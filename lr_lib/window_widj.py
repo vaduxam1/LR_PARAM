@@ -364,7 +364,6 @@ class TextLineNumbers(tk.Canvas):
             self.create_text(2, y, anchor="nw", text=self.linenum)
             i = self.textwidget.index("%s+1line" % i)
 
-        # with contextlib.suppress(AttributeError):
         self.parent_.action.scroll_lab.config(text=self.textwidget.highlight_lines._max_line)
 
 

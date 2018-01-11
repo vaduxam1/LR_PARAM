@@ -314,7 +314,7 @@ T_POOL_Size = 4  # фоновый T пул(int>2 / None), кроме SThreadPool
 SThreadAutoSizeTimeOut = tk.IntVar(value=1000)  # отзывчивость(мсек) SThreadPool - период опроса, для изменения размера пула
 SThreadPoolSizeMin = tk.IntVar(value=2)  # SThreadPool min size
 SThreadPoolSizeMax = tk.IntVar(value=T_POOL_Size*2)  # SThreadPool max size (int>2)
-SThreadPoolAddMinQSize = tk.IntVar(value=5000)  # SThreadPool - минимальная длина очереди, для добавления, более чем одного потока, за раз
+SThreadPoolAddMinQSize = tk.IntVar(value=100)  # SThreadPool - минимальная длина очереди, для добавления, более чем одного потока, за раз
 SThreadPooMaxAddThread = tk.IntVar(value=2)  # SThreadPool - max число потоков, для добавления за один раз(до SThreadPoolSizeMax)
 SThreadExitTimeout = tk.IntVar(value=1)  # SThreadPool таймаут(сек) выхода, бездействующих потоков(до SThreadPoolSizeMin)
 _SThreadMonitorUpdate = tk.IntVar(value=1000)  # SThreadPool (мс) время обновления popup окна Window.pool_wind для текста состояния пула
