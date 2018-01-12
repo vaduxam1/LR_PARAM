@@ -36,12 +36,10 @@ def mouse_web_reg_save_param(widget, param, mode=('SearchAndReplace', 'highlight
                 else:
                     wrsp_dict = defaults.VarWrspDict.get()
 
-            w = wrsp_dict['web_reg_num']
-
             # найти и заменить в action.c
             widget.action.SearchAndReplace(search=param, wrsp_dict=wrsp_dict, is_param=True, is_wrsp=True, backup=True,
                                            wrsp=wrsp)
-
+            w = wrsp_dict['web_reg_num']
             if defaults.VarShowPopupWindow.get() and widget.action.final_wnd_var.get():
                 widget.action.search_in_action(word=w)
                 s = '{wr}\n\n{wd}'.format(wr=widget.action.web_action.websReport.param_statistic[w], wd=wrsp_dict)
@@ -68,7 +66,6 @@ def rClick_Param(event, *args, **kwargs) -> None:
         # print('------------------')
     except tk.TclError:
         return lr_log.Logger.warning('сбросилось выделение текста\ntry again', parent=widget)
-    # найти
     try:
         action = widget.action
     except AttributeError:
@@ -98,7 +95,7 @@ def group_param(event, widget=None, params=None, ask=True) -> None:
 
     if ask:
         y = YesNoCancel(buttons=['Найти', 'Отменить', 'Пропуск'],
-                        text_before='найти group param', text_after='%s шт.' % len(params), is_text='\n'.join(params),
+                        text_before='найти group param', text_after='%s шт.' % len_params, is_text='\n'.join(params),
                         title='group param', parent=widget.action, default_key='Найти')
         ask = y.ask()
         if ask == 'Найти':
@@ -138,7 +135,7 @@ def group_param(event, widget=None, params=None, ask=True) -> None:
         lu = len(unsuccess_params)
         widget.action.toolbar['text'] = 'поиск : {param}\nweb_reg_save_param {counter}/{len_params} : {w} %{u}\n' \
                                         '{wrsp}'.format(
-            counter=counter, len_params=len_params, u=f % lu if lu else '', w=round(counter / proc1), param=param,
+            counter=counter, len_params=len_params, u=(f % lu if lu else ''), w=round(counter / proc1), param=param,
             wrsp=wrsp)
         widget.action.background_color_set(color=None)
 
@@ -214,7 +211,7 @@ def repB(widget, counter=None) -> None:
           'web_transaction_sorted', 'param_statistic', 'web_snapshot_param_in_count', 'web_transaction']
     tb = ' | '.join('{}:{}'.format(e, a) for e, a in enumerate(ao, start=1))
     st = '\n----\n'
-    ta = ('\n\n' + st).join('{}:{}{}{}'.format(e, ao[e - 1], st, get_json(ob)) for e, (a, ob) in enumerate(zip(ao, obj), start=1))
+    ta = ('\n\n' + st).join('{}:{}{}{}'.format(e, ao[e - 1], st, get_json(ob)) for e, ob in enumerate(obj, start=1))
 
     y = YesNoCancel(
         buttons=['OK'], text_before=tb, text_after='{} шт'.format(counter), is_text='\n\n{}'.format(ta),
@@ -231,7 +228,7 @@ def get_json(obj, indent=10):
 
 
 def remove_web_reg_save_param_from_action(event, selection=None) -> None:
-    '''удалить remove_web_reg_save с w.param или w.name == selection'''
+    '''удалить web_reg_save_param с w.param или w.name == selection'''
     if selection is None:
         selection = event.widget.selection_get()
     _param = event.widget.action.web_action.web_reg_save_param_remove(selection)
@@ -270,7 +267,7 @@ def all_wrsp_dict_web_reg_save_param(event) -> None:
         text_before='отображены все найденные варианты, которыми можно создать web_reg_save_param\n'
                     'необходимо оставить только один вариант, удалив остальные.',
         text_after='итого %s вариантов.' % len_dl, is_text='\n\n'.join(w[1] for w in defaults.VarWrspDictList),
-        title='{} : {} шт.'.format(selection, len_dl), parent=event.widget.action, default_key='Найти')
+        title='{} : {} шт.'.format(selection, len_dl), parent=event.widget.action, default_key='Заменить текущий')
     ask = y.ask()
 
     if ask == 'Заменить текущий':
