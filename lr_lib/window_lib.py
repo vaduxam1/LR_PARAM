@@ -37,8 +37,8 @@ def mouse_web_reg_save_param(widget, param, mode=('SearchAndReplace', 'highlight
                     wrsp_dict = defaults.VarWrspDict.get()
 
             # найти и заменить в action.c
-            widget.action.SearchAndReplace(search=param, wrsp_dict=wrsp_dict, is_param=True, is_wrsp=True, backup=True,
-                                           wrsp=wrsp)
+            widget.action.SearchAndReplace(
+                search=param, wrsp_dict=wrsp_dict, is_param=True, is_wrsp=True, backup=True, wrsp=wrsp)
             w = wrsp_dict['web_reg_num']
             if defaults.VarShowPopupWindow.get() and widget.action.final_wnd_var.get():
                 widget.action.search_in_action(word=w)
@@ -51,7 +51,7 @@ def mouse_web_reg_save_param(widget, param, mode=('SearchAndReplace', 'highlight
                     widget.action.search_res_combo.current(0)
                 widget.action.tk_text_see()
         elif 'highlight' in mode:
-            lr_widj.highlight_mode(widget, param, '')
+            lr_widj.highlight_mode(widget, param)
             widget.action.tk_text.set_highlight()
 
 @lr_pool.T_POOL_execute_decotator
@@ -130,7 +130,7 @@ def group_param(event, widget=None, params=None, ask=True) -> None:
     lr_log.Logger.info('>>> для создания выбрано {} param'.format(len_params))
     proc1 = (len_params / 100) or 1
 
-    def progress(counter: int, param: str, proc1: int, wrsp: str, f=' | fail: %s', pr_w_max=200) -> None:
+    def progress(counter: int, param: str, proc1: int, wrsp: str, f=' | fail: %s') -> None:
         '''прогресс'''
         lu = len(unsuccess_params)
         widget.action.toolbar['text'] = 'поиск : {param}\nweb_reg_save_param {counter}/{len_params} : {w} %{u}\n' \
@@ -160,10 +160,11 @@ def group_param(event, widget=None, params=None, ask=True) -> None:
         widget.action.web_action_to_tk_text(websReport=True)  # вставить в action.c
         defaults.Window._block_ = False
 
-    lr_pool.MainThreadUpdater.submit(lambda: final_group_param(widget, highlight, unsuccess_params, counter, log=True))
+    lr_pool.MainThreadUpdater.submit(lambda: final_group_param(
+        widget, highlight=highlight, unsuccess_params=unsuccess_params, log=True))
 
 
-def final_group_param(widget, highlight=None, unsuccess_params=None, counter=None, log=False) -> None:
+def final_group_param(widget, highlight=None, unsuccess_params=None, log=False) -> None:
     '''результаты работы group_param'''
     if highlight is not None:
         widget.highlight_var.set(highlight)
@@ -171,11 +172,14 @@ def final_group_param(widget, highlight=None, unsuccess_params=None, counter=Non
         widget.action.set_combo_len()
         widget.action.background_color_set(color='')  # оригинальный цвет
 
+    pl = widget.action.param_counter(all_param_info=False)
+    widget.action.toolbar['text'] = pl
+
     if unsuccess_params:
         err = len(unsuccess_params)
-        widget.action.toolbar['text'] = '{s}: {n}{i}'.format(
-            s=str(not err).upper(), n=('{} param не были созданы ! | '.format(err) if err else ''),
-            i=widget.action.param_counter(all_param_info=False))
+        widget.action.toolbar['text'] = '{s} : {n}\n{pl}'.format(
+            s=str(not err).upper(), pl=pl,
+            n=('{} param не были созданы ! {}'.format(err, ', '.join(unsuccess_params)) if err else ''))
 
         lr_log.Logger.error(
             '{} param не были обработаны:\n\t{}\nтребуется пересоздание, с OFF чекбоксом\n'
@@ -183,9 +187,8 @@ def final_group_param(widget, highlight=None, unsuccess_params=None, counter=Non
 
     if widget.action.final_wnd_var.get():
         repA(widget)
-
     if log:
-        lr_log.Logger.debug('итого стало {} param'.format(len(widget.action.web_action.websReport.wrsp_and_param_names)))
+        lr_log.Logger.debug(pl)
 
 
 def repA(widget) -> None:
