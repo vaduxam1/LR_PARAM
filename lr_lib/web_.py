@@ -5,6 +5,7 @@ import copy
 import string
 import itertools
 import contextlib
+import collections
 
 from lr_lib import (
     defaults,
@@ -380,13 +381,14 @@ class ActionWebsAndLines:
         else:
             self.webs_and_lines.append(element)
 
-    def set_text_list(self, text: str) -> None:
+    @lr_log.exec_time
+    def set_text_list(self, text: str, websReport=True) -> None:
         '''создать все web_action объекты'''
         with self.action.block():
             self.transactions = Transactions(self)
             self._set_text_list(text)
-            self.websReport.create()
-            self.websReport.checker_warn()
+            if websReport:
+                self.websReport.create()
 
     def _set_text_list(self, text: str) -> None:
         '''создать все web_action объекты'''
@@ -542,8 +544,11 @@ class ActionWebsAndLines:
 
         return _param
 
-    def to_str(self) -> str:
+    @lr_log.exec_time
+    def to_str(self, websReport=False) -> str:
         '''весь action текст как строка'''
+        if websReport:
+            self.websReport.create()
         iter_text = iter(self.webs_and_lines)
 
         def get_lines(text: iter, _bool=True):
@@ -581,6 +586,7 @@ class WebReport:
         self._wrsp = {}  # {'P_6046_1__z_k62_0': <lr_lib.web_.WebRegSaveParam object at 0x09252770>, ...}
         self.all_in_one = {}
 
+    @lr_log.exec_time
     def create(self):
         self.wrsp_and_param_names = {}
         self.param_wrsp_and_names = {}
@@ -679,6 +685,8 @@ class WebReport:
             if not self.param_statistic[wr.name]:
                 lr_widj.highlight_mode(self.parent_AWAL.action.tk_text, wr.name, option='background', color='yellow')
 
+        self.checker_warn()
+
     def stats_in_web(self, snapshot: int) -> str:
         params_in = self.web_snapshot_param_in_count[snapshot]
         if not params_in:
@@ -759,7 +767,7 @@ class Transactions:
         self.parent = parent
         self.names = []  # порядок следования имен
         self.start_stop = dict(start=[], stop=[])
-        self.sub_transaction = {}  # иерархия
+        self.sub_transaction = collections.OrderedDict()  # иерархия
         self._no_transaction_num = 0
         self.__is_no_transaction_name = ''
 
@@ -790,7 +798,7 @@ class Transactions:
             for t in self.names:
                 if t not in self.start_stop['stop']:
                     dt = dt[t]
-            dt[transaction] = {}
+            dt[transaction] = collections.OrderedDict()
 
             self.names.append(transaction)
             self.start_stop['start'].append(transaction)
@@ -804,7 +812,7 @@ class Transactions:
 
 def get_sub_transaction_dt(transaction, obj) -> dict:
     '''словарь транзакции, внутри вложенного словаря Transactions.sub_transaction'''
-    if isinstance(obj, dict):
+    if isinstance(obj, collections.OrderedDict):
         if transaction in obj:
             yield obj[transaction]
         else:

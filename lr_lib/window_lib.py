@@ -157,7 +157,7 @@ def group_param(event, widget=None, params=None, ask=True) -> None:
             lr_pool.MainThreadUpdater.submit(lambda: progress(counter, wrsp_dict['param'], proc1, wrsp))
 
         widget.action.web_action.replace_bodys(replace_list)  # заменить
-        widget.action.web_action_to_tk_text()  # вставить в action.c
+        widget.action.web_action_to_tk_text(websReport=True)  # вставить в action.c
         defaults.Window._block_ = False
 
     lr_pool.MainThreadUpdater.submit(lambda: final_group_param(widget, highlight, unsuccess_params, counter, log=True))
@@ -232,7 +232,7 @@ def remove_web_reg_save_param_from_action(event, selection=None) -> None:
     if selection is None:
         selection = event.widget.selection_get()
     _param = event.widget.action.web_action.web_reg_save_param_remove(selection)
-    event.widget.action.web_action_to_tk_text()  # вставить в action.c
+    event.widget.action.web_action_to_tk_text(websReport=True)  # вставить в action.c
     if _param:
         event.widget.action.search_in_action(word=_param)
 

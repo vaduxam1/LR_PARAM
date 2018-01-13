@@ -2,6 +2,7 @@
 # основное gui окно
 
 import contextlib
+import collections
 import itertools
 import string
 import subprocess
@@ -45,7 +46,7 @@ class Window(ttk.Frame):
         self.grid_columnconfigure(0, weight=1)
         self.grid(row=0, column=0, sticky=tk.NSEW)
 
-        self.action_windows = {}  # спросить, перед выходом, если открыты action.c окна
+        self.action_windows = collections.OrderedDict()  # спросить, перед выходом, если открыты action.c окна
 
         self.no_param_text = ''
         self.no_files_text = ''

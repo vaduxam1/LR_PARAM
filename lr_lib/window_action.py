@@ -296,12 +296,12 @@ class ActionWindow(tk.Toplevel):
             '''кнопка замены текста'''
             if messagebox.askyesno(str(ActionWindow), "action.c: Заменить ? :\n\n{s}\n\n на :\n\n{r}".format(
                     s=self.SearchReplace_searchVar.get(), r=self.SearchReplace_replaceVar.get()), parent=self):
-                self.backup()
-                text = self.tk_text.get(1.0, tk.END)
-                text = text.replace(self.SearchReplace_searchVar.get(), self.SearchReplace_replaceVar.get())
-                self.tk_text.delete(1.0, tk.END)
-                self.tk_text.insert(1.0, text)
-                self.save_action_file(file_name=False)
+                with self.block():
+                    self.backup()
+                    text = self.tk_text.get(1.0, tk.END)
+                    text = text.replace(self.SearchReplace_searchVar.get(), self.SearchReplace_replaceVar.get())
+                    self.web_action.set_text_list(text, websReport=True)
+                    self.web_action_to_tk_text(websReport=False)
 
         self.SearchReplace_button = tk.Button(
             self.toolbar, text='> replace >', font=defaults.DefaultFont, command=repl_butt, padx=0, pady=0)
@@ -360,10 +360,10 @@ class ActionWindow(tk.Toplevel):
                         yield line
             new_text = '\n'.join(no_tt_lines())
             if messagebox.askokcancel('thinktime', 'удалить thinktime из action?\n{} шт.'.format(counter), parent=self):
-                self.backup()
-                self.tk_text.delete(1.0, tk.END)
-                self.tk_text.insert(1.0, new_text)
-                self.save_action_file(file_name=False)
+                with self.block():
+                    self.backup()
+                    self.web_action.set_text_list(new_text, websReport=True)
+                    self.web_action_to_tk_text(websReport=False)
 
         self.lr_think_time = tk.Button(
             self.toolbar, text='lr_think_time', font=defaults.DefaultFont + ' bold', padx=0, pady=0,
@@ -397,10 +397,11 @@ class ActionWindow(tk.Toplevel):
                 for old, new in zip(transactions, new_transaction):
                     text = text.replace((st + old), (st + new))
                     text = text.replace((en + old), (en + new))
-                self.backup()
-                self.tk_text.new_text_set(text)  # вставить
+
                 with self.block():
-                    self.save_action_file(file_name=False)
+                    self.backup()
+                    self.web_action.set_text_list(text, websReport=True)
+                    self.web_action_to_tk_text(websReport=False)
 
         self.transaction_rename = tk.Button(
             self.toolbar, text='rename\ntransaction', font=defaults.DefaultFont + ' bold', background='orange',
@@ -873,12 +874,13 @@ class ActionWindow(tk.Toplevel):
                 elif yask == 'Выход':
                     break
         if is_del:
-            self.web_action_to_tk_text()
+            self.web_action_to_tk_text(websReport=True)
 
-    def save_action_file(self, file_name=None) -> None:
+    def save_action_file(self, file_name=None, websReport=True) -> None:
         '''текст to WEB_ACTION - сохранить текст action.c окна'''
-        self.web_action.set_text_list(self.tk_text.get(1.0, tk.END))
-        self.web_action_to_tk_text()
+        with self.block():
+            self.web_action.set_text_list(self.tk_text.get(1.0, tk.END), websReport=websReport)
+            self.web_action_to_tk_text(websReport=False)
 
         if file_name is None:
             file_name = tk.filedialog.asksaveasfilename(initialdir=os.getcwd(), filetypes=(
@@ -890,10 +892,10 @@ class ActionWindow(tk.Toplevel):
         else:
             self.backup()
 
-    def web_action_to_tk_text(self) -> None:
+    def web_action_to_tk_text(self, websReport=False) -> None:
         '''WEB_ACTION to tk_text'''
-        self.web_action.websReport.create()
-        self.tk_text.new_text_set(self.web_action.to_str())
+        new_text = self.web_action.to_str(websReport=websReport)
+        self.tk_text.new_text_set(new_text)
         self.tk_text.set_highlight()
         self.widj_reset()
 
@@ -904,21 +906,21 @@ class ActionWindow(tk.Toplevel):
         self.action_file = file or _action_file()
 
         if os.path.isfile(self.action_file):
-            with defaults.Window.block(), \
+            with self.block(), defaults.Window.block(), \
                  open(self.action_file, errors='replace', encoding=defaults.VarEncode.get()) as act:
                 text = act.read()
                 self.tk_text.new_text_set(text)
-                self.web_action.set_text_list(text)
-                # self.set_template_list()
+                self.web_action.set_text_list(text, websReport=True)
+                self.web_action_to_tk_text(websReport=False)
 
             self.tk_text.reset_highlight(highlight=False)
             # self.web_action.print_transaction()
             lr_log.Logger.info('{f} > {s}'.format(f=self.action_file, s=self.id_))
 
-        if self.cp1251_var.get():
-            self.set_cp1251_action_encode()
-        else:
-            self.save_action_file(file_name=False)
+        # if self.cp1251_var.get():
+        #     self.set_cp1251_action_encode()
+        # else:
+        #     self.save_action_file(file_name=False)
 
         if self.web_action.websReport.rus_webs:
             lr_log.Logger.warning(
@@ -933,16 +935,14 @@ class ActionWindow(tk.Toplevel):
         self.background_color_set(color='')  # оригинальный цвет
 
     def set_cp1251_action_encode(self, enc='CP1251'):
-        if self.cp1251_var.get():
-            self.backup()
-        else:
+        if not self.cp1251_var.get():
             enc = defaults.VarEncode.get()
-
-        text = self.tk_text.get(1.0, tk.END)
-        text = text.encode(enc).decode(errors='replace')
-        self.tk_text.delete(1.0, tk.END)
-        self.tk_text.insert(1.0, text)
-        self.save_action_file(file_name=False)
+        with self.block():
+            self.backup()
+            text = self.tk_text.get(1.0, tk.END)
+            text = text.encode(enc).decode(errors='replace')
+            self.web_action.set_text_list(text, websReport=True)
+            self.web_action_to_tk_text(websReport=False)
 
     def get_transaction(self, text: str) -> iter((str, )):
         '''имена транзакций'''
@@ -950,7 +950,7 @@ class ActionWindow(tk.Toplevel):
             line = line.strip()
             if line.startswith('lr_') and line.endswith(');') and '_transaction("' in line:
                 t_name = line.rsplit('"', 1)[0]
-                yield t_name
+                yield t_name[3:]
 
     def widj_reset(self) -> None:
         '''обновить виджеты'''
@@ -1091,9 +1091,7 @@ class ActionWindow(tk.Toplevel):
             self.web_action.web_reg_save_param_insert(wrsp_dict, wrsp)
 
         if not replace_callback:
-            self.web_action.websReport.create()
-            self.web_action_to_tk_text()  # показать
-            self.tk_text.set_highlight()
+            self.web_action_to_tk_text(websReport=True)  # показать
 
     def drop_file_none_inf_num_in_action(self) -> None:
         '''в LoadRunner могут быть inf-файлы, которых нету в action.c(например удалили лишний код), такие файлы надо
@@ -1218,8 +1216,7 @@ class ActionWindow(tk.Toplevel):
                 _web_action.webs_and_lines.remove(web_)
                 rem += 1
 
-        _web_action.websReport.create()
-        text_without_dummy = _web_action.to_str()
+        text_without_dummy = _web_action.to_str(websReport=True)
         dum_len = len(text)
         no_dum_len = len(text_without_dummy)
 
@@ -1274,7 +1271,7 @@ class ActionWindow(tk.Toplevel):
                 self.backup()
                 self.tk_text.new_text_set(text_without_dummy)
                 self.web_action = _web_action
-                self.web_action_to_tk_text()
+                self.web_action_to_tk_text(websReport=True)
 
             if y in buttons[:2]:
                 return True
