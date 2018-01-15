@@ -698,7 +698,7 @@ class WebReport:
                 param=self.wrsp_and_param_names[wr_name], p_in=params_in[wr_name], p_all=ps['param_count'],
                 snap=ps['snapshots_minmax'], transac=ps['transaction_count'])
 
-        statistic = [get(wr_name) for wr_name in sorted(params_in, key=len)]
+        statistic = (get(wr_name) for wr_name in sorted(params_in, key=len))
         return '\n\t{c} IN({i})<-[{ui}]: {s}'.format(
             s=', '.join(statistic), c=lr_param.LR_COMENT, i=sum(params_in[w] for w in params_in),
             ui=len(params_in))

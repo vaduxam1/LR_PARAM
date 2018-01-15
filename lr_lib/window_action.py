@@ -1090,8 +1090,9 @@ class ActionWindow(tk.Toplevel):
         if is_wrsp:  # вставить web_reg_save_param
             self.web_action.web_reg_save_param_insert(wrsp_dict, wrsp)
 
-        if not replace_callback:
-            self.web_action_to_tk_text(websReport=True)  # показать
+        if not replace_callback:  # !!!!!!!!!!!!!!!!!
+            self.web_action.set_text_list(self.web_action.to_str(websReport=True), websReport=False)
+            self.web_action_to_tk_text(websReport=False)
 
     def drop_file_none_inf_num_in_action(self) -> None:
         '''в LoadRunner могут быть inf-файлы, которых нету в action.c(например удалили лишний код), такие файлы надо

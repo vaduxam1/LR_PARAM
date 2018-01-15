@@ -39,6 +39,7 @@ def mouse_web_reg_save_param(widget, param, mode=('SearchAndReplace', 'highlight
             # найти и заменить в action.c
             widget.action.SearchAndReplace(
                 search=param, wrsp_dict=wrsp_dict, is_param=True, is_wrsp=True, backup=True, wrsp=wrsp)
+
             w = wrsp_dict['web_reg_num']
             if defaults.VarShowPopupWindow.get() and widget.action.final_wnd_var.get():
                 widget.action.search_in_action(word=w)
@@ -120,10 +121,6 @@ def group_param(event, widget=None, params=None, ask=True) -> None:
                 lr_log.excepthook(*sys.exc_info())
         wrsp_dict_queue.put_nowait(None)  # stop
 
-    highlight = widget.highlight_var.get()  # откл подсветку
-    widget.highlight_var.set(False)
-    widget.set_highlight()
-
     lr_log.Logger.debug('на текущий момент уже создано {} param'.format(
         len(widget.action.web_action.websReport.wrsp_and_param_names)))
     len_params = len(params)
@@ -161,16 +158,13 @@ def group_param(event, widget=None, params=None, ask=True) -> None:
         defaults.Window._block_ = False
 
     lr_pool.MainThreadUpdater.submit(lambda: final_group_param(
-        widget, highlight=highlight, unsuccess_params=unsuccess_params, log=True))
+        widget, unsuccess_params=unsuccess_params, log=True))
 
 
-def final_group_param(widget, highlight=None, unsuccess_params=None, log=False) -> None:
+def final_group_param(widget, unsuccess_params=None, log=False) -> None:
     '''результаты работы group_param'''
-    if highlight is not None:
-        widget.highlight_var.set(highlight)
-        widget.action.tk_text.set_highlight()
-        widget.action.set_combo_len()
-        widget.action.background_color_set(color='')  # оригинальный цвет
+    widget.action.set_combo_len()
+    widget.action.background_color_set(color='')  # оригинальный цвет
 
     pl = widget.action.param_counter(all_param_info=False)
     widget.action.toolbar['text'] = pl
@@ -196,7 +190,8 @@ def repA(widget) -> None:
     rep = widget.action.web_action.websReport.all_in_one
     y = YesNoCancel(
         buttons=['OK'], text_before='repA', text_after='self.web_action.websReport.all_in_one',
-        is_text=get_json(rep), title='len={}'.format(len(rep)), parent=widget.action)
+        is_text=get_json(rep), title='transac_len={}, param_len={}'.format(
+            len(rep), len(widget.action.web_action.websReport.wrsp_and_param_names)), parent=widget.action)
     lr_pool.T_POOL_execute_decotator(y.ask)()
 
 
@@ -732,7 +727,7 @@ class YesNoCancel(tk.Toplevel):
         # self.resizable(width=False, height=False)
         self.attributes('-topmost', True)  # свсегда сверху
         # self.attributes("-toolwindow", 1)  # remove maximize/minimize
-        self.protocol('WM_DELETE_WINDOW', self.close)  # remove close_threads
+        # self.protocol('WM_DELETE_WINDOW', self.close)  # remove close_threads
         center_widget(self)
         self.grid_rowconfigure(0, weight=1)
         self.grid_columnconfigure(0, weight=1)
@@ -750,6 +745,4 @@ class YesNoCancel(tk.Toplevel):
 
     def close(self) -> None:
         '''отмена при выходе'''
-        # self.alive_ = False
-        # self.queue.put(None)
-        # self.ask()
+        self.queue.put_nowait(self.default_key)

@@ -171,6 +171,7 @@ def exec_time(func: callable) -> callable:
     @functools.wraps(func)
     def wrap(*args, **kwargs):
         t = time.time()
+        Logger.trace('-> {f}'.format(f=func))
         out = func(*args, **kwargs)
         t = time.time() - t
         Logger.trace('<- {t} сек: {f}'.format(f=func, t=round(t, 1)))
