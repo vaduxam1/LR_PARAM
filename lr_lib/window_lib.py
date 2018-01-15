@@ -727,7 +727,7 @@ class YesNoCancel(tk.Toplevel):
         # self.resizable(width=False, height=False)
         self.attributes('-topmost', True)  # свсегда сверху
         # self.attributes("-toolwindow", 1)  # remove maximize/minimize
-        # self.protocol('WM_DELETE_WINDOW', self.close)  # remove close_threads
+        self.protocol('WM_DELETE_WINDOW', self.close)  # remove close_threads
         center_widget(self)
         self.grid_rowconfigure(0, weight=1)
         self.grid_columnconfigure(0, weight=1)
@@ -735,7 +735,6 @@ class YesNoCancel(tk.Toplevel):
     def ask(self) -> str:
         '''приостановить поток, до получения ответа'''
         try:
-            # self.queue.put(self.default_key)
             return self.queue.get()
         finally:
             self.alive_ = False
