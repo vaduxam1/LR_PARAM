@@ -804,7 +804,10 @@ class ActionWindow(tk.Toplevel):
         '''перейти на позицию в тексте'''
         if defaults.Window._block_:
             return
-        self.tk_text.mark_set("insert", self.searchPosVar.get())
+        pos = self.searchPosVar.get()
+        if a:  # при ручном выборе из комбобокса поиска, продолжать выбирать кнопками с этого места
+            self._search_index = list(self.search_res_combo['values']).index(pos)
+        self.tk_text.mark_set("insert", pos)
         self.tk_text.focus_set()
         self.tk_text.see("insert")
         _, a, b = lr_wlib.widget_values_counter(self.search_res_combo)
