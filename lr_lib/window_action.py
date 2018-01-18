@@ -223,7 +223,7 @@ class ActionWindow(tk.Toplevel):
         self.save_action_button = tk.Button(
             self.file_bar, text='save', font=defaults.DefaultFont + ' bold', command=self.save_action_file,
             padx=0, pady=0)
-        # self.clear_text_button = tk.Button(self.cbx_bar, text='clear', font=defaults.DefaultFont, command=self.clear_text, padx=0, pady=0)
+
         self.open_button = tk.Button(
             self.file_bar, text='open', font=defaults.DefaultFont, command=self.open_action_dialog, padx=0, pady=0)
         self.editor_button = tk.Button(
@@ -276,9 +276,6 @@ class ActionWindow(tk.Toplevel):
         self.highlight_cbx = tk.Checkbutton(
             self.cbx_bar, text='highlight', font=defaults.DefaultFont, background=defaults.Background,
             variable=self.tk_text.highlight_var, command=self.tk_text.set_highlight, padx=0, pady=0)
-        self.cp1251_cbx = tk.Checkbutton(
-            self.file_bar, text='1251', font=defaults.DefaultFont, variable=self.cp1251_var,
-            command=self.set_cp1251_action_encode, padx=0, pady=0)
 
         def no_var_cmd(*a) -> None:
             if self.no_var.get():
@@ -432,10 +429,8 @@ class ActionWindow(tk.Toplevel):
         self.highlight_LinesPortionSize.grid(row=4, column=5, padx=0, pady=0, sticky=tk.NSEW)
 
         self.open_button.grid(row=6, column=16, sticky=tk.NSEW, padx=0, pady=0)
-        self.editor_button.grid(row=7, column=17, padx=0, pady=0, sticky=tk.NSEW)
-        # self.clear_text_button.grid(row=4, column=1, padx=0, pady=0, sticky=tk.NSEW)
+        self.editor_button.grid(row=7, column=16, padx=0, pady=0, sticky=tk.NSEW, columnspan=2)
         self.no_cbx.grid(row=7, column=10, sticky=tk.NSEW, padx=0, pady=0, rowspan=2)
-        self.cp1251_cbx.grid(row=7, column=16, padx=0, pady=0, sticky=tk.NSEW)
         self.auto_param_creator_button.grid(row=7, column=8, sticky=tk.NSEW, padx=0, pady=0, rowspan=2)
         self.force_ask_cbx.grid(row=7, column=11, sticky=tk.NSEW, padx=0, pady=0, rowspan=2)
         self.unblock.grid(row=9, column=17, sticky=tk.NSEW, padx=0, pady=0)
@@ -531,11 +526,6 @@ class ActionWindow(tk.Toplevel):
                                                                '# SearchReplace_replaceCombo')
         lr_wlib.createToolTip(self.SearchReplace_button, 'Найти и Заменить, для SearchReplace_комбобоксов\n'
                                                          'Обычная(как в блокноте) автозамена\n\t# SearchReplace_button')
-        lr_wlib.createToolTip(self.cp1251_cbx, 'принудительно перекодировать action.c текст в кодировку\n'
-                                               'On="cp1251" / Off="UTF-8"\nдля преобразования сразу всех строк '
-                                               '"РџРµСЂРІРёС‡РЅС‹" -> "Первичны"\nТк может пропасть часть текста('
-                                               'если всречаются несколько разных кодировок), лучше не пользоватся\n\t'
-                                               '# cp1251_cbx')
         lr_wlib.createToolTip(self.up_search_button, 'перейти вверх, по результатам поиска\n\t# up_search_button')
         lr_wlib.createToolTip(self.down_search_button, 'перейти вниз, по результатам поиска\n\t# down_search_button')
         lr_wlib.createToolTip(self.backup_open_button, 'открыть бэкап файл, для текущего окна\n\t# backup_open_button')
@@ -914,35 +904,19 @@ class ActionWindow(tk.Toplevel):
                 self.web_action_to_tk_text(websReport=False)
 
             self.tk_text.reset_highlight(highlight=False)
-            # self.web_action.print_transaction()
             lr_log.Logger.info('{f} > {s}'.format(f=self.action_file, s=self.id_))
 
-        # if self.cp1251_var.get():
-        #     self.set_cp1251_action_encode()
-        # else:
-        #     self.save_action_file(file_name=False)
-
         if self.web_action.websReport.rus_webs:
-            lr_log.Logger.warning(
+            lr_log.Logger.info(
                 'В следующих номерах inf, обнаружены Русские(NoASCII) символы, возможно требуется перекодировка'
                 '(выделение/encoding из меню мыши)\n{}'.format(self.web_action.websReport.rus_webs))
         if self.web_action.websReport.google_webs:
-            lr_log.Logger.warning(
+            lr_log.Logger.info(
                 'Возможно следующие номера inf лишние, тк содержат слова {s}\n'
                 'их можно удалить(+"commit/backup/обновить action.c" из меню мыши)\n{w}'.format(
                     w=self.web_action.websReport.google_webs, s=defaults.DENY_WEB_))
 
         self.background_color_set(color='')  # оригинальный цвет
-
-    def set_cp1251_action_encode(self, enc='CP1251'):
-        if not self.cp1251_var.get():
-            enc = defaults.VarEncode.get()
-        with self.block():
-            self.backup()
-            text = self.tk_text.get(1.0, tk.END)
-            text = text.encode(enc).decode(errors='replace')
-            self.web_action.set_text_list(text, websReport=True)
-            self.web_action_to_tk_text(websReport=False)
 
     def get_transaction(self, text: str) -> iter((str, )):
         '''имена транзакций'''
@@ -1050,6 +1024,11 @@ class ActionWindow(tk.Toplevel):
                         lr_log.Logger.info('{q}\n\n{e}'.format(e=ex, q=qb))
 
     def SearchAndReplace(self, search: str, replace='', wrsp_dict=None, wrsp=None, backup=False, is_param=True,
+                         is_wrsp=True, replace_callback=None, rep_stat=False) -> None:
+        with self.block():
+            self._SearchAndReplace(search, replace, wrsp_dict, wrsp, backup, is_param, is_wrsp, replace_callback, rep_stat)
+
+    def _SearchAndReplace(self, search: str, replace='', wrsp_dict=None, wrsp=None, backup=False, is_param=True,
                          is_wrsp=True, replace_callback=None, rep_stat=False) -> None:
         '''VarWrspDict автозамена: [заменить param на {web_reg_save_param}]
         + [добавить блок с // web_reg_save_param, перед блоком c inf_line]'''

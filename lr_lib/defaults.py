@@ -15,7 +15,7 @@ from lr_lib import (
 )
 
 #####################################
-VERSION = 'v9.0.4'
+VERSION = 'v9.0.5'
 lib_folder = 'lr_lib'
 Tk = tk.Tk()
 

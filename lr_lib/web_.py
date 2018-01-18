@@ -17,10 +17,6 @@ from lr_lib import (
 )
 
 
-class _Num:
-    count = 0
-
-
 buttons = (ys, yta, no, nta, rais) = ('Да', 'Да, для Всех', 'Нет', 'Нет, для Всех', 'Преврать',)
 PrintableSet = set(string.printable)
 start_transaction = 'lr_start_transaction'
@@ -66,13 +62,15 @@ def bodys_replace(replace_args: ({int: str}, [(str, str), ])) -> [str, ]:
 
 
 class WebAny:
+    count = 0
+
     def __init__(self, parent_AWAL, lines_list: list, comments: str, transaction: str, _type=''):
         self.parent_AWAL = parent_AWAL  # ActionWebsAndLines
         self.tk_text = self.parent_AWAL.action.tk_text
         self.lines_list = lines_list
 
-        _Num.count += 1
-        self.unique_num = _Num.count
+        WebAny.count += 1
+        self.unique_num = WebAny.count
 
         self.transaction = transaction
         self.type = _type or read_web_type(self.lines_list[0])
@@ -312,10 +310,10 @@ class WebRegSaveParam(WebAny):
         rep = self.parent_AWAL.websReport
         ps = rep.param_statistic[self.name]
         wt = rep.web_transaction[self.transaction]
-        t_snap = (wt['snapshots_minmax'] if self.transaction else '')
+        t_snap = (wt['minmax_snapshots'] if self.transaction else '')
         tn = sorted(ps['transaction_names'], key=rep.web_transaction_sorted.index)
         s = '{c} ({w_transac}: {t_snap}) -> Param:{p_all} | Snapshots:{snap} | Transactions={len_transac}:{transac_names}'.format(
-            wrsp_name=self.transaction, p_all=ps['param_count'], snap=ps['snapshots_minmax'], c=lr_param.LR_COMENT,
+            wrsp_name=self.transaction, p_all=ps['param_count'], snap=ps['minmax_snapshots'], c=lr_param.LR_COMENT,
             len_transac=ps['transaction_count'], transac_names=tn, w_transac=self.transaction,
             t_snap=t_snap,
         )
@@ -402,18 +400,24 @@ class ActionWebsAndLines:
         comments = ''  # //
         _multiline_comment = []  # // /**/
         _OldPComment = lr_param.LR_COMENT + ' PARAM'
+        widget = self.action.tk_text
+        lw_end = (lr_param.Web_LAST, lr_param._block_endswith3, )
+        comment_format = '{}\n{}'.format
 
         for line in iter_lines:
             strip_line = line.strip()
             line_num += 1
+
             if not strip_line:
                 continue
 
             elif _multiline_comment or strip_line.startswith('/*'):
                 _multiline_comment.append(line)
-                lr_widj.highlight_mode(self.action.tk_text, strip_line, option='foreground', color='olive')
+
+                lr_widj.highlight_mode(widget, strip_line)
+
                 if strip_line.startswith('*/') or strip_line.endswith('*/'):
-                    comments = '{}\n{}'.format(comments.rstrip(), '\n'.join(_multiline_comment))
+                    comments = comment_format(comments, '\n'.join(_multiline_comment)).rstrip()
                     _multiline_comment = []
                 continue
 
@@ -421,8 +425,10 @@ class ActionWebsAndLines:
                 continue
 
             elif strip_line.startswith('//'):
-                lr_widj.highlight_mode(self.action.tk_text, strip_line, option='foreground', color='olive')
-                comments = '{}\n{}'.format(comments.rstrip(), line)
+
+                lr_widj.highlight_mode(widget, strip_line)
+
+                comments = comment_format(comments, line).rstrip()
                 continue
 
             elif strip_line.startswith(lr_param._block_startswith):  # начало блока web_
@@ -434,26 +440,28 @@ class ActionWebsAndLines:
                     for web_line in iter_lines:
                         line_num += 1
                         web_list.append(web_line)
-                        if any(map(web_line.rstrip().endswith, [lr_param.Web_LAST, lr_param._block_endswith3])):
+                        if any(map(web_line.rstrip().endswith, lw_end)):
                             break
 
-                    comments = comments.rstrip()
                     transaction = self.transactions._current()
 
                     if w_type.startswith('web_reg_save_param'):
                         web_ = WebRegSaveParam(self, web_list, comments, transaction=transaction, _type=w_type)
                         reg_param_list.append(web_)
+
                     else:
                         if (len(web_list) < 3) or (not any(lr_param.Snap1 in ln for ln in web_list)):
                             web_ = WebAny(self, web_list, comments, transaction=transaction, _type=w_type)
                             self.add_to_text_list(web_)
+
                         else:
                             web_ = WebSnapshot(self, web_list, comments, transaction=transaction, _type=w_type)
                             web_.web_reg_save_param_list = reg_param_list
                             reg_param_list = []
                             self.add_to_text_list(web_)
 
-                    lr_widj.highlight_mode(self.action.tk_text, comments.strip(), option='foreground', color='olive')
+                    lr_widj.highlight_mode(widget, comments)
+
                     comments = ''
                     continue
 
@@ -461,7 +469,8 @@ class ActionWebsAndLines:
                     web_ = WebAny(self, web_list, comments, transaction=self.transactions._current(), _type=w_type)
                     self.add_to_text_list(web_)
 
-                    lr_widj.highlight_mode(self.action.tk_text, comments.strip(), option='foreground', color='olive')
+                    lr_widj.highlight_mode(widget, comments)
+
                     comments = ''
                     continue
 
@@ -475,13 +484,13 @@ class ActionWebsAndLines:
                 self.set_transaction_name(strip_line)
 
                 if comments:
-                    line = '{}\n{}'.format(comments.rstrip(), line)
+                    line = comment_format(comments, line)
+                    lr_widj.highlight_mode(widget, comments)
+                    comments = ''
+
                 self.add_to_text_list(line)
 
-                lr_widj.highlight_mode(self.action.tk_text, comments.strip(), option='foreground', color='olive')
-                comments = ''
-
-                lr_widj.highlight_mode(self.action.tk_text, strip_line, option='foreground', color='olive')
+                lr_widj.highlight_mode(widget, strip_line)
                 continue
 
         if comments:
@@ -504,8 +513,9 @@ class ActionWebsAndLines:
                 transac = strip_line.split(_s, 2)
                 transac = transac[1]
                 self.transactions.start_transaction(transac)
-                lr_widj.highlight_mode(self.action.tk_text, self.transactions._current(),
-                                       option='foreground', color='darkslategrey')
+
+                lr_widj.highlight_mode(
+                    self.action.tk_text, self.transactions._current(), option='foreground', color='darkslategrey')
 
             elif strip_line.startswith(end_transaction):
                 transac = strip_line.split(_s, 2)
@@ -549,22 +559,23 @@ class ActionWebsAndLines:
         '''весь action текст как строка'''
         if websReport:
             self.websReport.create()
-        iter_text = iter(self.webs_and_lines)
 
-        def get_lines(text: iter, _bool=True):
-            for line in text:
+        def webs_and_lines(_bool=True) -> str:
+            for line in self.webs_and_lines:
                 is_str = isinstance(line, str)
                 if is_str != _bool:
                     yield '\n'  # смена str/WEB_
+
                 if is_str:
                     yield '\n{}'.format(line.strip('\n'))
                 elif isinstance(line, WebSnapshot):
                     yield '\n\n{}\n'.format(line.to_str())
                 else:
                     yield '\n{}'.format(line.to_str())
+
                 _bool = is_str
 
-        return '{n}{t}'.format(n=next(iter_text, ''), t=''.join(get_lines(iter_text))).strip()
+        return ''.join(webs_and_lines()).strip()
 
 
 is_ascii = set(string.printable).__contains__
@@ -575,10 +586,9 @@ class WebReport:
         self.parent_AWAL = parent_AWAL
 
         self.wrsp_and_param_names = {}  # {'P_6046_1__z_k62_0': 'z_k620', ...}
-        self.param_wrsp_and_names = {}  # {'z_k620': 'P_6046_1__z_k62_0', ...}
-        self.param_statistic = {}  # {'P_3396_4_Menupopup__a_FFXc_0__id_mainMenu': {'param_count': 2, 'snapshots': [874, 875], 'snapshots_count': 2, 'snapshots_minmax': '[t874:t875]=2', 'transaction_names': {'logout'}, 'transaction_count': 1}}
+        self.param_statistic = {}  # {'P_3396_4_Menupopup__a_FFXc_0__id_mainMenu': {'param_count': 2, 'snapshots': [874, 875], 'snapshots_count': 2, 'minmax_snapshots': '[t874:t875]=2', 'transaction_names': {'logout'}, 'transaction_count': 1}}
         self.web_snapshot_param_in_count = {}  # {1: {'P_6046_1__z_k62_0': 3}, 2: ...}
-        self.web_transaction = {}  # {'close_document': {'snapshots': [847, 848, ...], 'snapshots_minmax': '[t847:t857]=11'}, 'logout': {'snapshots': [872, 873, 874, 875], 'snapshots_minmax': '[t872:t875]=4'}}
+        self.web_transaction = {}  # {'close_document': {'snapshots': [847, 848, ...], 'minmax_snapshots': '[t847:t857]=11'}, 'logout': {'snapshots': [872, 873, 874, 875], 'minmax_snapshots': '[t872:t875]=4'}}
         self.web_transaction_sorted = []  # ['close_document', 'logout', ]
         self.rus_webs = {}  # web с не ASCII символами {snap: symb_count} {103: 17, 250: 14, 644: 22}
         self.google_webs = {}  # вероятно лишние web {228: {'google.com': 1}}
@@ -589,7 +599,6 @@ class WebReport:
     @lr_log.exec_time
     def create(self):
         self.wrsp_and_param_names = {}
-        self.param_wrsp_and_names = {}
         self.param_statistic = {}
         self.web_snapshot_param_in_count = {}
         self.web_transaction = {}
@@ -600,7 +609,7 @@ class WebReport:
 
         self._wrsp = {}
         self.all_in_one = copy.deepcopy(self.parent_AWAL.transactions.sub_transaction)
-        wrsp_all = self.parent_AWAL.get_web_reg_save_param_all()
+        wrsp_all = tuple(self.parent_AWAL.get_web_reg_save_param_all())
 
         for wr in wrsp_all:
             self.wrsp_and_param_names[wr.name] = wr.param
@@ -608,21 +617,14 @@ class WebReport:
 
         self.param_statistic = {}
         for k in self.wrsp_and_param_names:
-            self.param_statistic[k] = dict(
-            param_count=0,
-            snapshots=[],
-            snapshots_count=0,
-            snapshots_minmax='',
-            transaction_names=[],
-            transaction_count=0,
-        )
-
-        def set_stat(web_snapshot_param_in_count, wr_name, transaction, param_in_count):
-            web_snapshot_param_in_count[wr_name] = param_in_count
-            p_stat = self.param_statistic[wr_name]
-            p_stat['param_count'] += param_in_count
-            p_stat['snapshots'].append(snapshot)
-            p_stat['transaction_names'].append(transaction)
+            self.param_statistic[k] = {
+                'param_count': 0,
+                'snapshots': [],
+                'snapshots_count': 0,
+                'minmax_snapshots': '',
+                'transaction_names': [],
+                'transaction_count': 0,
+            }
 
         for web in self.parent_AWAL.get_web_all():
             snapshot = web.snapshot
@@ -650,36 +652,42 @@ class WebReport:
                 self.web_transaction.setdefault(transaction, {})['snapshots'] = [snapshot]
 
             body = web.get_body()
-            self.web_snapshot_param_in_count[snapshot] = web_snapshot_param_in_count = {}
+            self.web_snapshot_param_in_count[snapshot] = in_count = {}
 
             for wr_name in self.wrsp_and_param_names:
                 param_in_count = body.count(lr_param.param_bounds_setter(wr_name))
                 if param_in_count:
-                    set_stat(web_snapshot_param_in_count, wr_name, transaction, param_in_count)
+                    in_count[wr_name] = param_in_count
+                    statistic = self.param_statistic[wr_name]
+                    statistic['param_count'] += param_in_count
+                    statistic['snapshots'].append(snapshot)
+                    statistic['transaction_names'].append(transaction)
 
         for k in self.wrsp_and_param_names:
-            stn = set(self.param_statistic[k]['transaction_names'])
-            self.param_statistic[k]['transaction_names'] = sorted(stn, key=self.web_transaction_sorted.index)
+            psk = self.param_statistic[k]
+            psk['transaction_names'] = sorted(set(psk['transaction_names']), key=self.web_transaction_sorted.index)
 
         for wr_name in self.param_statistic:
-            p_stat = self.param_statistic[wr_name]
-            p_stat['snapshots_count'] = len(p_stat['snapshots'])
-            p_stat['transaction_count'] = len(p_stat['transaction_names'])
-            p_stat['snapshots_minmax'] = snapshot_diapason_string(p_stat['snapshots'])
+            statistic = self.param_statistic[wr_name]
+            statistic['snapshots_count'] = len(statistic['snapshots'])
+            statistic['transaction_count'] = len(statistic['transaction_names'])
+            statistic['minmax_snapshots'] = snapshot_diapason_string(statistic['snapshots'])
 
-            if (not p_stat['param_count']) or (self._wrsp[wr_name].snapshot in p_stat['snapshots']):
+            if (not statistic['param_count']) or (self._wrsp[wr_name].snapshot in statistic['snapshots']):
                 self.bad_wrsp_in_usage.append(wr_name)
 
         for dt in self.web_transaction.values():
-            dt['snapshots_minmax'] = snapshot_diapason_string(dt['snapshots'])
+            dt['minmax_snapshots'] = snapshot_diapason_string(dt['snapshots'])
 
-        self.param_wrsp_and_names = {v: k for k, v in self.wrsp_and_param_names.items()}
-
+        get_web = lambda sn: self.parent_AWAL.get_web_by(snapshot=sn)
+        deny_k = ('snapshots', 'transaction_names', 'snapshots_count', )
         for t in self.web_transaction:
             dtt = next(get_sub_transaction_dt(t, self.all_in_one))
             dtt.update(copy.deepcopy(self.web_transaction[t]))
-            dtt['snapshots'] = {dtt['snapshots'][r]: {w.name: w.param for w in next(self.parent_AWAL.get_web_by(
-                snapshot=dtt['snapshots'][r])).web_reg_save_param_list} for r in range(len(dtt['snapshots']))}
+            dtt['snapshots'] = {s: {w.name: {
+                'param': w.param,
+                'stats': {k: v for (k, v) in self.param_statistic[w.name].items() if k not in deny_k},
+            } for w in next(get_web(s)).web_reg_save_param_list} for s in dtt['snapshots']}
 
         for wr in wrsp_all:
             if not self.param_statistic[wr.name]:
@@ -696,7 +704,7 @@ class WebReport:
             ps = self.param_statistic[wr_name]
             return '{param}(Pm:{p_in}/{p_all}|Sn:{snap}|Tr:{transac})'.format(
                 param=self.wrsp_and_param_names[wr_name], p_in=params_in[wr_name], p_all=ps['param_count'],
-                snap=ps['snapshots_minmax'], transac=ps['transaction_count'])
+                snap=ps['minmax_snapshots'], transac=ps['transaction_count'])
 
         statistic = (get(wr_name) for wr_name in sorted(params_in, key=len))
         return '\n\t{c} IN({i})<-[{ui}]: {s}'.format(
@@ -714,7 +722,7 @@ class WebReport:
         for wr in sorted(web.web_reg_save_param_list, key=lambda w: len(w.param)):
             pss = '{p}(Pm:{p_all}|Sn:{snap}|Tr:{transac})'.format(
                 p=wr.param, p_all=self.param_statistic[wr.name]['param_count'],
-                snap=self.param_statistic[wr.name]['snapshots_minmax'],
+                snap=self.param_statistic[wr.name]['minmax_snapshots'],
                 transac=self.param_statistic[wr.name]['transaction_count'])
             statistic.append(pss)
 
@@ -722,7 +730,7 @@ class WebReport:
 
     def stats_transaction_web(self, web) -> str:
         transaction = web.transaction
-        mm = self.web_transaction[transaction]['snapshots_minmax']
+        mm = self.web_transaction[transaction]['minmax_snapshots']
         if isinstance(web, WebSnapshot):
             m = self.web_transaction[transaction]['snapshots'].index(web.snapshot) + 1
             mm = '{m}/{mm}'.format(mm=mm, m=m)

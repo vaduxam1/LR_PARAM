@@ -218,7 +218,7 @@ def repB(widget, counter=None) -> None:
     lr_log.Logger.trace('{}\n\n{}'.format(tb, ta))
 
 
-def get_json(obj, indent=10):
+def get_json(obj, indent=5):
     try:
         return json.dumps(obj, indent=indent)
     except Exception:

@@ -601,7 +601,7 @@ class LBRBText(tk.Text):
         self.configure(height=self.heightVar.get())
 
 
-def highlight_mode(widget, word: str, option='background', color='cyan') -> None:
+def highlight_mode(widget, word: str, option='foreground', color='olive') -> None:
     '''залить цветом все word в tk.Text widget'''
     colors = widget.highlight_dict.setdefault(option, {})
     try:
