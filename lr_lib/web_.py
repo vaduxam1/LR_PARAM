@@ -485,9 +485,6 @@ class ActionWebsAndLines:
                 transac = transac[1]
                 self.transactions.start_transaction(transac)
 
-                lr_widj.highlight_mode(
-                    self.action.tk_text, self.transactions._current(), option='foreground', color='darkslategrey')
-
             elif strip_line.startswith(end_transaction):
                 transac = strip_line.split(_s, 2)
                 transac = transac[1]
@@ -670,11 +667,15 @@ class WebReport:
                 'stats': {k: v for (k, v) in self.param_statistic[w.name].items() if k not in deny_k},
             } for w in next(get_web(s)).web_reg_save_param_list} for s in dtt['snapshots']}
 
+        self.checker_warn()
+
+        # highlight
         for wr in wrsp_all:
             if not all(self.param_statistic[wr.name].values()):
                 lr_widj.highlight_mode(tk_text, wr.name, option='background', color='yellow')
 
-        self.checker_warn()
+        for t in self.parent_AWAL.transactions.names:
+            lr_widj.highlight_mode(tk_text, t, option='foreground', color='darkslategrey')
 
     def stats_in_web(self, snapshot: int) -> str:
         params_in = self.web_snapshot_param_in_count[snapshot]
