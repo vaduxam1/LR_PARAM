@@ -3,7 +3,6 @@
 
 import copy
 import string
-import itertools
 import contextlib
 import collections
 
@@ -604,13 +603,13 @@ class WebReport:
         for web in self.parent_AWAL.get_web_all():
             web_add_highlight(web, tk_text)
 
+            snapshot = web.snapshot
+            transaction = web.transaction
+
             if isinstance(web, WebSnapshot):  # проставить родителя wrsp объекта
                 for wrsp in web.web_reg_save_param_list:
                     wrsp.snapshot = web.snapshot
                     wrsp.parent_snapshot = web
-
-            snapshot = web.snapshot
-            transaction = web.transaction
 
             if transaction not in self.web_transaction_sorted:
                 self.web_transaction_sorted.append(transaction)
@@ -684,7 +683,7 @@ class WebReport:
 
         def get(wr_name):
             ps = self.param_statistic[wr_name]
-            return '{param}(Pm:{p_in}/{p_all}|Sn:{snap}|Tr:{transac})'.format(
+            return '{param}(P:{p_in}/{p_all}|S:{snap}|T:{transac})'.format(
                 param=self.wrsp_and_param_names[wr_name], p_in=params_in[wr_name], p_all=ps['param_count'],
                 snap=ps['minmax_snapshots'], transac=ps['transaction_count'])
 
@@ -702,7 +701,7 @@ class WebReport:
         statistic = []
 
         for wr in sorted(web.web_reg_save_param_list, key=lambda w: len(w.param)):
-            pss = '{p}(Pm:{p_all}|Sn:{snap}|Tr:{transac})'.format(
+            pss = '{p}(P:{p_all}|S:{snap}|T:{transac})'.format(
                 p=wr.param, p_all=self.param_statistic[wr.name]['param_count'],
                 snap=self.param_statistic[wr.name]['minmax_snapshots'],
                 transac=self.param_statistic[wr.name]['transaction_count'])
@@ -742,9 +741,9 @@ def snapshot_diapason_string(infs: [int, ]) -> str:
         min_inf = max_inf = 0
 
     if min_inf == max_inf:
-        diapason = '{count}=[t{min_inf}]'.format(min_inf=min_inf, count=len(infs))
+        diapason = '{count}=[{min_inf}]'.format(min_inf=min_inf, count=len(infs))
     else:
-        diapason = '{count}=[t{min_inf}:t{max_inf}]'.format(min_inf=min_inf, max_inf=max_inf, count=len(infs))
+        diapason = '{count}=[{min_inf}:{max_inf}]'.format(min_inf=min_inf, max_inf=max_inf, count=len(infs))
 
     return diapason
 
