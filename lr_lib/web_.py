@@ -28,28 +28,28 @@ def read_web_type(first_line: str) -> str:
     return _type[0].strip()
 
 
-def body_replace(body: str, search: str, replace: str) -> str:
+def _body_replace(body_split, len_body_split, search, replace) -> iter((str, )):
     '''замена search в body'''
-    body_split = body.split(search)
-    len_body_split = len(body_split)
-    if len_body_split < 2:
-        return body
+    yield body_split[0]
 
-    search_indxs = set()
     for indx in range(1, len_body_split):
         left = body_split[indx - 1]
         right = body_split[indx]
         if lr_other.check_bound_lb_rb(left, right):
-            search_indxs.add(indx)
+            yield replace + right
+        else:
+            yield search + right
 
-    if search_indxs:
-        body_chunks = [body_split[0]]
-        for indx, chunk in enumerate(body_split[1:], start=1):
-            search_or_replace = (replace if (indx in search_indxs) else search)
-            body_chunks.append(search_or_replace + chunk)  # замена
-        body = ''.join(body_chunks)
 
-    return body
+def body_replace(body: str, search: str, replace: str) -> str:
+    '''замена search в body'''
+    body_split = body.split(search)
+    len_body_split = len(body_split)
+
+    if len_body_split < 2:
+        return body
+    else:
+        return ''.join(_body_replace(body_split, len_body_split, search, replace))
 
 
 def bodys_replace(replace_args: ({int: str}, [(str, str), ])) -> [str, ]:
