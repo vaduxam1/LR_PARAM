@@ -15,7 +15,7 @@ from lr_lib import (
 )
 
 #####################################
-VERSION = 'v9.0.5'
+VERSION = 'v9.0.6'
 lib_folder = 'lr_lib'
 Tk = tk.Tk()
 
@@ -234,6 +234,8 @@ VarDefaultColorTeg = {
 
 PunctDigitTag = 'foregroundblack'
 RusTag = 'backgroundorange'
+wrsp_color1 = 'chartreuse'
+wrsp_color2 = 'darkblue'
 
 ForceOlive = (
     'value=xon', 'value=on', 'value={\\"left\\', 'value=i"', 'value={}', 'value={\\"', 'value=dummy',

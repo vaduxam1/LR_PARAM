@@ -81,9 +81,6 @@ class WebAny:
         if self.comments:
             self.comments = '\n{}'.format(self.comments)
 
-        lr_widj.highlight_mode(self.tk_text, self.name, option='foreground', color='olive')
-        lr_widj.highlight_mode(self.tk_text, self.type, option='foreground', color='olive')
-
     def _read_snapshot(self) -> int:
         '''Snapshot inf номер'''
         with contextlib.suppress(Exception):
@@ -102,8 +99,7 @@ class WebAny:
         '''весь текст web_'''
         comments = self.comments
 
-        if (self.snapshot in self.parent_AWAL.websReport.rus_webs) and (
-                not all((map(PrintableSet.__contains__, itertools.chain(*self.lines_list))))):
+        if self.snapshot in self.parent_AWAL.websReport.rus_webs:
             comments += '\n\t{} WARNING: NO ASCII Symbols(rus?)'.format(lr_param.LR_COMENT)
         if (len(self.lines_list) > 2) and (not self.snapshot):
             comments += '\n\t{} WARNING: no "Snapshot=t.inf" (del?)'.format(lr_param.LR_COMENT)
@@ -261,16 +257,6 @@ class WebRegSaveParam(WebAny):
         self.Ord = ''
         self.Search = ''
 
-        self.highlight_wrsp()
-
-    def highlight_wrsp(self):
-        lr_widj.highlight_mode(self.tk_text, '{}'.format(self.name[:6]), option='background', color='chartreuse', )
-        lr_widj.highlight_mode(self.tk_text, self.name[6:], option='foreground', color='darkblue')
-        lr_widj.highlight_mode(self.tk_text, self.param, option='foreground', color='darkblue')
-
-        for line in self.lines_list[1:]:
-            lr_widj.highlight_mode(self.tk_text, line, option='foreground', color='olive')
-
     def _read_param(self) -> str:
         try:
             if lr_param.wrsp_start in self.comments:
@@ -400,7 +386,6 @@ class ActionWebsAndLines:
         comments = ''  # //
         _multiline_comment = []  # // /**/
         _OldPComment = lr_param.LR_COMENT + ' PARAM'
-        widget = self.action.tk_text
         lw_end = (lr_param.Web_LAST, lr_param._block_endswith3, )
         comment_format = '{}\n{}'.format
 
@@ -414,8 +399,6 @@ class ActionWebsAndLines:
             elif _multiline_comment or strip_line.startswith('/*'):
                 _multiline_comment.append(line)
 
-                lr_widj.highlight_mode(widget, strip_line)
-
                 if strip_line.startswith('*/') or strip_line.endswith('*/'):
                     comments = comment_format(comments, '\n'.join(_multiline_comment)).rstrip()
                     _multiline_comment = []
@@ -425,9 +408,6 @@ class ActionWebsAndLines:
                 continue
 
             elif strip_line.startswith('//'):
-
-                lr_widj.highlight_mode(widget, strip_line)
-
                 comments = comment_format(comments, line).rstrip()
                 continue
 
@@ -460,17 +440,12 @@ class ActionWebsAndLines:
                             reg_param_list = []
                             self.add_to_text_list(web_)
 
-                    lr_widj.highlight_mode(widget, comments)
-
                     comments = ''
                     continue
 
                 elif strip_line.endswith(lr_param._block_endswith3):  # однострочные web_
                     web_ = WebAny(self, web_list, comments, transaction=self.transactions._current(), _type=w_type)
                     self.add_to_text_list(web_)
-
-                    lr_widj.highlight_mode(widget, comments)
-
                     comments = ''
                     continue
 
@@ -485,12 +460,9 @@ class ActionWebsAndLines:
 
                 if comments:
                     line = comment_format(comments, line)
-                    lr_widj.highlight_mode(widget, comments)
                     comments = ''
 
                 self.add_to_text_list(line)
-
-                lr_widj.highlight_mode(widget, strip_line)
                 continue
 
         if comments:
@@ -610,8 +582,11 @@ class WebReport:
         self._wrsp = {}
         self.all_in_one = copy.deepcopy(self.parent_AWAL.transactions.sub_transaction)
         wrsp_all = tuple(self.parent_AWAL.get_web_reg_save_param_all())
+        tk_text = self.parent_AWAL.action.tk_text
 
         for wr in wrsp_all:
+            web_add_highlight(wr, tk_text)
+
             self.wrsp_and_param_names[wr.name] = wr.param
             self._wrsp[wr.name] = wr
 
@@ -627,6 +602,13 @@ class WebReport:
             }
 
         for web in self.parent_AWAL.get_web_all():
+            web_add_highlight(web, tk_text)
+
+            if isinstance(web, WebSnapshot):  # проставить родителя wrsp объекта
+                for wrsp in web.web_reg_save_param_list:
+                    wrsp.snapshot = web.snapshot
+                    wrsp.parent_snapshot = web
+
             snapshot = web.snapshot
             transaction = web.transaction
 
@@ -690,8 +672,8 @@ class WebReport:
             } for w in next(get_web(s)).web_reg_save_param_list} for s in dtt['snapshots']}
 
         for wr in wrsp_all:
-            if not self.param_statistic[wr.name]:
-                lr_widj.highlight_mode(self.parent_AWAL.action.tk_text, wr.name, option='background', color='yellow')
+            if not all(self.param_statistic[wr.name].values()):
+                lr_widj.highlight_mode(tk_text, wr.name, option='background', color='yellow')
 
         self.checker_warn()
 
@@ -826,3 +808,21 @@ def get_sub_transaction_dt(transaction, obj) -> dict:
         else:
             for t in obj:
                 yield from get_sub_transaction_dt(transaction, obj[t])
+
+
+def web_add_highlight(web_, tk_text) -> None:
+    '''подсветить web_'''
+    hm = lr_widj.highlight_mode
+    hm(tk_text, web_.type)
+
+    for line in web_.comments.split('\n'):
+        hm(tk_text, line.strip())
+
+    if isinstance(web_, WebRegSaveParam):
+        hm(tk_text, '{}'.format(web_.name[:6]), option='background', color=defaults.wrsp_color1)
+        hm(tk_text, web_.name[6:], option='foreground', color=defaults.wrsp_color2)
+        hm(tk_text, web_.param, option='foreground', color=defaults.wrsp_color2)
+        for line in web_.lines_list[1:]:
+            hm(tk_text, line.strip())
+    else:
+        hm(tk_text, web_.name)

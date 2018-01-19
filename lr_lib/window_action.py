@@ -1029,7 +1029,8 @@ class ActionWindow(tk.Toplevel):
     def SearchAndReplace(self, search: str, replace='', wrsp_dict=None, wrsp=None, backup=False, is_param=True,
                          is_wrsp=True, replace_callback=None, rep_stat=False) -> None:
         with self.block():
-            self._SearchAndReplace(search, replace, wrsp_dict, wrsp, backup, is_param, is_wrsp, replace_callback, rep_stat)
+            self._SearchAndReplace(
+                search, replace, wrsp_dict, wrsp, backup, is_param, is_wrsp, replace_callback, rep_stat)
 
     def _SearchAndReplace(self, search: str, replace='', wrsp_dict=None, wrsp=None, backup=False, is_param=True,
                          is_wrsp=True, replace_callback=None, rep_stat=False) -> None:
@@ -1072,9 +1073,8 @@ class ActionWindow(tk.Toplevel):
         if is_wrsp:  # вставить web_reg_save_param
             self.web_action.web_reg_save_param_insert(wrsp_dict, wrsp)
 
-        if not replace_callback:  # !!!!!!!!!!!!!!!!!
-            self.web_action.set_text_list(self.web_action.to_str(websReport=True), websReport=False)
-            self.web_action_to_tk_text(websReport=False)
+        if not replace_callback:
+            self.web_action_to_tk_text(websReport=True)
 
     def drop_file_none_inf_num_in_action(self) -> None:
         '''в LoadRunner могут быть inf-файлы, которых нету в action.c(например удалили лишний код), такие файлы надо
