@@ -15,7 +15,7 @@ from lr_lib import (
 )
 
 #####################################
-VERSION = 'v9.0.6'
+VERSION = 'v9.1.0'
 lib_folder = 'lr_lib'
 Tk = tk.Tk()
 
@@ -50,6 +50,10 @@ LB_PARAM_FIND_LIST = [
     '_adfp_request_hash=', '_adfp_full_page_mode_request=', '_afrLoop=', '_afrWindowMode=', '_afrWindowId=',
     '_afPfm=', '_rtrnId=', 'dfp_request_id=', 'ViewState=', '/consumer/', 'PSI=',
 ]  # использовать для поиска param(1) по LB=
+
+DENY_PARAMS = [
+    'UTF-8', 'boot', 'true', 'false', 'i', 'xonLoadUseIndustrialCalendar', 'dummy', 'CPAGE', 'null', 'pt1', 'cb1', 'f1',
+]  # не использовать в качестве параметров
 
 #####################################
 _Tk_WIND_SIZE = [655, 700]  # размер главного окна
@@ -160,9 +164,6 @@ FIND_PARAM_HOTKEY = 'ctrl+shift+c'  # хоткей "найти(2) param"
 DENY_WEB_ = {
     'google.com', 'yandex.ru', 'mail.ru',
 }  # web_ запросы, содержащие эти слова, помечять WARNING
-DENY_PARAMS = [
-    'UTF-8', 'boot', 'true', 'false', 'i', 'xonLoadUseIndustrialCalendar', 'dummy',
-]  # не использовать в качестве параметров
 
 #####################################
 HighlightOn = True  # включить подсветку
@@ -272,9 +273,9 @@ EHOME, EEND = [6, 1]  # при ошибке, показать строк выш�
 #####################################
 DEFAULT_FILES_FOLDER = 'data'  # каталог поиска param
 DEFAULT_FILES_FOLDER = os.path.realpath(DEFAULT_FILES_FOLDER) if os.path.isdir(DEFAULT_FILES_FOLDER) else os.getcwd()
-FileOptionsStartswith = {
+FileOptionsStartswith = {s.lower() for s in (
     'FileName', 'ResponseHeaderFile', 'SnapshotXmlFile',
-}  # секции в inf-файле, c файлами-ответов
+)}  # секции в inf-файле, c файлами-ответов
 
 # файлы, исключенные из поиска param
 DENY_FILES = {
@@ -334,6 +335,7 @@ VarRB = lr_var.Var(value='')  # текст RB
 VarFileText = lr_var.Var(value='')  # тект файла
 VarWrspDict = lr_var.Var(value={})  # текущий web_reg_save_param словарь
 VarWrspDictList = []  # все возможные web_reg_save_param словари, для данного param
+VarAllSnapshotConfig = {}  # configparser.ConfigParser() для всех Snapshot
 
 
 def clearVars() -> None:

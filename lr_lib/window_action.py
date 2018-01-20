@@ -4,6 +4,7 @@
 import os
 import re
 import contextlib
+import configparser
 import tkinter as tk
 import tkinter.ttk as ttk
 import tkinter.filedialog as tkf
@@ -35,6 +36,8 @@ class ActionWindow(tk.Toplevel):
 
         # текущий action текст
         self.web_action = lr_web_.ActionWebsAndLines(self)
+        self.usr_file = '{}.usr'.format(os.path.basename(os.path.dirname(defaults.VarFilesFolder.get())))
+        self.usr_config = self.get_usr_file()
 
         self.transaction = []  # имена action transaction
         __a, __b = '', ''
@@ -100,13 +103,8 @@ class ActionWindow(tk.Toplevel):
         #
         self.inf_combo = ttk.Combobox(self.inf_bar, justify='center', font=defaults.DefaultFont)
 
-        @lr_pool.T_POOL_execute_decotator
-        def goto_inf(*a) -> None:
-            with contextlib.suppress(tk.TclError):
-                self.search_in_action(word=lr_param.Snap.format(num=self.inf_combo.get().strip()), hist=False)
-
-        self.inf_combo.bind("<KeyRelease-Return>", goto_inf)
-        self.inf_combo.bind("<<ComboboxSelected>>", goto_inf)
+        self.inf_combo.bind("<KeyRelease-Return>", self.goto_inf)
+        self.inf_combo.bind("<<ComboboxSelected>>", self.goto_inf)
 
         #
         self.wrsp_combo = ttk.Combobox(self.wrsp_bar, justify='center', font=defaults.DefaultFont)
@@ -607,6 +605,11 @@ class ActionWindow(tk.Toplevel):
             self.auto_param_creator()
 
     @lr_pool.T_POOL_execute_decotator
+    def goto_inf(self, *a) -> None:
+        with contextlib.suppress(tk.TclError):
+            self.search_in_action(word=lr_param.Snap.format(num=self.inf_combo.get().strip()), hist=False)
+
+    @lr_pool.T_POOL_execute_decotator
     def bold_selection_set(self, *a) -> None:
         self.tk_text.set_tegs(parent=self)
 
@@ -920,6 +923,7 @@ class ActionWindow(tk.Toplevel):
                     w=self.web_action.websReport.google_webs, s=defaults.DENY_WEB_))
 
         self.background_color_set(color='')  # оригинальный цвет
+        self.get_result_files()
 
     def get_transaction(self, text: str) -> iter((str, )):
         '''имена транзакций'''
@@ -1258,6 +1262,30 @@ class ActionWindow(tk.Toplevel):
 
             if y in buttons[:2]:
                 return True
+
+    def get_usr_file(self) -> configparser.ConfigParser:
+        '''result_folder = self.get_usr_file()['General']['LastResultDir']'''
+        config = configparser.ConfigParser()
+        config.read(os.path.join(os.getcwd(), self.usr_file))
+        return config
+
+    def get_result_files(self, file='Results.xml'):
+        result_folder = self.usr_config['General']['LastResultDir']
+        folder = os.path.join(os.getcwd(), result_folder)
+        file = os.path.join(folder, file)
+        with open(file) as f:
+            text = f.read()
+            text = text.rsplit('.inf]]></Path>', 1)
+            text = text[0]
+            last_snapshot = text.rsplit('t', 1)
+            last_snapshot = int(last_snapshot[1])
+
+        max_snap = max(self.action_infs)
+        if last_snapshot < max_snap:
+            self.inf_combo.set(last_snapshot)
+            self.goto_inf()
+            lr_log.Logger.error('При воспроизведении, не все Snapshot были выполненны: last:{} < max:{}'.format(
+                last_snapshot, max_snap))
 
 
 def _action_file(file='action.c') -> str:

@@ -53,20 +53,23 @@ def openTextInEditor(text: str) -> None:
         f.close()
 
 
+error_state = ('critical', 'error', 'warning', )
+
+
 def loggingLevelCreator(level_num: int, level: str) -> None:
     ''' создать/переопределить новый level/exception для logging -> Logger'''
     logging.addLevelName(level_num, level.upper())
     level = level.lower()
 
-    def logging_level(self, message, *args, error_state=('critical', 'error', 'warning', ), **kwargs) -> None:
+    def logging_level(self, message, *args, **kwargs) -> None:
         '''переопределенный logging метод'''
         if self.isEnabledFor(level_num):
-            if kwargs.pop('notepad', None):
-                openTextInEditor(message)
+            notepad = kwargs.pop('notepad', None)
             parent = kwargs.pop('parent', None)
-
             self._log(level_num, message, args, **kwargs)  # оригинальный logging метод
 
+            if notepad:
+                openTextInEditor(message)
             if level in error_state:
                 if (parent is None) and defaults.Window and defaults.Window.action_windows:  # сделать action родителем
                     parent = defaults.Window.action_windows[next(iter(defaults.Window.action_windows))]
@@ -128,10 +131,11 @@ def get_tb(exc_type, exc_val, exc_tb, err_name: str) -> str:
         return '{} {} {}'.format(exc_type, exc_val, exc_tb)
     exc_lines = traceback.format_exception(exc_type, exc_val, exc_tb)
 
-    def get_code() -> str:
+    def get_code(lib='\{}\\'.format(defaults.lib_folder)) -> str:
         '''исходный код'''
+        line = ''
         for line in reversed(exc_lines):
-            if '\lr_lib\\' in line:
+            if lib in line:
                 break
         try:
             fileName = line.split('"')[1]

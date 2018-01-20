@@ -21,7 +21,7 @@ WEB_REG_NUM = 'P_{wrsp_rnd_num}_{infs}_{lb_name}__{wrsp_name}__{rb_name}'
 
 
 web_reg_save_param = '''
-// INF{inf_nums}, [t{param_inf_min}:t{param_inf_max}]={search_inf_len} -> [t{_param_inf_min}:t{_param_inf_max}]={_param_inf_all} | FILE["{Name}"], with_param = {file_index}/{param_files} | {create_time}
+// INF{inf_nums}, [{param_inf_min}:{param_inf_max}]={search_inf_len} -> [{_param_inf_min}:{_param_inf_max}]={_param_inf_all} | FILE["{Name}"], with_param = {file_index}/{param_files} | {create_time}
 // PARAM["{param_Name}"], count={param_part}/{param_count}, NA={param_NotPrintable} | LB[{Lb_len}~{lb_len}] NA={lb_NotPrintable}, RB[{Rb_len}~{rb_len}] NA={rb_NotPrintable}
 web_reg_save_param("{web_reg_num}",
     "LB={lb}",

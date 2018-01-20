@@ -118,14 +118,12 @@ class Window(ttk.Frame):
         # (3)
         self.t3 = tk.Label(
             self.mid_frame, text='(3)', font=defaults.DefaultFont + ' italic bold', padx=0, pady=0, foreground='brown')
-        self.comboFiles = ttk.Combobox(
-            self.mid_frame, state="readonly", justify='center', font=defaults.DefaultFont, style="BW.TButton")
+        self.comboFiles = ttk.Combobox(self.mid_frame, state="readonly", justify='center', font=defaults.DefaultFont)
 
         # (4)
         self.t4 = tk.Label(
             self.mid_frame, text='(4)', font=defaults.DefaultFont + ' italic bold', padx=0, pady=0, foreground='brown')
-        self.comboParts = ttk.Combobox(
-            self.mid_frame, justify='center', width=5, style="BW.TButton", font=defaults.DefaultFont + ' bold')
+        self.comboParts = ttk.Combobox(self.mid_frame, justify='center', width=5, font=defaults.DefaultFont + ' bold')
 
         # (5) LB/RB
         self.LB = lr_widj.LBRBText('LB', self)

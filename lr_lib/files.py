@@ -6,6 +6,7 @@ import time
 import string
 import itertools
 import contextlib
+import configparser
 
 from lr_lib import (
     defaults,
@@ -69,37 +70,62 @@ def file_dict_creator(name: str, full_name: str, inf_num: int, enc: str, inf_key
 
 def create_files_from_infs(folder: str, enc: str, allow_deny: bool, statistic: bool) -> iter([dict, ]):
     '''создать файлы, из LoadRunner ini-файлов'''
-    arg = (folder, enc, allow_deny, statistic)
-    args = ((arg, files) for files in lr_other.chunks((next(os.walk(folder))[2]), defaults.FilesCreatePortionSize))
-    executer = lr_pool.M_POOL.imap_unordered if defaults.SetFilesPOOLEnable else map
+    executer = (lr_pool.M_POOL.imap_unordered if defaults.SetFilesPOOLEnable else map)
+    folder_files = next(os.walk(folder))
+    folder_files = folder_files[2]
+    arg = (folder, enc, allow_deny, statistic, )
+    args = ((arg, files) for files in lr_other.chunks(folder_files, defaults.FilesCreatePortionSize))
     yield from filter(bool, itertools.chain(*executer(get_files_portions, args)))
 
 
 def get_files_portions(args: [(str, str, bool, bool), (str, )]) -> [dict, ]:
     '''создать файлы, для порции inf-файлов'''
-    arg, files = args
+    (arg, files) = args
     files = list(itertools.chain(*map(create_files_from_inf, ((arg, file) for file in files))))
     return files
 
 
 def create_files_from_inf(args: [(str, str, bool, bool), str]) -> iter((dict, )):
     '''создать файлы, из inf-файла'''
-    (folder, enc, allow_deny, statistic), file = args
-    name, ext = os.path.splitext(file)
+    ((folder, enc, allow_deny, statistic), file) = args
+    (name, ext) = os.path.splitext(file)
+    defaults.VarAllSnapshotConfig.clear()
 
-    if ext == '.inf' and name[0] == 't' and all(map(str.isnumeric, name[1:])):
-        with open(os.path.join(folder, file), encoding='utf-8', errors='ignore') as inf_file:  # inf файл
-            num, *lines = inf_file.read().split('\n')
-            try:  # inf номер '[t75]' -> 75
-                num = int(num[2:-1])
-            except: num = -1
+    n = name[1:]
+    if (ext == '.inf') and (name[0] == 't') and all(map(str.isnumeric, n)):
+        try:
+            config = configparser.ConfigParser()
+            config.read(os.path.join(folder, file), encoding='utf-8')
 
-            for line in lines:  # создать файлы из ключей файла t75.inf
-                if any(map(line.startswith, defaults.FileOptionsStartswith)):
-                    key_from_inf, file_name = line.split('=', 1)
-                    full_name = os.path.join(folder, file_name)
-                    if os.path.isfile(full_name):
-                        yield file_dict_creator(file_name, full_name, num, enc, key_from_inf, allow_deny, statistic)
+            num = int(n)
+            defaults.VarAllSnapshotConfig[num] = config
+
+            for sect in config.sections():
+                for opt in config.options(sect):
+                    if any(map(opt.startswith, defaults.FileOptionsStartswith)):
+                        file_name = config[sect][opt]
+                        full_name = os.path.join(folder, file_name)
+                        if os.path.isfile(full_name):
+                            file = file_dict_creator(file_name, full_name, num, enc, opt, allow_deny, statistic)
+                            yield file
+
+        except Exception as ex:
+            lr_log.excepthook(ex)
+
+            with open(os.path.join(folder, file), encoding='utf-8', errors='ignore') as inf_file:
+                num, *lines = inf_file.read().split('\n')
+                try:  # inf номер '[t75]' -> 75
+                    num = int(num[2:-1])
+                except: num = -1
+                defaults.VarAllSnapshotConfig[num] = {}
+
+                for line in lines:  # создать файлы из ключей файла t75.inf
+                    if any(map(line.startswith, defaults.FileOptionsStartswith)):
+                        key_from_inf, file_name = line.split('=', 1)
+                        full_name = os.path.join(folder, file_name)
+                        if os.path.isfile(full_name):
+                            file = file_dict_creator(file_name, full_name, num, enc, key_from_inf, allow_deny, statistic)
+                            yield file
 
 
 @lr_log.exec_time
