@@ -124,14 +124,10 @@ class WebAny:
             if ask_dict.get(rais):
                 raise UserWarning('Прервано!\n{}'.format('\n\t###\n'.join((param, replace, left, right, ask_dict))))
             return ask_dict.get(nta) or ask_dict.get(yta)
-        t2 = 'хотя строка и содержит param-имя "{p}"\nоно является частью другого, более длинного имени: \n' \
-             'Заменить на "{r}" ?'.format(p=param, r=replace)
-        t1 = 'заменяемая строка:\n{prev}{p}{part}'.format(
-            prev=left[-defaults.AskLbRbMaxLen:].rsplit('\n', 1)[-1].lstrip(), p=param,
-            part=right[:defaults.AskLbRbMaxLen].split('\n', 1)[0].rstrip())
-        y = lr_wlib.YesNoCancel(buttons=buttons, text_before=t1, text_after=t2,
-                                title='автозамена "{s}" на "{r}"'.format(s=param, r=replace), parent=self.parent_AWAL.action,
-                                default_key=nta, focus=self.parent_AWAL.action.tk_text)
+
+        t2 = 'хотя строка и содержит param-имя "{p}"\nоно является частью другого, более длинного имени: \nЗаменить на "{r}" ?'.format(p=param, r=replace)
+        t1 = 'заменяемая строка:\n{prev}{p}{part}'.format(prev=left[-defaults.AskLbRbMaxLen:].rsplit('\n', 1)[-1].lstrip(), p=param, part=right[:defaults.AskLbRbMaxLen].split('\n', 1)[0].rstrip())
+        y = lr_wlib.YesNoCancel(buttons=buttons, text_before=t1, text_after=t2, title='автозамена "{s}" на "{r}"'.format(s=param, r=replace), parent=self.parent_AWAL.action, default_key=nta, focus=self.parent_AWAL.action.tk_text)
         a = y.ask()
         if ask_dict and (a in dk):
             ask_dict[a] = True
@@ -198,8 +194,7 @@ class WebAny:
 
 
 class WebSnapshot(WebAny):
-    def __init__(self, parent_AWAL, lines_list: list, comments: str, transaction='', _type='',
-                 web_reg_save_param_list=None):
+    def __init__(self, parent_AWAL, lines_list: list, comments: str, transaction='', _type='', web_reg_save_param_list=None):
         super().__init__(parent_AWAL, lines_list, comments, transaction=transaction, _type=_type)
 
         if web_reg_save_param_list is None:
@@ -226,12 +221,9 @@ class WebSnapshot(WebAny):
             if self.snapshot in self.parent_AWAL.websReport.param_statistic[w.name]['snapshots']:
                 bad_wrsp.append(w.param)
         if bad_wrsp:
-            text = '\t{c} WARNING: WrspInAndOutUsage: {lp}={p}\n{t}'.format(
-                t=text, c=lr_param.LR_COMENT, p=bad_wrsp, lp=len(bad_wrsp))
+            text = '\t{c} WARNING: WrspInAndOutUsage: {lp}={p}\n{t}'.format(t=text, c=lr_param.LR_COMENT, p=bad_wrsp, lp=len(bad_wrsp))
 
-        txt = '{wrsp}{stat_string}\n{text}'.format(
-            stat_string=stat_string, text=text, wrsp=''.join(map(WebRegSaveParam.to_str, self.web_reg_save_param_list)))
-
+        txt = '{wrsp}{stat_string}\n{text}'.format(stat_string=stat_string, text=text, wrsp=''.join(map(WebRegSaveParam.to_str, self.web_reg_save_param_list)))
         return txt.strip('\n')
 
     def get_body(self, a=1, b=-1) -> str:
@@ -272,8 +264,7 @@ class WebRegSaveParam(WebAny):
                             if len(line_list) > 1:
                                 return line_list[0]
         except Exception as ex:
-            lr_log.Logger.debug('найти исходное имя param из {t}.\n{w}\n{e}\n{cm}'.format(
-                e=ex, w=self.name, t=self.type, cm=self.comments))
+            lr_log.Logger.debug('найти исходное имя param из {t}.\n{w}\n{e}\n{cm}'.format(e=ex, w=self.name, t=self.type, cm=self.comments))
         return ''
 
     def to_str(self) -> str:
@@ -286,9 +277,7 @@ class WebRegSaveParam(WebAny):
         elif self.snapshot >= min(filter(bool, rep['snapshots'])):
             comments += '\n{c} WARNING: WrspInAndOutUsage wrsp.snapshot >= usage.snapshot'.format(c=lr_param.LR_COMENT)
 
-        txt = '{usage_string}{coment_text}\n{snap_text}'.format(
-            usage_string=self.usage_string(), coment_text=comments, snap_text='\n'.join(self.lines_list))
-
+        txt = '{usage_string}{coment_text}\n{snap_text}'.format(usage_string=self.usage_string(), coment_text=comments, snap_text='\n'.join(self.lines_list))
         return '\n{}\n'.format(txt.strip('\n'))
 
     def usage_string(self) -> str:
@@ -298,10 +287,7 @@ class WebRegSaveParam(WebAny):
         t_snap = (wt['minmax_snapshots'] if self.transaction else '')
         tn = sorted(ps['transaction_names'], key=rep.web_transaction_sorted.index)
         s = '{c} ({w_transac}: {t_snap}) -> Param:{p_all} | Snapshots:{snap} | Transactions={len_transac}:{transac_names}'.format(
-            wrsp_name=self.transaction, p_all=ps['param_count'], snap=ps['minmax_snapshots'], c=lr_param.LR_COMENT,
-            len_transac=ps['transaction_count'], transac_names=tn, w_transac=self.transaction,
-            t_snap=t_snap,
-        )
+            wrsp_name=self.transaction, p_all=ps['param_count'], snap=ps['minmax_snapshots'], c=lr_param.LR_COMENT, len_transac=ps['transaction_count'], transac_names=tn, w_transac=self.transaction, t_snap=t_snap)
         return s
 
 
@@ -348,12 +334,14 @@ class ActionWebsAndLines:
     def replace_bodys(self, replace_list: [(str, str), ]) -> None:
         '''заменить группу param, во всех web_ body'''
         web_actions = tuple(self.get_web_snapshot_all())
-        lr_log.Logger.trace('web_actions={lw}, replace_list={lrl}:{rl}'.format(
-            rl=replace_list, lrl=len(replace_list), lw=len(web_actions)))
+        lr_log.Logger.trace('web_actions={lw}, replace_list={lrl}:{rl}'.format(rl=replace_list, lrl=len(replace_list), lw=len(web_actions)))
+
         for web_ in web_actions:
             body = web_.get_body()
+
             for search, replace in replace_list:
                 body = body_replace(body, search, replace)
+
             web_.set_body(body)
 
     def add_to_text_list(self, element: (str or object)) -> None:
@@ -449,8 +437,7 @@ class ActionWebsAndLines:
                     continue
 
                 else:
-                    lr_log.Logger.critical('вероятно ошибка распознавания\n{line}\n{lwl}\n{web_list}'.format(
-                        line=line, lwl=len(web_list), web_list=web_list))
+                    lr_log.Logger.critical('вероятно ошибка распознавания\n{line}\n{lwl}\n{web_list}'.format(line=line, lwl=len(web_list), web_list=web_list))
                     self.add_to_text_list(line)
                     continue
 
@@ -470,12 +457,8 @@ class ActionWebsAndLines:
             self.add_to_text_list('\n'.join(_multiline_comment))
 
         if reg_param_list:
-            lr_log.Logger.critical('Ненайден web_* запрос, которому принадлежат web_reg_save_param:\n{}'.format(
-                [w.name for w in reg_param_list])
-            )
-            self.add_to_text_list(
-                '\n// ERROR web_reg_save_param !\n{}'.format('\n\n'.join(map(WebRegSaveParam.to_str, reg_param_list)))
-            )
+            lr_log.Logger.critical('Ненайден web_* запрос, которому принадлежат web_reg_save_param:\n{}'.format([w.name for w in reg_param_list]))
+            self.add_to_text_list('\n// ERROR web_reg_save_param !\n{}'.format('\n\n'.join(map(WebRegSaveParam.to_str, reg_param_list))))
 
     def set_transaction_name(self, strip_line: str, _s='"') -> (str or None):
         '''проверить линию, сохранить имя transaction'''
@@ -658,14 +641,11 @@ class WebReport:
             dt['minmax_snapshots'] = snapshot_diapason_string(dt['snapshots'])
 
         get_web = lambda sn: self.parent_AWAL.get_web_by(snapshot=sn)
-        deny_k = ('snapshots', 'transaction_names', 'snapshots_count', )
+        stats = lambda w: {k: v for (k, v) in self.param_statistic[w.name].items() if k not in ('snapshots', 'transaction_names', 'snapshots_count', )}
         for t in self.web_transaction:
             dtt = next(get_sub_transaction_dt(t, self.all_in_one))
             dtt.update(copy.deepcopy(self.web_transaction[t]))
-            dtt['snapshots'] = {s: {w.name: {
-                'param': w.param,
-                'stats': {k: v for (k, v) in self.param_statistic[w.name].items() if k not in deny_k},
-            } for w in next(get_web(s)).web_reg_save_param_list} for s in dtt['snapshots']}
+            dtt['snapshots'] = {s: {w.name: {'param': w.param, 'stats': stats(w)} for w in next(get_web(s)).web_reg_save_param_list} for s in dtt['snapshots']}
 
         self.checker_warn()
 
@@ -682,16 +662,14 @@ class WebReport:
         if not params_in:
             return ''
 
-        def get(wr_name):
+        def get(wr_name, format='{param}(P:{p_in}/{p_all}|S:{snap}|T:{transac})'.format):
             ps = self.param_statistic[wr_name]
-            return '{param}(P:{p_in}/{p_all}|S:{snap}|T:{transac})'.format(
-                param=self.wrsp_and_param_names[wr_name], p_in=params_in[wr_name], p_all=ps['param_count'],
-                snap=ps['minmax_snapshots'], transac=ps['transaction_count'])
+            s = format(param=self.wrsp_and_param_names[wr_name], p_in=params_in[wr_name], p_all=ps['param_count'], snap=ps['minmax_snapshots'], transac=ps['transaction_count'])
+            return s
 
         statistic = (get(wr_name) for wr_name in sorted(params_in, key=len))
-        return '\n\t{c} IN({i})<-[{ui}]: {s}'.format(
-            s=', '.join(statistic), c=lr_param.LR_COMENT, i=sum(params_in[w] for w in params_in),
-            ui=len(params_in))
+        s = '\n\t{c} IN({i})<-[{ui}]: {s}'.format(s=', '.join(statistic), c=lr_param.LR_COMENT, i=sum(params_in[w] for w in params_in), ui=len(params_in))
+        return s
 
     def stats_out_web(self, snapshot: int) -> str:
         web = next(self.parent_AWAL.get_web_snapshot_by(snapshot=snapshot))
@@ -700,12 +678,9 @@ class WebReport:
             return ''
 
         statistic = []
-
         for wr in sorted(web.web_reg_save_param_list, key=lambda w: len(w.param)):
-            pss = '{p}(P:{p_all}|S:{snap}|T:{transac})'.format(
-                p=wr.param, p_all=self.param_statistic[wr.name]['param_count'],
-                snap=self.param_statistic[wr.name]['minmax_snapshots'],
-                transac=self.param_statistic[wr.name]['transaction_count'])
+            ps = self.param_statistic[wr.name]
+            pss = '{p}(P:{p_all}|S:{snap}|T:{transac})'.format(p=wr.param, p_all=ps['param_count'], snap=ps['minmax_snapshots'], transac=ps['transaction_count'])
             statistic.append(pss)
 
         return '\n\t{c} OUT({n})-> {s}'.format(s=', '.join(statistic), c=lr_param.LR_COMENT, n=len(statistic))

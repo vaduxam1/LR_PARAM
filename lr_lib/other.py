@@ -8,7 +8,6 @@ import argparse
 import itertools
 import contextlib
 
-
 from lr_lib import (
     defaults,
     help as lr_help,
@@ -103,10 +102,8 @@ def file_string(file=None, deny=()) -> str:
     items = tuple(sorted(file.items()))
     m = max(len(k) for v in file.values() for k in v.keys())
     st = '{:<%s}\t{}' % m
-    s = ('\t[ {k} ] :\n{v}'.format(k=k, v='\n'.join(
-        st.format(a, str(b)[:defaults.MaxFileStringWidth]) for a, b in sorted(v.items()) if a not in deny))
-         for k, v in items)
-
+    lv = lambda v: '\n'.join(st.format(a, str(b)[:defaults.MaxFileStringWidth]) for (a, b) in sorted(v.items()) if a not in deny)
+    s = ('\t[ {k} ] :\n{v}'.format(k=k, v=lv(v)) for (k, v) in items)
     return '\n'.join(s)
 
 
@@ -121,8 +118,7 @@ def all_files_info() -> str:
     sa = sum(f['File'].get('Size', 0) for f in defaults.AllFiles)
     mn = min([f['File'].get('Size', 0) for f in defaults.AllFiles] or [0])
     mx = max([f['File'].get('Size', 0) for f in defaults.AllFiles] or [0])
-    s = 'в {i} inf, найдено {f} файлов.\n symbols_count  : '.format(
-        f=lf, i=len(list(get_files_infs(defaults.AllFiles))))
+    s = 'в {i} inf, найдено {f} файлов.\n symbols_count  : '.format(f=lf, i=len(list(get_files_infs(defaults.AllFiles))))
     sum_keys = ['Size', 'len', 'NotPrintable', 'Lines', 'ascii_letters', 'digits', 'whitespace', 'punctuation']
     _r = [(k, sum(f['File'].get(k, 0) for f in defaults.AllFiles)) for k in sum_keys]
     try: sl = _r[-1][1] / lf

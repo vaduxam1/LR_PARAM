@@ -77,32 +77,19 @@ class ActionWindow(tk.Toplevel):
         self.help2 = tk.Label(self, text='?', foreground='grey')
         self.help3 = tk.Label(self, text='?', foreground='grey')
 
-        self.toolbar = tk.LabelFrame(
-            self, relief='ridge', bd=5, labelanchor=tk.N, font=defaults.DefaultFont + ' italic', padx=0, pady=0,
-            text='для корректной работы, раскладку клавиатуры установить в ENG')
-
-        self.middle_bar = tk.LabelFrame(self, relief='ridge', bd=2, text='', labelanchor=tk.S, padx=0, pady=0,
-                                        font=defaults.DefaultFont)
-        self.transaction_bar = tk.LabelFrame(
-            self.middle_bar, relief='groove', bd=0, text='transaction', labelanchor=tk.S, font=defaults.DefaultFont,
-            padx=0, pady=0)
-        self.inf_bar = tk.LabelFrame(
-            self.transaction_bar, relief='groove', bd=0, text='inf', labelanchor=tk.W, font=defaults.DefaultFont,
-            padx=0, pady=0)
-        self.wrsp_bar = tk.LabelFrame(
-            self.middle_bar, relief='groove', bd=0, text='web_reg_save_param', labelanchor=tk.S,
-            font=defaults.DefaultFont, padx=0, pady=0)
-        self.font_toolbar = tk.LabelFrame(
-            self.toolbar, relief='groove', bd=0, text='', labelanchor=tk.S, font=defaults.DefaultFont, padx=0, pady=0)
+        self.toolbar = tk.LabelFrame(self, relief='ridge', bd=5, labelanchor=tk.N, font=defaults.DefaultFont + ' italic', padx=0, pady=0, text='для корректной работы, раскладку клавиатуры установить в ENG')
+        self.middle_bar = tk.LabelFrame(self, relief='ridge', bd=2, text='', labelanchor=tk.S, padx=0, pady=0,font=defaults.DefaultFont)
+        self.transaction_bar = tk.LabelFrame(self.middle_bar, relief='groove', bd=0, text='transaction', labelanchor=tk.S, font=defaults.DefaultFont, padx=0, pady=0)
+        self.inf_bar = tk.LabelFrame(self.transaction_bar, relief='groove', bd=0, text='inf', labelanchor=tk.W, font=defaults.DefaultFont, padx=0, pady=0)
+        self.wrsp_bar = tk.LabelFrame(self.middle_bar, relief='groove', bd=0, text='web_reg_save_param', labelanchor=tk.S, font=defaults.DefaultFont, padx=0, pady=0)
+        self.font_toolbar = tk.LabelFrame(self.toolbar, relief='groove', bd=0, text='', labelanchor=tk.S, font=defaults.DefaultFont, padx=0, pady=0)
         self.file_bar = tk.LabelFrame(self.toolbar, relief='groove', bd=0, text='', labelanchor=tk.N)
         self.cbx_bar = tk.LabelFrame(self.toolbar, relief='groove', bd=0, text='', labelanchor=tk.S)
 
-        self.tk_text = lr_widj.HighlightText(
-            self, background=defaults.Background, wrap=tk.NONE, bind=True, padx=0, pady=0, bd=0)
+        self.tk_text = lr_widj.HighlightText(self, background=defaults.Background, wrap=tk.NONE, bind=True, padx=0, pady=0, bd=0)
 
         #
         self.inf_combo = ttk.Combobox(self.inf_bar, justify='center', font=defaults.DefaultFont)
-
         self.inf_combo.bind("<KeyRelease-Return>", self.goto_inf)
         self.inf_combo.bind("<<ComboboxSelected>>", self.goto_inf)
 
@@ -138,45 +125,23 @@ class ActionWindow(tk.Toplevel):
         self.transaction_combo.bind("<KeyRelease-Return>", goto_transaction)
         self.transaction_combo.bind("<<ComboboxSelected>>", goto_transaction)
 
-        self.font_size_entry = tk.Spinbox(
-            self.font_toolbar, width=2, justify='center', from_=0, to=99, command=self.tk_text.set_font,
-            textvariable=self.tk_text.size_var, font=defaults.DefaultFont)
+        self.font_size_entry = tk.Spinbox(self.font_toolbar, width=2, justify='center', from_=0, to=99, command=self.tk_text.set_font, textvariable=self.tk_text.size_var, font=defaults.DefaultFont)
         self.font_size_entry.bind("<KeyRelease-Return>", self.tk_text.set_font)
 
-        self.selection_font_size_entry = tk.Spinbox(
-            self.font_toolbar, width=2, justify='center', from_=0, to=99, textvariable=self.size_var,
-            font=defaults.DefaultFont, command=lambda *a: self.tk_text.set_tegs(parent=self, remove=False))
-        self.selection_font_size_entry.bind(
-            "<KeyRelease-Return>", lambda *a: self.tk_text.set_tegs(parent=self, remove=False))
+        self.selection_font_size_entry = tk.Spinbox(self.font_toolbar, width=2, justify='center', from_=0, to=99, textvariable=self.size_var, font=defaults.DefaultFont, command=lambda *a: self.tk_text.set_tegs(parent=self, remove=False))
+        self.selection_font_size_entry.bind("<KeyRelease-Return>", lambda *a: self.tk_text.set_tegs(parent=self, remove=False))
 
-        self.bold_cbx = tk.Checkbutton(
-            self.font_toolbar, text='', font=defaults.DefaultFont + ' bold', variable=self.tk_text.weight_var,
-            command=self.tk_text.set_font, padx=0, pady=0)
-        self.slant_cbx = tk.Checkbutton(
-            self.font_toolbar, text='', font=defaults.DefaultFont + ' italic', variable=self.tk_text.slant_var,
-            command=self.tk_text.set_font, padx=0, pady=0)
-        self.underline_cbx = tk.Checkbutton(
-            self.font_toolbar, text='', font=defaults.DefaultFont + ' underline', variable=self.tk_text.underline_var,
-            command=self.tk_text.set_font, padx=0, pady=0)
-        self.overstrike_cbx = tk.Checkbutton(
-            self.font_toolbar, text='', font=defaults.DefaultFont + ' overstrike', variable=self.tk_text.overstrike_var,
-            command=self.tk_text.set_font, padx=0, pady=0)
+        self.bold_cbx = tk.Checkbutton(self.font_toolbar, text='', font=defaults.DefaultFont + ' bold', variable=self.tk_text.weight_var, command=self.tk_text.set_font, padx=0, pady=0)
+        self.slant_cbx = tk.Checkbutton(self.font_toolbar, text='', font=defaults.DefaultFont + ' italic', variable=self.tk_text.slant_var, command=self.tk_text.set_font, padx=0, pady=0)
+        self.underline_cbx = tk.Checkbutton(self.font_toolbar, text='', font=defaults.DefaultFont + ' underline', variable=self.tk_text.underline_var, command=self.tk_text.set_font, padx=0, pady=0)
+        self.overstrike_cbx = tk.Checkbutton(self.font_toolbar, text='', font=defaults.DefaultFont + ' overstrike', variable=self.tk_text.overstrike_var, command=self.tk_text.set_font, padx=0, pady=0)
 
-        self.selection_bold_cbx = tk.Checkbutton(
-            self.font_toolbar, text='', font=defaults.DefaultFont + ' bold', variable=self.weight_var,
-            command=self.bold_selection_set, padx=0, pady=0)
-        self.selection_slant_cbx = tk.Checkbutton(
-            self.font_toolbar, text='', font=defaults.DefaultFont + ' italic', variable=self.slant_var,
-            command=self.bold_selection_set, padx=0, pady=0)
-        self.selection_underline_cbx = tk.Checkbutton(
-            self.font_toolbar, text='', font=defaults.DefaultFont + ' underline', variable=self.underline_var,
-            command=self.bold_selection_set, padx=0, pady=0)
-        self.selection_overstrike_cbx = tk.Checkbutton(
-            self.font_toolbar, text='', font=defaults.DefaultFont + ' overstrike', variable=self.overstrike_var,
-            command=self.bold_selection_set, padx=0, pady=0)
+        self.selection_bold_cbx = tk.Checkbutton(self.font_toolbar, text='', font=defaults.DefaultFont + ' bold', variable=self.weight_var, command=self.bold_selection_set, padx=0, pady=0)
+        self.selection_slant_cbx = tk.Checkbutton(self.font_toolbar, text='', font=defaults.DefaultFont + ' italic', variable=self.slant_var, command=self.bold_selection_set, padx=0, pady=0)
+        self.selection_underline_cbx = tk.Checkbutton(self.font_toolbar, text='', font=defaults.DefaultFont + ' underline', variable=self.underline_var, command=self.bold_selection_set, padx=0, pady=0)
+        self.selection_overstrike_cbx = tk.Checkbutton(self.font_toolbar, text='', font=defaults.DefaultFont + ' overstrike', variable=self.overstrike_var, command=self.bold_selection_set, padx=0, pady=0)
 
-        self.font_combo = ttk.Combobox(
-            self.font_toolbar, textvariable=self.tk_text.font_var, justify='center', font=defaults.DefaultFont)
+        self.font_combo = ttk.Combobox(self.font_toolbar, textvariable=self.tk_text.font_var, justify='center', font=defaults.DefaultFont)
         self.font_combo['values'] = list(sorted(tk.font.families()))
         self.font_combo.bind("<KeyRelease-Return>", self.tk_text.set_font)
         self.font_combo.bind("<<ComboboxSelected>>", self.tk_text.set_font)
@@ -190,43 +155,27 @@ class ActionWindow(tk.Toplevel):
         self.tk_text.set_font()
         self.bold_selection_set()
 
-        self.background_color_combo = ttk.Combobox(
-            self.cbx_bar, textvariable=self.background_var, justify='center', font=defaults.DefaultFont)
+        self.background_color_combo = ttk.Combobox(self.cbx_bar, textvariable=self.background_var, justify='center', font=defaults.DefaultFont)
         self.background_color_combo['values'] = list(sorted(lr_help.COLORS.keys()))
 
         self.background_color_combo.bind("<KeyRelease-Return>", self.background_color_set)
         self.background_color_combo.bind("<<ComboboxSelected>>", self.background_color_set)
         self.config(background=self.background_color_combo.get())
 
-        self.search_entry = ttk.Combobox(
-            self.toolbar, textvariable=self.searchVar, font=defaults.DefaultFont + ' italic', justify='center')
+        self.search_entry = ttk.Combobox(self.toolbar, textvariable=self.searchVar, font=defaults.DefaultFont + ' italic', justify='center')
         self.search_entry.bind("<KeyRelease-Return>", self.search_in_action)
-        self.search_button = tk.Button(
-            self.toolbar, text='> search >', command=self.search_in_action, font=defaults.DefaultFont + ' bold',
-            padx=0, pady=0)
+        self.search_button = tk.Button(self.toolbar, text='> search >', command=self.search_in_action, font=defaults.DefaultFont + ' bold', padx=0, pady=0)
         self._uptext = '<-up %s'
-        self.up_search_button = tk.Button(
-            self.toolbar, text=self._uptext, command=self.search_up, font=defaults.DefaultFont + ' bold',
-            padx=0, pady=0)
-        self.down_search_button = tk.Button(
-            self.toolbar, text='down->', command=self.search_down, font=defaults.DefaultFont + ' bold', padx=0, pady=0)
+        self.up_search_button = tk.Button(self.toolbar, text=self._uptext, command=self.search_up, font=defaults.DefaultFont + ' bold', padx=0, pady=0)
+        self.down_search_button = tk.Button(self.toolbar, text='down->', command=self.search_down, font=defaults.DefaultFont + ' bold', padx=0, pady=0)
 
-        self.unblock = tk.Button(
-            self.file_bar, text='unblock', font=defaults.DefaultFont + ' bold', command=lambda *a: self._block(False),
-            padx=0, pady=0)
+        self.unblock = tk.Button(self.file_bar, text='unblock', font=defaults.DefaultFont + ' bold', command=lambda *a: self._block(False), padx=0, pady=0)
 
-        self.backup_open_button = tk.Button(
-            self.file_bar, text='backup_open', background='orange', font=defaults.DefaultFont + ' bold',
-            command=lambda *a: self.open_action_dialog(title=True, folder=defaults.BackupFolder), padx=0, pady=0)
-        self.save_action_button = tk.Button(
-            self.file_bar, text='save', font=defaults.DefaultFont + ' bold', command=self.save_action_file,
-            padx=0, pady=0)
+        self.backup_open_button = tk.Button(self.file_bar, text='backup_open', background='orange', font=defaults.DefaultFont + ' bold', command=lambda *a: self.open_action_dialog(title=True, folder=defaults.BackupFolder), padx=0, pady=0)
+        self.save_action_button = tk.Button(self.file_bar, text='save', font=defaults.DefaultFont + ' bold', command=self.save_action_file, padx=0, pady=0)
 
-        self.open_button = tk.Button(
-            self.file_bar, text='open', font=defaults.DefaultFont, command=self.open_action_dialog, padx=0, pady=0)
-        self.editor_button = tk.Button(
-            self.file_bar, text='editor', font=defaults.DefaultFont + ' bold', padx=0, pady=0,
-            command=lambda: lr_log.openTextInEditor(self.tk_text.get(1.0, tk.END)))
+        self.open_button = tk.Button(self.file_bar, text='open', font=defaults.DefaultFont, command=self.open_action_dialog, padx=0, pady=0)
+        self.editor_button = tk.Button(self.file_bar, text='editor', font=defaults.DefaultFont + ' bold', padx=0, pady=0, command=lambda: lr_log.openTextInEditor(self.tk_text.get(1.0, tk.END)))
 
         self.text_scrolly = ttk.Scrollbar(self, orient=tk.VERTICAL, command=self.tk_text.yview)
         self.text_scrollx = ttk.Scrollbar(self, orient=tk.HORIZONTAL, command=self.tk_text.xview)
@@ -237,51 +186,36 @@ class ActionWindow(tk.Toplevel):
 
         self.tk_text.action = self  # !!! доступ извне
 
-        self.search_res_combo = ttk.Combobox(
-            self.toolbar, textvariable=self.searchPosVar, justify='center', font=defaults.DefaultFont,
-            background=defaults.Background)
+        self.search_res_combo = ttk.Combobox(self.toolbar, textvariable=self.searchPosVar, justify='center', font=defaults.DefaultFont, background=defaults.Background)
 
         self.search_res_combo.bind("<<ComboboxSelected>>", self.tk_text_see)
         self.search_res_combo.bind("<KeyRelease-Return>", self.tk_text_see)
 
-        self.SearchReplace_searchCombo = ttk.Combobox(
-            self.toolbar, textvariable=self.SearchReplace_searchVar, justify='center',
-            font=defaults.DefaultFont + ' italic', foreground="purple")
+        self.SearchReplace_searchCombo = ttk.Combobox(self.toolbar, textvariable=self.SearchReplace_searchVar, justify='center', font=defaults.DefaultFont + ' italic', foreground="purple")
 
-        self.SearchReplace_replaceCombo = ttk.Combobox(
-            self.toolbar, textvariable=self.SearchReplace_replaceVar, justify='center', font=defaults.DefaultFont,
-            foreground="maroon")
+        self.SearchReplace_replaceCombo = ttk.Combobox(self.toolbar, textvariable=self.SearchReplace_replaceVar, justify='center', font=defaults.DefaultFont, foreground="maroon")
 
         self.SearchReplace_searchCombo['values'] = [__a]
         self.SearchReplace_replaceCombo['values'] = [__b]
         self.search_entry['values'] = [__a]
 
-        self.auto_param_creator_button = tk.Button(
-            self.toolbar, text='Найти\n*param*', font=defaults.DefaultFont + ' bold', command=self.auto_param_creator,
-            background='orange', padx=0, pady=0)
+        self.auto_param_creator_button = tk.Button(self.toolbar, text='Найти\n*param*', font=defaults.DefaultFont + ' bold', command=self.auto_param_creator, background='orange', padx=0, pady=0)
 
-        self.final_wnd_cbx = tk.Checkbutton(
-            self.toolbar, text='final\nwind', font=defaults.DefaultFont, variable=self.final_wnd_var, padx=0, pady=0)
+        self.final_wnd_cbx = tk.Checkbutton(self.toolbar, text='final\nwind', font=defaults.DefaultFont, variable=self.final_wnd_var, padx=0, pady=0)
 
         def force_ask_cmd(*a) -> None:
             if self.force_ask_var.get():
                 self.no_var.set(0)
 
-        self.force_ask_cbx = tk.Checkbutton(
-            self.toolbar, text='force\nAsk', font=defaults.DefaultFont, variable=self.force_ask_var,
-            command=force_ask_cmd, padx=0, pady=0)
+        self.force_ask_cbx = tk.Checkbutton(self.toolbar, text='force\nAsk', font=defaults.DefaultFont, variable=self.force_ask_var, command=force_ask_cmd, padx=0, pady=0)
 
-        self.highlight_cbx = tk.Checkbutton(
-            self.cbx_bar, text='highlight', font=defaults.DefaultFont, background=defaults.Background,
-            variable=self.tk_text.highlight_var, command=self.tk_text.set_highlight, padx=0, pady=0)
+        self.highlight_cbx = tk.Checkbutton(self.cbx_bar, text='highlight', font=defaults.DefaultFont, background=defaults.Background, variable=self.tk_text.highlight_var, command=self.tk_text.set_highlight, padx=0, pady=0)
 
         def no_var_cmd(*a) -> None:
             if self.no_var.get():
                 self.force_ask_var.set(0)
 
-        self.no_cbx = tk.Checkbutton(
-            self.toolbar, text='No\nAsk', font=defaults.DefaultFont, variable=self.no_var, command=no_var_cmd,
-            padx=0, pady=0)
+        self.no_cbx = tk.Checkbutton(self.toolbar, text='No\nAsk', font=defaults.DefaultFont, variable=self.no_var, command=no_var_cmd, padx=0, pady=0)
 
         self.backup_entry = tk.Entry(self.file_bar, font=defaults.DefaultFont, width=5, justify='center')
         self.backup_entry.insert('1', defaults.BackupActionFile)
@@ -289,8 +223,7 @@ class ActionWindow(tk.Toplevel):
         @lr_pool.T_POOL_execute_decotator
         def repl_butt(*a) -> None:
             '''кнопка замены текста'''
-            if messagebox.askyesno(str(ActionWindow), "action.c: Заменить ? :\n\n{s}\n\n на :\n\n{r}".format(
-                    s=self.SearchReplace_searchVar.get(), r=self.SearchReplace_replaceVar.get()), parent=self):
+            if messagebox.askyesno(str(ActionWindow), "action.c: Заменить ? :\n\n{s}\n\n на :\n\n{r}".format(s=self.SearchReplace_searchVar.get(), r=self.SearchReplace_replaceVar.get()), parent=self):
                 with self.block():
                     self.backup()
                     text = self.tk_text.get(1.0, tk.END)
@@ -298,48 +231,29 @@ class ActionWindow(tk.Toplevel):
                     self.web_action.set_text_list(text, websReport=True)
                     self.web_action_to_tk_text(websReport=False)
 
-        self.SearchReplace_button = tk.Button(
-            self.toolbar, text='> replace >', font=defaults.DefaultFont, command=repl_butt, padx=0, pady=0)
-
-        self.buttonColorReset = tk.Button(
-            self.cbx_bar, text='reset', font=defaults.DefaultFont, command=self.resColor, padx=0, pady=0)
-
-        self.highlight_Thread = tk.Checkbutton(
-            self.cbx_bar, text='', variable=defaults.HighlightThread, padx=0, pady=0, font=defaults.DefaultFont)
-
-        self.highlight_LineThread = tk.Checkbutton(
-            self.cbx_bar, text='', variable=defaults.LineTagAddThread, padx=0, pady=0, font=defaults.DefaultFont)
-
-        self.highlight_TagThread = tk.Checkbutton(
-            self.cbx_bar, text='', variable=defaults.TagAddThread, padx=0, pady=0, font=defaults.DefaultFont)
-
-        self.highlight_MThread = tk.Checkbutton(
-            self.cbx_bar, text='', variable=defaults.HighlightMPool, padx=0, pady=0, font=defaults.DefaultFont)
-
-        self.highlight_LinesPortionSize = tk.Spinbox(
-            self.cbx_bar, from_=0, to=100, textvariable=defaults.HighlightLinesPortionSize, width=2,
-            font=defaults.DefaultFont)
+        self.SearchReplace_button = tk.Button(self.toolbar, text='> replace >', font=defaults.DefaultFont, command=repl_butt, padx=0, pady=0)
+        self.buttonColorReset = tk.Button(self.cbx_bar, text='reset', font=defaults.DefaultFont, command=self.resColor, padx=0, pady=0)
+        self.highlight_Thread = tk.Checkbutton(self.cbx_bar, text='', variable=defaults.HighlightThread, padx=0, pady=0, font=defaults.DefaultFont)
+        self.highlight_LineThread = tk.Checkbutton(self.cbx_bar, text='', variable=defaults.LineTagAddThread, padx=0, pady=0, font=defaults.DefaultFont)
+        self.highlight_TagThread = tk.Checkbutton(self.cbx_bar, text='', variable=defaults.TagAddThread, padx=0, pady=0, font=defaults.DefaultFont)
+        self.highlight_MThread = tk.Checkbutton(self.cbx_bar, text='', variable=defaults.HighlightMPool, padx=0, pady=0, font=defaults.DefaultFont)
+        self.highlight_LinesPortionSize = tk.Spinbox(self.cbx_bar, from_=0, to=100, textvariable=defaults.HighlightLinesPortionSize, width=2, font=defaults.DefaultFont)
 
         def max_inf_set(*a) -> None:
             if self.max_inf_cbx_var.get():
                 self.add_inf_cbx.configure(state='normal')
             else:
                 self.add_inf_cbx.configure(state='disabled')
-        self.max_inf_cbx = tk.Checkbutton(
-            self.toolbar, text='ограничить\nmax inf', font=defaults.DefaultFont + ' bold', padx=0, pady=0,
-            variable=self.max_inf_cbx_var, command=max_inf_set)
-        self.add_inf_cbx = tk.Checkbutton(
-            self.toolbar, anchor=tk.E, text='max\nmode', font=defaults.DefaultFont, padx=0, pady=0,
-            variable=self.add_inf_cbx_var)
+
+        self.max_inf_cbx = tk.Checkbutton(self.toolbar, text='ограничить\nmax inf', font=defaults.DefaultFont + ' bold', padx=0, pady=0, variable=self.max_inf_cbx_var, command=max_inf_set)
+        self.add_inf_cbx = tk.Checkbutton(self.toolbar, anchor=tk.E, text='max\nmode', font=defaults.DefaultFont, padx=0, pady=0, variable=self.add_inf_cbx_var)
 
         def legend() -> None:
             t = lr_widj.WebLegend(self)
             t.add_web_canavs()
             t.print()
 
-        self.lr_legend = tk.Button(
-            self.toolbar, text='web_legend', font=defaults.DefaultFont + ' bold', padx=0, pady=0,
-            command=legend)
+        self.lr_legend = tk.Button(self.toolbar, text='web_legend', font=defaults.DefaultFont + ' bold', padx=0, pady=0, command=legend)
 
         def thinktime_remove() -> None:
             '''удалить thinktime'''
@@ -353,6 +267,7 @@ class ActionWindow(tk.Toplevel):
                         counter += 1
                     else:
                         yield line
+
             new_text = '\n'.join(no_tt_lines())
             if messagebox.askokcancel('thinktime', 'удалить thinktime из action?\n{} шт.'.format(counter), parent=self):
                 with self.block():
@@ -360,17 +275,9 @@ class ActionWindow(tk.Toplevel):
                     self.web_action.set_text_list(new_text, websReport=True)
                     self.web_action_to_tk_text(websReport=False)
 
-        self.lr_think_time = tk.Button(
-            self.toolbar, text='lr_think_time', font=defaults.DefaultFont + ' bold', padx=0, pady=0,
-            command=thinktime_remove)
-
-        self.lr_report_B = tk.Button(
-            self.toolbar, text='reportB', font=defaults.DefaultFont + ' bold', padx=0, pady=0,
-            command=lambda *a: lr_wlib.repB(self.tk_text))
-
-        self.lr_report_A = tk.Button(
-            self.toolbar, text='reportA', font=defaults.DefaultFont + ' bold', padx=0, pady=0,
-            command=lambda *a: lr_wlib.repA(self.tk_text))
+        self.lr_think_time = tk.Button(self.toolbar, text='lr_think_time', font=defaults.DefaultFont + ' bold', padx=0, pady=0, command=thinktime_remove)
+        self.lr_report_B = tk.Button(self.toolbar, text='reportB', font=defaults.DefaultFont + ' bold', padx=0, pady=0, command=lambda *a: lr_wlib.repB(self.tk_text))
+        self.lr_report_A = tk.Button(self.toolbar, text='reportA', font=defaults.DefaultFont + ' bold', padx=0, pady=0, command=lambda *a: lr_wlib.repA(self.tk_text))
 
         @lr_pool.T_POOL_execute_decotator
         def all_transaction_rename(*a) -> None:
@@ -380,9 +287,7 @@ class ActionWindow(tk.Toplevel):
             mx = max(map(len, transactions or ['']))
             m = '"{:<%s}" -> "{}"' % mx
             all_transaction = '\n'.join(m.format(old, new) for old, new in zip(transactions, transactions))
-            y = lr_wlib.YesNoCancel(
-                ['Переименовать', 'Отмена'], 'Переименовать transaction слева', 'в transaction справа', 'transaction',
-                parent=self, is_text=all_transaction)
+            y = lr_wlib.YesNoCancel(['Переименовать', 'Отмена'], 'Переименовать transaction слева', 'в transaction справа', 'transaction', parent=self, is_text=all_transaction)
             st = 'lr_start_transaction("'
             en = 'lr_end_transaction("'
             if y.ask() == 'Переименовать':
@@ -398,15 +303,9 @@ class ActionWindow(tk.Toplevel):
                     self.web_action.set_text_list(text, websReport=True)
                     self.web_action_to_tk_text(websReport=False)
 
-        self.transaction_rename = tk.Button(
-            self.toolbar, text='rename\ntransaction', font=defaults.DefaultFont + ' bold', background='orange',
-            padx=0, pady=0, command=all_transaction_rename)
-
-        self.dummy_button = tk.Button(
-            self.toolbar, text="Snapshot remove", font=defaults.DefaultFont + ' bold', background='orange',
-            padx=0, pady=0, command=self.dummy_btn_cmd)
-        self.force_yes_inf_checker_cbx = tk.Checkbutton(
-            self.toolbar, text='force\nYes inf', font=defaults.DefaultFont, variable=self.force_yes_inf, padx=0, pady=0)
+        self.transaction_rename = tk.Button(self.toolbar, text='rename\ntransaction', font=defaults.DefaultFont + ' bold', background='orange', padx=0, pady=0, command=all_transaction_rename)
+        self.dummy_button = tk.Button(self.toolbar, text="Snapshot remove", font=defaults.DefaultFont + ' bold', background='orange', padx=0, pady=0, command=self.dummy_btn_cmd)
+        self.force_yes_inf_checker_cbx = tk.Checkbutton(self.toolbar, text='force\nYes inf', font=defaults.DefaultFont, variable=self.force_yes_inf, padx=0, pady=0)
 
         self.search_entry.grid(row=5, column=0, columnspan=8, sticky=tk.NSEW, padx=0, pady=0)
         self.search_button.grid(row=5, column=8, sticky=tk.NSEW, padx=0, pady=0)
@@ -630,8 +529,7 @@ class ActionWindow(tk.Toplevel):
         top = int(self.tk_text.index("@0,0").split('.', 1)[0])
         bottom = int(self.tk_text.index("@0,%d" % self.tk_text.winfo_height()).split('.', 1)[0])
 
-        self.title('{txt} lines[{top}:{bottom}] | {v} | undo(ctrl-z)/redo(ctrl-y)'.format(
-            txt=self._set_title(), top=top, bottom=bottom, v=defaults.VERSION))
+        self.title('{txt} lines[{top}:{bottom}] | {v} | undo(ctrl-z)/redo(ctrl-y)'.format(txt=self._set_title(), top=top, bottom=bottom, v=defaults.VERSION))
         if self.tk_text.highlight_var.get():  # подсветить линии
             self.tk_text.highlight_lines.set_top_bottom(top, bottom)
 
@@ -738,8 +636,7 @@ class ActionWindow(tk.Toplevel):
         self.up_search_button['text'] = self._uptext % '{0}/{1}'.format(a, b)
 
         if not self.search_res_combo['values']:
-            return lr_log.Logger.warning('в action.c тексте не найдено:\nword="{w}"\ntype={t}\nlen={ln}'.format(
-                w=word, t=type(word), ln=(len(word) if hasattr(word, '__len__') else None)), parent=self)
+            return lr_log.Logger.warning('в action.c тексте не найдено:\nword="{w}"\ntype={t}\nlen={ln}'.format(w=word, t=type(word), ln=(len(word) if hasattr(word, '__len__') else None)), parent=self)
         else:
             self.search_res_combo.current(0)
             self.tk_text_see()
@@ -825,12 +722,9 @@ class ActionWindow(tk.Toplevel):
     def open_action_dialog(self, *a, title=False, folder=os.getcwd()) -> None:
         '''открыть файл'''
         if title:
-            af = tk.filedialog.askopenfilename(initialdir=folder, parent=self, filetypes=(
-                ("%s_backup_*.c" % self.id_, "%s_backup_*.c" % self.id_),
-                ("all", "*.*")), title='backup({})'.format(self.id_))
+            af = tk.filedialog.askopenfilename(initialdir=folder, parent=self, filetypes=(("%s_backup_*.c" % self.id_, "%s_backup_*.c" % self.id_), ("all", "*.*")), title='backup({})'.format(self.id_))
         else:
-            af = tk.filedialog.askopenfilename(initialdir=folder, parent=self, filetypes=(
-                ("action.c", "*.c"), ("all", "*.*")))
+            af = tk.filedialog.askopenfilename(initialdir=folder, parent=self, filetypes=(("action.c", "*.c"), ("all", "*.*")))
         if af:
             self.open_action(file=af)
 
@@ -838,8 +732,7 @@ class ActionWindow(tk.Toplevel):
         self.title('{} {} undo: ctrl-z / redo: ctrl-y)'.format(self._set_title(), defaults.VERSION))
 
     def _set_title(self) -> str:
-        return '{a} | {i} | backup={b} |'.format(
-            a=self.action_file, b=self._backup_index, i=self.id_)
+        return '{a} | {i} | backup={b} |'.format(a=self.action_file, b=self._backup_index, i=self.id_)
 
     def set_template_list(self, force=True) -> None:
         '''очистить Text для WebDummyTemplate_List'''
@@ -858,11 +751,7 @@ class ActionWindow(tk.Toplevel):
                     gws = str(self.web_action.websReport.google_webs)[:50]
                     wt = ''.join(web.to_str())
                     sn = '"Snapshot=t{}.inf"'.format(web.snapshot)
-                    yask = lr_wlib.YesNoCancel(
-                        ['Удалить текущий', "Удалить все Snapshot's {}".format(gws), 'Пропустить', 'Выход'],
-                        "удалить {sn} содержащий {d}".format(d={k: wt.count(k) for k in defaults.DENY_WEB_}, sn=sn),
-                        'всего можно удалить {} шт'.format(len(self.web_action.websReport.google_webs)), parent=self,
-                        is_text=wt, title='{i} | {sn}'.format(i=self.id_, sn=sn)).ask()
+                    yask = lr_wlib.YesNoCancel(['Удалить текущий', "Удалить все Snapshot's {}".format(gws), 'Пропустить', 'Выход'], "удалить {sn} содержащий {d}".format(d={k: wt.count(k) for k in defaults.DENY_WEB_}, sn=sn), 'всего можно удалить {} шт'.format(len(self.web_action.websReport.google_webs)), parent=self, is_text=wt, title='{i} | {sn}'.format(i=self.id_, sn=sn)).ask()
                     del_all = yask.startswith('Удалить все')
                 if del_all or yask.startswith('Удалить'):
                     self.web_action.webs_and_lines.remove(web)
@@ -879,8 +768,7 @@ class ActionWindow(tk.Toplevel):
             self.web_action_to_tk_text(websReport=False)
 
         if file_name is None:
-            file_name = tk.filedialog.asksaveasfilename(initialdir=os.getcwd(), filetypes=(
-                ("action.c", "*.c"), ("all", "*.*")), title='сохранить текст action.c окна', parent=self)
+            file_name = tk.filedialog.asksaveasfilename(initialdir=os.getcwd(), filetypes=(("action.c", "*.c"), ("all", "*.*")), title='сохранить текст action.c окна', parent=self)
 
         if file_name:
             with open(file_name, 'w', errors='replace', encoding=defaults.VarEncode.get()) as act:
@@ -902,8 +790,7 @@ class ActionWindow(tk.Toplevel):
         self.action_file = file or _action_file()
 
         if os.path.isfile(self.action_file):
-            with self.block(), defaults.Window.block(), \
-                 open(self.action_file, errors='replace', encoding=defaults.VarEncode.get()) as act:
+            with self.block(), defaults.Window.block(), open(self.action_file, errors='replace', encoding=defaults.VarEncode.get()) as act:
                 text = act.read()
                 self.tk_text.new_text_set(text)
                 self.web_action.set_text_list(text, websReport=True)
@@ -913,14 +800,9 @@ class ActionWindow(tk.Toplevel):
             lr_log.Logger.info('{f} > {s}'.format(f=self.action_file, s=self.id_))
 
         if self.web_action.websReport.rus_webs:
-            lr_log.Logger.info(
-                'В следующих номерах inf, обнаружены Русские(NoASCII) символы, возможно требуется перекодировка'
-                '(выделение/encoding из меню мыши)\n{}'.format(self.web_action.websReport.rus_webs))
+            lr_log.Logger.info('В следующих номерах inf, обнаружены Русские(NoASCII) символы, возможно требуется перекодировка(выделение/encoding из меню мыши)\n{}'.format(self.web_action.websReport.rus_webs))
         if self.web_action.websReport.google_webs:
-            lr_log.Logger.info(
-                'Возможно следующие номера inf лишние, тк содержат слова {s}\n'
-                'их можно удалить(+"commit/backup/обновить action.c" из меню мыши)\n{w}'.format(
-                    w=self.web_action.websReport.google_webs, s=defaults.DENY_WEB_))
+            lr_log.Logger.info('Возможно следующие номера inf лишние, тк содержат слова {s}\nих можно удалить(+"commit/backup/обновить action.c" из меню мыши)\n{w}'.format(w=self.web_action.websReport.google_webs, s=defaults.DENY_WEB_))
 
         self.background_color_set(color='')  # оригинальный цвет
         self.get_result_files()
@@ -947,21 +829,16 @@ class ActionWindow(tk.Toplevel):
     @lr_pool.T_POOL_execute_decotator
     def auto_param_creator(self, *a) -> None:
         '''group params по кнопке PARAM'''
-        y = lr_wlib.YesNoCancel(['Найти', 'Отменить'], is_text='\n'.join(defaults.Params_names), parent=self,
-                                text_before='Будет произведен поиск param, имя которых начинается на указанные имена.',
-                                title='начало param-имен', text_after='При необходимости - добавить/удалить')
+        y = lr_wlib.YesNoCancel(['Найти', 'Отменить'], is_text='\n'.join(defaults.Params_names), parent=self, text_before='Будет произведен поиск param, имя которых начинается на указанные имена.', title='начало param-имен', text_after='При необходимости - добавить/удалить')
         ans = y.ask()
         if ans == 'Найти':
             param_parts = list(filter(bool, map(str.strip, y.text.split('\n'))))
             params = [self.session_params()]
             params.extend(map(self.group_param_search, param_parts))
             params = set(p for ps in params for p in ps)
-            params = [p for p in params if ((p not in defaults.DENY_PARAMS) and (not (
-                len(p) > 2 and p.startswith('on') and p[2].isupper())))]
+            params = [p for p in params if ((p not in defaults.DENY_PARAMS) and (not (len(p) > 2 and p.startswith('on') and p[2].isupper())))]
             params.sort(key=lambda param: len(param), reverse=True)
-            y = lr_wlib.YesNoCancel(['Создать', 'Отменить'], is_text='\n'.join(params),
-                                    parent=self, text_before='создание + автозамена. %s шт' % len(params),
-                                    title='Имена param', text_after='При необходимости - добавить/удалить')
+            y = lr_wlib.YesNoCancel(['Создать', 'Отменить'], is_text='\n'.join(params), parent=self, text_before='создание + автозамена. %s шт' % len(params), title='Имена param', text_after='При необходимости - добавить/удалить')
             ans = y.ask()
             if ans == 'Создать':
                 params = list(filter(bool, map(str.strip, y.text.split('\n'))))
@@ -1010,36 +887,26 @@ class ActionWindow(tk.Toplevel):
                     raise UserWarning('Перед param, не найдено никаких блоков c inf запросами.')
                 elif max_action_inf <= min(wrsp_dict['inf_nums']):
                     inf_nums = wrsp_dict['inf_nums'] or [-2]
-                    raise UserWarning(
-                        'Snapshot=t{p}.inf, в котором расположен,\nпервый заменяемый {_p}\n\nне может быть меньше '
-                        'или равен,\nSnapshot=t{w}.inf, перед которым вставляется\nweb_reg_save_param запрос\n\n'
-                        '{p} <= {inf_nums}'.format(
-                            _p='{%s}' % wrsp_dict['param_Name'], p=max_action_inf, w=inf_nums[0], inf_nums=inf_nums))
+                    raise UserWarning('Snapshot=t{p}.inf, в котором расположен,\nпервый заменяемый {_p}\n\nне может быть меньше или равен,\nSnapshot=t{w}.inf, перед которым вставляется\nweb_reg_save_param запрос\n\n{p} <= {inf_nums}'.format(_p='{%s}' % wrsp_dict['param_Name'], p=max_action_inf, w=inf_nums[0], inf_nums=inf_nums))
             except Exception as ex:
                 self.search_in_action(word=lr_param.Snap.format(num=max_action_inf), hist=False)
-                qb = 'param: "{p}"\nweb_reg_save_param: {n}'.format(
-                    p=wrsp_dict['param_Name'], n='{%s}' % wrsp_dict['web_reg_num'])
+                qb = 'param: "{p}"\nweb_reg_save_param: {n}'.format(p=wrsp_dict['param_Name'], n='{%s}' % wrsp_dict['web_reg_num'])
 
                 if self.force_yes_inf.get():
                     lr_log.Logger.warning('{q}\n\n{e}\n{wrsp}'.format(e=ex, q=qb, wrsp=wrsp))
                 else:
-                    y = lr_wlib.YesNoCancel(buttons=['Создать', 'Пропустить'], text_after=qb, text_before=str(ex),
-                                            title='создать web_reg_save_param ?', parent=self).ask()
+                    y = lr_wlib.YesNoCancel(buttons=['Создать', 'Пропустить'], text_after=qb, text_before=str(ex), title='создать web_reg_save_param ?', parent=self).ask()
                     if y == 'Пропустить':
                         raise
                     else:
                         lr_log.Logger.info('{q}\n\n{e}'.format(e=ex, q=qb))
 
-    def SearchAndReplace(self, search: str, replace='', wrsp_dict=None, wrsp=None, backup=False, is_param=True,
-                         is_wrsp=True, replace_callback=None, rep_stat=False) -> None:
+    def SearchAndReplace(self, search: str, replace='', wrsp_dict=None, wrsp=None, backup=False, is_param=True, is_wrsp=True, replace_callback=None, rep_stat=False) -> None:
         with self.block():
-            self._SearchAndReplace(
-                search, replace, wrsp_dict, wrsp, backup, is_param, is_wrsp, replace_callback, rep_stat)
+            self._SearchAndReplace(search, replace, wrsp_dict, wrsp, backup, is_param, is_wrsp, replace_callback, rep_stat)
 
-    def _SearchAndReplace(self, search: str, replace='', wrsp_dict=None, wrsp=None, backup=False, is_param=True,
-                         is_wrsp=True, replace_callback=None, rep_stat=False) -> None:
-        '''VarWrspDict автозамена: [заменить param на {web_reg_save_param}]
-        + [добавить блок с // web_reg_save_param, перед блоком c inf_line]'''
+    def _SearchAndReplace(self, search: str, replace='', wrsp_dict=None, wrsp=None, backup=False, is_param=True, is_wrsp=True, replace_callback=None, rep_stat=False) -> None:
+        '''VarWrspDict автозамена: [заменить param на {web_reg_save_param}] + [добавить блок с // web_reg_save_param, перед блоком c inf_line]'''
         assert search, 'пустой search "{s}" {ts}'.format(s=search, ts=type(search))
 
         if is_wrsp:
@@ -1069,8 +936,7 @@ class ActionWindow(tk.Toplevel):
                 if rep_stat and any(res):
                     stats[web_.snapshot] = res
             if rep_stat:
-                lr_log.Logger.debug(search + ':\n' + '\n'.join('{} inf: заменено [да|нет] раз: [{}|{}]'.format(
-                    k, *stats[k]) for k in sorted(stats)))
+                lr_log.Logger.debug(search + ':\n' + '\n'.join('{} inf: заменено [да|нет] раз: [{}|{}]'.format(k, *stats[k]) for k in sorted(stats)))
         else:  # "быстрая" замена
             self.web_action.replace_bodys([(search, replace), ])
 
@@ -1081,8 +947,7 @@ class ActionWindow(tk.Toplevel):
             self.web_action_to_tk_text(websReport=True)
 
     def drop_file_none_inf_num_in_action(self) -> None:
-        '''в LoadRunner могут быть inf-файлы, которых нету в action.c(например удалили лишний код), такие файлы надо
-        отсеять, тк web_reg_save_param потом может на него сослатся'''
+        '''в LoadRunner могут быть inf-файлы, которых нету в action.c(например удалили лишний код), такие файлы надо отсеять, тк web_reg_save_param потом может на него сослатся'''
         self.action_infs[:] = [a.snapshot for a in self.web_action.get_web_snapshot_all()]
         self.drop_infs.clear()
         self.drop_files.clear()
@@ -1107,15 +972,10 @@ class ActionWindow(tk.Toplevel):
         li = len(self.action_infs)
         alw = len(tuple(self.web_action.get_web_all()))
 
-        defaults.Window.last_frame['text'] = '{d} > в {i} inf > {f} файлов'.format(
-            d=defaults.VarFilesFolder.get(), f=len(defaults.AllFiles),
-            i=len(list(lr_other.get_files_infs(defaults.AllFiles))))
-
-        self.middle_bar['text'] = 'В action.c web_*: объектов[любых={alw} шт, snapshot={i} шт], файлов ответов[{f} шт] / Удалено: объектов[snapshot={ni} шт]' \
-                                  '-> файлов ответов[{nf} шт]'.format(alw=alw, i=li, f=lf, ni=lif-li, nf=ldaf-lf)
+        defaults.Window.last_frame['text'] = '{d} > в {i} inf > {f} файлов'.format(d=defaults.VarFilesFolder.get(), f=len(defaults.AllFiles), i=len(list(lr_other.get_files_infs(defaults.AllFiles))))
+        self.middle_bar['text'] = 'В action.c web_*: объектов[любых={alw} шт, snapshot={i} шт], файлов ответов[{f} шт] / Удалено: объектов[snapshot={ni} шт] -> файлов ответов[{nf} шт]'.format(alw=alw, i=li, f=lf, ni=lif-li, nf=ldaf-lf)
         if self.drop_infs or self.drop_files:
-            lr_log.Logger.debug('Отсутствует в action.c: inf: {il}, файлов : {fl} | Найдено: {ai} inf'.format(
-                il=len(self.drop_infs), fl=len(self.drop_files), ai=li), parent=self)
+            lr_log.Logger.debug('Отсутствует в action.c: inf: {il}, файлов : {fl} | Найдено: {ai} inf'.format(il=len(self.drop_infs), fl=len(self.drop_files), ai=li), parent=self)
 
     def backup(self) -> None:
         '''сделать action.c бэкап'''
@@ -1143,9 +1003,7 @@ class ActionWindow(tk.Toplevel):
             lb_col_count = re.findall(r'p_p_col_count=\d&', text)
 
             text = '\n'.join(set(lb_list + lb_uuid + lb_col_count))
-            y = lr_wlib.YesNoCancel(buttons=['Найти', 'Пропуск'], text_before='найти param по LB=',
-                                    text_after='указать LB, с новой строки', is_text=text, title='автозамена по LB=',
-                                    parent=self, default_key='Найти')
+            y = lr_wlib.YesNoCancel(buttons=['Найти', 'Пропуск'], text_before='найти param по LB=', text_after='указать LB, с новой строки', is_text=text, title='автозамена по LB=', parent=self, default_key='Найти')
             if y.ask() == 'Найти':
                 lb_list = y.text.split('\n')
             else:
@@ -1226,25 +1084,10 @@ class ActionWindow(tk.Toplevel):
             buttons = ['Удалить/Пересканировать', 'Пропустить', 'Выход']
             n1, n2, n3, n4 = '{}|Snapshot|строк|символов'.format(_type).split('|')
 
-            ync = lr_wlib.YesNoCancel(
-                buttons=buttons,
-                text_before='Удалить {cd} шт. "dummy" - {web_name} из action.c текста?\n'
-                            'Если изменить web_dummy_template текст,\n'
-                            'action.c пересканируется, с повторным показом диалог окна.\n'
-                            'inf удаляется, если его строки, начинаются\nна соответствующие им строки, '
-                            'в web_dummy_template,\nбез учета начальных пробелов.'.format(web_name=_type, cd=cd),
-                text_after='action.c до и после удаления {web_name}:\n'
-                           '{n1:>20} {n2:>20} {n3:>20} {n4:>20}\n'
-                           '{lwnt:>20} | {t1:>20} | {ltn:>20} | {d:>20} |\n'
-                           '{lwnd:>20} | {t2:>20} | {ldn:>20} | {nd:>20} |'.format(
-                    n1=n1, n2=n2, n3=n3, n4=n4, lwnt=lwnt, lwnd=lwnd, d=dum_len, nd=no_dum_len, t1=t1, t2=t2, ltn=ltn,
-                    ldn=ldn, web_name=_type),
-                title='web_dummy_template | удалить {rem} шт ?'.format(rem=rem),
-                parent=self,
-                is_text=lr_template.Dummy.web_dummy_template
-            )
+            ync = lr_wlib.YesNoCancel(buttons=buttons, text_before='Удалить {cd} шт. "dummy" - {web_name} из action.c текста?\nЕсли изменить web_dummy_template текст,\naction.c пересканируется, с повторным показом диалог окна.\ninf удаляется, если его строки, начинаются\nна соответствующие им строки, в web_dummy_template,\nбез учета начальных пробелов.'.format(web_name=_type, cd=cd),
+                                      text_after='action.c до и после удаления {web_name}:\n{n1:>20} {n2:>20} {n3:>20} {n4:>20}\n{lwnt:>20} | {t1:>20} | {ltn:>20} | {d:>20} |\n{lwnd:>20} | {t2:>20} | {ldn:>20} | {nd:>20} |'.format(
+                                          n1=n1, n2=n2, n3=n3, n4=n4, lwnt=lwnt, lwnd=lwnd, d=dum_len, nd=no_dum_len, t1=t1, t2=t2, ltn=ltn, ldn=ldn, web_name=_type), title='web_dummy_template | удалить {rem} шт ?'.format(rem=rem), parent=self, is_text=lr_template.Dummy.web_dummy_template)
             y = ync.ask()
-
             if y == buttons[2]:
                 return False
 
@@ -1277,15 +1120,25 @@ class ActionWindow(tk.Toplevel):
             text = f.read()
             text = text.rsplit('.inf]]></Path>', 1)
             text = text[0]
-            last_snapshot = text.rsplit('t', 1)
-            last_snapshot = int(last_snapshot[1])
+            text = text.rsplit('t', 1)
+            rdir = text[0].rsplit('\\', 2)
+            rdir = rdir[1]
+            snap = text[1]
+            last_snapshot = int(snap) - 1
 
         max_snap = max(self.action_infs)
         if last_snapshot < max_snap:
             self.inf_combo.set(last_snapshot)
             self.goto_inf()
-            lr_log.Logger.error('При воспроизведении, не все Snapshot были выполненны: last:{} < max:{}'.format(
-                last_snapshot, max_snap))
+            lr_log.Logger.error('При воспроизведении({r})\nне все Snapshot были выполненны: last:{l} < max:{m}'.format(r=os.path.join(folder, rdir), l=last_snapshot, m=max_snap))
+
+        # a = lr_param.get_search_data('None')
+        # a = next(lr_param.create_files_with_search_data(defaults.AllFiles, a, action_infs=[last_snapshot]))
+        # with open(os.path.join(folder, rdir, a['File']['Name'])) as f:
+        #     print(f.read())
+        # y = lr_wlib.YesNoCancel(
+        #     ['Переименовать', 'Отмена'], 'Переименовать', 'transactio', 'qwe',
+        #     parent=self, is_text='wqw', combo_dict={})
 
 
 def _action_file(file='action.c') -> str:

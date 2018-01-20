@@ -3,7 +3,6 @@
 
 import json
 import re
-import os
 import sys
 import html
 import queue
@@ -25,54 +24,49 @@ from lr_lib import (
 
 
 @lr_pool.T_POOL_execute_decotator
-def mouse_web_reg_save_param(widget, param, mode=('SearchAndReplace', 'highlight', ), wrsp=None, wrsp_dict=None,
-                             set_param=True) -> None:
+def mouse_web_reg_save_param(widget, param, mode=('SearchAndReplace', 'highlight', ), wrsp=None, wrsp_dict=None, set_param=True) -> None:
     '''в окне action.c, для param, автозамена, залить цветом, установить виджеты'''
-    with widget.action.block():
+    action = widget.action
+
+    with action.block():
         if 'SearchAndReplace' in mode:
             if not wrsp_dict:
                 if set_param:
-                    defaults.VarParam.set(param, action=widget.action, set_file=True)
+                    defaults.VarParam.set(param, action=action, set_file=True)
                     wrsp_dict = lr_param.wrsp_dict_creator()
-                else:
-                    wrsp_dict = defaults.VarWrspDict.get()
+                else: wrsp_dict = defaults.VarWrspDict.get()
 
             # найти и заменить в action.c
-            widget.action.SearchAndReplace(
-                search=param, wrsp_dict=wrsp_dict, is_param=True, is_wrsp=True, backup=True, wrsp=wrsp)
+            action.SearchAndReplace(search=param, wrsp_dict=wrsp_dict, is_param=True, is_wrsp=True, backup=True, wrsp=wrsp)
 
             w = wrsp_dict['web_reg_num']
-            if defaults.VarShowPopupWindow.get() and widget.action.final_wnd_var.get():
-                widget.action.search_in_action(word=w)
-                s = '{wr}\n\n{wd}'.format(wr=widget.action.web_action.websReport.param_statistic[w], wd=wrsp_dict)
+            if defaults.VarShowPopupWindow.get() and action.final_wnd_var.get():
+                action.search_in_action(word=w)
+                s = '{wr}\n\n{wd}'.format(wr=action.web_action.websReport.param_statistic[w], wd=wrsp_dict)
                 lr_log.Logger.debug(s)
-                tk.messagebox.showinfo(wrsp_dict['param_Name'], s, parent=widget.action)
-                try:
-                    widget.action.search_res_combo.current(1)
-                except tk.TclError:
-                    widget.action.search_res_combo.current(0)
-                widget.action.tk_text_see()
+                tk.messagebox.showinfo(wrsp_dict['param_Name'], s, parent=action)
+                try: action.search_res_combo.current(1)
+                except tk.TclError: action.search_res_combo.current(0)
+                action.tk_text_see()
         elif 'highlight' in mode:
             lr_widj.highlight_mode(widget, param)
-            widget.action.tk_text.set_highlight()
+            action.tk_text.set_highlight()
 
 @lr_pool.T_POOL_execute_decotator
 def rClick_Param(event, *args, **kwargs) -> None:
     '''web_reg_save_param из выделения, меню правой кнопки мыши'''
     widget = event.widget
+
     try:
         param = widget.selection_get()
         # print('индекс(tk.Text) начала выделения')
         # count = widget.count("1.0", "sel.first")
         # print(count)
         # print('------------------')
-    except tk.TclError:
-        return lr_log.Logger.warning('сбросилось выделение текста\ntry again', parent=widget)
-    try:
-        action = widget.action
+    except tk.TclError: return lr_log.Logger.warning('сбросилось выделение текста\ntry again', parent=widget)
+    try: action = widget.action
     except AttributeError:
-        action = next(iter(defaults.Window.action_windows))
-        action = defaults.Window.action_windows[action]
+        action = defaults.Window.action_windows[next(iter(defaults.Window.action_windows))]
         widget = action.tk_text
 
     callback = lambda: mouse_web_reg_save_param(widget, param, *args, set_param=False, **kwargs)
@@ -82,84 +76,78 @@ def rClick_Param(event, *args, **kwargs) -> None:
 @lr_pool.T_POOL_execute_decotator
 def group_param(event, widget=None, params=None, ask=True) -> None:
     '''группа web_reg_save_param из выделения, меню правой кнопки мыши'''
-    if widget is None:
-        widget = event.widget
+    if widget is None: widget = event.widget
+    action = widget.action
 
-    if params is None:
-        params = widget.action.group_param_search(widget.selection_get())
-    elif params is False:
-        params = widget.action.session_params(lb_list=[widget.selection_get()], ask=False)
-    if not params:
-        return lr_log.Logger.warning('param не найдены! %s' % params, parent=widget.action)
+    if params is None: params = action.group_param_search(widget.selection_get())
+    elif params is False: params = action.session_params(lb_list=[widget.selection_get()], ask=False)
+    if not params: return lr_log.Logger.warning('param не найдены! %s' % params, parent=action)
 
     len_params = len(params)
     lr_log.Logger.info('для создания найдено {} param'.format(len_params))
 
     if ask:
-        y = YesNoCancel(buttons=['Найти', 'Отменить', 'Пропуск'],
-                        text_before='найти group param', text_after='%s шт.' % len_params, is_text='\n'.join(params),
-                        title='group param', parent=widget.action, default_key='Найти')
+        y = YesNoCancel(buttons=['Найти', 'Отменить', 'Пропуск'], text_before='найти group param', text_after='%s шт.' % len_params, is_text='\n'.join(params), title='group param', parent=action, default_key='Найти')
         ask = y.ask()
-        if ask == 'Найти':
-            params = sorted(filter(bool, y.text.split('\n')), key=len, reverse=True)
-        elif ask == 'Пропуск':
-            params = []
-        else:
-            return
+        if ask == 'Найти': params = sorted(filter(bool, y.text.split('\n')), key=len, reverse=True)
+        elif ask == 'Пропуск': params = []
+        else: return
+
+    lr_log.Logger.debug('на текущий момент уже создано {} param'.format(len(action.web_action.websReport.wrsp_and_param_names)))
+    lr_log.Logger.info('>>> для создания выбрано {} param'.format(len_params))
 
     unsuccess_params = []  # param обработанные с ошибкой
     wrsp_dict_queue = queue.Queue()
 
-    @lr_pool.T_POOL_execute_decotator
-    def thread_wrsp_dict_creator() -> None:
-        '''создать wrsp_dicts в потоке, чтобы не терять время, при показе popup окон'''
-        for param in params:
-            try:
-                defaults.VarParam.set(param, action=widget.action, set_file=True)
-                wrsp_dict_queue.put_nowait(defaults.VarWrspDict.get())
-            except Exception:
-                unsuccess_params.append(param)
-                lr_log.excepthook(*sys.exc_info())
-        wrsp_dict_queue.put_nowait(None)  # stop
-
-    lr_log.Logger.debug('на текущий момент уже создано {} param'.format(
-        len(widget.action.web_action.websReport.wrsp_and_param_names)))
-    len_params = len(params)
-    lr_log.Logger.info('>>> для создания выбрано {} param'.format(len_params))
-    proc1 = (len_params / 100) or 1
-
-    def progress(counter: int, param: str, proc1: int, wrsp: str, f=' | fail: %s') -> None:
-        '''прогресс'''
-        lu = len(unsuccess_params)
-        widget.action.toolbar['text'] = 'поиск : {param}\nweb_reg_save_param {counter}/{len_params} : {w} %{u}\n' \
-                                        '{wrsp}'.format(
-            counter=counter, len_params=len_params, u=(f % lu if lu else ''), w=round(counter / proc1), param=param,
-            wrsp=wrsp)
-        widget.action.background_color_set(color=None)
+    thread_wrsp_dict_creator(wrsp_dict_queue, params, unsuccess_params, action)  # создавать wrsp_dicts
+    progress = lambda: progress_group_param(counter, wrsp_dict['param'], ((len_params / 100) or 1), wrsp, unsuccess_params, len_params, action, [True])
+    lr_pool.MainThreadUpdater.submit(progress)
 
     replace_list = []  # [('aFFXt', '{P_9882_4_Window_main_a_FFX_t}'), ('aFFX9', '{P_3768_1_Window_login_a_FFX_9}')]
+    action.backup()
 
-    widget.action.backup()
-    with defaults.Window.block(), widget.action.block():
+    with defaults.Window.block(), action.block():
         defaults.Window._block_ = True
-        thread_wrsp_dict_creator()  # создавать wrsp_dicts
 
         for counter, wrsp_dict in enumerate(iter(wrsp_dict_queue.get, None), start=1):
             wrsp_name = lr_param.param_bounds_setter(wrsp_dict['web_reg_num'])
             wrsp = lr_param.web_reg_save_param.format(**wrsp_dict)
-            with contextlib.suppress(Exception):
-                widget.action.param_inf_checker(wrsp_dict, wrsp)
+            with contextlib.suppress(Exception): action.param_inf_checker(wrsp_dict, wrsp)
 
             replace_list.append((wrsp_dict['param'], wrsp_name))
-            widget.action.web_action.web_reg_save_param_insert(wrsp_dict, wrsp)  # вставить web_reg_save_param
-            lr_pool.MainThreadUpdater.submit(lambda: progress(counter, wrsp_dict['param'], proc1, wrsp))
+            action.web_action.web_reg_save_param_insert(wrsp_dict, wrsp)  # вставить web_reg_save_param
 
-        widget.action.web_action.replace_bodys(replace_list)  # заменить
-        widget.action.web_action_to_tk_text(websReport=True)  # вставить в action.c
+        action.web_action.replace_bodys(replace_list)  # заменить
+        action.web_action_to_tk_text(websReport=True)  # вставить в action.c
         defaults.Window._block_ = False
 
-    lr_pool.MainThreadUpdater.submit(lambda: final_group_param(
-        widget, unsuccess_params=unsuccess_params, log=True))
+    lr_pool.MainThreadUpdater.submit(lambda: final_group_param(widget, unsuccess_params=unsuccess_params, log=True))
+
+
+def progress_group_param(counter: int, param: str, proc1: int, wrsp: str, unsuccess_params: [str,], len_params: int, action, is_run: list, wait=1) -> None:
+    '''прогресс group_param()'''
+    if not any(is_run):
+        return
+    lu = len(unsuccess_params)
+    u = (' | fail: %s' % lu if lu else '')
+    t = '{param} : web_reg_save_param : {counter}/{len_params} : {w} %{u}\n{wrsp}'.format(counter=counter, len_params=len_params, u=u, w=round(counter / proc1), param=param, wrsp=wrsp)
+    action.toolbar['text'] = t
+    action.background_color_set(color=None)
+
+    if any(is_run):
+        defaults.Tk.after(wait, progress_group_param, counter, param, proc1, wrsp, unsuccess_params, len_params, action, is_run, wait)
+
+@lr_pool.T_POOL_execute_decotator
+def thread_wrsp_dict_creator(wrsp_dict_queue, params, unsuccess_params, action) -> None:
+    '''создать wrsp_dicts в потоке, чтобы не терять время, при показе popup окон'''
+    for param in params:
+        try:
+            defaults.VarParam.set(param, action=action, set_file=True)
+            wrsp_dict_queue.put_nowait(defaults.VarWrspDict.get())
+        except Exception:
+            unsuccess_params.append(param)
+            lr_log.excepthook(*sys.exc_info())
+    wrsp_dict_queue.put_nowait(None)  # stop
 
 
 def final_group_param(widget, unsuccess_params=None, log=False) -> None:
@@ -172,68 +160,51 @@ def final_group_param(widget, unsuccess_params=None, log=False) -> None:
 
     if unsuccess_params:
         err = len(unsuccess_params)
-        widget.action.toolbar['text'] = '{s} : {n}\n{pl}'.format(
-            s=str(not err).upper(), pl=pl,
-            n=('{} param не были созданы ! {}'.format(err, ', '.join(unsuccess_params)) if err else ''))
+        n = ('{} param не были созданы ! {}'.format(err, ', '.join(unsuccess_params)) if err else '')
+        widget.action.toolbar['text'] = '{s} : {n}\n{pl}'.format(s=str(not err).upper(), pl=pl, n=n)
+        lr_log.Logger.error('{} param не были обработаны:\n\t{}\nтребуется пересоздание, с OFF чекбоксом\n"ограничить max_inf"'.format(err, '\n\t'.join(unsuccess_params)), parent=widget.action)
 
-        lr_log.Logger.error(
-            '{} param не были обработаны:\n\t{}\nтребуется пересоздание, с OFF чекбоксом\n'
-            '"ограничить max_inf"'.format(err, '\n\t'.join(unsuccess_params)), parent=widget.action)
-
-    if widget.action.final_wnd_var.get():
-        repA(widget)
-    if log:
-        lr_log.Logger.debug(pl)
+    if widget.action.final_wnd_var.get(): repA(widget)
+    if log: lr_log.Logger.debug(pl)
 
 
 def repA(widget) -> None:
     '''отчет сокращенный'''
     rep = widget.action.web_action.websReport.all_in_one
-    y = YesNoCancel(
-        buttons=['OK'], text_before='repA', text_after='self.web_action.websReport.all_in_one',
-        is_text=get_json(rep), title='transac_len={}, param_len={}'.format(
-            len(rep), len(widget.action.web_action.websReport.wrsp_and_param_names)), parent=widget.action)
+    t = 'transac_len={}, param_len={}'.format(len(rep), len(widget.action.web_action.websReport.wrsp_and_param_names))
+    y = YesNoCancel(buttons=['OK'], text_before='repA', text_after='websReport.all_in_one', is_text=get_json(rep), title=t, parent=widget.action)
     lr_pool.T_POOL_execute_decotator(y.ask)()
 
 
 def repB(widget, counter=None) -> None:
     '''отчет полный'''
     wr = widget.action.web_action.websReport
-    if counter is None:
-        counter = len(wr.wrsp_and_param_names)
+    if counter is None: counter = len(wr.wrsp_and_param_names)
 
-    obj = [wr.wrsp_and_param_names, wr.rus_webs, wr.google_webs, wr.bad_wrsp_in_usage,
-           widget.action.web_action.transactions.sub_transaction, wr.web_transaction_sorted, wr.param_statistic,
-           wr.web_snapshot_param_in_count, wr.web_transaction]
-
-    ao = ['wrsp_and_param_names', 'rus_webs', 'google_webs', 'bad_wrsp_in_usage', 'sub_transaction',
-          'web_transaction_sorted', 'param_statistic', 'web_snapshot_param_in_count', 'web_transaction']
+    obj = [wr.wrsp_and_param_names, wr.rus_webs, wr.google_webs, wr.bad_wrsp_in_usage, widget.action.web_action.transactions.sub_transaction, wr.web_transaction_sorted, wr.param_statistic, wr.web_snapshot_param_in_count, wr.web_transaction]
+    ao = ['wrsp_and_param_names', 'rus_webs', 'google_webs', 'bad_wrsp_in_usage', 'sub_transaction', 'web_transaction_sorted', 'param_statistic', 'web_snapshot_param_in_count', 'web_transaction']
     tb = ' | '.join('{}:{}'.format(e, a) for e, a in enumerate(ao, start=1))
     st = '\n----\n'
     ta = ('\n\n' + st).join('{}:{}{}{}'.format(e, ao[e - 1], st, get_json(ob)) for e, ob in enumerate(obj, start=1))
 
-    y = YesNoCancel(
-        buttons=['OK'], text_before=tb, text_after='{} шт'.format(counter), is_text='\n\n{}'.format(ta),
-        title='создано: {} шт.'.format(counter), parent=widget.action)
+    y = YesNoCancel(buttons=['OK'], text_before=tb, text_after='{} шт'.format(counter), is_text='\n\n{}'.format(ta), title='создано: {} шт.'.format(counter), parent=widget.action)
     lr_pool.T_POOL_execute_decotator(y.ask)()
     lr_log.Logger.trace('{}\n\n{}'.format(tb, ta))
 
 
 def get_json(obj, indent=5):
-    try:
-        return json.dumps(obj, indent=indent)
-    except Exception:
-        return obj
+    try: return json.dumps(obj, indent=indent)
+    except Exception: return obj
 
 
 def remove_web_reg_save_param_from_action(event, selection=None) -> None:
     '''удалить web_reg_save_param с w.param или w.name == selection'''
-    if selection is None:
-        selection = event.widget.selection_get()
-    _param = event.widget.action.web_action.web_reg_save_param_remove(selection)
+    if selection is None: selection = event.widget.selection_get()
+
+    param = event.widget.action.web_action.web_reg_save_param_remove(selection)
     event.widget.action.web_action_to_tk_text(websReport=True)  # вставить в action.c
-    if _param:
-        event.widget.action.search_in_action(word=_param)
+
+    if param: event.widget.action.search_in_action(word=param)
 
 
 @lr_pool.T_POOL_execute_decotator
@@ -244,29 +215,19 @@ def all_wrsp_dict_web_reg_save_param(event) -> None:
     defaults.VarWrspDictList.clear()
 
     wrsp_dict = lr_param.wrsp_dict_creator()
-    if wrsp_dict:
-        defaults.VarWrspDictList.append([wrsp_dict, lr_param.create_web_reg_save_param(wrsp_dict)])
-    else:
-        return
+    if wrsp_dict: defaults.VarWrspDictList.append([wrsp_dict, lr_param.create_web_reg_save_param(wrsp_dict)])
+    else: return
 
     while True:
         try:
             lr_setter.next_3_or_4_if_bad_or_enmpy_lb_rb('поиск всех возможных wrsp_dict')
             wrsp_dict = lr_param.wrsp_dict_creator()
-            if wrsp_dict:
-                defaults.VarWrspDictList.append([wrsp_dict, lr_param.create_web_reg_save_param(wrsp_dict)])
-        except UserWarning:
-            break
-        except Exception:
-            continue
+            if wrsp_dict: defaults.VarWrspDictList.append([wrsp_dict, lr_param.create_web_reg_save_param(wrsp_dict)])
+        except UserWarning: break
+        except Exception: continue
 
     len_dl = len(defaults.VarWrspDictList)
-    y = YesNoCancel(
-        buttons=['Заменить текущий', 'Создать новый', 'Выйти'],
-        text_before='отображены все найденные варианты, которыми можно создать web_reg_save_param\n'
-                    'необходимо оставить только один вариант, удалив остальные.',
-        text_after='итого %s вариантов.' % len_dl, is_text='\n\n'.join(w[1] for w in defaults.VarWrspDictList),
-        title='{} : {} шт.'.format(selection, len_dl), parent=event.widget.action, default_key='Заменить текущий')
+    y = YesNoCancel(buttons=['Заменить текущий', 'Создать новый', 'Выйти'], text_before='отображены все найденные варианты, которыми можно создать web_reg_save_param\n' 'необходимо оставить только один вариант, удалив остальные.', text_after='итого %s вариантов.' % len_dl, is_text='\n\n'.join(w[1] for w in defaults.VarWrspDictList), title='{} : {} шт.'.format(selection, len_dl), parent=event.widget.action, default_key='Заменить текущий')
     ask = y.ask()
 
     if ask == 'Заменить текущий':
@@ -278,8 +239,7 @@ def all_wrsp_dict_web_reg_save_param(event) -> None:
         _wrsp = user_wrsp.strip()
         for wrsp_dict, wrsp in defaults.VarWrspDictList:
             if _wrsp == wrsp.strip():
-                mouse_web_reg_save_param(event.widget, selection, wrsp=user_wrsp, wrsp_dict=wrsp_dict)
-                return
+                return mouse_web_reg_save_param(event.widget, selection, wrsp=user_wrsp, wrsp_dict=wrsp_dict)
 
 
 @lr_pool.T_POOL_execute_decotator
@@ -292,11 +252,7 @@ def rClick_web_reg_save_param_regenerate(event, new_lb_rb=True) -> None:
         action = next(iter(defaults.Window.action_windows.values()))
 
     if lr_param.wrsp_lr_start not in selection:
-        return tk.messagebox.showwarning(
-            str(rClick_web_reg_save_param_regenerate),
-            'Ошибка, необходимо выделять весь блок, созданного web_reg_save_param, вместе с комментариями\
-            nСейчас "{wr}" не содержится в выделенном тексте:\n{selection}'.format(
-                wr=lr_param.wrsp_lr_start, selection=selection[:1000]), parent=action)
+        return tk.messagebox.showwarning(str(rClick_web_reg_save_param_regenerate), 'Ошибка, необходимо выделять весь блок, созданного web_reg_save_param, вместе с комментариями\nСейчас "{wr}" не содержится в выделенном тексте:\n{selection}'.format(wr=lr_param.wrsp_lr_start, selection=selection[:1000]), parent=action)
 
     file_name = selection.split(lr_param.wrsp_file_start, 1)[-1]
     file_name = file_name.split(lr_param.wrsp_file_end, 1)[0]
@@ -347,29 +303,23 @@ def rClick_min_inf(event) -> None:
 def rClick_Search(event) -> None:
     '''поиск выделения в тексте, меню правой кнопки мыши'''
     selection = event.widget.selection_get()
-    with contextlib.suppress(AttributeError):
-        event.widget.action.search_in_action(word=selection)
+    with contextlib.suppress(AttributeError): event.widget.action.search_in_action(word=selection)
 
 
 def rClick_add_highlight(event, option: str, color: str, val: str, find=False) -> None:
     '''для выделения, добавление color в highlight_dict, меню правой кнопки мыши'''
-    try:  # action.c виджет
-        highlight = event.widget.highlight_dict
-    except AttributeError:
-        pass
+    try: hd = event.widget.highlight_dict
+    except AttributeError: pass
     else:
         selection = event.widget.selection_get()
 
         if val == 'добавить':
-            if option not in highlight:
-                highlight[option] = {color: [selection]}
-            elif color not in highlight[option]:
-                highlight[option][color] = [selection]
-            elif selection not in highlight[option][color]:
-                highlight[option][color].add(selection)
+            if option not in hd: hd[option] = {color: [selection]}
+            elif color not in hd[option]: hd[option][color] = [selection]
+            elif selection not in hd[option][color]: hd[option][color].add(selection)
         else:
-            if option in highlight and color in highlight[option] and selection in highlight[option][color]:
-                highlight[option][color].remove(selection)
+            if (option in hd) and (color in hd[option]) and (selection in hd[option][color]):
+                hd[option][color].remove(selection)
 
         event.widget.action.save_action_file(file_name=False)
         if find:
@@ -384,25 +334,18 @@ Transac_end = 'lr_end_transaction("'
 @lr_pool.T_POOL_execute_decotator
 def rename_transaction(event, parent=None) -> None:
     selection = event.widget.selection_get().strip()
-    try:
-        old_name = selection.split(Transac_start, 1)[1].split('"', 1)[0]
-    except IndexError:
-        old_name = selection.split(Transac_end, 1)[1].split('"', 1)[0]
+    try: old_name = selection.split(Transac_start, 1)[1].split('"', 1)[0]
+    except IndexError: old_name = selection.split(Transac_end, 1)[1].split('"', 1)[0]
+    with contextlib.suppress(AttributeError): parent = event.widget.action
 
-    with contextlib.suppress(AttributeError):
-        parent = event.widget.action
-
-    y = YesNoCancel(['Переименовать', 'Отмена'],
-                    'Переименовать выделенную(линию) transaction', 'указать только новое имя transaction',
-                    'transaction', parent=parent, is_text=old_name)
+    y = YesNoCancel(['Переименовать', 'Отмена'], 'Переименовать выделенную(линию) transaction', 'указать только новое имя transaction', 'transaction', parent=parent, is_text=old_name)
     s1, s2 = Transac_start+old_name, Transac_end+old_name
     if y.ask() == 'Переименовать':
         new_name = y.text.strip()
         lit = event.widget.action.tk_text.get(1.0, tk.END).split('\n')
         for e, line in enumerate(lit):
             l = line.lstrip()
-            if l.startswith(s1) or l.startswith(s2):
-                lit[e] = line.replace(old_name, new_name)
+            if l.startswith(s1) or l.startswith(s2): lit[e] = line.replace(old_name, new_name)
 
         event.widget.action.backup()
         event.widget.delete(1.0, tk.END)
@@ -413,13 +356,10 @@ def rename_transaction(event, parent=None) -> None:
 @lr_pool.T_POOL_execute_decotator
 def encoder(event, action=None) -> None:
     '''декодирование выделения'''
-    try:
-        widget = event.widget
-    except AttributeError:
-        widget = event
+    try: widget = event.widget
+    except AttributeError: widget = event
     if not action:
-        with contextlib.suppress(AttributeError):
-            action = widget.action
+        with contextlib.suppress(AttributeError): action = widget.action
 
     selection = widget.selection_get().strip()
     combo_dict = {
@@ -430,16 +370,13 @@ def encoder(event, action=None) -> None:
         'unicode_escape': lambda: codecs.decode(selection, 'unicode_escape', errors='replace'),
     }
 
-    y = YesNoCancel(['заменить', 'Отмена'], 'заменить выделение', 'cp1251', 'cp1251', parent=(action or widget),
-                    is_text=selection, combo_dict=combo_dict)
-
+    y = YesNoCancel(['заменить', 'Отмена'], 'заменить выделение', 'cp1251', 'cp1251', parent=(action or widget), is_text=selection, combo_dict=combo_dict)
     if y.ask() == 'заменить':
         new_name = y.text.strip()
         if action:
             txt = widget.action.tk_text.get(1.0, tk.END)
             widget.action.backup()
-        else:
-            txt = widget.get(1.0, tk.END)
+        else: txt = widget.get(1.0, tk.END)
 
         new_text = txt.replace(selection, new_name)
         widget.delete(1.0, tk.END)
@@ -472,30 +409,14 @@ def rClicker(event) -> str:
             submenu_param = tk.Menu(rmenu, tearoff=False)
             rmenu.add_cascade(label='P: web_reg_save_param', menu=submenu_param, underline=0)
 
-            submenu_param.add_cascade(
-                label='* одиночный -> найти и заменить', underline=0,
-                command=lambda e=event: rClick_Param(e, mode=['SearchAndReplace']))
-            submenu_param.add_cascade(
-                label='группа(найти по налалу имени) -> найти и заменить', underline=0,
-                command=lambda e=event: group_param(e, params=None))
-            submenu_param.add_cascade(
-                label='* группа(найти по LB=") -> найти и заменить', underline=0,
-                command=lambda e=event: group_param(e, params=False))
-            submenu_param.add_cascade(
-                label='* готовый -> пересоздать, с измененными LB/RB', underline=0,
-                command=lambda e=event: rClick_web_reg_save_param_regenerate(e, new_lb_rb=True))
-            submenu_param.add_cascade(
-                label='готовый -> пересоздать, с оригинальными LB/RB', underline=0,
-                command=lambda e=event: rClick_web_reg_save_param_regenerate(e, new_lb_rb=False))
-            submenu_param.add_cascade(
-                label='одиночный -> найти и подсветить', underline=0,
-                command=lambda e=event: rClick_Param(e, mode=['highlight']))
-            submenu_param.add_cascade(
-                label='одиночный -> только найти', underline=0,
-                command=lambda e=event: rClick_Param(e, mode=[]))
-            submenu_param.add_cascade(
-                label='* одиночный -> удалить по wrsp или param имени', underline=0,
-                command=lambda e=event: remove_web_reg_save_param_from_action(e))
+            submenu_param.add_cascade(label='* одиночный -> найти и заменить', underline=0, command=lambda e=event: rClick_Param(e, mode=['SearchAndReplace']))
+            submenu_param.add_cascade(label='группа(найти по налалу имени) -> найти и заменить', underline=0, command=lambda e=event: group_param(e, params=None))
+            submenu_param.add_cascade(label='* группа(найти по LB=") -> найти и заменить', underline=0, command=lambda e=event: group_param(e, params=False))
+            submenu_param.add_cascade(label='* готовый -> пересоздать, с измененными LB/RB', underline=0, command=lambda e=event: rClick_web_reg_save_param_regenerate(e, new_lb_rb=True))
+            submenu_param.add_cascade(label='готовый -> пересоздать, с оригинальными LB/RB', underline=0, command=lambda e=event: rClick_web_reg_save_param_regenerate(e, new_lb_rb=False))
+            submenu_param.add_cascade(label='одиночный -> найти и подсветить', underline=0, command=lambda e=event: rClick_Param(e, mode=['highlight']))
+            submenu_param.add_cascade(label='одиночный -> только найти', underline=0, command=lambda e=event: rClick_Param(e, mode=[]))
+            submenu_param.add_cascade(label='* одиночный -> удалить по wrsp или param имени', underline=0, command=lambda e=event: remove_web_reg_save_param_from_action(e))
 
         dt = defaults.VarWrspDict.get()
         web_reg_num = dt.get('web_reg_num')
@@ -511,10 +432,12 @@ def rClicker(event) -> str:
                     event.widget.action.search_entry.set(_search)
                     event.widget.action.search_in_action(event.widget.action.search_entry.get())
                     event.widget.action.tk_text_see()
+
             if web_reg_num:
                 reg_num = '{%s}' % web_reg_num
                 cmd = lambda e=event, n=reg_num: action_goto(e, n)
                 submenu_goto.add_cascade(label=reg_num, underline=0, command=cmd)
+
             if param:
                 p_wrsp = lr_param.wrsp_start_end.format(param_Name=param)
                 submenu_goto.add_cascade(label=p_wrsp, underline=0, command=lambda e=event, n=p_wrsp: action_goto(e, n))
@@ -530,8 +453,7 @@ def rClicker(event) -> str:
 
             submenu = tk.Menu(rmenu, tearoff=False)
             colors = defaults.VarColorTeg.get()
-            submenu.add_cascade(
-                label='сорх в файл', underline=0, command=lambda e=event: add_highlight_words_to_file(e))
+            submenu.add_cascade(label='сорх в файл', underline=0, command=lambda e=event: add_highlight_words_to_file(e))
 
             for val in ['добавить', 'удалить']:
                 vSub = tk.Menu(submenu, tearoff=False)
@@ -540,9 +462,7 @@ def rClicker(event) -> str:
                     sub = tk.Menu(vSub, tearoff=False)
                     vSub.add_cascade(label=option, menu=sub, underline=0)
                     for color in colors:
-                        sub.add_command(
-                            label=color, command=lambda e=event, o=option, c=color, v=val: rClick_add_highlight(
-                                e, o, c, v, find=True))
+                        sub.add_command(label=color, command=lambda e=event, o=option, c=color, v=val: rClick_add_highlight(e, o, c, v, find=True))
 
             rmenu.add_cascade(label=' подсветка', menu=submenu, underline=0)
 
@@ -553,15 +473,13 @@ def rClicker(event) -> str:
 def add_highlight_words_to_file(event) -> None:
     '''сохранить слово для подсветки в файл - "навсегда" '''
     selection = event.widget.selection_get()
-    with open(defaults.highlight_words_main_file, 'a') as f:
-        f.write(selection + '\n')
+    with open(defaults.highlight_words_main_file, 'a') as f: f.write(selection + '\n')
     rClick_add_highlight(event, 'foreground', 'olive', 'добавить', find=True)
 
 
 def rClickbinder(widget, wdg=('Text', 'Entry', 'Listbox', 'Label')) -> None:
     with contextlib.suppress(tk.TclError):
-        for b in wdg:
-            widget.bind_class(b, sequence='<Button-3>', func=rClicker, add='')
+        for b in wdg: widget.bind_class(b, sequence='<Button-3>', func=rClicker, add='')
 
 
 class ToolTip(object):
@@ -580,12 +498,10 @@ class ToolTip(object):
         if self.toolTips:
             with self.lock:
                 for tip in self.toolTips:
-                    with contextlib.suppress(Exception):
-                        tip.hidetip()
-                    with contextlib.suppress(Exception):
-                        self.toolTips.remove(tip)
-        with self.lock:
-            self.toolTips.append(self)
+                    with contextlib.suppress(Exception): tip.hidetip()
+                    with contextlib.suppress(Exception): self.toolTips.remove(tip)
+
+        with self.lock: self.toolTips.append(self)
         with contextlib.suppress(Exception):
             x, y, cx, cy = self.widget.bbox("insert")
             x += self.widget.winfo_rootx() + 25
@@ -593,12 +509,10 @@ class ToolTip(object):
             self.tip = tk.Toplevel(self.widget)
             self.tip.wm_overrideredirect(1)
             self.tip.wm_geometry("+%d+%d" % (x, y))
-            tk.Label(self.tip, text=text, justify=tk.LEFT, background=defaults.Background, relief=tk.SOLID,
-                     borderwidth=1, font=defaults.ToolTipFont).pack(ipadx=0, ipady=0)
+            tk.Label(self.tip, text=text, justify=tk.LEFT, background=defaults.Background, relief=tk.SOLID, borderwidth=1, font=defaults.ToolTipFont).pack(ipadx=0, ipady=0)
 
     def hidetip(self) -> None:
-        with contextlib.suppress(Exception):
-            self.tip.destroy()
+        with contextlib.suppress(Exception): self.tip.destroy()
 
 
 def widget_values_counter(widget) -> (int, int):
@@ -608,9 +522,7 @@ def widget_values_counter(widget) -> (int, int):
     with contextlib.suppress(Exception):
         _i = list(widget['values'])
         i = _i.index(widget.get()) + 1
-
-    with contextlib.suppress(Exception):
-        li = len(widget['values'])
+    with contextlib.suppress(Exception): li = len(widget['values'])
 
     return widget.widgetName, i, li
 
@@ -621,8 +533,7 @@ def createToolTip(widget, text: str) -> None:
 
     def enter(event, toolTip=toolTip, text=text, wlines='') -> None:
         wvc = widget_values_counter(widget)
-        if any(wvc[1:]):
-            wlines = ' * {0} выбрана строка {1} из {2}\n'.format(*wvc)
+        if any(wvc[1:]): wlines = ' * {0} выбрана строка {1} из {2}\n'.format(*wvc)
 
         toolTip.showtip('{t}{text}'.format(t=wlines, text=text.rstrip()))
         widget.after(int(defaults.VarToolTipTimeout.get()), toolTip.hidetip)  # тк иногда подсказки "зависают"
@@ -646,8 +557,7 @@ def center_widget(widget) -> None:
 
 class YesNoCancel(tk.Toplevel):
     '''диалог окно, тк велосипед, работает только в потоке'''
-    def __init__(self, buttons: [str, ], text_before: str, text_after: str, title: str, parent=None, default_key='',
-                 is_text=None, focus=None, combo_dict=None):
+    def __init__(self, buttons: [str, ], text_before: str, text_after: str, title: str, parent=None, default_key='', is_text=None, focus=None, combo_dict=None):
         super().__init__(master=parent, padx=0, pady=0)
         self._wind_attributes()
         self.alive_ = True
@@ -686,37 +596,30 @@ class YesNoCancel(tk.Toplevel):
             self.buttons[name].grid(row=i, column=0, sticky=tk.NSEW, columnspan=2, padx=0, pady=0)
             i += 1
 
-        if self.combo_dict:
-            self.combo.grid(row=i + 1, column=0, padx=0, pady=0)
+        if self.combo_dict: self.combo.grid(row=(i + 1), column=0, padx=0, pady=0)
 
         self.text = ''
         self.tk_text = tk.Text(self, wrap="none", padx=0, pady=0)
         if is_text is not None:
             with contextlib.suppress(Exception):
                 height = len(is_text.split('\n'))
-                if height > 25:
-                    height = 25
-                elif height < 5:
-                    height = 5
+                if height > 25: height = 25
+                elif height < 5: height = 5
                 self.tk_text.configure(height=height)
 
             self.tk_text.insert(1.0, is_text)
             self.text_scrolly = ttk.Scrollbar(self, orient=tk.VERTICAL, command=self.tk_text.yview)
             self.text_scrollx = ttk.Scrollbar(self, orient=tk.HORIZONTAL, command=self.tk_text.xview)
-            self.tk_text.configure(
-                yscrollcommand=self.text_scrolly.set, xscrollcommand=self.text_scrollx.set, padx=0, pady=0)
+            self.tk_text.configure(yscrollcommand=self.text_scrolly.set, xscrollcommand=self.text_scrollx.set, padx=0, pady=0)
             self.tk_text.grid(row=0, column=0, sticky=tk.NSEW, padx=0, pady=0)
             self.text_scrollx.grid(row=1, column=0, sticky=tk.NSEW, columnspan=2, padx=0, pady=0)
             self.text_scrolly.grid(row=0, column=1, sticky=tk.NSEW, padx=0, pady=0)
 
         if self.buttons:
-            if self.default_key not in self.buttons:
-                self.default_key = list(self.buttons.keys())[0]
-            if not focus:
-                self.buttons[self.default_key].focus_set()
+            if self.default_key not in self.buttons: self.default_key = list(self.buttons.keys())[0]
+            if not focus: self.buttons[self.default_key].focus_set()
             self.buttons[self.default_key].configure(height=2, background='orange')
-        if focus:
-            focus.focus_set()
+        if focus: focus.focus_set()
 
     def new_text(self, text: str) -> None:
         '''стереть = новый текст в self.tk_text'''
@@ -735,8 +638,7 @@ class YesNoCancel(tk.Toplevel):
 
     def ask(self) -> str:
         '''приостановить поток, до получения ответа'''
-        try:
-            return self.queue.get()
+        try: return self.queue.get()
         finally:
             self.alive_ = False
             self.text = self.tk_text.get(1.0, tk.END) + '\n'

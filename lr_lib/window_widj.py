@@ -5,7 +5,6 @@ import re
 import copy
 import string
 import itertools
-import contextlib
 import tkinter as tk
 import tkinter.ttk as ttk
 from tkinter.font import Font
@@ -148,9 +147,7 @@ def find_tag_indxs(line_num: int, line: str, tag_names: {str: {(str, int), }, })
 
         if _NC in line_indxs:
             line_indxs[_NC] -= set(itertools.chain(*map(line_indxs.__getitem__, (line_indxs.keys() - {_NC}))))
-
-        line_indxs = {k: [set_tk_indxs(line_num, i_start, i_end) for (i_start, i_end) in join_indxs(indxs)]
-                      for (k, indxs) in line_indxs.items() if indxs}
+        line_indxs = {k: [set_tk_indxs(line_num, i_start, i_end) for (i_start, i_end) in join_indxs(indxs)] for (k, indxs) in line_indxs.items() if indxs}
 
     return line_num, line_indxs
 
@@ -384,8 +381,7 @@ class WebLegend(tk.Toplevel):
         hscrollbar = tk.Scrollbar(self, orient=tk.HORIZONTAL)
         hscrollbar.pack(fill=tk.X, side=tk.BOTTOM, expand=tk.FALSE)
 
-        self.canvas = tk.Canvas(
-            self, bd=0, highlightthickness=0, yscrollcommand=vscrollbar.set, xscrollcommand=hscrollbar.set)
+        self.canvas = tk.Canvas(self, bd=0, highlightthickness=0, yscrollcommand=vscrollbar.set, xscrollcommand=hscrollbar.set)
         self.canvas.pack(side=tk.LEFT, fill=tk.BOTH, expand=tk.TRUE)
 
         vscrollbar.config(command=self.canvas.yview)
@@ -396,21 +392,16 @@ class WebLegend(tk.Toplevel):
         self.canvas.config(scrollregion='0 0 %s %s' % tuple(self.minimal_canvas_size))
 
         self.interior = tk.Frame(self.canvas)
-        # interior_id = self.canvas.create_window(0, 0, window=interior, anchor=tk.NW)
         self.interior.bind('<Configure>', self._configure_interior)
 
-        self.h_entry = tk.Spinbox(
-            self, width=4, justify='center', from_=0, to=9999, command=lambda *a: self.print(transac_show=False),
-            textvariable=self.H)
+        self.h_entry = tk.Spinbox(self, width=4, justify='center', from_=0, to=9999, command=lambda *a: self.print(transac_show=False), textvariable=self.H)
         self.h_entry.pack()
 
     def _configure_interior(self, *args) -> None:
         '''update the scrollbars to match the size of the inner frame'''
-        size = (max(self.interior.winfo_reqwidth(), self.minimal_canvas_size[0]),
-                max(self.interior.winfo_reqheight(), self.minimal_canvas_size[1]))
+        size = (max(self.interior.winfo_reqwidth(), self.minimal_canvas_size[0]), max(self.interior.winfo_reqheight(), self.minimal_canvas_size[1]))
         self.canvas.config(scrollregion='0 0 %s %s' % size)
         if self.interior.winfo_reqwidth() != self.canvas.winfo_width():
-            # update the canvas's width to fit the inner frame
             self.canvas.config(width=self.interior.winfo_reqwidth())
 
     def add_web_canavs(self):
@@ -474,9 +465,7 @@ class WebLegend(tk.Toplevel):
                 self.canvas.tag_bind(shape_1, '<ButtonPress-1>', onObjectClick1)
             self.web_canavs[i][1] = list(xy1)
 
-            t1 = self.canvas.create_text(
-                sep + w_, 35, text='Snap: {}\nout: {}'.format(i, len(wdt[i].web_reg_save_param_list)))
-
+            t1 = self.canvas.create_text(sep + w_, 35, text='Snap: {}\nout: {}'.format(i, len(wdt[i].web_reg_save_param_list)))
             self.canvas.tag_bind(t1, '<ButtonPress-1>', onObjectClick1)
             if transaction != _transaction:
                 self.canvas.create_text((sep + w_), (H + 45), text='transac({})'.format(lt if transaction else "''"))
@@ -487,8 +476,7 @@ class WebLegend(tk.Toplevel):
             self.canvas.tag_bind(shape_2, '<ButtonPress-1>', onObjectClick2)
             self.web_canavs[i][2] = list(xy2)
 
-            t2 = self.canvas.create_text(
-                (sep + w_), (H + 15), text='in: {1}\nSnap: {0}'.format(i, ''))  # wdt[i].param_in_web_report()[1]
+            t2 = self.canvas.create_text((sep + w_), (H + 15), text='in: {1}\nSnap: {0}'.format(i, ''))  # wdt[i].param_in_web_report()[1]
             self.canvas.tag_bind(t2, '<ButtonPress-1>', onObjectClick2)
 
             sep += 70
@@ -510,11 +498,8 @@ class WebLegend(tk.Toplevel):
 
                             def title(*a, w=w, web_=web_, dt=dt, rep=rep, i=i) -> None:
                                 '''описание param в title'''
-                                self.title(
-                                    'OUT(t{oi}.snapshot): {p} | {n} | count(in_webs={c}, webs={wwp}, '
-                                    'transac_={twp}, infs={il}  ||  IN(t{i}.snapshot): {rep}'.format(
-                                        p=w.param, n=w.name, c=dt['param_count'], wwp=dt['snapshots'],
-                                        twp=dt['transaction_count'], il=len(dt['snapshots']), rep=rep[i], oi=web_.snapshot, i=i))
+                                self.title('OUT(t{oi}.snapshot): {p} | {n} | count(in_webs={c}, webs={wwp}, transac_={twp}, infs={il}  ||  IN(t{i}.snapshot): {rep}'.format(
+                                    p=w.param, n=w.name, c=dt['param_count'], wwp=dt['snapshots'], twp=dt['transaction_count'], il=len(dt['snapshots']), rep=rep[i], oi=web_.snapshot, i=i))
 
                             self.canvas.tag_bind(l, '<ButtonPress-1>', title)
 
@@ -541,15 +526,11 @@ class LBRBText(tk.Text):
     def __init__(self, name: str, parent: object):
         self.heightVar = tk.IntVar(value=defaults.DEFAULT_LB_RB_MIN_HEIGHT)
 
-        self.label_info = tk.LabelFrame(
-            parent, text=self.info_text[name], font=defaults.DefaultFont + ' bold italic', padx=0, pady=0,
-            relief='groove', labelanchor=tk.N, bd=4)
+        self.label_info = tk.LabelFrame(parent, text=self.info_text[name], font=defaults.DefaultFont + ' bold italic', padx=0, pady=0, relief='groove', labelanchor=tk.N, bd=4)
         self.label_info.grid_rowconfigure(0, weight=1)
         self.label_info.grid_columnconfigure(0, weight=1)
 
-        super().__init__(
-            self.label_info, height=defaults.DEFAULT_LB_RB_MIN_HEIGHT, background=defaults.Background,
-            font=defaults.DefaultLBRBFont, wrap=tk.NONE, padx=0, pady=0)
+        super().__init__(self.label_info, height=defaults.DEFAULT_LB_RB_MIN_HEIGHT, background=defaults.Background, font=defaults.DefaultLBRBFont, wrap=tk.NONE, padx=0, pady=0)
         self.name = name
 
         self.bounds[name] = self

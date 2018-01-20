@@ -16,16 +16,14 @@ from lr_lib import (
 )
 
 
-def file_dict_creator(name: str, full_name: str, inf_num: int, enc: str, inf_key: str, allow_deny: bool,
-                      set_statistic: bool, dn=-1) -> dict:
+def file_dict_creator(name: str, full_name: str, inf_num: int, enc: str, inf_key: str, allow_deny: bool, set_statistic: bool, dn=-1) -> dict:
     '''создать словарь файла'''
     file = get_file_with_kwargs(defaults.AllFiles, Name=name) if inf_num else None
     if file:  # файл уже есть, те пришел из другого inf
         file['Inf']['Nums'].add(inf_num)
     else:  # новый файл
         n, e = os.path.splitext(name)
-        if allow_deny or not ((name in defaults.DENY_FILES) or (e in defaults.DENY_EXT) or
-                              any(p in n for p in defaults.DENY_PART_NAMES)):
+        if allow_deny or not ((name in defaults.DENY_FILES) or (e in defaults.DENY_EXT) or any(p in n for p in defaults.DENY_PART_NAMES)):
             file = dict(
                 File=dict(
                     Name=name,
@@ -149,9 +147,7 @@ def createAllFiles() -> None:
                     defaults.AllFiles.append(file)
 
     if not defaults.AllFiles:
-        lr_log.Logger.critical(
-            'В "{}" отсутствуют t*.inf LoadRunner файлы!\nнеобходимо выбрать каталог " lr_скрипт\\data "\n'
-            'либо сменить директорию кнопкой "Folder"'.format(folder))
+        lr_log.Logger.critical('В "{}" отсутствуют t*.inf LoadRunner файлы!\nнеобходимо выбрать каталог " lr_скрипт\\data "\nлибо сменить директорию кнопкой "Folder"'.format(folder))
 
     for file in defaults.AllFiles:  # Inf_Nums: set -> list
         file['Inf']['Nums'] = sorted(file['Inf']['Nums'])

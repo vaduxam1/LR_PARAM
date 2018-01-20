@@ -259,6 +259,7 @@ def create_files_with_search_data(files: (dict, ), search_data: dict, action=Non
 
             yield file
 
+
 def set_param_in_action_inf(action, param: str) -> int:
     '''первый action-inf в котором расположен param, тк inf-номер запроса <= inf-номер web_reg_save_param'''
     for web_ in action.web_action.get_web_snapshot_all():
@@ -267,9 +268,9 @@ def set_param_in_action_inf(action, param: str) -> int:
             return web_.snapshot
     return 0
 
-def get_files_with_param(param: str, action=None, set_file=True) -> None:
-    '''найти файлы с param'''
-    param = param or defaults.VarParam.get()
+
+def get_search_data(param: str) -> dict:
+    '''данные, для поиска param в AllFiles'''
     search_data = dict(
         Param=dict(
             Name=param,
@@ -281,7 +282,14 @@ def get_files_with_param(param: str, action=None, set_file=True) -> None:
         File=dict(
             encoding=defaults.VarEncode.get(),
         ),
-    )  # данные, для поиска param в AllFiles
+    )
+    return search_data
+
+
+def get_files_with_param(param: str, action=None, set_file=True) -> None:
+    '''найти файлы с param'''
+    param = param or defaults.VarParam.get()
+    search_data = get_search_data(param)
 
     files = tuple(create_files_with_search_data(defaults.AllFiles, search_data, action=action))
     assert files, 'Не найдены файлы, подходящие, под условия поиска. {a}\nsearch_data: {d}'.format(d=search_data, a=action)
@@ -319,16 +327,12 @@ def find_param_ord() -> (int, int):
 
 def new_find_param_ord() -> (int, int):
     '''получить Ord, версия после 7.2.0'''
-    items = param, lb, rb, text = (defaults.VarParam.get(), defaults.VarLB.get(), defaults.VarRB.get(),
-                                   defaults.VarFileText.get())
+    items = param, lb, rb, text = (defaults.VarParam.get(), defaults.VarLB.get(), defaults.VarRB.get(), defaults.VarFileText.get())
     lb_text_index = [len(part) for part in text.split(lb)]  # индексы для определения param в тексте
     len_lbti = len(lb_text_index)
 
-    assert all(items), 'Формирование Ord для web_reg_save_param невозможно, тк поле пусто\n[param, lb, rb, text] == {empty}\nVarWrspDict={wrsp}\nVarPartNum={pn}, max={len_lbti}\nVarFile={fl}'.format(
-        wrsp=defaults.VarWrspDict.get(), empty=list(map(bool, items)), pn=defaults.VarPartNum.get(), len_lbti=len_lbti, fl=defaults.VarFile.get(),)
-
-    assert len_lbti > 1, 'Формирование web_reg_save_param невозможно, тк файл не содержит LB(5)\n{wrsp}'.format(
-        wrsp=defaults.VarWrspDict.get())
+    assert all(items), 'Формирование Ord для web_reg_save_param невозможно, тк поле пусто\n[param, lb, rb, text] == {empty}\nVarWrspDict={wrsp}\nVarPartNum={pn}, max={len_lbti}\nVarFile={fl}'.format(wrsp=defaults.VarWrspDict.get(), empty=list(map(bool, items)), pn=defaults.VarPartNum.get(), len_lbti=len_lbti, fl=defaults.VarFile.get(),)
+    assert len_lbti > 1, 'Формирование web_reg_save_param невозможно, тк файл не содержит LB(5)\n{wrsp}'.format(wrsp=defaults.VarWrspDict.get())
 
     Ord, index = 0, 0  # искомый Ord, текущий LB index
     iter_index = iter(lb_text_index)  # следующий LB index

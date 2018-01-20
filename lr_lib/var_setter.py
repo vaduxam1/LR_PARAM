@@ -83,10 +83,7 @@ def set_part_num(num=0) -> None:
         lb = __lb[-defaults.VarMaxLenLB.get():]
         rb = __rb[:defaults.VarMaxLenRB.get()]
     except Exception:
-        lr_log.Logger.error(
-            'Вероятно закончились доступные комбинации (3)/(4) для посика корректных LB/RB\n\nфайлов: {}, param_num: {}'
-            ', split_text: {}\n\nфайл: {}'.format(
-                len(defaults.FilesWithParam), num, len(split_text), defaults.VarFile.get()))
+        lr_log.Logger.error('Вероятно закончились доступные комбинации (3)/(4) для посика корректных LB/RB\n\nфайлов: {}, param_num: {}, split_text: {}\n\nфайл: {}'.format(len(defaults.FilesWithParam), num, len(split_text), defaults.VarFile.get()))
         raise
 
     # next (3) либо (4), при пустом LB/RB(5)
@@ -205,10 +202,7 @@ def next_3_or_4_if_bad_or_enmpy_lb_rb(text='') -> None:
         if defaults.Window and not defaults.Window._block_:  # при изменении из ядра, менять gui виджеты
             defaults.Window.comboParts.set(defaults.VarPartNum.get())
 
-        lr_log.Logger.trace(
-            'next вхождение(4), при {text} в (5)\n\t{num}->{n}/{pc} : {f} | {p}'.format(
-                num=num, n=n, pc=(file['Param']['Count'] - 1), f=file['File']['Name'], text=text,
-                p=defaults.VarParam.get()))
+        lr_log.Logger.trace('next вхождение(4), при {text} в (5)\n\t{num}->{n}/{pc} : {f} | {p}'.format(num=num, n=n, pc=(file['Param']['Count'] - 1), f=file['File']['Name'], text=text, p=defaults.VarParam.get()))
         return
 
     elif len_files > 0:  # файл(3)
@@ -223,16 +217,10 @@ def next_3_or_4_if_bad_or_enmpy_lb_rb(text='') -> None:
                 defaults.Window.comboFiles.set(defaults.VarFileName.get())
                 defaults.Window.comboPartsFill()
 
-            lr_log.Logger.trace(
-                'next файл(3), при {text} в (5)\n\t{indx}->{ni}/{len_files} : {f} -> {next_file} | {p}'.format(
-                    len_files=len_files, indx=indx, ni=i, f=file['File']['Name'], next_file=file_name, text=text,
-                    p=defaults.VarParam.get()))
+            lr_log.Logger.trace('next файл(3), при {text} в (5)\n\t{indx}->{ni}/{len_files} : {f} -> {next_file} | {p}'.format(len_files=len_files, indx=indx, ni=i, f=file['File']['Name'], next_file=file_name, text=text, p=defaults.VarParam.get()))
             return
 
-    raise UserWarning(
-        'Все возможные LB/RB(5), для формирования param "{p}", пустые/недопустимые.\nСнятие чекбокса "deny" или '
-        '"strip", вероятно поможет. Если требуется, переход к месту замены в тексте, снять чекбоскс "NoAsk", либо '
-        'установить "forceAsk".'.format(p=defaults.VarParam.get()))
+    raise UserWarning('Все возможные LB/RB(5), для формирования param "{p}", пустые/недопустимые.\nСнятие чекбокса "deny" или "strip", вероятно поможет. Если требуется, переход к месту замены в тексте, снять чекбоскс "NoAsk", либо установить "forceAsk".'.format(p=defaults.VarParam.get()))
 
 
 def splitters_combo(combo) -> [str, ]:
