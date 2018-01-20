@@ -4,6 +4,7 @@
 import copy
 import string
 import contextlib
+import itertools
 import collections
 
 from lr_lib import (
@@ -83,6 +84,8 @@ class WebAny:
         if self.comments:
             self.comments = '\n{}'.format(self.comments)
 
+        print('\n{w}({n}):\n\tSnap={sn}, lines={l}, symb={s}, {t}'.format(w=self.type, n=self.name, l=len(self.lines_list), s=len(tuple(itertools.chain(*self.lines_list))), sn=self.snapshot, t=self.transaction))
+
     def _read_snapshot(self) -> int:
         '''Snapshot inf номер'''
         with contextlib.suppress(Exception):
@@ -113,11 +116,11 @@ class WebAny:
 
     def _read_name(self, name='') -> str:
         try:
-            name = self.lines_list[0]
-            name = name.split('",', 1)
-            name = name[0]
-            name = name.split('("', 1)
-            name = name[1]
+            n = self.lines_list[0]
+            n = n.split('",', 1)
+            n = n[0]
+            n = n.split('("', 1)
+            name = n[1]
         except IndexError:
             pass
 
@@ -217,6 +220,7 @@ class WebSnapshot(WebAny):
             self.web_reg_save_param_list = web_reg_save_param_list
             for wrsp in self.web_reg_save_param_list:
                 wrsp.snapshot = self.snapshot
+            print('\tweb_reg_save_param={} шт'.format(len(self.web_reg_save_param_list)))
 
     def to_str(self) -> str:
         '''весь текст web_'''
@@ -261,6 +265,8 @@ class WebRegSaveParam(WebAny):
         self.RB = ''
         self.Ord = ''
         self.Search = ''
+
+        print('\tparam:{}'.format(self.param))
 
     def _read_param(self, param='') -> str:
         try:
@@ -427,7 +433,7 @@ class ActionWebsAndLines:
                             break
 
                     transaction = self.transactions._current()
-                    print('w_type:', w_type, len(web_list), transaction)
+
                     if w_type.startswith('web_reg_save_param'):
                         web_ = WebRegSaveParam(self, web_list, comments, transaction=transaction, _type=w_type)
                         reg_param_list.append(web_)
@@ -517,7 +523,9 @@ class ActionWebsAndLines:
                 if any((getattr(wrsp_web, k) == name) for k in keys):
                     web.web_reg_save_param_list.remove(wrsp_web)
                     _param = wrsp_web.param
-                    self.replace_bodys([('{%s}' % wrsp_web.name, _param)])  # удалить из всех web
+                    wn = lr_param.param_bounds_setter(wrsp_web.name)
+                    self.replace_bodys([(wn, _param), ])  # удалить из всех web
+                    break
 
         return _param
 

@@ -805,7 +805,7 @@ class ActionWindow(tk.Toplevel):
             lr_log.Logger.info('Возможно следующие номера inf лишние, тк содержат слова {s}\nих можно удалить(+"commit/backup/обновить action.c" из меню мыши)\n{w}'.format(w=self.web_action.websReport.google_webs, s=defaults.DENY_WEB_))
 
         self.background_color_set(color='')  # оригинальный цвет
-        self.get_result_files()
+        # self.get_result_files()
 
     def get_transaction(self, text: str) -> iter((str, )):
         '''имена транзакций'''
@@ -1133,7 +1133,7 @@ class ActionWindow(tk.Toplevel):
         if last_snapshot < max_snap:
             self.inf_combo.set(last_snapshot)
             self.goto_inf()
-            # lr_log.Logger.error('При воспроизведении({r})\nне все Snapshot были выполненны: last:{l} < max:{m}'.format(r=os.path.join(folder, rdir), l=last_snapshot, m=max_snap))
+            lr_log.Logger.info('При воспроизведении({r})\nне все Snapshot были выполненны: last:{l} < max:{m}'.format(r=os.path.join(folder, rdir), l=last_snapshot, m=max_snap))
 
         # a = lr_param.get_search_data('None')
         # a = next(lr_param.create_files_with_search_data(defaults.AllFiles, a, action_infs=[last_snapshot]))

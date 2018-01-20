@@ -195,18 +195,24 @@ def get_json(obj, indent=5):
 
 def remove_web_reg_save_param_from_action(event, selection=None) -> None:
     '''удалить web_reg_save_param с w.param или w.name == selection'''
-    if selection is None: selection = event.widget.selection_get()
+    if selection is None:
+        selection = event.widget.selection_get()
 
     param = event.widget.action.web_action.web_reg_save_param_remove(selection)
     event.widget.action.web_action_to_tk_text(websReport=True)  # вставить в action.c
 
-    if param: event.widget.action.search_in_action(word=param)
+    if param:
+        event.widget.action.search_in_action(word=param)
 
 
 @lr_pool.T_POOL_execute_decotator
 def all_wrsp_dict_web_reg_save_param(event) -> None:
-    ''''''
+    '''все варианты создания web_reg_save_param'''
     selection = event.widget.selection_get()
+    with contextlib.suppress(AttributeError):
+        wrsp_and_param = event.widget.action.web_action.websReport.wrsp_and_param_names
+        if selection in wrsp_and_param:
+            selection = wrsp_and_param[selection]
     defaults.VarParam.set(selection, action=event.widget.action, set_file=True)
     defaults.VarWrspDictList.clear()
 
@@ -227,14 +233,11 @@ def all_wrsp_dict_web_reg_save_param(event) -> None:
         except Exception: continue
 
     len_dl = len(defaults.VarWrspDictList)
-    y = YesNoCancel(buttons=['Заменить текущий', 'Создать новый', 'Выйти'], text_before='отображены все найденные варианты, которыми можно создать web_reg_save_param\n' 'необходимо оставить только один вариант, удалив остальные.', text_after='итого %s вариантов.' % len_dl, is_text='\n\n'.join(w[1] for w in defaults.VarWrspDictList), title='{} : {} шт.'.format(selection, len_dl), parent=event.widget.action, default_key='Заменить текущий')
+    y = YesNoCancel(buttons=['Заменить/Создать', 'Выйти'], text_before='отображены все найденные варианты, которыми можно создать web_reg_save_param\nнеобходимо оставить только один вариант, удалив остальные.', text_after=('итого %s вариантов.' % len_dl), is_text='\n\n'.join(w[1] for w in defaults.VarWrspDictList), title='{} : {} шт.'.format(selection, len_dl), parent=event.widget.action, default_key='Заменить/Создать')
     ask = y.ask()
 
-    if ask == 'Заменить текущий':
+    if ask == 'Заменить/Создать':
         remove_web_reg_save_param_from_action(event, selection=selection)
-        ask = 'Создать новый'
-
-    if ask == 'Создать новый':
         user_wrsp = y.text.strip('\n')
         _wrsp = user_wrsp.strip()
         for wrsp_dict, wrsp in defaults.VarWrspDictList:

@@ -15,7 +15,7 @@ from lr_lib import (
 )
 
 #####################################
-VERSION = 'v9.1.0'
+VERSION = 'v9.1.1'
 lib_folder = 'lr_lib'
 Tk = tk.Tk()
 
@@ -340,10 +340,6 @@ VarAllSnapshotConfig = {}  # configparser.ConfigParser() для всех Snapsho
 
 def clearVars() -> None:
     '''очистка'''
-    all_vars = [
-        VarParam, VarFileName, VarFile, VarPartNum, VarLB, VarRB, VarFileText, VarWrspDict, VarFileSortKey1,
-        VarFileSortKey2,
-    ]
-    for var in all_vars:
+    for var in (VarParam, VarFileName, VarFile, VarPartNum, VarLB, VarRB, VarFileText, VarWrspDict, VarFileSortKey1, VarFileSortKey2, ):
         var.set(var.default_value, callback=False)
     FilesWithParam.clear()
