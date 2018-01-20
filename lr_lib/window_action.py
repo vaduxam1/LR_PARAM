@@ -1126,11 +1126,14 @@ class ActionWindow(tk.Toplevel):
             snap = text[1]
             last_snapshot = int(snap) - 1
 
-        max_snap = max(self.action_infs)
+        if self.action_infs:
+            max_snap = max(self.action_infs)
+        else: max_snap = 0
+
         if last_snapshot < max_snap:
             self.inf_combo.set(last_snapshot)
             self.goto_inf()
-            lr_log.Logger.error('При воспроизведении({r})\nне все Snapshot были выполненны: last:{l} < max:{m}'.format(r=os.path.join(folder, rdir), l=last_snapshot, m=max_snap))
+            # lr_log.Logger.error('При воспроизведении({r})\nне все Snapshot были выполненны: last:{l} < max:{m}'.format(r=os.path.join(folder, rdir), l=last_snapshot, m=max_snap))
 
         # a = lr_param.get_search_data('None')
         # a = next(lr_param.create_files_with_search_data(defaults.AllFiles, a, action_infs=[last_snapshot]))

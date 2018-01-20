@@ -100,8 +100,8 @@ def group_param(event, widget=None, params=None, ask=True) -> None:
     wrsp_dict_queue = queue.Queue()
 
     thread_wrsp_dict_creator(wrsp_dict_queue, params, unsuccess_params, action)  # создавать wrsp_dicts
-    progress = lambda: progress_group_param(counter, wrsp_dict['param'], ((len_params / 100) or 1), wrsp, unsuccess_params, len_params, action, [True])
-    lr_pool.MainThreadUpdater.submit(progress)
+    p1 = ((len_params / 100) or 1)
+    progress = lambda: progress_group_param(counter, wrsp_dict['param'], p1, wrsp, unsuccess_params, len_params, action)
 
     replace_list = []  # [('aFFXt', '{P_9882_4_Window_main_a_FFX_t}'), ('aFFX9', '{P_3768_1_Window_login_a_FFX_9}')]
     action.backup()
@@ -110,6 +110,7 @@ def group_param(event, widget=None, params=None, ask=True) -> None:
         defaults.Window._block_ = True
 
         for counter, wrsp_dict in enumerate(iter(wrsp_dict_queue.get, None), start=1):
+            lr_pool.MainThreadUpdater.submit(progress)
             wrsp_name = lr_param.param_bounds_setter(wrsp_dict['web_reg_num'])
             wrsp = lr_param.web_reg_save_param.format(**wrsp_dict)
             with contextlib.suppress(Exception): action.param_inf_checker(wrsp_dict, wrsp)
@@ -124,18 +125,13 @@ def group_param(event, widget=None, params=None, ask=True) -> None:
     lr_pool.MainThreadUpdater.submit(lambda: final_group_param(widget, unsuccess_params=unsuccess_params, log=True))
 
 
-def progress_group_param(counter: int, param: str, proc1: int, wrsp: str, unsuccess_params: [str,], len_params: int, action, is_run: list, wait=1) -> None:
+def progress_group_param(counter: int, param: str, proc1: int, wrsp: str, unsuccess_params: [str,], len_params: int, action) -> None:
     '''прогресс group_param()'''
-    if not any(is_run):
-        return
     lu = len(unsuccess_params)
     u = (' | fail: %s' % lu if lu else '')
     t = '{param} : web_reg_save_param : {counter}/{len_params} : {w} %{u}\n{wrsp}'.format(counter=counter, len_params=len_params, u=u, w=round(counter / proc1), param=param, wrsp=wrsp)
     action.toolbar['text'] = t
     action.background_color_set(color=None)
-
-    if any(is_run):
-        defaults.Tk.after(wait, progress_group_param, counter, param, proc1, wrsp, unsuccess_params, len_params, action, is_run, wait)
 
 @lr_pool.T_POOL_execute_decotator
 def thread_wrsp_dict_creator(wrsp_dict_queue, params, unsuccess_params, action) -> None:
@@ -215,14 +211,18 @@ def all_wrsp_dict_web_reg_save_param(event) -> None:
     defaults.VarWrspDictList.clear()
 
     wrsp_dict = lr_param.wrsp_dict_creator()
-    if wrsp_dict: defaults.VarWrspDictList.append([wrsp_dict, lr_param.create_web_reg_save_param(wrsp_dict)])
+    if wrsp_dict:
+        dt = [wrsp_dict, lr_param.create_web_reg_save_param(wrsp_dict)]
+        defaults.VarWrspDictList.append(dt)
     else: return
 
     while True:
         try:
             lr_setter.next_3_or_4_if_bad_or_enmpy_lb_rb('поиск всех возможных wrsp_dict')
             wrsp_dict = lr_param.wrsp_dict_creator()
-            if wrsp_dict: defaults.VarWrspDictList.append([wrsp_dict, lr_param.create_web_reg_save_param(wrsp_dict)])
+            if wrsp_dict:
+                dt = [wrsp_dict, lr_param.create_web_reg_save_param(wrsp_dict)]
+                defaults.VarWrspDictList.append(dt)
         except UserWarning: break
         except Exception: continue
 

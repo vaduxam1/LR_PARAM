@@ -22,9 +22,12 @@ start_transaction = 'lr_start_transaction'
 end_transaction = 'lr_end_transaction'
 
 
-def read_web_type(first_line: str) -> str:
-    _type = first_line.split('("', 1)
-    return _type[0].strip()
+def read_web_type(first_line: str, s1='("', s2='(') -> str:
+    s = (s1 if (s1 in first_line) else s2)
+    t = first_line.split(s, 1)
+    if len(t) == 2:
+        return t[0].strip()
+    else: raise UserWarning('{l} не содержит {s}'.format(l=first_line, s=[s1, s2]))
 
 
 def _body_replace(body_split, len_body_split, search, replace) -> iter((str, )):
@@ -108,15 +111,25 @@ class WebAny:
 
         return txt.strip('\n')
 
-    def _read_name(self) -> str:
+    def _read_name(self, name='') -> str:
         try:
             name = self.lines_list[0]
             name = name.split('",', 1)
             name = name[0]
             name = name.split('("', 1)
-            return name[1]
+            name = name[1]
         except IndexError:
-            return ''
+            pass
+
+        if (not name) and (self.type == 'web_reg_save_param_ex'):
+            s = '"ParamName='
+            for line in self.lines_list:
+                sline = line.strip().split(s, 1)
+                if len(sline) == 2:
+                    name = sline[1].split('"')[0]
+                    break
+
+        return name
 
     def ask_replace(self, param, replace, left, right, ask_dict) -> bool:
         dk = (nta, yta, rais)
@@ -125,13 +138,14 @@ class WebAny:
                 raise UserWarning('Прервано!\n{}'.format('\n\t###\n'.join((param, replace, left, right, ask_dict))))
             return ask_dict.get(nta) or ask_dict.get(yta)
 
-        t2 = 'хотя строка и содержит param-имя "{p}"\nоно является частью другого, более длинного имени: \nЗаменить на "{r}" ?'.format(p=param, r=replace)
+        t2 = 'хотя строка и содержит param-имя "{p}"\nоно является частью другого, более длинного имени:\nЗаменить на "{r}" ?'.format(p=param, r=replace)
         t1 = 'заменяемая строка:\n{prev}{p}{part}'.format(prev=left[-defaults.AskLbRbMaxLen:].rsplit('\n', 1)[-1].lstrip(), p=param, part=right[:defaults.AskLbRbMaxLen].split('\n', 1)[0].rstrip())
         y = lr_wlib.YesNoCancel(buttons=buttons, text_before=t1, text_after=t2, title='автозамена "{s}" на "{r}"'.format(s=param, r=replace), parent=self.parent_AWAL.action, default_key=nta, focus=self.parent_AWAL.action.tk_text)
         a = y.ask()
         if ask_dict and (a in dk):
             ask_dict[a] = True
-        return a in (ys, yta)
+        r = (a in (ys, yta))
+        return r
 
     def param_find_replace(self, param: str, replace=None, ask_dict=None) -> (int, int):
         '''автоматическая замена, c диалоговыми окнами'''
@@ -248,13 +262,14 @@ class WebRegSaveParam(WebAny):
         self.Ord = ''
         self.Search = ''
 
-    def _read_param(self) -> str:
+    def _read_param(self, param='') -> str:
         try:
             if lr_param.wrsp_start in self.comments:
-                return self.comments.split(lr_param.wrsp_start, 1)[1].split(lr_param.wrsp_end, 1)[0]
+                param = self.comments.split(lr_param.wrsp_start, 1)[1].split(lr_param.wrsp_end, 1)[0]
             elif 'PARAM["' in self.comments:
-                return self.comments.split('PARAM["', 1)[1].split(lr_param.wrsp_end, 1)[0]
-            else:  # если param создавал LoadRunner
+                param = self.comments.split('PARAM["', 1)[1].split(lr_param.wrsp_end, 1)[0]
+
+            if not param:  # если param создавал LoadRunner
                 srch = '{%s} = "' % self.name
                 for line in self.comments.split('\n'):
                     if srch in line:
@@ -262,10 +277,11 @@ class WebRegSaveParam(WebAny):
                         if len(line_list) > 1:
                             line_list = line_list[1].rsplit('"', 1)
                             if len(line_list) > 1:
-                                return line_list[0]
+                                param = line_list[0]
         except Exception as ex:
             lr_log.Logger.debug('найти исходное имя param из {t}.\n{w}\n{e}\n{cm}'.format(e=ex, w=self.name, t=self.type, cm=self.comments))
-        return ''
+
+        return param
 
     def to_str(self) -> str:
         '''web_reg_save_param текст + //lr:Usage коментарий'''
@@ -402,7 +418,7 @@ class ActionWebsAndLines:
                 web_list = [line]  # web_ текст Snapshot запроса
                 w_type = read_web_type(line)
 
-                if strip_line.endswith(lr_param._block_endswith):  # тело запроса
+                if strip_line.endswith(lr_param._block_endswith) or strip_line.endswith('('):  # тело запроса
 
                     for web_line in iter_lines:
                         line_num += 1
@@ -411,7 +427,7 @@ class ActionWebsAndLines:
                             break
 
                     transaction = self.transactions._current()
-
+                    print('w_type:', w_type, len(web_list), transaction)
                     if w_type.startswith('web_reg_save_param'):
                         web_ = WebRegSaveParam(self, web_list, comments, transaction=transaction, _type=w_type)
                         reg_param_list.append(web_)
@@ -430,7 +446,7 @@ class ActionWebsAndLines:
                     comments = ''
                     continue
 
-                elif strip_line.endswith(lr_param._block_endswith3):  # однострочные web_
+                elif any(map(strip_line.endswith, lw_end)):  # однострочные web_
                     web_ = WebAny(self, web_list, comments, transaction=self.transactions._current(), _type=w_type)
                     self.add_to_text_list(web_)
                     comments = ''
