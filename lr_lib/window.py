@@ -100,7 +100,7 @@ class Window(ttk.Frame):
         self.last_frameCbx1 = ttk.Label(self.LB.label_info, padding="0 0 0 0")
         self.last_frameCbx2 = ttk.Label(self.RB.label_info, padding="0 0 0 0")
 
-        @lr_pool.T_POOL_execute_decotator
+        @lr_pool.T_POOL_decorator
         def lr_note(ob) -> None:
             lr_log.openTextInEditor(ob.get())
 
@@ -206,7 +206,7 @@ class Window(ttk.Frame):
         self.ButtonNote = tk.Button(self.last_frame, text='text', command=lambda: lr_log.openTextInEditor(self.tk_text.get('1.0', tk.END)), font=defaults.DefaultFont + ' italic', padx=0, pady=0)
         self.ButtonLog = tk.Button(self.last_frame, text='log', font=defaults.DefaultFont + ' italic', padx=0, pady=0, command=lambda: subprocess.Popen([defaults.EDITOR['exe'], defaults.logFullName]))
 
-        @lr_pool.T_POOL_execute_decotator
+        @lr_pool.T_POOL_decorator
         def editor_fn(*a):
             '''открыть в editor'''
             return subprocess.Popen([defaults.EDITOR['exe'], lr_files.get_file_with_kwargs(defaults.FilesWithParam)['File']['FullName']])
@@ -707,7 +707,7 @@ class Window(ttk.Frame):
         if defaults.T_POOL_NAME == 'SThreadPool(threading.Thread)':
             self.pool_state_updater()
 
-    @lr_pool.T_POOL_execute_decotator
+    @lr_pool.T_POOL_decorator
     def pool_state_updater(self) -> None:
         '''SThreadPool(threading.Thread) текст состояния пула'''
         def pool_state_string(st=lambda i: '{0:<6} : {1}'.format(*i)) -> str:

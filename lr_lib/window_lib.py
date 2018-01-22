@@ -23,7 +23,7 @@ from lr_lib import (
 )
 
 
-@lr_pool.T_POOL_execute_decotator
+@lr_pool.T_POOL_decorator
 def mouse_web_reg_save_param(widget, param, mode=('SearchAndReplace', 'highlight', ), wrsp=None, wrsp_dict=None, set_param=True) -> None:
     '''в окне action.c, для param, автозамена, залить цветом, установить виджеты'''
     action = widget.action
@@ -52,7 +52,7 @@ def mouse_web_reg_save_param(widget, param, mode=('SearchAndReplace', 'highlight
             lr_widj.highlight_mode(widget, param)
             action.tk_text.set_highlight()
 
-@lr_pool.T_POOL_execute_decotator
+@lr_pool.T_POOL_decorator
 def rClick_Param(event, *args, **kwargs) -> None:
     '''web_reg_save_param из выделения, меню правой кнопки мыши'''
     widget = event.widget
@@ -73,7 +73,7 @@ def rClick_Param(event, *args, **kwargs) -> None:
     defaults.Window.get_files(param=param, callback=callback, action=action)
 
 
-@lr_pool.T_POOL_execute_decotator
+@lr_pool.T_POOL_decorator
 def group_param(event, widget=None, params=None, ask=True) -> None:
     '''группа web_reg_save_param из выделения, меню правой кнопки мыши'''
     if widget is None: widget = event.widget
@@ -133,7 +133,7 @@ def progress_group_param(counter: int, param: str, proc1: int, wrsp: str, unsucc
     action.toolbar['text'] = t
     action.background_color_set(color=None)
 
-@lr_pool.T_POOL_execute_decotator
+@lr_pool.T_POOL_decorator
 def thread_wrsp_dict_creator(wrsp_dict_queue, params, unsuccess_params, action) -> None:
     '''создать wrsp_dicts в потоке, чтобы не терять время, при показе popup окон'''
     for param in params:
@@ -169,7 +169,7 @@ def repA(widget) -> None:
     rep = widget.action.web_action.websReport.all_in_one
     t = 'transac_len={}, param_len={}'.format(len(rep), len(widget.action.web_action.websReport.wrsp_and_param_names))
     y = YesNoCancel(buttons=['OK'], text_before='repA', text_after='websReport.all_in_one', is_text=get_json(rep), title=t, parent=widget.action)
-    lr_pool.T_POOL_execute_decotator(y.ask)()
+    lr_pool.T_POOL_decorator(y.ask)()
 
 
 def repB(widget, counter=None) -> None:
@@ -184,7 +184,7 @@ def repB(widget, counter=None) -> None:
     ta = ('\n\n' + st).join('{}:{}{}{}'.format(e, ao[e - 1], st, get_json(ob)) for e, ob in enumerate(obj, start=1))
 
     y = YesNoCancel(buttons=['OK'], text_before=tb, text_after='{} шт'.format(counter), is_text='\n\n{}'.format(ta), title='создано: {} шт.'.format(counter), parent=widget.action)
-    lr_pool.T_POOL_execute_decotator(y.ask)()
+    lr_pool.T_POOL_decorator(y.ask)()
     lr_log.Logger.trace('{}\n\n{}'.format(tb, ta))
 
 
@@ -205,7 +205,7 @@ def remove_web_reg_save_param_from_action(event, selection=None) -> None:
         event.widget.action.search_in_action(word=param)
 
 
-@lr_pool.T_POOL_execute_decotator
+@lr_pool.T_POOL_decorator
 def all_wrsp_dict_web_reg_save_param(event) -> None:
     '''все варианты создания web_reg_save_param'''
     selection = event.widget.selection_get()
@@ -245,7 +245,7 @@ def all_wrsp_dict_web_reg_save_param(event) -> None:
                 return mouse_web_reg_save_param(event.widget, selection, wrsp=user_wrsp, wrsp_dict=wrsp_dict)
 
 
-@lr_pool.T_POOL_execute_decotator
+@lr_pool.T_POOL_decorator
 def rClick_web_reg_save_param_regenerate(event, new_lb_rb=True) -> None:
     '''из выделения, переформатировать LB/RB в уже созданном web_reg_save_param, меню правой кнопки мыши'''
     selection = event.widget.selection_get()
@@ -334,7 +334,7 @@ Transac_start = 'lr_start_transaction("'
 Transac_end = 'lr_end_transaction("'
 
 
-@lr_pool.T_POOL_execute_decotator
+@lr_pool.T_POOL_decorator
 def rename_transaction(event, parent=None) -> None:
     selection = event.widget.selection_get().strip()
     try: old_name = selection.split(Transac_start, 1)[1].split('"', 1)[0]
@@ -356,7 +356,7 @@ def rename_transaction(event, parent=None) -> None:
         event.widget.action.save_action_file(file_name=False)
 
 
-@lr_pool.T_POOL_execute_decotator
+@lr_pool.T_POOL_decorator
 def encoder(event, action=None) -> None:
     '''декодирование выделения'''
     try: widget = event.widget

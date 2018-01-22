@@ -126,7 +126,7 @@ def create_files_from_inf(args: [(str, str, bool, bool), str]) -> iter((dict, ))
                             yield file
 
 
-@lr_log.exec_time
+# @lr_log.exec_time
 def createAllFiles() -> None:
     '''создать все файлы для поиска param'''
     defaults.AllFiles.clear()

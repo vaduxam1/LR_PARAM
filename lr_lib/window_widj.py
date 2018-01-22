@@ -56,11 +56,11 @@ class HighlightLines:
             return
 
         if defaults.LineTagAddThread.get():
-            tags_highlight = lr_pool.T_POOL_execute_decotator(self.tegs_add)
+            tags_highlight = lr_pool.T_POOL_decorator(self.tegs_add)
         else:
             tags_highlight = self.tegs_add
         if defaults.TagAddThread.get():
-            highlight_cmd = lr_pool.T_POOL_execute_decotator(self.tk_text.tag_add)
+            highlight_cmd = lr_pool.T_POOL_decorator(self.tk_text.tag_add)
         else:
             highlight_cmd = self.tk_text.tag_add
 
@@ -91,7 +91,7 @@ class HighlightLines:
         self.bottom_line_num = bottom
 
         if defaults.HighlightThread.get():
-            highlight_line_nums = lr_pool.T_POOL_execute_decotator(self.highlight_line_nums)
+            highlight_line_nums = lr_pool.T_POOL_decorator(self.highlight_line_nums)
         else:
             highlight_line_nums = self.highlight_line_nums
 

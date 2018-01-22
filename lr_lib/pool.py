@@ -287,7 +287,7 @@ def close() -> None:
     MainThreadUpdater.working = False
 
 
-def T_POOL_execute_decotator(func):
+def T_POOL_decorator(func):
     '''декоратор, выполнения func в T_POOL потоке'''
     @functools.wraps(func)
     def wrap(*args, **kwargs):

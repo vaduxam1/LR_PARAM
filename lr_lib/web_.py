@@ -84,7 +84,7 @@ class WebAny:
         if self.comments:
             self.comments = '\n{}'.format(self.comments)
 
-        print('\n{w}({n}):\n\tSnap={sn}, lines={l}, symb={s}, {t}'.format(w=self.type, n=self.name, l=len(self.lines_list), s=len(tuple(itertools.chain(*self.lines_list))), sn=self.snapshot, t=self.transaction))
+        # print('\n{w}({n}):\n\tSnap={sn}, lines={l}, symb={s}, {t}'.format(w=self.type, n=self.name, l=len(self.lines_list), s=len(tuple(itertools.chain(*self.lines_list))), sn=self.snapshot, t=self.transaction))
 
     def _read_snapshot(self) -> int:
         '''Snapshot inf номер'''
@@ -220,7 +220,7 @@ class WebSnapshot(WebAny):
             self.web_reg_save_param_list = web_reg_save_param_list
             for wrsp in self.web_reg_save_param_list:
                 wrsp.snapshot = self.snapshot
-            print('\tweb_reg_save_param={} шт'.format(len(self.web_reg_save_param_list)))
+            # print('\tweb_reg_save_param={} шт'.format(len(self.web_reg_save_param_list)))
 
     def to_str(self) -> str:
         '''весь текст web_'''
@@ -266,7 +266,7 @@ class WebRegSaveParam(WebAny):
         self.Ord = ''
         self.Search = ''
 
-        print('\tparam:{}'.format(self.param))
+        # print('\tparam:{}'.format(self.param))
 
     def _read_param(self, param='') -> str:
         try:
@@ -374,7 +374,7 @@ class ActionWebsAndLines:
         else:
             self.webs_and_lines.append(element)
 
-    @lr_log.exec_time
+    # @lr_log.exec_time
     def set_text_list(self, text: str, websReport=True) -> None:
         '''создать все web_action объекты'''
         with self.action.block():
@@ -529,7 +529,7 @@ class ActionWebsAndLines:
 
         return _param
 
-    @lr_log.exec_time
+    # @lr_log.exec_time
     def to_str(self, websReport=False) -> str:
         '''весь action текст как строка'''
         if websReport:
@@ -571,7 +571,7 @@ class WebReport:
         self._wrsp = {}  # {'P_6046_1__z_k62_0': <lr_lib.web_.WebRegSaveParam object at 0x09252770>, ...}
         self.all_in_one = {}
 
-    @lr_log.exec_time
+    # @lr_log.exec_time
     def create(self):
         self.wrsp_and_param_names = {}
         self.param_statistic = {}
@@ -664,14 +664,19 @@ class WebReport:
         for dt in self.web_transaction.values():
             dt['minmax_snapshots'] = snapshot_diapason_string(dt['snapshots'])
 
-        get_web = lambda sn: self.parent_AWAL.get_web_by(snapshot=sn)
-        stats = lambda w: {k: v for (k, v) in self.param_statistic[w.name].items() if k not in ('snapshots', 'transaction_names', 'snapshots_count', )}
+        n = ('snapshots', 'transaction_names', 'snapshots_count', )
+        stats = lambda w: {k: v for (k, v) in self.param_statistic[w.name].items() if k not in n}
+        web_reg = lambda s: {w.name: {'param': w.param, 'stats': stats(w)} for w in next(self.parent_AWAL.get_web_by(snapshot=s)).web_reg_save_param_list}
         for t in self.web_transaction:
             dtt = next(get_sub_transaction_dt(t, self.all_in_one))
             dtt.update(copy.deepcopy(self.web_transaction[t]))
-            dtt['snapshots'] = {s: {w.name: {'param': w.param, 'stats': stats(w)} for w in next(get_web(s)).web_reg_save_param_list} for s in dtt['snapshots']}
+            dtt['snapshots'] = {s: web_reg(s) for s in dtt['snapshots']}
 
-        self.checker_warn()
+        dt = self.checker_warn()
+        for lvl in dt:
+            msgs = dt[lvl]
+            if msgs:
+                getattr(lr_log.Logger, lvl)('\n'.join(msgs))
 
         # highlight
         for wr in wrsp_all:
@@ -722,14 +727,19 @@ class WebReport:
         else:
             return ''
 
-    def checker_warn(self):
+    def checker_warn(self) -> dict:
+        result = {'warning': [], 'debug': []}
         for t in self.parent_AWAL.transactions.names:
-            if t not in self.web_transaction:
-                lr_log.Logger.debug('Пустая транзакция "{}"'.format(t))
+            if t.startswith(Transactions._no_transaction_name):
+                continue
+            dtt = next(get_sub_transaction_dt(t, self.all_in_one))
+            if (not dtt) and (t not in self.web_transaction):
+                result['info'].append('Пустая транзакция "{}"'.format(t))
             if t not in self.parent_AWAL.transactions.start_stop['start']:
-                lr_log.Logger.warning('Отсутствует транзакция start_transaction("{}")'.format(t))
+                result['warning'].append('Отсутствует транзакция start_transaction("{}")'.format(t))
             if t not in self.parent_AWAL.transactions.start_stop['stop']:
-                lr_log.Logger.warning('Отсутствует транзакция stop_transaction("{}")'.format(t))
+                result['warning'].append('Отсутствует транзакция stop_transaction("{}")'.format(t))
+        return result
 
 
 def snapshot_diapason_string(infs: [int, ]) -> str:
@@ -800,7 +810,8 @@ class Transactions:
 
 
 def get_sub_transaction_dt(transaction, obj) -> dict:
-    '''словарь транзакции, внутри вложенного словаря Transactions.sub_transaction'''
+    '''словарь транзакции, внутри вложенного словаря Transactions.sub_transaction
+    dtt = next(get_sub_transaction_dt(t, self.all_in_one))'''
     if isinstance(obj, collections.OrderedDict):
         if transaction in obj:
             yield obj[transaction]

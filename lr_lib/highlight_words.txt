@@ -1,4 +1,4 @@
-# -*- coding: UTF-8 -*-
+﻿# -*- coding: UTF-8 -*-
 # слова для подсветки
 
 /zkau
@@ -599,3 +599,9 @@ Pm:
 Sn:
 :ys"
 :dd"
+|p=
+Analytic
+Excel
+miss
+launch
+own

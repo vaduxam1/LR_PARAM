@@ -96,7 +96,7 @@ class ActionWindow(tk.Toplevel):
         #
         self.wrsp_combo = ttk.Combobox(self.wrsp_bar, justify='center', font=defaults.DefaultFont)
 
-        @lr_pool.T_POOL_execute_decotator
+        @lr_pool.T_POOL_decorator
         def goto_wrsp(*a) -> None:
             with contextlib.suppress(tk.TclError):
                 self.search_in_action(word=self.wrsp_combo.get(), hist=False)
@@ -106,7 +106,7 @@ class ActionWindow(tk.Toplevel):
 
         self.param_combo = ttk.Combobox(self.wrsp_bar, justify='center', font=defaults.DefaultFont)
 
-        @lr_pool.T_POOL_execute_decotator
+        @lr_pool.T_POOL_decorator
         def goto_param(*a) -> None:
             with contextlib.suppress(tk.TclError):
                 self.search_in_action(word=self.param_combo.get(), hist=False)
@@ -117,7 +117,7 @@ class ActionWindow(tk.Toplevel):
         #
         self.transaction_combo = ttk.Combobox(self.transaction_bar, justify='center', font=defaults.DefaultFont)
 
-        @lr_pool.T_POOL_execute_decotator
+        @lr_pool.T_POOL_decorator
         def goto_transaction(*a) -> None:
             with contextlib.suppress(tk.TclError):
                 self.search_in_action(word=self.transaction_combo.get(), hist=False)
@@ -220,7 +220,7 @@ class ActionWindow(tk.Toplevel):
         self.backup_entry = tk.Entry(self.file_bar, font=defaults.DefaultFont, width=5, justify='center')
         self.backup_entry.insert('1', defaults.BackupActionFile)
 
-        @lr_pool.T_POOL_execute_decotator
+        @lr_pool.T_POOL_decorator
         def repl_butt(*a) -> None:
             '''кнопка замены текста'''
             if messagebox.askyesno(str(ActionWindow), "action.c: Заменить ? :\n\n{s}\n\n на :\n\n{r}".format(s=self.SearchReplace_searchVar.get(), r=self.SearchReplace_replaceVar.get()), parent=self):
@@ -279,7 +279,7 @@ class ActionWindow(tk.Toplevel):
         self.lr_report_B = tk.Button(self.toolbar, text='reportB', font=defaults.DefaultFont + ' bold', padx=0, pady=0, command=lambda *a: lr_wlib.repB(self.tk_text))
         self.lr_report_A = tk.Button(self.toolbar, text='reportA', font=defaults.DefaultFont + ' bold', padx=0, pady=0, command=lambda *a: lr_wlib.repA(self.tk_text))
 
-        @lr_pool.T_POOL_execute_decotator
+        @lr_pool.T_POOL_decorator
         def all_transaction_rename(*a) -> None:
             '''переименавать все транзакции'''
             _transactions = [t.split('"', 1)[1] for t in self.transaction]
@@ -503,12 +503,12 @@ class ActionWindow(tk.Toplevel):
         if auto_param_creator and len(defaults.Window.action_windows) < 2:
             self.auto_param_creator()
 
-    @lr_pool.T_POOL_execute_decotator
+    @lr_pool.T_POOL_decorator
     def goto_inf(self, *a) -> None:
         with contextlib.suppress(tk.TclError):
             self.search_in_action(word=lr_param.Snap.format(num=self.inf_combo.get().strip()), hist=False)
 
-    @lr_pool.T_POOL_execute_decotator
+    @lr_pool.T_POOL_decorator
     def bold_selection_set(self, *a) -> None:
         self.tk_text.set_tegs(parent=self)
 
@@ -543,7 +543,7 @@ class ActionWindow(tk.Toplevel):
         self.text_scrolly.set(*argv)
         self.report_position()
 
-    @lr_pool.T_POOL_execute_decotator
+    @lr_pool.T_POOL_decorator
     def dummy_btn_cmd(self, *a) -> None:
         '''удалить dummy из action'''
         self.set_template_list(force=True)
@@ -718,7 +718,7 @@ class ActionWindow(tk.Toplevel):
         if messagebox.askquestion('сброс', 'сбросить текст настройки цветов?', parent=self) == 'yes':
             self.tk_text.reset_highlight()
 
-    @lr_pool.T_POOL_execute_decotator
+    @lr_pool.T_POOL_decorator
     def open_action_dialog(self, *a, title=False, folder=os.getcwd()) -> None:
         '''открыть файл'''
         if title:
@@ -783,7 +783,7 @@ class ActionWindow(tk.Toplevel):
         self.tk_text.set_highlight()
         self.widj_reset()
 
-    @lr_pool.T_POOL_execute_decotator
+    @lr_pool.T_POOL_decorator
     # @lr_log.exec_time
     def open_action(self, file=None) -> None:
         '''окно action.c'''
@@ -826,7 +826,7 @@ class ActionWindow(tk.Toplevel):
         self.set_title()
         self.set_combo_len()
 
-    @lr_pool.T_POOL_execute_decotator
+    @lr_pool.T_POOL_decorator
     def auto_param_creator(self, *a) -> None:
         '''group params по кнопке PARAM'''
         y = lr_wlib.YesNoCancel(['Найти', 'Отменить'], is_text='\n'.join(defaults.Params_names), parent=self, text_before='Будет произведен поиск param, имя которых начинается на указанные имена.', title='начало param-имен', text_after='При необходимости - добавить/удалить')
