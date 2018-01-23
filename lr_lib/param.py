@@ -20,6 +20,17 @@ LR_COMENT = '//lr:'
 WEB_REG_NUM = 'P_{wrsp_rnd_num}_{infs}_{lb_name}__{wrsp_name}__{rb_name}'
 
 
+_web_reg_save_param = '''
+// PARAM["{param_Name}"] // INF{inf_nums}
+web_reg_save_param("{web_reg_num}",
+    "LB={lb}",
+    "RB={rb}",
+    "Ord={param_ord}",
+    "Search={search_key}",
+    LAST); 
+'''
+
+
 web_reg_save_param = '''
 // INF{inf_nums}, [{param_inf_min}:{param_inf_max}]={search_inf_len} -> [{_param_inf_min}:{_param_inf_max}]={_param_inf_all} | FILE["{Name}"], with_param = {file_index}/{param_files} | {create_time}
 // PARAM["{param_Name}"], count={param_part}/{param_count}, NA={param_NotPrintable} | LB[{Lb_len}~{lb_len}] NA={lb_NotPrintable}, RB[{Rb_len}~{rb_len}] NA={rb_NotPrintable}
@@ -74,7 +85,12 @@ def create_web_reg_save_param(wrsp_dict=None) -> str:
     else:
         defaults.VarWrspDict.set(wrsp_dict)
 
-    return web_reg_save_param.format(**wrsp_dict)
+    if defaults.VarWRSPStats.get():
+        wrsp_string = web_reg_save_param
+    else:
+        wrsp_string = _web_reg_save_param
+
+    return wrsp_string.format(**wrsp_dict)
 
 
 wrsp_allow_symb = string.ascii_letters + string.digits + '_!-'  # из каких символов, может состоять param
@@ -104,36 +120,7 @@ def wrsp_dict_creator(is_param=True) -> dict:
     else:
         param_ord, param_index = -1, -1
 
-    if len(Lb) > 2:
-        lb_name = ['']
-        for b in Lb:
-            if b in allow_lrb: lb_name[-1] += b
-            elif lb_name[-1]: lb_name.append('')
-        lb_name = [b for b in filter(bool, lb_name) if b not in defaults.LRB_rep_list]
-        lb_name = '_'.join(sorted(set(lb_name), key=lb_name.index))[-defaults.MaxRbWrspName:]
-    else:
-        lb_name = ''
-
-    if len(Rb) > 2:
-        rb_name = ['']
-        for b in Rb:
-            if b in allow_lrb: rb_name[-1] += b
-            elif rb_name[-1]: rb_name.append('')
-        rb_name = [b for b in filter(bool, rb_name) if b not in defaults.LRB_rep_list]
-        rb_name = '_'.join(sorted(set(rb_name), key=rb_name.index))[:defaults.MaxRbWrspName]
-    else:
-        rb_name = ''
-
-    # Печатные символы искомого param(1), войдут в имя для web_reg_save_param(6), втозамена не должна затронуть имя параметра
-    wn = [s for s in param  if s in allow_lrb]
-    w2 = ''.join(wn[1:-1])
-    wrsp_name = '{w1}_{w2}_{w3}'.format(w2=w2, w1=wn[0], w3=wn[-1])[:defaults.MaxParamWrspName + 2]
-    wrsp_name = WEB_REG_NUM.format(
-        wrsp_rnd_num=random.randrange(defaults.MinWrspRnum, defaults.MaxWrspRnum), wrsp_name=wrsp_name,
-        lb_name=lb_name, rb_name=rb_name, infs='_'.join(map(str, file['Inf']['Nums'])))
-    wrsp_name = str.translate(wrsp_name, wrsp_deny_punctuation).replace('___', '__')
-    while wrsp_name.endswith('_'):
-        wrsp_name = wrsp_name[:-1]
+    wrsp_name = wrsp_name_creator(param, Lb, Rb, file)
 
     search_key = 'All'
     # if file['Inf']['inf_key'] == 'ResponseHeaderFile':
@@ -177,6 +164,59 @@ def wrsp_dict_creator(is_param=True) -> dict:
     web_reg_save_param_dict.update({'param_{}'.format(k): v for k, v in file['Param'].items()})
 
     return web_reg_save_param_dict
+
+
+def wrsp_name_creator(param, Lb, Rb, file) -> str:
+    '''печатные символы искомого param(1), войдут в имя для web_reg_save_param(6)'''
+    MaxLbWrspName = defaults.MaxLbWrspName.get()
+    MaxRbWrspName = defaults.MaxRbWrspName.get()
+
+    if MaxLbWrspName and (len(Lb) > 2):
+        lb_name = ['']
+        for b in Lb:
+            if b in allow_lrb:
+                lb_name[-1] += b
+            elif lb_name[-1]:
+                lb_name.append('')
+        lb_name = [b for b in filter(bool, lb_name) if b not in defaults.LRB_rep_list]
+        lb_name = '_'.join(sorted(set(lb_name), key=lb_name.index))[-MaxLbWrspName:]
+    else:
+        lb_name = ''
+
+    if MaxRbWrspName and (len(Rb) > 2):
+        rb_name = ['']
+        for b in Rb:
+            if b in allow_lrb:
+                rb_name[-1] += b
+            elif rb_name[-1]:
+                rb_name.append('')
+        rb_name = [b for b in filter(bool, rb_name) if b not in defaults.LRB_rep_list]
+        rb_name = '_'.join(sorted(set(rb_name), key=rb_name.index))[:MaxRbWrspName]
+    else:
+        rb_name = ''
+
+    wn = [s for s in param if s in allow_lrb]
+    w2 = ''.join(wn[1:-1])
+    if defaults.MaxWrspRnum:
+        wrsp_rnd_num = random.randrange(defaults.MinWrspRnum.get(), defaults.MaxWrspRnum.get())
+    else:
+        wrsp_rnd_num = ''
+
+    wrsp_name = defaults.wrsp_name_splitter.get().join((w2, wn[0], wn[-1]))
+    MaxParamWrspName = defaults.MaxParamWrspName.get()
+    if MaxParamWrspName:
+        wrsp_name = wrsp_name[:MaxParamWrspName + 2]
+
+    infs = '_'.join(map(str, file['Inf']['Nums']))
+    wrsp_name = WEB_REG_NUM.format(wrsp_rnd_num=wrsp_rnd_num, wrsp_name=wrsp_name, lb_name=lb_name, rb_name=rb_name, infs=infs)
+
+    wrsp_name = str.translate(wrsp_name, wrsp_deny_punctuation)
+    while '___' in wrsp_name:
+        wrsp_name = wrsp_name.replace('___', '__')
+    while wrsp_name.endswith('_'):
+        wrsp_name = wrsp_name[:-1]
+
+    return wrsp_name
 
 
 def screening_wrsp(s: str, t={ord(c): '\\{}'.format(c) for c in defaults.Screening}) -> str:

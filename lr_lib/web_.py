@@ -104,14 +104,13 @@ class WebAny:
         '''весь текст web_'''
         comments = self.comments
 
-        if self.snapshot in self.parent_AWAL.websReport.rus_webs:
-            comments += '\n\t{} WARNING: NO ASCII Symbols(rus?)'.format(lr_param.LR_COMENT)
-        if (len(self.lines_list) > 2) and (not self.snapshot):
-            comments += '\n\t{} WARNING: no "Snapshot=t.inf" (del?)'.format(lr_param.LR_COMENT)
+        if defaults.VarWebStatsWarn.get():
+            if self.snapshot in self.parent_AWAL.websReport.rus_webs:
+                comments += '\n\t{} WARNING: NO ASCII Symbols(rus?)'.format(lr_param.LR_COMENT)
+            if (len(self.lines_list) > 2) and (not self.snapshot):
+                comments += '\n\t{} WARNING: no "Snapshot=t.inf" (del?)'.format(lr_param.LR_COMENT)
 
-        txt = '{coment_text}\n{snap_text}'.format(
-            coment_text=comments, snap_text='\n'.join(self.lines_list))
-
+        txt = '{coment_text}\n{snap_text}'.format(coment_text=comments, snap_text='\n'.join(self.lines_list))
         return txt.strip('\n')
 
     def _read_name(self, name='') -> str:
@@ -224,9 +223,15 @@ class WebSnapshot(WebAny):
 
     def to_str(self) -> str:
         '''весь текст web_'''
-        _tr = self.parent_AWAL.websReport.stats_transaction_web(self)
-        _out = self.parent_AWAL.websReport.stats_out_web(self.snapshot)
-        _in = self.parent_AWAL.websReport.stats_in_web(self.snapshot)
+        if defaults.VarWebStatsTransac.get():
+            _tr = self.parent_AWAL.websReport.stats_transaction_web(self)
+        else: _tr = ''
+        if defaults.VarWebStatsOut.get():
+            _out = self.parent_AWAL.websReport.stats_out_web(self.snapshot)
+        else: _out = ''
+        if defaults.VarWebStatsIn.get():
+            _in = self.parent_AWAL.websReport.stats_in_web(self.snapshot)
+        else: _in = ''
 
         if any((_tr, _out, _in)):
             stat_string = '{t}{o}{i}'.format(t=_tr, o=_out, i=_in)
@@ -234,12 +239,13 @@ class WebSnapshot(WebAny):
 
         text = super().to_str()
 
-        bad_wrsp = []
-        for w in self.web_reg_save_param_list:
-            if self.snapshot in self.parent_AWAL.websReport.param_statistic[w.name]['snapshots']:
-                bad_wrsp.append(w.param)
-        if bad_wrsp:
-            text = '\t{c} WARNING: WrspInAndOutUsage: {lp}={p}\n{t}'.format(t=text, c=lr_param.LR_COMENT, p=bad_wrsp, lp=len(bad_wrsp))
+        if defaults.VarWebStatsWarn.get():
+            bad_wrsp = []
+            for w in self.web_reg_save_param_list:
+                if self.snapshot in self.parent_AWAL.websReport.param_statistic[w.name]['snapshots']:
+                    bad_wrsp.append(w.param)
+            if bad_wrsp:
+                text = '\t{c} WARNING: WrspInAndOutUsage: {lp}={p}\n{t}'.format(t=text, c=lr_param.LR_COMENT, p=bad_wrsp, lp=len(bad_wrsp))
 
         txt = '{wrsp}{stat_string}\n{text}'.format(stat_string=stat_string, text=text, wrsp=''.join(map(WebRegSaveParam.to_str, self.web_reg_save_param_list)))
         return txt.strip('\n')
@@ -291,15 +297,20 @@ class WebRegSaveParam(WebAny):
 
     def to_str(self) -> str:
         '''web_reg_save_param текст + //lr:Usage коментарий'''
-        rep = self.parent_AWAL.websReport.param_statistic[self.name]
         comments = self.comments
 
-        if not rep['param_count']:
-            comments += '\n{c} WARNING: NoWebRegSaveParamUsage?'.format(c=lr_param.LR_COMENT)
-        elif self.snapshot >= min(filter(bool, rep['snapshots'])):
-            comments += '\n{c} WARNING: WrspInAndOutUsage wrsp.snapshot >= usage.snapshot'.format(c=lr_param.LR_COMENT)
+        if defaults.VarWebStatsWarn.get():
+            rep = self.parent_AWAL.websReport.param_statistic[self.name]
+            if not rep['param_count']:
+                comments += '\n{c} WARNING: NoWebRegSaveParamUsage?'.format(c=lr_param.LR_COMENT)
+            elif self.snapshot >= min(filter(bool, rep['snapshots'])):
+                comments += '\n{c} WARNING: WrspInAndOutUsage wrsp.snapshot >= usage.snapshot'.format(c=lr_param.LR_COMENT)
 
-        txt = '{usage_string}{coment_text}\n{snap_text}'.format(usage_string=self.usage_string(), coment_text=comments, snap_text='\n'.join(self.lines_list))
+        if defaults.VarWebStatsTransac.get():
+            usage_string = self.usage_string()
+        else: usage_string = ''
+        txt = '{usage_string}{coment_text}\n{snap_text}'.format(usage_string=usage_string, coment_text=comments,
+                                                                snap_text='\n'.join(self.lines_list))
         return '\n{}\n'.format(txt.strip('\n'))
 
     def usage_string(self) -> str:
@@ -307,7 +318,9 @@ class WebRegSaveParam(WebAny):
         ps = rep.param_statistic[self.name]
         wt = rep.web_transaction[self.transaction]
         t_snap = (wt['minmax_snapshots'] if self.transaction else '')
-        tn = sorted(ps['transaction_names'], key=rep.web_transaction_sorted.index)
+        if defaults.VarWRSPStatsTransacNames.get():
+            tn = sorted(ps['transaction_names'], key=rep.web_transaction_sorted.index)
+        else: tn = ''
         s = '{c} ({w_transac}: {t_snap}) -> Param:{p_all} | Snapshots:{snap} | Transactions={len_transac}:{transac_names}'.format(
             wrsp_name=self.transaction, p_all=ps['param_count'], snap=ps['minmax_snapshots'], c=lr_param.LR_COMENT, len_transac=ps['transaction_count'], transac_names=tn, w_transac=self.transaction, t_snap=t_snap)
         return s
@@ -500,7 +513,7 @@ class ActionWebsAndLines:
         inf = wrsp_dict['inf_nums'][0]
         web_ = next(self.get_web_snapshot_by(snapshot=inf))
         if not wrsp:
-            wrsp = lr_param.web_reg_save_param.format(**wrsp_dict)
+            wrsp = lr_param.create_web_reg_save_param(wrsp_dict)
 
         ws = wrsp.split(lr_param.wrsp_lr_start, 1)
         if len(ws) == 2:

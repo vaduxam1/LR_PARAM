@@ -15,9 +15,19 @@ from lr_lib import (
 )
 
 #####################################
-VERSION = 'v9.1.2'
+VERSION = 'v9.1.3'
 lib_folder = 'lr_lib'
 Tk = tk.Tk()
+
+#####################################
+# статистика в каментах
+VarWebStatsTransac = tk.BooleanVar(value=True)  # коментарии с именем транзакции
+VarWebStatsIn = tk.BooleanVar(value=True)  # In коментарии
+VarWebStatsOut = tk.BooleanVar(value=True)  # Out коментарии
+VarWebStatsWarn = tk.BooleanVar(value=True)  # Warning коментарии
+VarWRSPStatsTransac = tk.BooleanVar(value=True)  # для wrsp, статистика использования param
+VarWRSPStatsTransacNames = tk.BooleanVar(value=True)  # для wrsp, имена транзакций в которых используется param
+VarWRSPStats = tk.BooleanVar(value=True)  # для wrsp, создавать подробные/короткие коментарии
 
 #####################################
 FindParamPOOLEnable = True  # использовать M_POOL, для поиска param, в файлах ответов
@@ -147,11 +157,12 @@ allow_symbols = set(allow_symbols)
 
 #####################################
 # {web_reg_save_param} имя param
-MaxLbWrspName = 20  # макс число символов, взятых из LB, для wrsp имени param
-MaxRbWrspName = 20  # макс число символов, взятых из RB, для wrsp имени param
-MaxParamWrspName = 20  # макс число символов, взятых из param, для wrsp имени param
-MinWrspRnum = 1000  # мин число, для случайного номера, в wrsp имени param
-MaxWrspRnum = 9999  # макс число, для случайного номера, в wrsp имени param
+MaxLbWrspName = tk.IntVar(value=25)  # макс число символов, взятых из LB, для wrsp имени param
+MaxRbWrspName = tk.IntVar(value=25)  # макс число символов, взятых из RB, для wrsp имени param
+MaxParamWrspName = tk.IntVar(value=50)  # макс число символов, взятых из param, для wrsp имени param
+MinWrspRnum = tk.IntVar(value=1000)  # мин число, для случайного номера, в wrsp имени param
+MaxWrspRnum = tk.IntVar(value=9999)  # макс число, для случайного номера, в wrsp имени param
+wrsp_name_splitter = tk.StringVar(value='')  # символ разделения именя wrsp(для '_'): Win__aFFX9__id -> Win__a_FFX_9__id
 LRB_rep_list = [
     'zul', 'path', 'Set', 'wnd', 'sel', 'inp', 'dt', 'wgt', 'imp', 'false', 'true', 'visible', 'cmd', 'label', 'zclass',
     'btn', 'menu', 'tab', 'cmb', 'amp',
@@ -228,7 +239,6 @@ VarDefaultColorTeg = {
     },
     'foreground': {
         'olive': highlight_words,
-        'black': {'[t', ':t', '=t', },
         'purple': _LB_LIST_highlight,
     },
 }

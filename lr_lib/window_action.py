@@ -127,7 +127,6 @@ class ActionWindow(tk.Toplevel):
 
         self.font_size_entry = tk.Spinbox(self.font_toolbar, width=2, justify='center', from_=0, to=99, command=self.tk_text.set_font, textvariable=self.tk_text.size_var, font=defaults.DefaultFont)
         self.font_size_entry.bind("<KeyRelease-Return>", self.tk_text.set_font)
-
         self.selection_font_size_entry = tk.Spinbox(self.font_toolbar, width=2, justify='center', from_=0, to=99, textvariable=self.size_var, font=defaults.DefaultFont, command=lambda *a: self.tk_text.set_tegs(parent=self, remove=False))
         self.selection_font_size_entry.bind("<KeyRelease-Return>", lambda *a: self.tk_text.set_tegs(parent=self, remove=False))
 
@@ -146,8 +145,7 @@ class ActionWindow(tk.Toplevel):
         self.font_combo.bind("<KeyRelease-Return>", self.tk_text.set_font)
         self.font_combo.bind("<<ComboboxSelected>>", self.tk_text.set_font)
 
-        self.selection_font_combo = ttk.Combobox(
-            self.font_toolbar, textvariable=self.font_var, justify='center', font=defaults.DefaultFont)
+        self.selection_font_combo = ttk.Combobox(self.font_toolbar, textvariable=self.font_var, justify='center', font=defaults.DefaultFont)
         self.selection_font_combo['values'] = list(sorted(tk.font.families()))
         self.selection_font_combo.bind("<KeyRelease-Return>", self.bold_selection_set)
         self.selection_font_combo.bind("<<ComboboxSelected>>", self.bold_selection_set)
@@ -157,7 +155,6 @@ class ActionWindow(tk.Toplevel):
 
         self.background_color_combo = ttk.Combobox(self.cbx_bar, textvariable=self.background_var, justify='center', font=defaults.DefaultFont)
         self.background_color_combo['values'] = list(sorted(lr_help.COLORS.keys()))
-
         self.background_color_combo.bind("<KeyRelease-Return>", self.background_color_set)
         self.background_color_combo.bind("<<ComboboxSelected>>", self.background_color_set)
         self.config(background=self.background_color_combo.get())
@@ -170,10 +167,8 @@ class ActionWindow(tk.Toplevel):
         self.down_search_button = tk.Button(self.toolbar, text='down->', command=self.search_down, font=defaults.DefaultFont + ' bold', padx=0, pady=0)
 
         self.unblock = tk.Button(self.file_bar, text='unblock', font=defaults.DefaultFont + ' bold', command=lambda *a: self._block(False), padx=0, pady=0)
-
         self.backup_open_button = tk.Button(self.file_bar, text='backup_open', background='orange', font=defaults.DefaultFont + ' bold', command=lambda *a: self.open_action_dialog(title=True, folder=defaults.BackupFolder), padx=0, pady=0)
         self.save_action_button = tk.Button(self.file_bar, text='save', font=defaults.DefaultFont + ' bold', command=self.save_action_file, padx=0, pady=0)
-
         self.open_button = tk.Button(self.file_bar, text='open', font=defaults.DefaultFont, command=self.open_action_dialog, padx=0, pady=0)
         self.editor_button = tk.Button(self.file_bar, text='editor', font=defaults.DefaultFont + ' bold', padx=0, pady=0, command=lambda: lr_log.openTextInEditor(self.tk_text.get(1.0, tk.END)))
 
@@ -187,36 +182,31 @@ class ActionWindow(tk.Toplevel):
         self.tk_text.action = self  # !!! доступ извне
 
         self.search_res_combo = ttk.Combobox(self.toolbar, textvariable=self.searchPosVar, justify='center', font=defaults.DefaultFont, background=defaults.Background)
-
         self.search_res_combo.bind("<<ComboboxSelected>>", self.tk_text_see)
         self.search_res_combo.bind("<KeyRelease-Return>", self.tk_text_see)
-
         self.SearchReplace_searchCombo = ttk.Combobox(self.toolbar, textvariable=self.SearchReplace_searchVar, justify='center', font=defaults.DefaultFont + ' italic', foreground="purple")
-
         self.SearchReplace_replaceCombo = ttk.Combobox(self.toolbar, textvariable=self.SearchReplace_replaceVar, justify='center', font=defaults.DefaultFont, foreground="maroon")
-
         self.SearchReplace_searchCombo['values'] = [__a]
         self.SearchReplace_replaceCombo['values'] = [__b]
         self.search_entry['values'] = [__a]
 
         self.auto_param_creator_button = tk.Button(self.toolbar, text='Найти\n*param*', font=defaults.DefaultFont + ' bold', command=self.auto_param_creator, background='orange', padx=0, pady=0)
 
-        self.final_wnd_cbx = tk.Checkbutton(self.toolbar, text='final\nwind', font=defaults.DefaultFont, variable=self.final_wnd_var, padx=0, pady=0)
+        self.final_wnd_cbx = tk.Checkbutton(self.toolbar, text='final', font=defaults.DefaultFont, variable=self.final_wnd_var, padx=0, pady=0)
+        self.wrsp_setting = tk.Button(self.toolbar, text='wrsp_setting', font=defaults.DefaultFont, command=self.wrsp_setting_wnd, padx=0, pady=0)
 
         def force_ask_cmd(*a) -> None:
             if self.force_ask_var.get():
                 self.no_var.set(0)
 
-        self.force_ask_cbx = tk.Checkbutton(self.toolbar, text='force\nAsk', font=defaults.DefaultFont, variable=self.force_ask_var, command=force_ask_cmd, padx=0, pady=0)
-
+        self.force_ask_cbx = tk.Checkbutton(self.toolbar, text='forceAsk', font=defaults.DefaultFont, variable=self.force_ask_var, command=force_ask_cmd, padx=0, pady=0)
         self.highlight_cbx = tk.Checkbutton(self.cbx_bar, text='highlight', font=defaults.DefaultFont, background=defaults.Background, variable=self.tk_text.highlight_var, command=self.tk_text.set_highlight, padx=0, pady=0)
 
         def no_var_cmd(*a) -> None:
             if self.no_var.get():
                 self.force_ask_var.set(0)
 
-        self.no_cbx = tk.Checkbutton(self.toolbar, text='No\nAsk', font=defaults.DefaultFont, variable=self.no_var, command=no_var_cmd, padx=0, pady=0)
-
+        self.no_cbx = tk.Checkbutton(self.toolbar, text='NoAsk', font=defaults.DefaultFont, variable=self.no_var, command=no_var_cmd, padx=0, pady=0)
         self.backup_entry = tk.Entry(self.file_bar, font=defaults.DefaultFont, width=5, justify='center')
         self.backup_entry.insert('1', defaults.BackupActionFile)
 
@@ -305,7 +295,7 @@ class ActionWindow(tk.Toplevel):
 
         self.transaction_rename = tk.Button(self.toolbar, text='rename\ntransaction', font=defaults.DefaultFont + ' bold', background='orange', padx=0, pady=0, command=all_transaction_rename)
         self.dummy_button = tk.Button(self.toolbar, text="Snapshot remove", font=defaults.DefaultFont + ' bold', background='orange', padx=0, pady=0, command=self.dummy_btn_cmd)
-        self.force_yes_inf_checker_cbx = tk.Checkbutton(self.toolbar, text='force\nYes inf', font=defaults.DefaultFont, variable=self.force_yes_inf, padx=0, pady=0)
+        self.force_yes_inf_checker_cbx = tk.Checkbutton(self.toolbar, text='forceInfYes', font=defaults.DefaultFont, variable=self.force_yes_inf, padx=0, pady=0)
 
         self.search_entry.grid(row=5, column=0, columnspan=8, sticky=tk.NSEW, padx=0, pady=0)
         self.search_button.grid(row=5, column=8, sticky=tk.NSEW, padx=0, pady=0)
@@ -327,11 +317,12 @@ class ActionWindow(tk.Toplevel):
 
         self.open_button.grid(row=6, column=16, sticky=tk.NSEW, padx=0, pady=0)
         self.editor_button.grid(row=7, column=16, padx=0, pady=0, sticky=tk.NSEW, columnspan=2)
-        self.no_cbx.grid(row=7, column=10, sticky=tk.NSEW, padx=0, pady=0, rowspan=2)
+        self.no_cbx.grid(row=7, column=10, sticky=tk.W, padx=0, pady=0)
         self.auto_param_creator_button.grid(row=7, column=8, sticky=tk.NSEW, padx=0, pady=0, rowspan=2)
-        self.force_ask_cbx.grid(row=7, column=11, sticky=tk.NSEW, padx=0, pady=0, rowspan=2)
+        self.force_ask_cbx.grid(row=8, column=10, sticky=tk.W, padx=0, pady=0)
         self.unblock.grid(row=9, column=17, sticky=tk.NSEW, padx=0, pady=0)
-        self.final_wnd_cbx.grid(row=7, column=9, sticky=tk.NSEW, padx=0, pady=0, rowspan=2)
+        self.final_wnd_cbx.grid(row=8, column=12, sticky=tk.W, padx=0, pady=0)
+        self.wrsp_setting.grid(row=7, column=9, sticky=tk.NSEW, padx=0, pady=0, rowspan=2)
 
         self.font_size_entry.grid(row=12, column=4, sticky=tk.NSEW, padx=0, pady=0)
         self.font_combo.grid(row=10, column=0, columnspan=10, sticky=tk.NSEW, padx=0, pady=0)
@@ -384,7 +375,7 @@ class ActionWindow(tk.Toplevel):
         self.max_inf_cbx.grid(row=7, column=1, sticky=tk.NSEW, padx=0, pady=0, rowspan=2)
         self.add_inf_cbx.grid(row=7, column=2, sticky=tk.NSEW, padx=0, pady=0, rowspan=2)
         self.dummy_button.grid(row=7, column=13, sticky=tk.NSEW, padx=0, pady=0, rowspan=2)
-        self.force_yes_inf_checker_cbx.grid(row=7, column=12, sticky=tk.NSEW, padx=0, pady=0, rowspan=2)
+        self.force_yes_inf_checker_cbx.grid(row=7, column=12, sticky=tk.W, padx=0, pady=0)
         self.lr_legend.grid(row=7, column=3, sticky=tk.NSEW, padx=0, pady=0)
         self.lr_think_time.grid(row=7, column=4, sticky=tk.NSEW, padx=0, pady=0)
         self.lr_report_B.grid(row=8, column=4, sticky=tk.NSEW, padx=0, pady=0)
@@ -392,6 +383,7 @@ class ActionWindow(tk.Toplevel):
         self.transaction_rename.grid(row=7, column=5, sticky=tk.NSEW, padx=0, pady=0, rowspan=2)
 
         lr_wlib.createToolTip(self.editor_button, 'открыть текст action в блокноте\n\t# editor_button')
+        lr_wlib.createToolTip(self.wrsp_setting, 'настройки каментов и имени wrsp\n\t# wrsp_setting')
         lr_wlib.createToolTip(self.backup_entry, 'макс кол-во backup файлов(запись по кругу)\nперед автозаменой, в '
                                                  'директорию {folder}, делается action бэкап\n\t# backup_entry'.format(
             folder=os.path.join(os.getcwd(), defaults.BackupFolder)))
@@ -502,6 +494,62 @@ class ActionWindow(tk.Toplevel):
         self.open_action()
         if auto_param_creator and len(defaults.Window.action_windows) < 2:
             self.auto_param_creator()
+
+    def wrsp_setting_wnd(self) -> None:
+        '''окно настройки каментов и имени wrsp'''
+        top = tk.Toplevel()
+        top.transient(self)
+        top.resizable(width=False, height=False)
+        top.title('настройка каментов и имени wrsp')
+        VarWebStatsTransac = tk.Checkbutton(top, text='VarWebStatsTransac', font=defaults.DefaultFont, variable=defaults.VarWebStatsTransac)
+        VarWebStatsIn = tk.Checkbutton(top, text='VarWebStatsIn', font=defaults.DefaultFont, variable=defaults.VarWebStatsIn)
+        VarWebStatsOut = tk.Checkbutton(top, text='VarWebStatsOut', font=defaults.DefaultFont, variable=defaults.VarWebStatsOut)
+        VarWebStatsWarn = tk.Checkbutton(top, text='VarWebStatsWarn', font=defaults.DefaultFont, variable=defaults.VarWebStatsWarn)
+        VarWRSPStatsTransac = tk.Checkbutton(top, text='VarWRSPStatsTransac', font=defaults.DefaultFont, variable=defaults.VarWRSPStatsTransac)
+        VarWRSPStatsTransacNames = tk.Checkbutton(top, text='VarWRSPStatsTransacNames', font=defaults.DefaultFont, variable=defaults.VarWRSPStatsTransacNames)
+        VarWRSPStats = tk.Checkbutton(top, text='VarWRSPStats', font=defaults.DefaultFont, variable=defaults.VarWRSPStats)
+
+        MaxLbWrspName = tk.Spinbox(top, textvariable=defaults.MaxLbWrspName, font=defaults.DefaultFont)
+        MaxRbWrspName = tk.Spinbox(top, textvariable=defaults.MaxRbWrspName, font=defaults.DefaultFont)
+        MaxParamWrspName = tk.Spinbox(top, textvariable=defaults.MaxParamWrspName, font=defaults.DefaultFont)
+        MinWrspRnum = tk.Spinbox(top, textvariable=defaults.MinWrspRnum, font=defaults.DefaultFont)
+        MaxWrspRnum = tk.Spinbox(top, textvariable=defaults.MaxWrspRnum, font=defaults.DefaultFont)
+        wrsp_name_splitter = tk.Entry(top, textvariable=defaults.wrsp_name_splitter, font=defaults.DefaultFont)
+
+        apply_btn = tk.Button(top, command=lambda: self.save_action_file(file_name=False), font=defaults.DefaultFont, text='применить')
+        lr_wlib.createToolTip(apply_btn, 'применить изменения')
+
+        lr_wlib.createToolTip(VarWebStatsTransac, 'коментарии с именем транзакции')
+        lr_wlib.createToolTip(VarWebStatsIn, 'In коментарии')
+        lr_wlib.createToolTip(VarWebStatsOut, 'Out коментарии')
+        lr_wlib.createToolTip(VarWebStatsWarn, 'Warning коментарии')
+        lr_wlib.createToolTip(VarWRSPStatsTransac, 'для wrsp, статистика использования param')
+        lr_wlib.createToolTip(VarWRSPStatsTransacNames, 'для wrsp, имена транзакций в которых используется param')
+        lr_wlib.createToolTip(VarWRSPStats, 'для wrsp, создавать подробные/короткие коментарии\nИзменится только при пересоздании param')
+
+        lr_wlib.createToolTip(MaxLbWrspName, 'макс число символов, взятых из LB, для wrsp имени param\nИзменится только при пересоздании param')
+        lr_wlib.createToolTip(MaxRbWrspName, 'макс число символов, взятых из RB, для wrsp имени param\nИзменится только при пересоздании param')
+        lr_wlib.createToolTip(MaxParamWrspName, 'макс число символов, взятых из param, для wrsp имени param\nИзменится только при пересоздании param')
+        lr_wlib.createToolTip(MinWrspRnum, 'мин число, для случайного номера, в wrsp имени param\nИзменится только при пересоздании param')
+        lr_wlib.createToolTip(MaxWrspRnum, 'макс число, для случайного номера, в wrsp имени param\nИзменится только при пересоздании param')
+        lr_wlib.createToolTip(wrsp_name_splitter, 'символ разделения именя wrsp(для "_"): Win__aFFX9__id -> Win__a_FFX_9__id\nИзменится только при пересоздании param')
+
+        VarWebStatsTransac.pack()
+        VarWebStatsIn.pack()
+        VarWebStatsOut.pack()
+        VarWebStatsWarn.pack()
+        VarWRSPStatsTransac.pack()
+        VarWRSPStatsTransacNames.pack()
+        VarWRSPStats.pack()
+
+        MaxLbWrspName.pack()
+        MaxRbWrspName.pack()
+        MaxParamWrspName.pack()
+        MinWrspRnum.pack()
+        MaxWrspRnum.pack()
+        wrsp_name_splitter.pack()
+
+        apply_btn.pack()
 
     @lr_pool.T_POOL_decorator
     def goto_inf(self, *a) -> None:
@@ -913,7 +961,7 @@ class ActionWindow(tk.Toplevel):
             if not wrsp_dict:  # текущий
                 wrsp_dict = defaults.VarWrspDict.get()
             if not wrsp:
-                wrsp = lr_param.web_reg_save_param.format(**wrsp_dict)
+                wrsp = lr_param.create_web_reg_save_param(wrsp_dict)
 
         if not replace:
             replace = wrsp_dict['web_reg_num']

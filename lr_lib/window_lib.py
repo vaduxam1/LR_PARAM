@@ -112,7 +112,7 @@ def group_param(event, widget=None, params=None, ask=True) -> None:
         for counter, wrsp_dict in enumerate(iter(wrsp_dict_queue.get, None), start=1):
             lr_pool.MainThreadUpdater.submit(progress)
             wrsp_name = lr_param.param_bounds_setter(wrsp_dict['web_reg_num'])
-            wrsp = lr_param.web_reg_save_param.format(**wrsp_dict)
+            wrsp = lr_param.create_web_reg_save_param(wrsp_dict)
             with contextlib.suppress(Exception): action.param_inf_checker(wrsp_dict, wrsp)
 
             replace_list.append((wrsp_dict['param'], wrsp_name))
@@ -279,7 +279,7 @@ def rClick_web_reg_save_param_regenerate(event, new_lb_rb=True) -> None:
 
     wrsp_dict = lr_param.wrsp_dict_creator()  # сформировать wrsp_dict
     wrsp_dict['web_reg_num'] = wrsp_name  # сохранить старое имя
-    web_reg_save_param = lr_param.web_reg_save_param.format(**wrsp_dict)  # создать
+    web_reg_save_param = lr_param.create_web_reg_save_param(wrsp_dict)  # создать
 
     txt = event.widget.get(1.0, tk.END).replace(selection, web_reg_save_param)
     action.backup()
