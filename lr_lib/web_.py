@@ -4,7 +4,6 @@
 import copy
 import string
 import contextlib
-import itertools
 import collections
 
 from lr_lib import (

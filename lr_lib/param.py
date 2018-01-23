@@ -196,16 +196,15 @@ def wrsp_name_creator(param, Lb, Rb, file) -> str:
         rb_name = ''
 
     wn = [s for s in param if s in allow_lrb]
-    w2 = ''.join(wn[1:-1])
+    wrsp_name = defaults.wrsp_name_splitter.get().join((wn[0], ''.join(wn[1:-1]), wn[-1]))
+    MaxParamWrspName = defaults.MaxParamWrspName.get()
+    if MaxParamWrspName:
+        wrsp_name = wrsp_name[:MaxParamWrspName + 2]
+
     if defaults.MaxWrspRnum:
         wrsp_rnd_num = random.randrange(defaults.MinWrspRnum.get(), defaults.MaxWrspRnum.get())
     else:
         wrsp_rnd_num = ''
-
-    wrsp_name = defaults.wrsp_name_splitter.get().join((w2, wn[0], wn[-1]))
-    MaxParamWrspName = defaults.MaxParamWrspName.get()
-    if MaxParamWrspName:
-        wrsp_name = wrsp_name[:MaxParamWrspName + 2]
 
     infs = '_'.join(map(str, file['Inf']['Nums']))
     wrsp_name = WEB_REG_NUM.format(wrsp_rnd_num=wrsp_rnd_num, wrsp_name=wrsp_name, lb_name=lb_name, rb_name=rb_name, infs=infs)
