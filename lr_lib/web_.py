@@ -306,7 +306,7 @@ class WebRegSaveParam(WebAny):
             elif self.snapshot >= min(filter(bool, rep['snapshots'])):
                 comments += '\n{c} WARNING: WrspInAndOutUsage wrsp.snapshot >= usage.snapshot'.format(c=lr_param.LR_COMENT)
 
-        if defaults.VarWebStatsTransac.get():
+        if defaults.VarWRSPStatsTransac.get():
             usage_string = self.usage_string()
         else: usage_string = ''
         txt = '{usage_string}{coment_text}\n{snap_text}'.format(usage_string=usage_string, coment_text=comments,
