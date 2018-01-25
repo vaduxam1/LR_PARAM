@@ -690,7 +690,7 @@ class ActionWindow(tk.Toplevel):
         self.up_search_button['text'] = self._uptext % '{0}/{1}'.format(a, b)
 
         if not self.search_res_combo['values']:
-            return lr_log.Logger.warning('в action.c тексте не найдено:\nword="{w}"\ntype={t}\nlen={ln}'.format(w=word, t=type(word), ln=(len(word) if hasattr(word, '__len__') else None)), parent=self)
+            return defaults.Logger.warning('в action.c тексте не найдено:\nword="{w}"\ntype={t}\nlen={ln}'.format(w=word, t=type(word), ln=(len(word) if hasattr(word, '__len__') else None)), parent=self)
         else:
             self.search_res_combo.current(0)
             self.tk_text_see()
@@ -851,12 +851,12 @@ class ActionWindow(tk.Toplevel):
                 self.web_action_to_tk_text(websReport=False)
 
             self.tk_text.reset_highlight(highlight=False)
-            lr_log.Logger.info('{f} > {s}'.format(f=self.action_file, s=self.id_))
+            defaults.Logger.info('{f} > {s}'.format(f=self.action_file, s=self.id_))
 
         if self.web_action.websReport.rus_webs:
-            lr_log.Logger.info('В следующих номерах inf, обнаружены Русские(NoASCII) символы, возможно требуется перекодировка(выделение/encoding из меню мыши)\n{}'.format(self.web_action.websReport.rus_webs))
+            defaults.Logger.info('В следующих номерах inf, обнаружены Русские(NoASCII) символы, возможно требуется перекодировка(выделение/encoding из меню мыши)\n{}'.format(self.web_action.websReport.rus_webs))
         if self.web_action.websReport.google_webs:
-            lr_log.Logger.info('Возможно следующие номера inf лишние, тк содержат слова {s}\nих можно удалить(+"commit/backup/обновить action.c" из меню мыши)\n{w}'.format(w=self.web_action.websReport.google_webs, s=defaults.DENY_WEB_))
+            defaults.Logger.info('Возможно следующие номера inf лишние, тк содержат слова {s}\nих можно удалить(+"commit/backup/обновить action.c" из меню мыши)\n{w}'.format(w=self.web_action.websReport.google_webs, s=defaults.DENY_WEB_))
 
         self.background_color_set(color='')  # оригинальный цвет
         # self.get_result_files()
@@ -926,7 +926,7 @@ class ActionWindow(tk.Toplevel):
         self.param_combo_set()
 
         if all_param_info:
-            lr_log.Logger.debug(self.web_action.websReport.web_snapshot_param_in_count)
+            defaults.Logger.debug(self.web_action.websReport.web_snapshot_param_in_count)
         return 'всего web_reg_save_param : {w}'.format(w=len(self.web_action.websReport.wrsp_and_param_names))
 
     def param_inf_checker(self, wrsp_dict: dict, wrsp: str) -> None:
@@ -947,13 +947,13 @@ class ActionWindow(tk.Toplevel):
                 qb = 'param: "{p}"\nweb_reg_save_param: {n}'.format(p=wrsp_dict['param_Name'], n='{%s}' % wrsp_dict['web_reg_num'])
 
                 if self.force_yes_inf.get():
-                    lr_log.Logger.warning('{q}\n\n{e}\n{wrsp}'.format(e=ex, q=qb, wrsp=wrsp))
+                    defaults.Logger.warning('{q}\n\n{e}\n{wrsp}'.format(e=ex, q=qb, wrsp=wrsp))
                 else:
                     y = lr_wlib.YesNoCancel(buttons=['Создать', 'Пропустить'], text_after=qb, text_before=str(ex), title='создать web_reg_save_param ?', parent=self).ask()
                     if y == 'Пропустить':
                         raise
                     else:
-                        lr_log.Logger.info('{q}\n\n{e}'.format(e=ex, q=qb))
+                        defaults.Logger.info('{q}\n\n{e}'.format(e=ex, q=qb))
 
     def SearchAndReplace(self, search: str, replace='', wrsp_dict=None, wrsp=None, backup=False, is_param=True, is_wrsp=True, replace_callback=None, rep_stat=False) -> None:
         with self.block():
@@ -990,7 +990,7 @@ class ActionWindow(tk.Toplevel):
                 if rep_stat and any(res):
                     stats[web_.snapshot] = res
             if rep_stat:
-                lr_log.Logger.debug(search + ':\n' + '\n'.join('{} inf: заменено [да|нет] раз: [{}|{}]'.format(k, *stats[k]) for k in sorted(stats)))
+                defaults.Logger.debug(search + ':\n' + '\n'.join('{} inf: заменено [да|нет] раз: [{}|{}]'.format(k, *stats[k]) for k in sorted(stats)))
         else:  # "быстрая" замена
             self.web_action.replace_bodys([(search, replace), ])
 
@@ -1029,7 +1029,7 @@ class ActionWindow(tk.Toplevel):
         defaults.Window.last_frame['text'] = '{d} > в {i} inf > {f} файлов'.format(d=defaults.VarFilesFolder.get(), f=len(defaults.AllFiles), i=len(list(lr_other.get_files_infs(defaults.AllFiles))))
         self.middle_bar['text'] = 'В action.c web_*: объектов[любых={alw} шт, snapshot={i} шт], файлов ответов[{f} шт] / Удалено: объектов[snapshot={ni} шт] -> файлов ответов[{nf} шт]'.format(alw=alw, i=li, f=lf, ni=lif-li, nf=ldaf-lf)
         if self.drop_infs or self.drop_files:
-            lr_log.Logger.debug('Отсутствует в action.c: inf: {il}, файлов : {fl} | Найдено: {ai} inf'.format(il=len(self.drop_infs), fl=len(self.drop_files), ai=li), parent=self)
+            defaults.Logger.debug('Отсутствует в action.c: inf: {il}, файлов : {fl} | Найдено: {ai} inf'.format(il=len(self.drop_infs), fl=len(self.drop_files), ai=li), parent=self)
 
     def backup(self) -> None:
         '''сделать action.c бэкап'''
@@ -1044,7 +1044,7 @@ class ActionWindow(tk.Toplevel):
         with open(b_name, 'w', errors='replace', encoding=defaults.VarEncode.get()) as f:
             f.write(self.tk_text.get(1.0, tk.END))
         self.set_title()
-        lr_log.Logger.debug('{} = {} byte'.format(b_name, os.path.getsize(b_name)))
+        defaults.Logger.debug('{} = {} byte'.format(b_name, os.path.getsize(b_name)))
 
     def session_params(self, lb_list=None, ask=True) -> list:
         '''поиск param в action? по LB='''
@@ -1187,7 +1187,7 @@ class ActionWindow(tk.Toplevel):
         if last_snapshot < max_snap:
             self.inf_combo.set(last_snapshot)
             self.goto_inf()
-            lr_log.Logger.info('При воспроизведении({r})\nне все Snapshot были выполненны: last:{l} < max:{m}'.format(r=os.path.join(folder, rdir), l=last_snapshot, m=max_snap))
+            defaults.Logger.info('При воспроизведении({r})\nне все Snapshot были выполненны: last:{l} < max:{m}'.format(r=os.path.join(folder, rdir), l=last_snapshot, m=max_snap))
 
         # a = lr_param.get_search_data('None')
         # a = next(lr_param.create_files_with_search_data(defaults.AllFiles, a, action_infs=[last_snapshot]))

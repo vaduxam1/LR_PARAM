@@ -5,23 +5,17 @@ import sys
 import functools
 import contextlib
 import concurrent.futures
-import multiprocessing
-import multiprocessing.dummy
 import multiprocessing.pool
+import multiprocessing.dummy
 import asyncio
 import queue
 import threading
 import tkinter
 
-
 from lr_lib import (
     defaults,
     logger as lr_log,
 )
-
-# пулы
-M_POOL = None
-T_POOL = None
 
 
 class MainThreadUpdater:
@@ -269,22 +263,21 @@ class POOL:
             self.shutdown(wait=False)
 
 
-def start() -> None:
+@contextlib.contextmanager
+def POOL_Creator() -> None:
     '''создание пулов'''
-    global M_POOL, T_POOL
-
     MainThreadUpdater.working = True
     defaults.Tk.after(0, MainThreadUpdater.queue_listener)
 
-    M_POOL = POOL(defaults.M_POOL_NAME, defaults.M_POOL_Size)
-    T_POOL = POOL(defaults.T_POOL_NAME, defaults.T_POOL_Size)
+    defaults.M_POOL = POOL(defaults.M_POOL_NAME, defaults.M_POOL_Size)
+    defaults.T_POOL = POOL(defaults.T_POOL_NAME, defaults.T_POOL_Size)
 
-
-def close() -> None:
-    '''закрыть пулы'''
-    M_POOL.pool_exit()
-    T_POOL.pool_exit()
-    MainThreadUpdater.working = False
+    try:
+        yield
+    finally:
+        defaults.M_POOL.pool_exit()
+        defaults.T_POOL.pool_exit()
+        MainThreadUpdater.working = False
 
 
 def T_POOL_decorator(func):
@@ -292,7 +285,7 @@ def T_POOL_decorator(func):
     @functools.wraps(func)
     def wrap(*args, **kwargs):
         try:
-            return T_POOL.submit(func, *args, **kwargs)
+            return defaults.T_POOL.submit(func, *args, **kwargs)
         except AttributeError:
-            return T_POOL.apply_async(func, args, kwargs)
+            return defaults.T_POOL.apply_async(func, args, kwargs)
     return wrap

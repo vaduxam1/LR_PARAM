@@ -15,7 +15,7 @@ from lr_lib import (
 )
 
 #####################################
-VERSION = 'v9.1.3'
+VERSION = 'v9.2'
 lib_folder = 'lr_lib'
 Tk = tk.Tk()
 
@@ -262,6 +262,7 @@ BackupName = '{i}_backup_{ind}_action.c'
 
 #####################################
 # логирование
+Logger = None  # вывод сообщений во все Handler: Logger.info('msg', notepad=True, parent=action)
 log_overdrive = 'a'
 logFolder = 'lr_logs'
 logName = 'server_%s.log' % time.strftime('%d.%m')
@@ -320,11 +321,13 @@ ENCODE_LIST = list(sorted(ENCODE_LIST))
 #####################################
 MainThreadUpdateTime = tk.IntVar(value=500)  # интервал(мс) проверки очереди, для выполнения для главного потока, callback(из потоков)
 cpu_count = multiprocessing.cpu_count()
+M_POOL = None  # пул процессов
 M_POOL_NAME = 'multiprocessing.Pool'  # тип основной пул
-T_POOL_NAME = 'SThreadPool(threading.Thread)'  # тип фоновый пул
 M_POOL_Size = cpu_count if (cpu_count < 5) else 4  # основной MP пул(int/None)
-T_POOL_Size = 4  # фоновый T пул(int>2 / None), кроме SThreadPool
 
+T_POOL = None  # пул потоков
+T_POOL_NAME = 'SThreadPool(threading.Thread)'  # тип фоновый пул
+T_POOL_Size = 4  # фоновый T пул(int>2 / None), кроме SThreadPool
 # 'threading.Thread': SThreadPool - auto size
 SThreadAutoSizeTimeOut = tk.IntVar(value=1000)  # отзывчивость(мсек) SThreadPool - период опроса, для изменения размера пула
 SThreadPoolSizeMin = tk.IntVar(value=2)  # SThreadPool min size

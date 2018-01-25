@@ -8,9 +8,7 @@ import string
 
 from lr_lib import (
     defaults,
-    pool as lr_pool,
     other as lr_other,
-    logger as lr_log,
 )
 
 
@@ -336,7 +334,7 @@ def get_files_with_param(param: str, action=None, set_file=True) -> None:
     files = tuple(create_files_with_search_data(defaults.AllFiles, search_data, action=action))
     assert files, 'Не найдены файлы, подходящие, под условия поиска. {a}\nsearch_data: {d}'.format(d=search_data, a=action)
     param_searcher = search_param_in_file if defaults.VarStrongSearchInFile.get() else _search_param_in_file
-    map_executer = lr_pool.M_POOL.imap_unordered if defaults.FindParamPOOLEnable else map
+    map_executer = defaults.M_POOL.imap_unordered if defaults.FindParamPOOLEnable else map
 
     defaults.FilesWithParam = sorted(filter(bool, map_executer(param_searcher, files)), key=lr_other.sort_by_file_keys)
 
@@ -351,7 +349,7 @@ def get_files_with_param(param: str, action=None, set_file=True) -> None:
         defaults.VarFileName.set(file['File']['Name'])
 
     if defaults.VarFileNamesNumsShow.get():
-        lr_log.Logger.info(lr_other.param_files_info())
+        defaults.Logger.info(lr_other.param_files_info())
 
 
 def find_param_ord() -> (int, int):

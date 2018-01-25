@@ -6,6 +6,7 @@ import sys
 import time
 import queue
 import tempfile
+import contextlib
 import subprocess
 import traceback
 import functools
@@ -16,32 +17,94 @@ from lr_lib import (
     defaults,
 )
 
-
-if not os.path.isdir(defaults.logPath):
-    os.makedirs(defaults.logPath)  # каталог лога
-
 formatter = u'\n[ %(levelname)s ]: %(filename)s %(funcName)s:%(lineno)d %(threadName)s %(asctime)s.%(msecs)d \n%(message)s'
+datefmt = "%H:%M:%S"
 
 
-class SessionStateHandler(logging.Handler):
-    '''перенаправление logging в Window'''
+class GuiHandler(logging.Handler):
+    '''logging в Window'''
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.setFormatter(logging.Formatter(formatter, datefmt=datefmt))
+
     def emit(self, record: logging) -> None:
         if defaults.Window:
             defaults.Window.print(record.levelname, self.format(record))
 
 
-Logger = logging.getLogger('__main__')
-Logger.setLevel(defaults.logger_level)
+class ConsoleHandler(logging.StreamHandler):
+    '''logging в Console'''
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.setFormatter(logging.Formatter(formatter, datefmt=datefmt))
 
-consoleHandler = logging.StreamHandler()  # консоль
-sessionHandler = SessionStateHandler()  # gui
-logHandler = logging.FileHandler(defaults.logFullName, defaults.log_overdrive, encoding='cp1251')
+    def emit(self, record: logging, **kwargs) -> None:
+        super().emit(record)
 
-LoggerQueue = queue.Queue()
-LoggerQueueListener = logging.handlers.QueueHandler(LoggerQueue)
-Logger_listener = logging.handlers.QueueListener(LoggerQueue, sessionHandler, consoleHandler, logHandler)
 
-Logger.addHandler(LoggerQueueListener)
+class LogHandler(logging.FileHandler):
+    '''logging в лог'''
+    if not os.path.isdir(defaults.logPath):
+        os.makedirs(defaults.logPath)  # создать каталог лога
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.setFormatter(logging.Formatter(formatter, datefmt=datefmt))
+
+    def emit(self, record: logging) -> None:
+        super().emit(record)
+
+
+def loggingLevelCreator(level_num: int, level: str) -> None:
+    ''' создать/переопределить новый level-exception, для *Handler.level -> logging.level'''
+    logging.addLevelName(level_num, level.upper())
+    level = level.lower()
+
+    def logging_level(self, message, *args, **kwargs) -> None:
+        '''переопределенный logging метод'''
+        if self.isEnabledFor(level_num):
+            notepad = kwargs.pop('notepad', None)
+            parent = kwargs.pop('parent', None)
+
+            self._log(level_num, message, args, **kwargs)  # оригинальный logging метод
+
+            if notepad:
+                openTextInEditor(message)
+            # окно с ошибкой
+            if defaults.VarShowPopupWindow.get() and (level in ('critical', 'error', 'warning',)):
+                if (parent is None) and defaults.Window and defaults.Window.action_windows:  # сделать action родителем
+                    parent = defaults.Window.action_windows[next(iter(defaults.Window.action_windows))]
+
+                message = '{s}\n{m}\n{s}'.format(m=message, s=defaults.PRINT_SEPARATOR)
+                if level == 'warning':
+                    messagebox.showwarning(level.capitalize(), message, parent=parent)
+                else:
+                    messagebox.showerror(level.upper(), message, parent=parent)
+
+    logging_level.__name__ = level
+    setattr(logging.getLoggerClass(), level, logging_level)  # создать
+
+
+@contextlib.contextmanager
+def Logger_Creator() -> iter((None,)):
+    '''слушатель QueueHandler: Logger_listener.start() / Logger_listener.stop()'''
+    for level in defaults.loggingLevels:  # создать logging.level
+        loggingLevelCreator(defaults.loggingLevels[level], level)
+
+    defaults.Logger = logging.getLogger('__main__')
+    defaults.Logger.setLevel(defaults.logger_level)
+
+    LoggerQueue = queue.Queue()
+    LoggerQueueListener = logging.handlers.QueueHandler(LoggerQueue)
+    defaults.Logger.addHandler(LoggerQueueListener)
+
+    listener = logging.handlers.QueueListener(LoggerQueue, GuiHandler(), ConsoleHandler(), LogHandler(defaults.logFullName, defaults.log_overdrive, encoding='cp1251'))
+    try:
+        yield listener.start()
+    except Exception:
+        raise
+    else:
+        listener.stop()
 
 
 def openTextInEditor(text: str) -> None:
@@ -51,50 +114,6 @@ def openTextInEditor(text: str) -> None:
             tf.write(text)
         subprocess.Popen([defaults.EDITOR['exe'], f.name])
         f.close()
-
-
-error_state = ('critical', 'error', 'warning', )
-
-
-def loggingLevelCreator(level_num: int, level: str) -> None:
-    ''' создать/переопределить новый level/exception для logging -> Logger'''
-    logging.addLevelName(level_num, level.upper())
-    level = level.lower()
-
-    def logging_level(self, message, *args, **kwargs) -> None:
-        '''переопределенный logging метод'''
-        if self.isEnabledFor(level_num):
-            notepad = kwargs.pop('notepad', None)
-            parent = kwargs.pop('parent', None)
-            self._log(level_num, message, args, **kwargs)  # оригинальный logging метод
-
-            if notepad:
-                openTextInEditor(message)
-            if level in error_state:
-                if (parent is None) and defaults.Window and defaults.Window.action_windows:  # сделать action родителем
-                    parent = defaults.Window.action_windows[next(iter(defaults.Window.action_windows))]
-                message = '{s}\n{m}\n{s}'.format(m=message, s=defaults.PRINT_SEPARATOR)
-                if defaults.VarShowPopupWindow.get():  # окно с ошибкой
-                    if level == 'warning':
-                        messagebox.showwarning(level.capitalize(), message, parent=parent)
-                    else:
-                        messagebox.showerror(level.upper(), message, parent=parent)
-    # создать
-    logging_level.__name__ = level
-    setattr(logging.getLoggerClass(), level, logging_level)
-
-
-for level in defaults.loggingLevels:  # создать logging.level
-    loggingLevelCreator(defaults.loggingLevels[level], level)
-
-
-def set_formatter(handler: logging.handlers, formatter=formatter, datefmt="%H:%M:%S") -> None:
-    '''logging.Formatter'''
-    handler.setFormatter(logging.Formatter(formatter, datefmt=datefmt))
-
-
-for handler in (logHandler, consoleHandler, sessionHandler,):
-    set_formatter(handler)
 
 
 def excepthook(*args) -> None:
@@ -113,7 +132,7 @@ def excepthook(*args) -> None:
     ern = exc_type.__name__
     if defaults.Window:
         defaults.Window.err_to_widgts(exc_type, exc_val, exc_tb, ern)
-    Logger.critical(get_tb(exc_type, exc_val, exc_tb, ern))
+    defaults.Logger.critical(get_tb(exc_type, exc_val, exc_tb, ern))
 
 
 def full_tb_write(exc_type, exc_val, exc_tb) -> None:
@@ -175,9 +194,9 @@ def exec_time(func: callable) -> callable:
     @functools.wraps(func)
     def wrap(*args, **kwargs):
         t = time.time()
-        Logger.trace('-> {f}'.format(f=func))
+        defaults.Logger.trace('-> {f}'.format(f=func))
         out = func(*args, **kwargs)
         t = time.time() - t
-        Logger.trace('<- {t} сек: {f}'.format(f=func, t=round(t, 1)))
+        defaults.Logger.trace('<- {t} сек: {f}'.format(f=func, t=round(t, 1)))
         return out
     return wrap

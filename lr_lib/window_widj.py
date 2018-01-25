@@ -13,8 +13,8 @@ from lr_lib import (
     defaults,
     other as lr_other,
     pool as lr_pool,
-    logger as lr_log,
 )
+
 
 def set_word_boundaries(root) -> None:
     '''
@@ -64,7 +64,7 @@ class HighlightLines:
         else:
             highlight_cmd = self.tk_text.tag_add
 
-        execute = lr_pool.M_POOL.imap_unordered if defaults.HighlightMPool.get() else map
+        execute = defaults.M_POOL.imap_unordered if defaults.HighlightMPool.get() else map
         args = ((num, self.on_screen_lines.get(num), self.tegs_names) for num in line_nums)
         if self.is_on_screen_lines_change(top, bottom):
             return
@@ -561,14 +561,14 @@ class LBRBText(tk.Text):
         try:
             cls.bounds['LB'].set(lb)
         except Exception as ex:
-            lr_log.Logger.error('LB {}'.format(ex.args))
+            defaults.Logger.error('LB {}'.format(ex.args))
             cls.bounds['LB'].set(lb.encode(defaults.VarEncode.get(), errors='replace'))
 
         rb = defaults.VarRB.get()
         try:
             cls.bounds['RB'].set(rb)
         except Exception as ex:
-            lr_log.Logger.error('RB {}'.format(ex.args))
+            defaults.Logger.error('RB {}'.format(ex.args))
             cls.bounds['RB'].set(lb.encode(defaults.VarEncode.get(), errors='replace'))
 
     @classmethod

@@ -43,7 +43,7 @@ def mouse_web_reg_save_param(widget, param, mode=('SearchAndReplace', 'highlight
             if defaults.VarShowPopupWindow.get() and action.final_wnd_var.get():
                 action.search_in_action(word=w)
                 s = '{wr}\n\n{wd}'.format(wr=action.web_action.websReport.param_statistic[w], wd=wrsp_dict)
-                lr_log.Logger.debug(s)
+                defaults.Logger.debug(s)
                 tk.messagebox.showinfo(wrsp_dict['param_Name'], s, parent=action)
                 try: action.search_res_combo.current(1)
                 except tk.TclError: action.search_res_combo.current(0)
@@ -63,7 +63,7 @@ def rClick_Param(event, *args, **kwargs) -> None:
         # count = widget.count("1.0", "sel.first")
         # print(count)
         # print('------------------')
-    except tk.TclError: return lr_log.Logger.warning('сбросилось выделение текста\ntry again', parent=widget)
+    except tk.TclError: return defaults.Logger.warning('сбросилось выделение текста\ntry again', parent=widget)
     try: action = widget.action
     except AttributeError:
         action = defaults.Window.action_windows[next(iter(defaults.Window.action_windows))]
@@ -81,10 +81,10 @@ def group_param(event, widget=None, params=None, ask=True) -> None:
 
     if params is None: params = action.group_param_search(widget.selection_get())
     elif params is False: params = action.session_params(lb_list=[widget.selection_get()], ask=False)
-    if not params: return lr_log.Logger.warning('param не найдены! %s' % params, parent=action)
+    if not params: return defaults.Logger.warning('param не найдены! %s' % params, parent=action)
 
     len_params = len(params)
-    lr_log.Logger.info('для создания найдено {} param'.format(len_params))
+    defaults.Logger.info('для создания найдено {} param'.format(len_params))
 
     if ask:
         y = YesNoCancel(buttons=['Найти', 'Отменить', 'Пропуск'], text_before='найти group param', text_after='%s шт.' % len_params, is_text='\n'.join(params), title='group param', parent=action, default_key='Найти')
@@ -93,8 +93,8 @@ def group_param(event, widget=None, params=None, ask=True) -> None:
         elif ask == 'Пропуск': params = []
         else: return
 
-    lr_log.Logger.debug('на текущий момент уже создано {} param'.format(len(action.web_action.websReport.wrsp_and_param_names)))
-    lr_log.Logger.info('>>> для создания выбрано {} param'.format(len_params))
+    defaults.Logger.debug('на текущий момент уже создано {} param'.format(len(action.web_action.websReport.wrsp_and_param_names)))
+    defaults.Logger.info('>>> для создания выбрано {} param'.format(len_params))
 
     unsuccess_params = []  # param обработанные с ошибкой
     wrsp_dict_queue = queue.Queue()
@@ -158,10 +158,10 @@ def final_group_param(widget, unsuccess_params=None, log=False) -> None:
         err = len(unsuccess_params)
         n = ('{} param не были созданы ! {}'.format(err, ', '.join(unsuccess_params)) if err else '')
         widget.action.toolbar['text'] = '{s} : {n}\n{pl}'.format(s=str(not err).upper(), pl=pl, n=n)
-        lr_log.Logger.error('{} param не были обработаны:\n\t{}\nтребуется пересоздание, с OFF чекбоксом\n"ограничить max_inf"'.format(err, '\n\t'.join(unsuccess_params)), parent=widget.action)
+        defaults.Logger.error('{} param не были обработаны:\n\t{}\nтребуется пересоздание, с OFF чекбоксом\n"ограничить max_inf"'.format(err, '\n\t'.join(unsuccess_params)), parent=widget.action)
 
     if widget.action.final_wnd_var.get(): repA(widget)
-    if log: lr_log.Logger.debug(pl)
+    if log: defaults.Logger.debug(pl)
 
 
 def repA(widget) -> None:
@@ -185,7 +185,7 @@ def repB(widget, counter=None) -> None:
 
     y = YesNoCancel(buttons=['OK'], text_before=tb, text_after='{} шт'.format(counter), is_text='\n\n{}'.format(ta), title='создано: {} шт.'.format(counter), parent=widget.action)
     lr_pool.T_POOL_decorator(y.ask)()
-    lr_log.Logger.trace('{}\n\n{}'.format(tb, ta))
+    defaults.Logger.trace('{}\n\n{}'.format(tb, ta))
 
 
 def get_json(obj, indent=5):

@@ -586,7 +586,7 @@ class Window(ttk.Frame):
         filemenu.add_command(label="Select Folder", command=self.change_folder_ask)
         filemenu.add_command(label="AllFiles list", command=self.folder_wind)
         filemenu.add_command(label="LoadRunner action.c", command=lr_action.ActionWindow)
-        filemenu.add_command(label="Help", command=lambda *a: lr_log.Logger.info(lr_help.CODE + '\n' + lr_help.HELP))
+        filemenu.add_command(label="Help", command=lambda *a: defaults.Logger.info(lr_help.CODE + '\n' + lr_help.HELP))
         filemenu.add_command(label="Exit", command=defaults.Tk.destroy)
         self.menubar.add_cascade(label="Menu", menu=filemenu)
         defaults.Tk.config(menu=self.menubar)
@@ -649,13 +649,13 @@ class Window(ttk.Frame):
         labMP.grid(row=1, column=1)
         lr_wlib.createToolTip(labMP, 'основной пул(process), поиск в файлах и тд')
 
-        entryMPName = ttk.Combobox(top, justify='center', textvariable=lr_pool.M_POOL.name, width=65, foreground='grey', background=defaults.Background, font=defaults.DefaultFont + ' italic')
+        entryMPName = ttk.Combobox(top, justify='center', textvariable=defaults.M_POOL.name, width=65, foreground='grey', background=defaults.Background, font=defaults.DefaultFont + ' italic')
         entryMPName['values'] = list(lr_pool.POOL.pools.keys())
-        entryMPName.bind("<<ComboboxSelected>>", lambda *a: set_pool(lr_pool.M_POOL))
+        entryMPName.bind("<<ComboboxSelected>>", lambda *a: set_pool(defaults.M_POOL))
         lr_wlib.createToolTip(entryMPName, 'тип MP пула(любые стандартные(process))')
         entryMPName.grid(row=2, column=0, columnspan=7)
 
-        spinMP = tk.Spinbox(top, from_=0, to=999, textvariable=lr_pool.M_POOL.size, width=3, font=defaults.DefaultFont, command=lambda *a: set_pool(lr_pool.M_POOL))
+        spinMP = tk.Spinbox(top, from_=0, to=999, textvariable=defaults.M_POOL.size, width=3, font=defaults.DefaultFont, command=lambda *a: set_pool(defaults.M_POOL))
         spinMP.grid(row=2, column=7)
         lr_wlib.createToolTip(spinMP, 'размер MP пула')
 
@@ -663,13 +663,13 @@ class Window(ttk.Frame):
         labT.grid(row=3, column=1)
         lr_wlib.createToolTip(labT, 'доп пул(thread only), выполнение в фоне, подсветка и тд')
 
-        entryTName = ttk.Combobox(top, justify='center', textvariable=lr_pool.T_POOL.name, width=65, foreground='grey', background=defaults.Background, font=defaults.DefaultFont + ' italic')
+        entryTName = ttk.Combobox(top, justify='center', textvariable=defaults.T_POOL.name, width=65, foreground='grey', background=defaults.Background, font=defaults.DefaultFont + ' italic')
         entryTName['values'] = list(lr_pool.POOL.pools.keys())
-        entryTName.bind("<<ComboboxSelected>>", lambda *a: set_pool(lr_pool.T_POOL))
+        entryTName.bind("<<ComboboxSelected>>", lambda *a: set_pool(defaults.T_POOL))
         lr_wlib.createToolTip(entryTName, 'тип T пула(чтото из thread)')
         entryTName.grid(row=4, column=0, columnspan=7)
 
-        spinT = tk.Spinbox(top, from_=0, to=999, textvariable=lr_pool.T_POOL.size, width=3, font=defaults.DefaultFont, command=set_pool(lr_pool.T_POOL))
+        spinT = tk.Spinbox(top, from_=0, to=999, textvariable=defaults.T_POOL.size, width=3, font=defaults.DefaultFont, command=set_pool(defaults.T_POOL))
         spinT.grid(row=4, column=7)
         lr_wlib.createToolTip(spinT, 'размер T пула')
 
@@ -712,13 +712,13 @@ class Window(ttk.Frame):
         '''SThreadPool(threading.Thread) текст состояния пула'''
         def pool_state_string(st=lambda i: '{0:<6} : {1}'.format(*i)) -> str:
             '''инфо о потоках T_POOL'''
-            s = '\n'.join('\n{n} {t}'.format(t=('\n' + '\n'.join(map(st, t.task.items())) if t.task else 'sleep'), n=t.name) for t in lr_pool.T_POOL.threads)
+            s = '\n'.join('\n{n} {t}'.format(t=('\n' + '\n'.join(map(st, t.task.items())) if t.task else 'sleep'), n=t.name) for t in defaults.T_POOL.threads)
             return s
 
         def thread_info_updater(y: lr_wlib.YesNoCancel) -> None:
             '''перезапуск инфо'''
             t1, t2 = y.label1['text'].split('\n', 1)
-            t1 = '{0}: size({1})'.format(t1.split(':', 1)[0], len(lr_pool.T_POOL.threads))
+            t1 = '{0}: size({1})'.format(t1.split(':', 1)[0], len(defaults.T_POOL.threads))
             y.label1.config(text='{0}\n{1}'.format(t1, t2))
             y.new_text(pool_state_string())
             if y.alive_:
@@ -732,15 +732,15 @@ class Window(ttk.Frame):
         '''обновление action.label с процентами и пулом'''
         if self.action_windows:
             for act in self.action_windows.values():
-                if hasattr(lr_pool.T_POOL.pool, 'queue_in'):
-                    pt = 'T:q_in\n{t} : {q_in}'.format(t=lr_pool.T_POOL._size, q_in=lr_pool.T_POOL.pool.queue_in.qsize())
+                if hasattr(defaults.T_POOL.pool, 'queue_in'):
+                    pt = 'T:q_in\n{t} : {q_in}'.format(t=defaults.T_POOL._size, q_in=defaults.T_POOL.pool.queue_in.qsize())
                 else:
-                    pt = '  T\n  {t}'.format(t=lr_pool.T_POOL._size)
+                    pt = '  T\n  {t}'.format(t=defaults.T_POOL._size)
 
-                if hasattr(lr_pool.M_POOL.pool, 'queue_in'):
-                    pm = 'M:q_in\n{mp} : {q_in}'.format(mp=lr_pool.M_POOL._size, q_in=lr_pool.M_POOL.pool.queue_in.qsize())
+                if hasattr(defaults.M_POOL.pool, 'queue_in'):
+                    pm = 'M:q_in\n{mp} : {q_in}'.format(mp=defaults.M_POOL._size, q_in=defaults.M_POOL.pool.queue_in.qsize())
                 else:
-                    pm = '  M {mp}'.format(mp=lr_pool.M_POOL._size)
+                    pm = '  M {mp}'.format(mp=defaults.M_POOL._size)
 
                 act.scroll_lab2.config(text='{p:>3}%\n\npool:\n\n{pt}\n\n{pm}'.format(p=round(int(act.tk_text.linenumbers.linenum) / (act.tk_text.highlight_lines._max_line / 100)), pt=pt, pm=pm))
 
@@ -772,8 +772,8 @@ class Window(ttk.Frame):
         defaults.Tk.title(defaults.VERSION)
 
     def last_frame_text_set(self) -> None:
-        self.last_frame['text'] = 'inf={i}: файлов={f} | MP: {pool}[{p_size}] | T: {tpool}[{tpool_size}] | {d}'.format(
-            d=defaults.VarFilesFolder.get(), f=len(defaults.AllFiles), pool=lr_pool.M_POOL._name, i=len(list(lr_other.get_files_infs(defaults.AllFiles))), tpool_size=lr_pool.T_POOL._size, p_size=lr_pool.M_POOL._size, tpool=lr_pool.T_POOL._name)
+        t = 'inf={i}: файлов={f} | MP: {pool}[{p_size}] | T: {tpool}[{tpool_size}] | {d}'.format(d=defaults.VarFilesFolder.get(), f=len(defaults.AllFiles), pool=defaults.M_POOL._name, i=len(list(lr_other.get_files_infs(defaults.AllFiles))), tpool_size=defaults.T_POOL._size, p_size=defaults.M_POOL._size, tpool=defaults.T_POOL._name)
+        self.last_frame['text'] = t
 
     def clear_before_find_param_files(self) -> None:
         '''очистка виджетов перед поиском'''
@@ -884,7 +884,7 @@ class Window(ttk.Frame):
                 self.clip_add(web_reg_save_param)
             if self.cbxClearShowVar.get():
                 self.tk_text.delete(1.0, 'end')
-            lr_log.Logger.info('{s}\n{wrsp}\n{s}'.format(s=defaults.PRINT_SEPARATOR, wrsp=web_reg_save_param))
+            defaults.Logger.info('{s}\n{wrsp}\n{s}'.format(s=defaults.PRINT_SEPARATOR, wrsp=web_reg_save_param))
             if callback:  # highlight
                 callback()
         return web_reg_save_param

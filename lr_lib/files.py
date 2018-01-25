@@ -10,7 +10,6 @@ import configparser
 
 from lr_lib import (
     defaults,
-    pool as lr_pool,
     other as lr_other,
     logger as lr_log,
 )
@@ -68,7 +67,7 @@ def file_dict_creator(name: str, full_name: str, inf_num: int, enc: str, inf_key
 
 def create_files_from_infs(folder: str, enc: str, allow_deny: bool, statistic: bool) -> iter([dict, ]):
     '''создать файлы, из LoadRunner ini-файлов'''
-    executer = (lr_pool.M_POOL.imap_unordered if defaults.SetFilesPOOLEnable else map)
+    executer = (defaults.M_POOL.imap_unordered if defaults.SetFilesPOOLEnable else map)
     folder_files = next(os.walk(folder))
     folder_files = folder_files[2]
     arg = (folder, enc, allow_deny, statistic, )
@@ -131,7 +130,7 @@ def createAllFiles() -> None:
     '''создать все файлы для поиска param'''
     defaults.AllFiles.clear()
     folder = defaults.VarFilesFolder.get()
-    lr_log.Logger.info('обработка файлов из [ {d} ] ...'.format(d=folder))
+    defaults.Logger.info('обработка файлов из [ {d} ] ...'.format(d=folder))
     enc = defaults.VarEncode.get()
     allow_deny = defaults.VarAllowDenyFiles.get()
     statistic = defaults.VarAllFilesStatistic.get()
@@ -147,7 +146,7 @@ def createAllFiles() -> None:
                     defaults.AllFiles.append(file)
 
     if not defaults.AllFiles:
-        lr_log.Logger.critical('В "{}" отсутствуют t*.inf LoadRunner файлы!\nнеобходимо выбрать каталог " lr_скрипт\\data "\nлибо сменить директорию кнопкой "Folder"'.format(folder))
+        defaults.Logger.critical('В "{}" отсутствуют t*.inf LoadRunner файлы!\nнеобходимо выбрать каталог " lr_скрипт\\data "\nлибо сменить директорию кнопкой "Folder"'.format(folder))
 
     for file in defaults.AllFiles:  # Inf_Nums: set -> list
         file['Inf']['Nums'] = sorted(file['Inf']['Nums'])
@@ -163,7 +162,7 @@ def createAllFiles() -> None:
         defaults.AllFiles = sorted(defaults.AllFiles, key=lambda file: file['Inf']['Nums'])
 
     defaults.VarFileSortKey1.set(defaults.VarFileSortKey1.get())
-    lr_log.Logger.info(lr_other.all_files_info())
+    defaults.Logger.info(lr_other.all_files_info())
 
 
 def get_file_with_kwargs(files: (dict,), **kwargs) -> dict:

@@ -8,7 +8,6 @@ import collections
 
 from lr_lib import (
     defaults,
-    logger as lr_log,
     param as lr_param,
     window_widj as lr_widj,
     other as lr_other,
@@ -290,7 +289,7 @@ class WebRegSaveParam(WebAny):
                             if len(line_list) > 1:
                                 param = line_list[0]
         except Exception as ex:
-            lr_log.Logger.debug('найти исходное имя param из {t}.\n{w}\n{e}\n{cm}'.format(e=ex, w=self.name, t=self.type, cm=self.comments))
+            defaults.Logger.debug('найти исходное имя param из {t}.\n{w}\n{e}\n{cm}'.format(e=ex, w=self.name, t=self.type, cm=self.comments))
 
         return param
 
@@ -368,7 +367,7 @@ class ActionWebsAndLines:
     def replace_bodys(self, replace_list: [(str, str), ]) -> None:
         '''заменить группу param, во всех web_ body'''
         web_actions = tuple(self.get_web_snapshot_all())
-        lr_log.Logger.trace('web_actions={lw}, replace_list={lrl}:{rl}'.format(rl=replace_list, lrl=len(replace_list), lw=len(web_actions)))
+        defaults.Logger.trace('web_actions={lw}, replace_list={lrl}:{rl}'.format(rl=replace_list, lrl=len(replace_list), lw=len(web_actions)))
 
         for web_ in web_actions:
             body = web_.get_body()
@@ -471,7 +470,7 @@ class ActionWebsAndLines:
                     continue
 
                 else:
-                    lr_log.Logger.critical('вероятно ошибка распознавания\n{line}\n{lwl}\n{web_list}'.format(line=line, lwl=len(web_list), web_list=web_list))
+                    defaults.Logger.critical('вероятно ошибка распознавания\n{line}\n{lwl}\n{web_list}'.format(line=line, lwl=len(web_list), web_list=web_list))
                     self.add_to_text_list(line)
                     continue
 
@@ -491,7 +490,7 @@ class ActionWebsAndLines:
             self.add_to_text_list('\n'.join(_multiline_comment))
 
         if reg_param_list:
-            lr_log.Logger.critical('Ненайден web_* запрос, которому принадлежат web_reg_save_param:\n{}'.format([w.name for w in reg_param_list]))
+            defaults.Logger.critical('Ненайден web_* запрос, которому принадлежат web_reg_save_param:\n{}'.format([w.name for w in reg_param_list]))
             self.add_to_text_list('\n// ERROR web_reg_save_param !\n{}'.format('\n\n'.join(map(WebRegSaveParam.to_str, reg_param_list))))
 
     def set_transaction_name(self, strip_line: str, _s='"') -> (str or None):
@@ -687,7 +686,7 @@ class WebReport:
         for lvl in dt:
             msgs = dt[lvl]
             if msgs:
-                getattr(lr_log.Logger, lvl)('\n'.join(msgs))
+                getattr(defaults.Logger, lvl)('\n'.join(msgs))
 
         # highlight
         t = self.parent_AWAL.action.tk_text
@@ -833,7 +832,7 @@ class Transactions:
             self.__is_no_transaction_name = ''
 
         if transaction in self.names:
-            lr_log.Logger.error('транзакция: start после start\nПовторное использование start_transaction("{}")'.format(transaction))
+            defaults.Logger.error('транзакция: start после start\nПовторное использование start_transaction("{}")'.format(transaction))
         else:
             dt = self.sub_transaction
             for t in self.names:
@@ -846,6 +845,6 @@ class Transactions:
 
     def stop_transaction(self, transaction: str) -> None:
         if transaction not in self.names:
-            lr_log.Logger.error('транзакция: stop перед start\nОтсутствует start_transaction("{}")'.format(transaction))
+            defaults.Logger.error('транзакция: stop перед start\nОтсутствует start_transaction("{}")'.format(transaction))
         else:
             self.start_stop['stop'].append(transaction)

@@ -11,7 +11,6 @@ import contextlib
 from lr_lib import (
     defaults,
     help as lr_help,
-    logger as lr_log,
 )
 
 
@@ -161,9 +160,7 @@ def keyboard_listener() -> None:
     try:
         import keyboard
     except ImportError:
-        lr_log.Logger.info(
-            'ImportError keyboard [{}] не работает !\nНеобходимо установить библиотеку keyboard из cmd:\n'
-            'cd c:\Python36\Scripts\ \npip install keyboard'.format(defaults.FIND_PARAM_HOTKEY))
+        defaults.Logger.info('ImportError keyboard [{}] не работает !\nНеобходимо установить библиотеку keyboard из cmd:\ncd c:\Python36\Scripts\ \npip install keyboard'.format(defaults.FIND_PARAM_HOTKEY))
     else:
         def get_param_hotkey() -> None:
             '''найти {param} из clipboard, по хоткей'''
