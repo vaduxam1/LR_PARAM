@@ -597,10 +597,9 @@ class WebReport:
         self._wrsp = {}
         self.all_in_one = copy.deepcopy(self.parent_AWAL.transactions.sub_transaction)
         wrsp_all = tuple(self.parent_AWAL.get_web_reg_save_param_all())
-        tk_text = self.parent_AWAL.action.tk_text
 
         for wr in wrsp_all:
-            web_add_highlight(wr, tk_text)
+            self.web_add_highlight(wr)
 
             self.wrsp_and_param_names[wr.name] = wr.param
             self._wrsp[wr.name] = wr
@@ -617,7 +616,7 @@ class WebReport:
             }
 
         for web in self.parent_AWAL.get_web_all():
-            web_add_highlight(web, tk_text)
+            self.web_add_highlight(web)
 
             snapshot = web.snapshot
             transaction = web.transaction
@@ -680,7 +679,7 @@ class WebReport:
         stats = lambda w: {k: v for (k, v) in self.param_statistic[w.name].items() if k not in n}
         web_reg = lambda s: {w.name: {'param': w.param, 'stats': stats(w)} for w in next(self.parent_AWAL.get_web_by(snapshot=s)).web_reg_save_param_list}
         for t in self.web_transaction:
-            dtt = next(get_sub_transaction_dt(t, self.all_in_one))
+            dtt = next(self.get_sub_transaction_dt(t, self.all_in_one))
             dtt.update(copy.deepcopy(self.web_transaction[t]))
             dtt['snapshots'] = {s: web_reg(s) for s in dtt['snapshots']}
 
@@ -691,12 +690,30 @@ class WebReport:
                 getattr(lr_log.Logger, lvl)('\n'.join(msgs))
 
         # highlight
+        t = self.parent_AWAL.action.tk_text
         for wr in wrsp_all:
             if not all(self.param_statistic[wr.name].values()):
-                lr_widj.highlight_mode(tk_text, wr.name, option='background', color='yellow')
+                lr_widj.highlight_mode(t, wr.name, option='background', color='yellow')
 
-        for t in self.parent_AWAL.transactions.names:
-            lr_widj.highlight_mode(tk_text, t, option='foreground', color='darkslategrey')
+        for n in self.parent_AWAL.transactions.names:
+            lr_widj.highlight_mode(t, n, option='foreground', color='darkslategrey')
+
+    def web_add_highlight(self, web_) -> None:
+        '''подсветить web_'''
+        t = self.parent_AWAL.action.tk_text
+        lr_widj.highlight_mode(t, web_.type)
+
+        for line in web_.comments.split('\n'):
+            lr_widj.highlight_mode(t, line.strip())
+
+        if isinstance(web_, WebRegSaveParam):
+            lr_widj.highlight_mode(t, '{}'.format(web_.name[:6]), option='background', color=defaults.wrsp_color1)
+            lr_widj.highlight_mode(t, web_.name[6:], option='foreground', color=defaults.wrsp_color2)
+            lr_widj.highlight_mode(t, web_.param, option='foreground', color=defaults.wrsp_color2)
+            for line in web_.lines_list[1:]:
+                lr_widj.highlight_mode(t, line.strip())
+        else:
+            lr_widj.highlight_mode(t, web_.name)
 
     def stats_in_web(self, snapshot: int) -> str:
         params_in = self.web_snapshot_param_in_count[snapshot]
@@ -740,18 +757,31 @@ class WebReport:
             return ''
 
     def checker_warn(self) -> dict:
-        result = {'warning': [], 'debug': []}
+        '''проверка на некорректные транзакции'''
+        result = dict(info=[], warning=[], )
+
         for t in self.parent_AWAL.transactions.names:
             if t.startswith(Transactions._no_transaction_name):
                 continue
-            dtt = next(get_sub_transaction_dt(t, self.all_in_one))
-            if (not dtt) and (t not in self.web_transaction):
+            dtt = next(self.get_sub_transaction_dt(t, self.all_in_one))
+
+            if (not dtt) and (t not in self.web_transaction):  # считается пустой(без snapshot), только если не содержит подтранзакций
                 result['info'].append('Пустая транзакция "{}"'.format(t))
             if t not in self.parent_AWAL.transactions.start_stop['start']:
                 result['warning'].append('Отсутствует транзакция start_transaction("{}")'.format(t))
             if t not in self.parent_AWAL.transactions.start_stop['stop']:
                 result['warning'].append('Отсутствует транзакция stop_transaction("{}")'.format(t))
+
         return result
+
+    def get_sub_transaction_dt(self, transaction: str, dt_obj: dict) -> dict:
+        '''словарь транзакции, внутри вложенного словаря Transactions.sub_transaction'''
+        if isinstance(dt_obj, collections.OrderedDict):
+            if transaction in dt_obj:
+                yield dt_obj[transaction]
+            else:
+                for t in dt_obj:
+                    yield from self.get_sub_transaction_dt(transaction, dt_obj[t])
 
 
 def snapshot_diapason_string(infs: [int, ]) -> str:
@@ -819,32 +849,3 @@ class Transactions:
             lr_log.Logger.error('транзакция: stop перед start\nОтсутствует start_transaction("{}")'.format(transaction))
         else:
             self.start_stop['stop'].append(transaction)
-
-
-def get_sub_transaction_dt(transaction, obj) -> dict:
-    '''словарь транзакции, внутри вложенного словаря Transactions.sub_transaction
-    dtt = next(get_sub_transaction_dt(t, self.all_in_one))'''
-    if isinstance(obj, collections.OrderedDict):
-        if transaction in obj:
-            yield obj[transaction]
-        else:
-            for t in obj:
-                yield from get_sub_transaction_dt(transaction, obj[t])
-
-
-def web_add_highlight(web_, tk_text) -> None:
-    '''подсветить web_'''
-    hm = lr_widj.highlight_mode
-    hm(tk_text, web_.type)
-
-    for line in web_.comments.split('\n'):
-        hm(tk_text, line.strip())
-
-    if isinstance(web_, WebRegSaveParam):
-        hm(tk_text, '{}'.format(web_.name[:6]), option='background', color=defaults.wrsp_color1)
-        hm(tk_text, web_.name[6:], option='foreground', color=defaults.wrsp_color2)
-        hm(tk_text, web_.param, option='foreground', color=defaults.wrsp_color2)
-        for line in web_.lines_list[1:]:
-            hm(tk_text, line.strip())
-    else:
-        hm(tk_text, web_.name)

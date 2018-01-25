@@ -17,7 +17,7 @@ from lr_lib import (
 LR_COMENT = '//lr:'
 
 # имя web_reg_save_param - P_число__inf_номера_запросов__и_скомый_para_m
-WEB_REG_NUM = 'P_{wrsp_rnd_num}_{infs}_{lb_name}__{wrsp_name}__{rb_name}'
+WEB_REG_NUM = '{letter}_{wrsp_rnd_num}_{infs}_{lb_name}__{wrsp_name}__{rb_name}'
 
 
 _web_reg_save_param = '''
@@ -199,21 +199,24 @@ def wrsp_name_creator(param, Lb, Rb, file) -> str:
     wrsp_name = defaults.wrsp_name_splitter.get().join((wn[0], ''.join(wn[1:-1]), wn[-1]))
     MaxParamWrspName = defaults.MaxParamWrspName.get()
     if MaxParamWrspName:
-        wrsp_name = wrsp_name[:MaxParamWrspName + 2]
+        wrsp_name = wrsp_name[:MaxParamWrspName]
 
-    if defaults.MaxWrspRnum:
-        wrsp_rnd_num = random.randrange(defaults.MinWrspRnum.get(), defaults.MaxWrspRnum.get())
+    MaxWrspRnum = defaults.MaxWrspRnum.get()
+    if MaxWrspRnum:
+        wrsp_rnd_num = random.randrange(defaults.MinWrspRnum.get(), MaxWrspRnum)
     else:
         wrsp_rnd_num = ''
 
-    infs = '_'.join(map(str, file['Inf']['Nums']))
-    wrsp_name = WEB_REG_NUM.format(wrsp_rnd_num=wrsp_rnd_num, wrsp_name=wrsp_name, lb_name=lb_name, rb_name=rb_name, infs=infs)
+    if defaults.SnapshotInName.get():
+        infs = '_'.join(map(str, file['Inf']['Nums']))
+    else: infs = ''
+
+    wrsp_name = WEB_REG_NUM.format(wrsp_rnd_num=wrsp_rnd_num, wrsp_name=wrsp_name, lb_name=lb_name, rb_name=rb_name, infs=infs, letter=defaults.WrspNameFirst.get())
 
     wrsp_name = str.translate(wrsp_name, wrsp_deny_punctuation)
     while '___' in wrsp_name:
         wrsp_name = wrsp_name.replace('___', '__')
-    while wrsp_name.endswith('_'):
-        wrsp_name = wrsp_name[:-1]
+    wrsp_name = wrsp_name.rstrip('_')
 
     return wrsp_name
 

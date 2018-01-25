@@ -508,6 +508,7 @@ class ActionWindow(tk.Toplevel):
         VarWRSPStatsTransac = tk.Checkbutton(top, text='VarWRSPStatsTransac', font=defaults.DefaultFont, variable=defaults.VarWRSPStatsTransac)
         VarWRSPStatsTransacNames = tk.Checkbutton(top, text='VarWRSPStatsTransacNames', font=defaults.DefaultFont, variable=defaults.VarWRSPStatsTransacNames)
         VarWRSPStats = tk.Checkbutton(top, text='VarWRSPStats', font=defaults.DefaultFont, variable=defaults.VarWRSPStats)
+        SnapshotInName = tk.Checkbutton(top, text='SnapshotInName', font=defaults.DefaultFont, variable=defaults.SnapshotInName)
 
         MaxLbWrspName = tk.Spinbox(top, textvariable=defaults.MaxLbWrspName, font=defaults.DefaultFont)
         MaxRbWrspName = tk.Spinbox(top, textvariable=defaults.MaxRbWrspName, font=defaults.DefaultFont)
@@ -515,6 +516,7 @@ class ActionWindow(tk.Toplevel):
         MinWrspRnum = tk.Spinbox(top, textvariable=defaults.MinWrspRnum, font=defaults.DefaultFont)
         MaxWrspRnum = tk.Spinbox(top, textvariable=defaults.MaxWrspRnum, font=defaults.DefaultFont)
         wrsp_name_splitter = tk.Entry(top, textvariable=defaults.wrsp_name_splitter, font=defaults.DefaultFont)
+        WrspNameFirst = tk.Entry(top, textvariable=defaults.WrspNameFirst, font=defaults.DefaultFont)
 
         apply_btn = tk.Button(top, command=lambda: self.save_action_file(file_name=False), font=defaults.DefaultFont, text='применить')
         lr_wlib.createToolTip(apply_btn, 'применить изменения')
@@ -526,13 +528,15 @@ class ActionWindow(tk.Toplevel):
         lr_wlib.createToolTip(VarWRSPStatsTransac, 'для wrsp, статистика использования param')
         lr_wlib.createToolTip(VarWRSPStatsTransacNames, 'для wrsp, имена транзакций в которых используется param')
         lr_wlib.createToolTip(VarWRSPStats, 'для wrsp, создавать подробные/короткие коментарии\nИзменится только при пересоздании param')
+        lr_wlib.createToolTip(SnapshotInName, 'в wrsp имени param, отображать номер Snapshot, в котором создан wrsp\nИзменится только при пересоздании param')
 
-        lr_wlib.createToolTip(MaxLbWrspName, 'макс число символов, взятых из LB, для wrsp имени param\nИзменится только при пересоздании param')
-        lr_wlib.createToolTip(MaxRbWrspName, 'макс число символов, взятых из RB, для wrsp имени param\nИзменится только при пересоздании param')
-        lr_wlib.createToolTip(MaxParamWrspName, 'макс число символов, взятых из param, для wrsp имени param\nИзменится только при пересоздании param')
-        lr_wlib.createToolTip(MinWrspRnum, 'мин число, для случайного номера, в wrsp имени param\nИзменится только при пересоздании param')
-        lr_wlib.createToolTip(MaxWrspRnum, 'макс число, для случайного номера, в wrsp имени param\nИзменится только при пересоздании param')
-        lr_wlib.createToolTip(wrsp_name_splitter, 'символ разделения именя wrsp(для "_"): Win__aFFX9__id -> Win__a_FFX_9__id\nИзменится только при пересоздании param')
+        lr_wlib.createToolTip(MaxLbWrspName, 'макс число символов, взятых из LB, для wrsp имени param\nИзменится только при пересоздании param\n0 - откл')
+        lr_wlib.createToolTip(MaxRbWrspName, 'макс число символов, взятых из RB, для wrsp имени param\nИзменится только при пересоздании param\n0 - откл')
+        lr_wlib.createToolTip(MaxParamWrspName, 'макс число символов, взятых из param, для wrsp имени param\nИзменится только при пересоздании param\n0 - откл')
+        lr_wlib.createToolTip(MinWrspRnum, 'мин число, для случайного номера, в wrsp имени param\nИзменится только при пересоздании param\n0 - откл')
+        lr_wlib.createToolTip(MaxWrspRnum, 'макс число, для случайного номера, в wrsp имени param\nИзменится только при пересоздании param\n0 - откл')
+        lr_wlib.createToolTip(wrsp_name_splitter, 'символ разделения именя wrsp(для "_"): Win__aFFX9__id -> Win__a_FFX_9__id\nИзменится только при пересоздании param\nничего - откл')
+        lr_wlib.createToolTip(WrspNameFirst, 'начало(P) wrsp имени param: {P_11_zkau_22}\nИзменится только при пересоздании param\nничего - откл')
 
         VarWebStatsTransac.pack()
         VarWebStatsIn.pack()
@@ -541,6 +545,7 @@ class ActionWindow(tk.Toplevel):
         VarWRSPStatsTransac.pack()
         VarWRSPStatsTransacNames.pack()
         VarWRSPStats.pack()
+        SnapshotInName.pack()
 
         MaxLbWrspName.pack()
         MaxRbWrspName.pack()
@@ -548,6 +553,7 @@ class ActionWindow(tk.Toplevel):
         MinWrspRnum.pack()
         MaxWrspRnum.pack()
         wrsp_name_splitter.pack()
+        WrspNameFirst.pack()
 
         apply_btn.pack()
 
