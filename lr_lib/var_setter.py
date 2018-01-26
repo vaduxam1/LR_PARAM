@@ -189,7 +189,7 @@ def set_part_num(num=0) -> None:
 
 
 def next_3_or_4_if_bad_or_enmpy_lb_rb(text='') -> None:
-    '''увеличить(3) либо (4), при пустом str.strip(LB/RB(5))'''
+    '''увеличить(3) либо (4))'''
     len_files = len(defaults.FilesWithParam) - 1  # нумерация с 0
     num = defaults.VarPartNum.get()
     n = num + 1
