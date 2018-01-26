@@ -20,7 +20,7 @@ from lr_lib import (
 def lr_starter() -> iter((None, )):
     '''запуск скрипта'''
     defaults.Logger.info('version={v}, sys.getdefaultencoding={e}, defaults.VarEncode={ce}'.format(v=defaults.VERSION, e=sys.getdefaultencoding(), ce=defaults.VarEncode.get()))
-    defaults.Tk.report_callback_exception = lr_log.excepthook  # !!! перехват raise!!!
+    defaults.Tk.report_callback_exception = lr_other.excepthook  # !!! перехват raise!!!
 
     lr_setter.initVars()  # связь основных Var
     try:
@@ -41,6 +41,6 @@ def lr_starter() -> iter((None, )):
 
 if __name__ == '__main__':
     # вся работа в lr_starter(), в теле with - уже выход
-    with lr_log.Logger_Creator(), lr_pool.POOL_Creator(), lr_starter():
+    with lr_log.Logger_Creator(), lr_pool.MainThreadUpdater(), lr_pool.POOL_Creator(), lr_starter():
         defaults.Logger.info('выход, sys.exc_info: {}'.format(sys.exc_info()))
-    sys.exit()
+    sys.exit(0)

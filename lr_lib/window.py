@@ -18,9 +18,7 @@ from lr_lib import (
     window_action as lr_action,
     window_lib as lr_wlib,
     window_widj as lr_widj,
-    pool as lr_pool,
     help as lr_help,
-    logger as lr_log,
 )
 
 
@@ -100,9 +98,9 @@ class Window(ttk.Frame):
         self.last_frameCbx1 = ttk.Label(self.LB.label_info, padding="0 0 0 0")
         self.last_frameCbx2 = ttk.Label(self.RB.label_info, padding="0 0 0 0")
 
-        @lr_pool.T_POOL_decorator
+        @defaults.T_POOL_decorator
         def lr_note(ob) -> None:
-            lr_log.openTextInEditor(ob.get())
+            lr_other.openTextInEditor(ob.get())
 
         self.t5l = tk.Label(self, text='(5)', font=defaults.DefaultFont + ' italic bold', padx=0, pady=0, foreground='brown')
         self.t5r = tk.Label(self, text='(5)', font=defaults.DefaultFont + ' italic bold', padx=0, pady=0, foreground='brown')
@@ -203,10 +201,10 @@ class Window(ttk.Frame):
         self.unblock = tk.Button(self.last_frame, text='unblock', font=defaults.DefaultFont + ' bold', padx=0, pady=0, command=force_unblock)
         self.ButtonClearDown = tk.Button(self.last_frame, text='clearW', command=self.clear, font=defaults.DefaultFont + ' italic', padx=0, pady=0)
         self.ButtonClearUp = tk.Button(self.last_frame, text='clearT', command=lambda: self.tk_text.delete(0.0, 'end'), font=defaults.DefaultFont + ' italic', padx=0, pady=0)
-        self.ButtonNote = tk.Button(self.last_frame, text='text', command=lambda: lr_log.openTextInEditor(self.tk_text.get('1.0', tk.END)), font=defaults.DefaultFont + ' italic', padx=0, pady=0)
+        self.ButtonNote = tk.Button(self.last_frame, text='text', command=lambda: lr_other.openTextInEditor(self.tk_text.get('1.0', tk.END)), font=defaults.DefaultFont + ' italic', padx=0, pady=0)
         self.ButtonLog = tk.Button(self.last_frame, text='log', font=defaults.DefaultFont + ' italic', padx=0, pady=0, command=lambda: subprocess.Popen([defaults.EDITOR['exe'], defaults.logFullName]))
 
-        @lr_pool.T_POOL_decorator
+        @defaults.T_POOL_decorator
         def editor_fn(*a):
             '''открыть в editor'''
             return subprocess.Popen([defaults.EDITOR['exe'], lr_files.get_file_with_kwargs(defaults.FilesWithParam)['File']['FullName']])
@@ -640,7 +638,7 @@ class Window(ttk.Frame):
         tt = 'окно настройки пулов  # Window.pool_wind'
         top.title(tt)
 
-        def set_pool(pool: lr_pool.POOL) -> None:
+        def set_pool(pool) -> None:
             '''установить новый пул'''
             pool.reset()
             self.last_frame_text_set()
@@ -650,7 +648,7 @@ class Window(ttk.Frame):
         lr_wlib.createToolTip(labMP, 'основной пул(process), поиск в файлах и тд')
 
         entryMPName = ttk.Combobox(top, justify='center', textvariable=defaults.M_POOL.name, width=65, foreground='grey', background=defaults.Background, font=defaults.DefaultFont + ' italic')
-        entryMPName['values'] = list(lr_pool.POOL.pools.keys())
+        entryMPName['values'] = list(defaults.T_POOL.pools.keys())
         entryMPName.bind("<<ComboboxSelected>>", lambda *a: set_pool(defaults.M_POOL))
         lr_wlib.createToolTip(entryMPName, 'тип MP пула(любые стандартные(process))')
         entryMPName.grid(row=2, column=0, columnspan=7)
@@ -664,7 +662,7 @@ class Window(ttk.Frame):
         lr_wlib.createToolTip(labT, 'доп пул(thread only), выполнение в фоне, подсветка и тд')
 
         entryTName = ttk.Combobox(top, justify='center', textvariable=defaults.T_POOL.name, width=65, foreground='grey', background=defaults.Background, font=defaults.DefaultFont + ' italic')
-        entryTName['values'] = list(lr_pool.POOL.pools.keys())
+        entryTName['values'] = list(defaults.T_POOL.pools.keys())
         entryTName.bind("<<ComboboxSelected>>", lambda *a: set_pool(defaults.T_POOL))
         lr_wlib.createToolTip(entryTName, 'тип T пула(чтото из thread)')
         entryTName.grid(row=4, column=0, columnspan=7)
@@ -707,7 +705,7 @@ class Window(ttk.Frame):
         if defaults.T_POOL_NAME == 'SThreadPool(threading.Thread)':
             self.pool_state_updater()
 
-    @lr_pool.T_POOL_decorator
+    @defaults.T_POOL_decorator
     def pool_state_updater(self) -> None:
         '''SThreadPool(threading.Thread) текст состояния пула'''
         def pool_state_string(st=lambda i: '{0:<6} : {1}'.format(*i)) -> str:
@@ -724,8 +722,8 @@ class Window(ttk.Frame):
             if y.alive_:
                 y.after(defaults._SThreadMonitorUpdate.get(), thread_info_updater, y)
 
-        y = lr_wlib.YesNoCancel(['выйти'], 'монитор T_POOL\n{}[ {} ] : {}'.format(lr_pool.SThreadPool, lr_pool.SThread, lr_pool.auto_size_SThreadPool), 'инфо о задачах, выполняющихся в SThread потоках', title=self.pool_state_updater, parent=self, is_text=pool_state_string())
-        y.after(50, thread_info_updater, y)
+        y = lr_wlib.YesNoCancel(['выйти'], 'T_POOL\nмонитор', 'инфо о задачах, выполняющихся в SThread потоках', title=self.pool_state_updater, parent=self, is_text=pool_state_string())
+        y.after(100, thread_info_updater, y)
         y.ask()
 
     def auto_update_action_pool_lab(self) -> None:
@@ -801,7 +799,7 @@ class Window(ttk.Frame):
 
     def print(self, levelname: str, text: str) -> None:
         '''сообщения в конец текста gui, в main потоке'''
-        lr_pool.MainThreadUpdater.submit(lambda: self.add_message(levelname, text))
+        defaults.MainThreadUpdater.submit(lambda: self.add_message(levelname, text))
 
     def set_comboFiles_width(self) -> None:
         '''установка макс ширины комбо файлов(3)'''
@@ -879,7 +877,7 @@ class Window(ttk.Frame):
 
         if web_reg_save_param:
             if self.cbxNotepadWrsp.get():
-                lr_log.openTextInEditor(web_reg_save_param)
+                lr_other.openTextInEditor(web_reg_save_param)
             if self.cbxWrspClipboard.get():
                 self.clip_add(web_reg_save_param)
             if self.cbxClearShowVar.get():

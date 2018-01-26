@@ -2,7 +2,6 @@
 # пулы потоков
 
 import sys
-import functools
 import contextlib
 import concurrent.futures
 import multiprocessing.pool
@@ -14,36 +13,46 @@ import tkinter
 
 from lr_lib import (
     defaults,
-    logger as lr_log,
+    other as lr_other,
 )
 
 
 class MainThreadUpdater:
     '''выполнить из main потока(например если что-то нельзя(RuntimeError) выполнять в потоке)'''
-    queue_in = queue.Queue()
-    working = None
+    def __init__(self):
+        self.queue_in = queue.Queue()
+        self.working = None
+        defaults.MainThreadUpdater = self
 
-    @staticmethod
-    def submit(callback: callable) -> None:
+    def __enter__(self):
+        self.working = True
+        defaults.Tk.after(0, self.queue_listener)
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self.working = False
+        if exc_type:
+            lr_other.excepthook(exc_type, exc_val, exc_tb)
+        return exc_type, exc_val, exc_tb
+
+    def submit(self, callback: callable) -> None:
         '''выполнить callback, из main потока'''
-        MainThreadUpdater.queue_in.put_nowait(callback)
+        self.queue_in.put_nowait(callback)
 
-    @staticmethod
-    def queue_listener() -> None:
+    def queue_listener(self) -> None:
         '''выполнять из очереди, пока есть, затем перезапустить'''
-        while not MainThreadUpdater.queue_in.empty():
+        while not self.queue_in.empty():
             try:  # выполнить
-                callback = MainThreadUpdater.queue_in.get()
+                callback = self.queue_in.get()
                 callback()
             except Exception:
-                lr_log.excepthook(*sys.exc_info())
+                lr_other.excepthook(*sys.exc_info())
                 continue
 
         if defaults.Window:  # отображение всякого инфо
             defaults.Window.auto_update_action_pool_lab()
 
-        if MainThreadUpdater.working:  # перезапуск
-            defaults.Tk.after(defaults.MainThreadUpdateTime.get(), MainThreadUpdater.queue_listener)
+        if self.working:  # перезапуск
+            defaults.Tk.after(defaults.MainThreadUpdateTime.get(), self.queue_listener)
 
 
 class SThreadIOQueue:
@@ -94,7 +103,7 @@ class SThread(threading.Thread, SThreadIOQueue):
                     try:  # выполнить задачу
                         out = self.task['target'](*self.task['args'], **self.task['kwargs'])
                     except Exception:  # выход
-                        return '' if (self.task is None) else lr_log.excepthook(*sys.exc_info())
+                        return '' if (self.task is None) else lr_other.excepthook(*sys.exc_info())
                     finally:  # вернуть результат
                         self.queue_out.put_nowait(out)
                         self.queue_in.task_done()
@@ -266,26 +275,12 @@ class POOL:
 @contextlib.contextmanager
 def POOL_Creator() -> None:
     '''создание пулов'''
-    MainThreadUpdater.working = True
-    defaults.Tk.after(0, MainThreadUpdater.queue_listener)
-
-    defaults.M_POOL = POOL(defaults.M_POOL_NAME, defaults.M_POOL_Size)
-    defaults.T_POOL = POOL(defaults.T_POOL_NAME, defaults.T_POOL_Size)
-
     try:
+        defaults.M_POOL = POOL(defaults.M_POOL_NAME, defaults.M_POOL_Size)
+        defaults.T_POOL = POOL(defaults.T_POOL_NAME, defaults.T_POOL_Size)
         yield
     finally:
-        defaults.M_POOL.pool_exit()
-        defaults.T_POOL.pool_exit()
-        MainThreadUpdater.working = False
-
-
-def T_POOL_decorator(func):
-    '''декоратор, выполнения func в T_POOL потоке'''
-    @functools.wraps(func)
-    def wrap(*args, **kwargs):
-        try:
-            return defaults.T_POOL.submit(func, *args, **kwargs)
-        except AttributeError:
-            return defaults.T_POOL.apply_async(func, args, kwargs)
-    return wrap
+        if defaults.M_POOL:
+            defaults.M_POOL.pool_exit()
+        if defaults.T_POOL:
+            defaults.T_POOL.pool_exit()

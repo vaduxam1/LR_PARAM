@@ -11,7 +11,6 @@ import configparser
 from lr_lib import (
     defaults,
     other as lr_other,
-    logger as lr_log,
 )
 
 
@@ -107,7 +106,7 @@ def create_files_from_inf(args: [(str, str, bool, bool), str]) -> iter((dict, ))
                             yield file
 
         except Exception as ex:
-            lr_log.excepthook(ex)
+            lr_other.excepthook(ex)
 
             with open(os.path.join(folder, file), encoding='utf-8', errors='ignore') as inf_file:
                 num, *lines = inf_file.read().split('\n')
@@ -125,7 +124,7 @@ def create_files_from_inf(args: [(str, str, bool, bool), str]) -> iter((dict, ))
                             yield file
 
 
-# @lr_log.exec_time
+# @lr_other.exec_time
 def createAllFiles() -> None:
     '''создать все файлы для поиска param'''
     defaults.AllFiles.clear()

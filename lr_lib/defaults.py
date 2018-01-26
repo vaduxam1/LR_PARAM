@@ -5,6 +5,7 @@ import os
 import time
 import string
 import itertools
+import functools
 import multiprocessing
 import encodings.aliases
 import tkinter as tk
@@ -15,7 +16,7 @@ from lr_lib import (
 )
 
 #####################################
-VERSION = 'v9.2'
+VERSION = 'v9.2.1'
 lib_folder = 'lr_lib'
 Tk = tk.Tk()
 
@@ -319,10 +320,12 @@ ENCODE_LIST.update(set(encodings.aliases.aliases.values()))
 ENCODE_LIST = list(sorted(ENCODE_LIST))
 
 #####################################
-MainThreadUpdateTime = tk.IntVar(value=500)  # интервал(мс) проверки очереди, для выполнения для главного потока, callback(из потоков)
-cpu_count = multiprocessing.cpu_count()
+MainThreadUpdater = None  # выполнять callback из main потока
+MainThreadUpdateTime = tk.IntVar(value=500)  # интервал(мс) проверки очереди, callback(из потоков)
+
 M_POOL = None  # пул процессов
 M_POOL_NAME = 'multiprocessing.Pool'  # тип основной пул
+cpu_count = multiprocessing.cpu_count()
 M_POOL_Size = cpu_count if (cpu_count < 5) else 4  # основной MP пул(int/None)
 
 T_POOL = None  # пул потоков
@@ -336,6 +339,15 @@ SThreadPoolAddMinQSize = tk.IntVar(value=100)  # SThreadPool - минималь�
 SThreadPooMaxAddThread = tk.IntVar(value=2)  # SThreadPool - max число потоков, для добавления за один раз(до SThreadPoolSizeMax)
 SThreadExitTimeout = tk.IntVar(value=1)  # SThreadPool таймаут(сек) выхода, бездействующих потоков(до SThreadPoolSizeMin)
 _SThreadMonitorUpdate = tk.IntVar(value=1000)  # SThreadPool (мс) время обновления popup окна Window.pool_wind для текста состояния пула
+
+
+def T_POOL_decorator(func: callable):
+    '''декоратор, выполнения func в T_POOL потоке'''
+    @functools.wraps(func)
+    def wrap(*args, **kwargs):
+        try: return T_POOL.submit(func, *args, **kwargs)
+        except AttributeError: return T_POOL.apply_async(func, args, kwargs)
+    return wrap
 
 #####################################
 Window = None  # класс gui окна
