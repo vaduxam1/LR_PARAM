@@ -958,3 +958,8 @@ class Window(ttk.Frame):
                     attrs[a](state=state)
         with contextlib.suppress(Exception):
             self.update()
+
+    def get_main_action(self) -> lr_action.ActionWindow:
+        '''если открыто несколько action онон, какое вернуть'''
+        action = self.action_windows[next(iter(self.action_windows))]
+        return action

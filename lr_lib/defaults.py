@@ -164,6 +164,7 @@ MaxParamWrspName = tk.IntVar(value=50)  # макс число символов, 
 MinWrspRnum = tk.IntVar(value=1000)  # мин число, для случайного номера, в wrsp имени param
 MaxWrspRnum = tk.IntVar(value=9999)  # макс число, для случайного номера, в wrsp имени param
 SnapshotInName = tk.BooleanVar(value=True)  # в wrsp имени param, отображать номер Snapshot, в котором создан wrsp
+TransactionInNameMax = tk.IntVar(value=50)  # в wrsp имени param, отображать максимум символов transaction, в которой создан wrsp
 WrspNameFirst = tk.StringVar(value='P')  # начало(P) wrsp имени param: {P_11_zkau_22}
 wrsp_name_splitter = tk.StringVar(value='')  # символ разделения имени wrsp(для '_'): Win__aFFX9__id -> Win__a_FFX_9__id
 LRB_rep_list = [

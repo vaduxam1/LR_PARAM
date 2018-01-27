@@ -9,13 +9,14 @@ import string
 from lr_lib import (
     defaults,
     other as lr_other,
+    help as lr_help,
 )
 
 
 LR_COMENT = '//lr:'
 
-# имя web_reg_save_param - P_число__inf_номера_запросов__и_скомый_para_m
-WEB_REG_NUM = '{letter}_{wrsp_rnd_num}_{infs}_{lb_name}__{wrsp_name}__{rb_name}'
+# имя web_reg_save_param
+WEB_REG_NUM = '{letter}_{wrsp_rnd_num}_{infs}__{transaction}__{lb_name}__{wrsp_name}__{rb_name}'
 
 
 _web_reg_save_param = '''
@@ -164,58 +165,59 @@ def wrsp_dict_creator(is_param=True) -> dict:
     return web_reg_save_param_dict
 
 
-def wrsp_name_creator(param, Lb, Rb, file) -> str:
-    '''печатные символы искомого param(1), войдут в имя для web_reg_save_param(6)'''
+def wrsp_name_creator(param: str, Lb: str, Rb: str, file: dict) -> str:
+    '''сформировать имя для web_reg_save_param(6)'''
+    snapshots = file['Snapshot']['Nums']
+    assert snapshots, 'не определен snapshot, в для которого создан web_reg_save_param\n{}'.format(file)
+    snaps = ('_'.join(map(str, snapshots)) if defaults.SnapshotInName.get() else '')
     MaxLbWrspName = defaults.MaxLbWrspName.get()
     MaxRbWrspName = defaults.MaxRbWrspName.get()
 
     if MaxLbWrspName and (len(Lb) > 2):
-        lb_name = ['']
+        lbn = ['']
         for b in Lb:
             if b in allow_lrb:
-                lb_name[-1] += b
-            elif lb_name[-1]:
-                lb_name.append('')
-        lb_name = [b for b in filter(bool, lb_name) if b not in defaults.LRB_rep_list]
-        lb_name = '_'.join(sorted(set(lb_name), key=lb_name.index))[-MaxLbWrspName:]
-    else:
-        lb_name = ''
+                lbn[-1] += b
+            elif lbn[-1]:
+                lbn.append('')
+        lbn = [b for b in filter(bool, lbn) if (b not in defaults.LRB_rep_list)]
+        lb_name = '_'.join(sorted(set(lbn), key=lbn.index))[-MaxLbWrspName:]
+    else: lb_name = ''
 
     if MaxRbWrspName and (len(Rb) > 2):
-        rb_name = ['']
+        rbn = ['']
         for b in Rb:
             if b in allow_lrb:
-                rb_name[-1] += b
-            elif rb_name[-1]:
-                rb_name.append('')
-        rb_name = [b for b in filter(bool, rb_name) if b not in defaults.LRB_rep_list]
-        rb_name = '_'.join(sorted(set(rb_name), key=rb_name.index))[:MaxRbWrspName]
-    else:
-        rb_name = ''
+                rbn[-1] += b
+            elif rbn[-1]:
+                rbn.append('')
+        rbn = [b for b in filter(bool, rbn) if (b not in defaults.LRB_rep_list)]
+        rb_name = '_'.join(sorted(set(rbn), key=rbn.index))[:MaxRbWrspName]
+    else: rb_name = ''
 
-    wn = [s for s in param if s in allow_lrb]
-    wrsp_name = defaults.wrsp_name_splitter.get().join((wn[0], ''.join(wn[1:-1]), wn[-1]))
+    p = tuple(filter(allow_lrb.__contains__, param))  # печатные символы искомого param
+    wrsp_param_name = defaults.wrsp_name_splitter.get().join((p[0], ''.join(p[1:-1]), p[-1]))
     MaxParamWrspName = defaults.MaxParamWrspName.get()
     if MaxParamWrspName:
-        wrsp_name = wrsp_name[:MaxParamWrspName]
+        wrsp_param_name = wrsp_param_name[:MaxParamWrspName]
 
     MaxWrspRnum = defaults.MaxWrspRnum.get()
-    if MaxWrspRnum:
-        wrsp_rnd_num = random.randrange(defaults.MinWrspRnum.get(), MaxWrspRnum)
-    else:
-        wrsp_rnd_num = ''
+    wrsp_rnd_num = (random.randrange(defaults.MinWrspRnum.get(), MaxWrspRnum) if MaxWrspRnum else '')
 
-    if defaults.SnapshotInName.get():
-        infs = '_'.join(map(str, file['Snapshot']['Nums']))
-    else: infs = ''
+    TransactionInNameMax = defaults.TransactionInNameMax.get()
+    if TransactionInNameMax and defaults.Window:
+        action = defaults.Window.get_main_action()
+        w = next(action.web_action.get_web_by(snapshot=snapshots[0]))
+        if w and w.transaction and (not w.transaction.startswith(action.web_action.transactions._no_transaction_name)):
+            transaction = '_'.join(''.join(filter(str.isalnum, t)).translate(lr_help.TRANSLIT_DT) for t in w.transaction.split())
+            if TransactionInNameMax:
+                transaction = transaction[:TransactionInNameMax]
+        else: transaction = ''
+    else: transaction = ''
 
-    wrsp_name = WEB_REG_NUM.format(wrsp_rnd_num=wrsp_rnd_num, wrsp_name=wrsp_name, lb_name=lb_name, rb_name=rb_name, infs=infs, letter=defaults.WrspNameFirst.get())
-
-    wrsp_name = str.translate(wrsp_name, wrsp_deny_punctuation)
-    while '___' in wrsp_name:
-        wrsp_name = wrsp_name.replace('___', '__')
-    wrsp_name = wrsp_name.rstrip('_')
-
+    wrsp_name = WEB_REG_NUM.format(wrsp_rnd_num=wrsp_rnd_num, wrsp_name=wrsp_param_name, lb_name=lb_name, rb_name=rb_name, infs=snaps, letter=defaults.WrspNameFirst.get(), transaction=transaction)
+    wrsp_name = str.translate(wrsp_name, wrsp_deny_punctuation).rstrip('_')
+    while '___' in wrsp_name: wrsp_name = wrsp_name.replace('___', '__')
     return wrsp_name
 
 
@@ -246,7 +248,6 @@ def search_param_in_file(file: dict) -> (dict or None):
     Param['Count_indexs'] = []
 
     with open(File['FullName'], encoding=File['encoding'], errors='ignore') as text:
-        # for line in text:
         split_line = text.read().split(param)
         split_len = len(split_line)
         if split_len < 2:

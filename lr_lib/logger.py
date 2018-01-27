@@ -61,8 +61,8 @@ def loggingLevelCreator(level_num: int, level: str) -> None:
                 lr_other.openTextInEditor(message)
             # окно с ошибкой
             if defaults.VarShowPopupWindow.get() and (level in ('critical', 'error', 'warning',)):
-                if (parent is None) and defaults.Window and defaults.Window.action_windows:  # сделать action родителем
-                    parent = defaults.Window.action_windows[next(iter(defaults.Window.action_windows))]
+                if (parent is None) and defaults.Window:  # сделать action родителем
+                    parent = defaults.Window.get_main_action()
 
                 message = '{s}\n{m}\n{s}'.format(m=message, s=defaults.PRINT_SEPARATOR)
                 if level == 'warning':

@@ -66,7 +66,7 @@ def rClick_Param(event, *args, **kwargs) -> None:
     except tk.TclError: return defaults.Logger.warning('сбросилось выделение текста\ntry again', parent=widget)
     try: action = widget.action
     except AttributeError:
-        action = defaults.Window.action_windows[next(iter(defaults.Window.action_windows))]
+        action = defaults.Window.get_main_action()
         widget = action.tk_text
 
     callback = lambda: mouse_web_reg_save_param(widget, param, *args, set_param=False, **kwargs)
