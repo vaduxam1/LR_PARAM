@@ -19,8 +19,8 @@ WEB_REG_NUM = '{letter}_{wrsp_rnd_num}_{infs}_{lb_name}__{wrsp_name}__{rb_name}'
 
 
 _web_reg_save_param = '''
-// PARAM["{param_Name}"] // INF{inf_nums}
-web_reg_save_param("{web_reg_num}",
+// PARAM["{param}"] // Snap{inf_nums}
+web_reg_save_param("{web_reg_name}",
     "LB={lb}",
     "RB={rb}",
     "Ord={param_ord}",
@@ -30,9 +30,9 @@ web_reg_save_param("{web_reg_num}",
 
 
 web_reg_save_param = '''
-// INF{inf_nums}, [{param_inf_min}:{param_inf_max}]={search_inf_len} -> [{_param_inf_min}:{_param_inf_max}]={_param_inf_all} | FILE["{Name}"], with_param = {file_index}/{param_files} | {create_time}
-// PARAM["{param_Name}"], count={param_part}/{param_count}, NA={param_NotPrintable} | LB[{Lb_len}~{lb_len}] NA={lb_NotPrintable}, RB[{Rb_len}~{rb_len}] NA={rb_NotPrintable}
-web_reg_save_param("{web_reg_num}",
+// Snap{inf_nums}, [{param_inf_min}:{param_inf_max}]={search_inf_len} -> [{_param_inf_min}:{_param_inf_max}]={_param_inf_all} | FILE["{Name}"], with_param = {file_index}/{param_files} | {create_time}
+// PARAM["{param}"], count={param_part}/{param_count}, NA={param_NotPrintable} | LB[{Lb_len}~{lb_len}] NA={lb_NotPrintable}, RB[{Rb_len}~{rb_len}] NA={rb_NotPrintable}
+web_reg_save_param("{web_reg_name}",
     "LB={lb}",
     "RB={rb}",
     "Ord={param_ord}",
@@ -40,7 +40,7 @@ web_reg_save_param("{web_reg_num}",
     LAST); 
 '''
 
-# !!! при редактировании web_reg_save_param, учесть что придется изменить wrsp_start/end, чтобы при автозамене, не заменялся param в коментарии // PARAM[{param_Name}], и тд
+# !!! при редактировании web_reg_save_param, учесть что придется изменить wrsp_start/end, чтобы при автозамене, не заменялся param в коментарии // PARAM[{param}], и тд
 wrsp_file_start = '| FILE["'
 wrsp_file_end = '"],'
 
@@ -51,7 +51,7 @@ wrsp_RB_end = '",\n'
 
 wrsp_start = '// PARAM["'
 wrsp_end = '"'
-wrsp_start_end = '// PARAM["{param_Name}"]'
+wrsp_start_end = '// PARAM["{param}"]'
 
 wrsp_lr_start = 'web_reg_save_param("'
 wrsp_lr_end = '",'
@@ -121,14 +121,14 @@ def wrsp_dict_creator(is_param=True) -> dict:
     wrsp_name = wrsp_name_creator(param, Lb, Rb, file)
 
     search_key = 'All'
-    # if file['Inf']['inf_key'] == 'ResponseHeaderFile':
+    # if file['Snapshot']['inf_key'] == 'ResponseHeaderFile':
     #     search_key = 'Headers'
 
     web_reg_save_param_dict = dict(
         lb=lb,
         rb=rb,
         param_ord=param_ord,
-        web_reg_num=wrsp_name,
+        web_reg_name=wrsp_name,
         param_part=param_num,
         param_count=param_count,
         param_files=len_param_files,
@@ -136,7 +136,7 @@ def wrsp_dict_creator(is_param=True) -> dict:
         files_all=len(defaults.AllFiles),
         param_all=sum(f['Param']['Count'] for f in defaults.FilesWithParam),
         create_time=time.strftime('%H:%M:%S-%d/%m/%y'),
-        inf_nums=file['Inf']['Nums'],
+        inf_nums=file['Snapshot']['Nums'],
         Lb_len=len(Lb),
         Rb_len=len(Rb),
         lb_len=len(lb),
@@ -159,7 +159,7 @@ def wrsp_dict_creator(is_param=True) -> dict:
     # file['File'] ключи
     web_reg_save_param_dict.update(file['File'])
     # param_* ключи - file['Param']
-    web_reg_save_param_dict.update({'param_{}'.format(k): v for k, v in file['Param'].items()})
+    web_reg_save_param_dict.update({'param_{}'.format(k): v for k, v in file['Param'].items() if k != 'Name'})
 
     return web_reg_save_param_dict
 
@@ -206,7 +206,7 @@ def wrsp_name_creator(param, Lb, Rb, file) -> str:
         wrsp_rnd_num = ''
 
     if defaults.SnapshotInName.get():
-        infs = '_'.join(map(str, file['Inf']['Nums']))
+        infs = '_'.join(map(str, file['Snapshot']['Nums']))
     else: infs = ''
 
     wrsp_name = WEB_REG_NUM.format(wrsp_rnd_num=wrsp_rnd_num, wrsp_name=wrsp_name, lb_name=lb_name, rb_name=rb_name, infs=infs, letter=defaults.WrspNameFirst.get())
@@ -287,13 +287,13 @@ def create_files_with_search_data(files: (dict, ), search_data: dict, action=Non
     for __file in files:
         inf_list = []
 
-        for n in __file['Inf']['Nums']:
+        for n in __file['Snapshot']['Nums']:
             if ((n in action_infs) or (not action_infs)) and (inf_min <= n <= inf_max):
                 inf_list.append(n)
 
         if inf_list:
             file = copy.deepcopy(__file)  # не изменять оригинальный файл
-            file['Inf']['Nums'] = sorted(inf_list)
+            file['Snapshot']['Nums'] = sorted(inf_list)
             for data in search_data:  # обновить(не заменить) ключи
                 file[data].update(search_data[data])
 
@@ -314,9 +314,9 @@ def get_search_data(param: str) -> dict:
     search_data = dict(
         Param=dict(
             Name=param,
-            inf_min=defaults.VarSearchMinInf.get(),
+            inf_min=defaults.VarSearchMinSnapshot.get(),
             len=(len(param) if hasattr(param, '__len__') else None),
-            inf_max=defaults.VarSearchMaxInf.get(),
+            inf_max=defaults.VarSearchMaxSnapshot.get(),
             NotPrintable=lr_other.not_printable(param),
         ),
         File=dict(

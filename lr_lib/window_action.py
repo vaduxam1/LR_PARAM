@@ -62,8 +62,8 @@ class ActionWindow(tk.Toplevel):
         self.final_wnd_var = tk.BooleanVar(value=defaults.DefaultActionFinalWind)
         self.force_ask_var = tk.BooleanVar(value=defaults.DefaultActionForceAsk)
         self.no_var = tk.BooleanVar(value=defaults.DefaultActionNoVar)
-        self.max_inf_cbx_var = tk.BooleanVar(value=defaults.DefaultActionMaxInf)
-        self.add_inf_cbx_var = tk.BooleanVar(value=defaults.DefaultActionAddInf)
+        self.max_inf_cbx_var = tk.BooleanVar(value=defaults.DefaultActionMaxSnapshot)
+        self.add_inf_cbx_var = tk.BooleanVar(value=defaults.DefaultActionAddSnapshot)
         self.force_yes_inf = tk.BooleanVar(value=defaults.DefaultActionForceYes)
 
         self.weight_var = tk.BooleanVar(value=defaults.DefaultActionHighlightFontBold)
@@ -293,7 +293,7 @@ class ActionWindow(tk.Toplevel):
 
         self.transaction_rename = tk.Button(self.toolbar, text='rename\ntransaction', font=defaults.DefaultFont + ' bold', background='orange', padx=0, pady=0, command=all_transaction_rename)
         self.dummy_button = tk.Button(self.toolbar, text="Snapshot remove", font=defaults.DefaultFont + ' bold', background='orange', padx=0, pady=0, command=self.dummy_btn_cmd)
-        self.force_yes_inf_checker_cbx = tk.Checkbutton(self.toolbar, text='forceInfYes', font=defaults.DefaultFont, variable=self.force_yes_inf, padx=0, pady=0)
+        self.force_yes_inf_checker_cbx = tk.Checkbutton(self.toolbar, text='forceSnapshotYes', font=defaults.DefaultFont, variable=self.force_yes_inf, padx=0, pady=0)
 
         self.search_entry.grid(row=5, column=0, columnspan=8, sticky=tk.NSEW, padx=0, pady=0)
         self.search_button.grid(row=5, column=8, sticky=tk.NSEW, padx=0, pady=0)
@@ -933,16 +933,16 @@ class ActionWindow(tk.Toplevel):
             return
 
         max_action_inf = wrsp_dict['param_max_action_inf']
-        if defaults.VarIsInfFiles.get():
+        if defaults.VarIsSnapshotFiles.get():
             try:
                 if not max_action_inf:
                     raise UserWarning('Перед param, не найдено никаких блоков c inf запросами.')
                 elif max_action_inf <= min(wrsp_dict['inf_nums']):
                     inf_nums = wrsp_dict['inf_nums'] or [-2]
-                    raise UserWarning('Snapshot=t{p}.inf, в котором расположен,\nпервый заменяемый {_p}\n\nне может быть меньше или равен,\nSnapshot=t{w}.inf, перед которым вставляется\nweb_reg_save_param запрос\n\n{p} <= {inf_nums}'.format(_p='{%s}' % wrsp_dict['param_Name'], p=max_action_inf, w=inf_nums[0], inf_nums=inf_nums))
+                    raise UserWarning('Snapshot=t{p}.inf, в котором расположен,\nпервый заменяемый {_p}\n\nне может быть меньше или равен,\nSnapshot=t{w}.inf, перед которым вставляется\nweb_reg_save_param запрос\n\n{p} <= {inf_nums}'.format(_p='{%s}' % wrsp_dict['param'], p=max_action_inf, w=inf_nums[0], inf_nums=inf_nums))
             except Exception as ex:
                 self.search_in_action(word=lr_param.Snap.format(num=max_action_inf), hist=False)
-                qb = 'param: "{p}"\nweb_reg_save_param: {n}'.format(p=wrsp_dict['param_Name'], n='{%s}' % wrsp_dict['web_reg_num'])
+                qb = 'param: "{p}"\nweb_reg_save_param: {n}'.format(p=wrsp_dict['param'], n='{%s}' % wrsp_dict['web_reg_name'])
 
                 if self.force_yes_inf.get():
                     defaults.Logger.warning('{q}\n\n{e}\n{wrsp}'.format(e=ex, q=qb, wrsp=wrsp))
@@ -968,7 +968,7 @@ class ActionWindow(tk.Toplevel):
                 wrsp = lr_param.create_web_reg_save_param(wrsp_dict)
 
         if not replace:
-            replace = wrsp_dict['web_reg_num']
+            replace = wrsp_dict['web_reg_name']
         if is_param:
             replace = lr_param.param_bounds_setter(replace)
 
@@ -1006,7 +1006,7 @@ class ActionWindow(tk.Toplevel):
 
         for file in defaults.AllFiles:
             check = False
-            for inf in file['Inf']['Nums']:
+            for inf in file['Snapshot']['Nums']:
                 if inf in self.action_infs:
                     check = True
                 else:
@@ -1020,7 +1020,7 @@ class ActionWindow(tk.Toplevel):
         '''всякая инфа'''
         ldaf = len(defaults.AllFiles)
         lif = len(list(lr_other.get_files_infs(defaults.AllFiles)))
-        lf = len([f for f in defaults.AllFiles if any(i in self.action_infs for i in f['Inf']['Nums'])])
+        lf = len([f for f in defaults.AllFiles if any(i in self.action_infs for i in f['Snapshot']['Nums'])])
         li = len(self.action_infs)
         alw = len(tuple(self.web_action.get_web_all()))
 

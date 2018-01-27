@@ -147,7 +147,7 @@ ACTION2 = '''Меню правой кнопкой мыши:
                 3) сформирован новый "Ord=, с учетом отредактированных "LB= "RB=
     * "поиск" '"201.33+2c" - [Строка].[Столбец]+[ДлинаСлова]c
     * Быстрый перход - для перехода к сформированному web_reg_save_param, или первому замененному param
-    * Inf-min/max - выбрать из выделенного текста только цифры, установить полученным значением inf_min/max виждет
+    * Snapshot-min/max - выбрать из выделенного текста только цифры, установить полученным значением inf_min/max виждет
     * Подсветка - для выделенного текста, добавить/удалить подсветку в action.c тексте'''
 
 
@@ -172,7 +172,7 @@ ACTION3= '''Поиск текста:
 
 
 CODE = '''Соответствие defaults.Var's с шагами : | <<(на этом шаге используются Vars.get()) | [=> соответствующий gui виджет]
-    LR_7.py -> files.createAllFiles() | <<(VarFilesFolder, VarIsInfFiles, VarAllowDenyFiles, VarEncode, VarAllFilesStatistic, FileOptionsStartswith, DENY_FILES, DENY_PART_NAMES, DENY_EXT)
+    LR_7.py -> files.createAllFiles() | <<(VarFilesFolder, VarIsSnapshotFiles, VarAllowDenyFiles, VarEncode, VarAllFilesStatistic, FileOptionsStartswith, DENY_FILES, DENY_PART_NAMES, DENY_EXT)
         |
   AllFiles[..] | <<(VarFileSortKey1/2) | [=> Window.folder_wind]
         |
@@ -180,7 +180,7 @@ CODE = '''Соответствие defaults.Var's с шагами : | <<(на э
         |
 (2) VarParam.set  # поиск param | <<(Window.cbxWrspAutoCreate) | [=> Window.ButtonFindParamFiles]
         | <- param.create_files_with_search_data()
-  param.get_files_with_param() | <<(VarSearchMinInf, VarSearchMaxInf, VarEncode, VarFileNamesNumsShow)
+  param.get_files_with_param() | <<(VarSearchMinSnapshot, VarSearchMaxSnapshot, VarEncode, VarFileNamesNumsShow)
         |
     FilesWithParam[..]  |ред|-->  | <<(VarFileSortKey1/2) | [=> Window.comboFiles]
         |

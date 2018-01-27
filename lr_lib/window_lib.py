@@ -38,18 +38,19 @@ def mouse_web_reg_save_param(widget, param, mode=('SearchAndReplace', 'highlight
             # найти и заменить в action.c
             action.SearchAndReplace(search=param, wrsp_dict=wrsp_dict, is_param=True, is_wrsp=True, backup=True, wrsp=wrsp)
 
-            w = wrsp_dict['web_reg_num']
+            w = wrsp_dict['web_reg_name']
             if defaults.VarShowPopupWindow.get() and action.final_wnd_var.get():
                 action.search_in_action(word=w)
                 s = '{wr}\n\n{wd}'.format(wr=action.web_action.websReport.param_statistic[w], wd=wrsp_dict)
                 defaults.Logger.debug(s)
-                tk.messagebox.showinfo(wrsp_dict['param_Name'], s, parent=action)
+                tk.messagebox.showinfo(wrsp_dict['param'], s, parent=action)
                 try: action.search_res_combo.current(1)
                 except tk.TclError: action.search_res_combo.current(0)
                 action.tk_text_see()
         elif 'highlight' in mode:
             lr_widj.highlight_mode(widget, param)
             action.tk_text.set_highlight()
+
 
 @defaults.T_POOL_decorator
 def rClick_Param(event, *args, **kwargs) -> None:
@@ -110,7 +111,7 @@ def group_param(event, widget=None, params=None, ask=True) -> None:
 
         for counter, wrsp_dict in enumerate(iter(wrsp_dict_queue.get, None), start=1):
             defaults.MainThreadUpdater.submit(progress)
-            wrsp_name = lr_param.param_bounds_setter(wrsp_dict['web_reg_num'])
+            wrsp_name = lr_param.param_bounds_setter(wrsp_dict['web_reg_name'])
             wrsp = lr_param.create_web_reg_save_param(wrsp_dict)
             with contextlib.suppress(Exception): action.param_inf_checker(wrsp_dict, wrsp)
 
@@ -131,6 +132,7 @@ def progress_group_param(counter: int, param: str, proc1: int, wrsp: str, unsucc
     t = '{param} : web_reg_save_param : {counter}/{len_params} : {w} %{u}\n{wrsp}'.format(counter=counter, len_params=len_params, u=u, w=round(counter / proc1), param=param, wrsp=wrsp)
     action.toolbar['text'] = t
     action.background_color_set(color=None)
+
 
 @defaults.T_POOL_decorator
 def thread_wrsp_dict_creator(wrsp_dict_queue, params, unsuccess_params, action) -> None:
@@ -277,7 +279,7 @@ def rClick_web_reg_save_param_regenerate(event, new_lb_rb=True) -> None:
         defaults.VarRB.set(value=wrsp_rb)
 
     wrsp_dict = lr_param.wrsp_dict_creator()  # сформировать wrsp_dict
-    wrsp_dict['web_reg_num'] = wrsp_name  # сохранить старое имя
+    wrsp_dict['web_reg_name'] = wrsp_name  # сохранить старое имя
     web_reg_save_param = lr_param.create_web_reg_save_param(wrsp_dict)  # создать
 
     txt = event.widget.get(1.0, tk.END).replace(selection, web_reg_save_param)
@@ -292,14 +294,14 @@ def rClick_max_inf(event) -> None:
     '''max inf widget из выделения, меню правой кнопки мыши'''
     selection = event.widget.selection_get()
     m = re.sub("\D", "", selection)
-    defaults.VarSearchMaxInf.set(int(m))
+    defaults.VarSearchMaxSnapshot.set(int(m))
 
 
 def rClick_min_inf(event) -> None:
     '''min inf widget из выделения, меню правой кнопки мыши'''
     selection = event.widget.selection_get()
     m = re.sub("\D", "", selection)
-    defaults.VarSearchMinInf.set(int(m))
+    defaults.VarSearchMinSnapshot.set(int(m))
 
 
 def rClick_Search(event) -> None:
@@ -329,19 +331,15 @@ def rClick_add_highlight(event, option: str, color: str, val: str, find=False) -
             event.widget.action.tk_text_see()
 
 
-Transac_start = 'lr_start_transaction("'
-Transac_end = 'lr_end_transaction("'
-
-
 @defaults.T_POOL_decorator
-def rename_transaction(event, parent=None) -> None:
+def rename_transaction(event, parent=None, s='lr_start_transaction("', e='lr_end_transaction("') -> None:
     selection = event.widget.selection_get().strip()
-    try: old_name = selection.split(Transac_start, 1)[1].split('"', 1)[0]
-    except IndexError: old_name = selection.split(Transac_end, 1)[1].split('"', 1)[0]
+    try: old_name = selection.split(s, 1)[1].split('"', 1)[0]
+    except IndexError: old_name = selection.split(e, 1)[1].split('"', 1)[0]
     with contextlib.suppress(AttributeError): parent = event.widget.action
 
     y = YesNoCancel(['Переименовать', 'Отмена'], 'Переименовать выделенную(линию) transaction', 'указать только новое имя transaction', 'transaction', parent=parent, is_text=old_name)
-    s1, s2 = Transac_start+old_name, Transac_end+old_name
+    s1, s2 = s+old_name, e+old_name
     if y.ask() == 'Переименовать':
         new_name = y.text.strip()
         lit = event.widget.action.tk_text.get(1.0, tk.END).split('\n')
@@ -421,10 +419,10 @@ def rClicker(event) -> str:
             submenu_param.add_cascade(label='* одиночный -> удалить по wrsp или param имени', underline=0, command=lambda e=event: remove_web_reg_save_param_from_action(e))
 
         dt = defaults.VarWrspDict.get()
-        web_reg_num = dt.get('web_reg_num')
-        param = dt.get('param_Name')
+        web_reg_name = dt.get('web_reg_name')
+        param = dt.get('param')
 
-        if web_reg_num or param:
+        if web_reg_name or param:
             submenu_goto = tk.Menu(rmenu, tearoff=False)
             rmenu.add_cascade(label=' Быстрый перход', menu=submenu_goto, underline=0)
 
@@ -435,13 +433,13 @@ def rClicker(event) -> str:
                     event.widget.action.search_in_action(event.widget.action.search_entry.get())
                     event.widget.action.tk_text_see()
 
-            if web_reg_num:
-                reg_num = '{%s}' % web_reg_num
-                cmd = lambda e=event, n=reg_num: action_goto(e, n)
-                submenu_goto.add_cascade(label=reg_num, underline=0, command=cmd)
+            if web_reg_name:
+                n = '{%s}' % web_reg_name
+                cmd = lambda e=event, n=n: action_goto(e, n)
+                submenu_goto.add_cascade(label=n, underline=0, command=cmd)
 
             if param:
-                p_wrsp = lr_param.wrsp_start_end.format(param_Name=param)
+                p_wrsp = lr_param.wrsp_start_end.format(param=param)
                 submenu_goto.add_cascade(label=p_wrsp, underline=0, command=lambda e=event, n=p_wrsp: action_goto(e, n))
 
         for (txt, cmd) in nclst:
@@ -451,7 +449,7 @@ def rClicker(event) -> str:
             submenu_maxmin = tk.Menu(rmenu, tearoff=False)
             submenu_maxmin.add_cascade(label='min', underline=0, command=lambda e=event: rClick_min_inf(e))
             submenu_maxmin.add_cascade(label='max', underline=0, command=lambda e=event: rClick_max_inf(e))
-            rmenu.add_cascade(label=' Inf-min/max', menu=submenu_maxmin, underline=0)
+            rmenu.add_cascade(label=' Snapshot-min/max', menu=submenu_maxmin, underline=0)
 
             submenu = tk.Menu(rmenu, tearoff=False)
             colors = defaults.VarColorTeg.get()

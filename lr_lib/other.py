@@ -37,9 +37,9 @@ def argument_parser() -> dict:
     if 'last_file' in args_dict:
         defaults.VarFirstLastFile.set(args_dict['last_file'])
     if 'min_inf' in args_dict:
-        defaults.VarSearchMinInf.set(args_dict['min_inf'])
+        defaults.VarSearchMinSnapshot.set(args_dict['min_inf'])
     if 'max_inf' in args_dict:
-        defaults.VarSearchMaxInf.set(args_dict['max_inf'])
+        defaults.VarSearchMaxSnapshot.set(args_dict['max_inf'])
     if 'encoding' in args_dict:
         defaults.VarEncode.set(args_dict['encoding'])
     defaults.VarFileNamesNumsShow.set(args_dict['file_names'])
@@ -136,14 +136,14 @@ def all_files_info() -> str:
 
 def param_files_info() -> str:
     '''инфо о param файлах'''
-    res = [(str(f['Param']['Count']), f['File']['Name'], str(f['Inf']['Nums'])) for f in defaults.FilesWithParam]
+    res = [(str(f['Param']['Count']), f['File']['Name'], str(f['Snapshot']['Nums'])) for f in defaults.FilesWithParam]
     m = max(len(n) for r in res for n in r)
     if m > 25: m = 25
     elif m < 10: m = 10
     s = '{:<%s} | {:<%s} | {:<%s}' % (m, m, m)
 
     i = '\n'.join(map(str, chunks(tuple(get_files_infs(defaults.FilesWithParam)), 15)))
-    r = '\n\tparam -> "{p}" :\n{sep}\n{t}\n{res}\n{sep}\nInfs\n{i}\n{sep}'.format(
+    r = '\n\tparam -> "{p}" :\n{sep}\n{t}\n{res}\n{sep}\nSnapshots\n{i}\n{sep}'.format(
         sep=defaults.PRINT_SEPARATOR, t=s.format('ParamCount', 'FileName', 'Snapshots'), p=defaults.VarParam.get(),
         res='\n'.join(s.format(*r) for r in res), i=i)
     return r
@@ -151,7 +151,7 @@ def param_files_info() -> str:
 
 def get_files_infs(files: [dict, ]) -> iter({int, }):
     '''inf-номера файлов'''
-    yield from sorted(set(n for file in files for n in file['Inf']['Nums']))
+    yield from sorted(set(n for file in files for n in file['Snapshot']['Nums']))
 
 
 def only_ascii_symbols(item: (str, ), allow=set(string.printable).__contains__) -> iter:

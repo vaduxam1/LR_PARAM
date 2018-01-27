@@ -18,7 +18,7 @@ def file_dict_creator(name: str, full_name: str, inf_num: int, enc: str, inf_key
     '''создать словарь файла'''
     file = get_file_with_kwargs(defaults.AllFiles, Name=name) if inf_num else None
     if file:  # файл уже есть, те пришел из другого inf
-        file['Inf']['Nums'].add(inf_num)
+        file['Snapshot']['Nums'].add(inf_num)
     else:  # новый файл
         n, e = os.path.splitext(name)
         if allow_deny or not ((name in defaults.DENY_FILES) or (e in defaults.DENY_EXT) or any(p in n for p in defaults.DENY_PART_NAMES)):
@@ -39,7 +39,7 @@ def file_dict_creator(name: str, full_name: str, inf_num: int, enc: str, inf_key
                     Lines=dn,
                     timeCreate='',
                 ),
-                Inf=dict(
+                Snapshot=dict(
                     Nums={inf_num},
                     len=dn,
                     inf_key=inf_key
@@ -134,7 +134,7 @@ def createAllFiles() -> None:
     allow_deny = defaults.VarAllowDenyFiles.get()
     statistic = defaults.VarAllFilesStatistic.get()
 
-    if defaults.VarIsInfFiles.get():    # файлы ответов  из LoadRunner inf
+    if defaults.VarIsSnapshotFiles.get():    # файлы ответов  из LoadRunner inf
         defaults.AllFiles = lr_other.iter_to_list(create_files_from_infs(folder, enc, allow_deny, statistic))
     else:  # все файлы каталога
         for e, name in enumerate(os.listdir(folder)):
@@ -147,18 +147,18 @@ def createAllFiles() -> None:
     if not defaults.AllFiles:
         defaults.Logger.critical('В "{}" отсутствуют t*.inf LoadRunner файлы!\nнеобходимо выбрать каталог " lr_скрипт\\data "\nлибо сменить директорию кнопкой "Folder"'.format(folder))
 
-    for file in defaults.AllFiles:  # Inf_Nums: set -> list
-        file['Inf']['Nums'] = sorted(file['Inf']['Nums'])
-        file['Inf']['len'] = len(file['Inf']['Nums'])
+    for file in defaults.AllFiles:  # Snapshot_Nums: set -> list
+        file['Snapshot']['Nums'] = sorted(file['Snapshot']['Nums'])
+        file['Snapshot']['len'] = len(file['Snapshot']['Nums'])
 
     all_files_inf = tuple(lr_other.get_files_infs(defaults.AllFiles))
-    defaults.VarSearchMaxInf.set(max(all_files_inf or [-1]))
-    defaults.VarSearchMinInf.set(min(all_files_inf or [-1]))
+    defaults.VarSearchMaxSnapshot.set(max(all_files_inf or [-1]))
+    defaults.VarSearchMinSnapshot.set(min(all_files_inf or [-1]))
 
     try:  # сортировка файлов
         defaults.AllFiles = sorted(defaults.AllFiles, key=lr_other.sort_by_file_keys)
     except TypeError:  # если VarFileSortKey2 предназначен только для FilesWithParam
-        defaults.AllFiles = sorted(defaults.AllFiles, key=lambda file: file['Inf']['Nums'])
+        defaults.AllFiles = sorted(defaults.AllFiles, key=lambda file: file['Snapshot']['Nums'])
 
     defaults.VarFileSortKey1.set(defaults.VarFileSortKey1.get())
     defaults.Logger.info(lr_other.all_files_info())

@@ -50,7 +50,7 @@ class HighlightLines:
         if self.is_on_screen_lines_change(top, bottom):
             return
 
-        line_nums = range(top, bottom + 1) & self.on_screen_lines.keys()
+        line_nums = (range(top, bottom + 1) & self.on_screen_lines.keys())
         if not line_nums:
             return
 

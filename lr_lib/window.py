@@ -80,9 +80,9 @@ class Window(ttk.Frame):
         # (2)
         self.t2 = tk.Label(self.show_param_frame, text='(2)', font=defaults.DefaultFont + ' italic bold', padx=0, pady=0, foreground='brown')
         self.ButtonFindParamFiles = tk.Button(self.show_param_frame, text='поиск {param} в файлах ответов', font=defaults.DefaultFont + ' italic bold', padx=0, pady=0, command=lambda *a: defaults.Tk.after(0, self.get_files), background='orange')
-        self.max_inf = ttk.Combobox(self.show_param_frame, width=10, textvariable=defaults.VarSearchMaxInf, justify='center', foreground='grey', font=defaults.DefaultFont, style="BW.TButton")
+        self.max_inf = ttk.Combobox(self.show_param_frame, width=10, textvariable=defaults.VarSearchMaxSnapshot, justify='center', foreground='grey', font=defaults.DefaultFont, style="BW.TButton")
 
-        self.min_inf = ttk.Combobox(self.show_param_frame, width=10, textvariable=defaults.VarSearchMinInf, justify='center', foreground='grey', font=defaults.DefaultFont, style="BW.TButton")
+        self.min_inf = ttk.Combobox(self.show_param_frame, width=10, textvariable=defaults.VarSearchMinSnapshot, justify='center', foreground='grey', font=defaults.DefaultFont, style="BW.TButton")
 
         # (3)
         self.t3 = tk.Label(self.mid_frame, text='(3)', font=defaults.DefaultFont + ' italic bold', padx=0, pady=0, foreground='brown')
@@ -211,7 +211,7 @@ class Window(ttk.Frame):
 
         self.ButtonParamFileOpen = tk.Button(self.last_frame, text='file(3)', font=defaults.DefaultFont + ' bold', padx=0, pady=0, command=editor_fn)
         self.Button_change_folder = tk.Button(self.last_frame, text='Folder', padx=0, pady=0, command=self.change_folder_ask, font=defaults.DefaultFont + ' italic bold')
-        self.change_folder_cbx = tk.Checkbutton(self.last_frame, variable=defaults.VarIsInfFiles, padx=0, pady=0, font=defaults.DefaultFont + ' italic', command=self.set_folder, text='inf')
+        self.change_folder_cbx = tk.Checkbutton(self.last_frame, variable=defaults.VarIsSnapshotFiles, padx=0, pady=0, font=defaults.DefaultFont + ' italic', command=self.set_folder, text='inf')
         self.deny_file_cbx = tk.Checkbutton(self.last_frame, variable=defaults.VarAllowDenyFiles, padx=0, pady=0, font=defaults.DefaultFont + ' italic', command=self.set_folder, text='deny_ext')
         self.spin_toolTipTimeout = tk.Entry(self.last_frame, textvariable=defaults.VarToolTipTimeout, width=4, font=defaults.DefaultFont + ' italic')
         self.cbxOrdVersion = tk.Checkbutton(self.mid_frame, variable=defaults.VarOrdVersion, padx=0, pady=0, font=defaults.DefaultFont, text='ord')
@@ -498,15 +498,15 @@ class Window(ttk.Frame):
         lr_wlib.createToolTip(self.spin_LB_height, 'изменить высоту LB\n\t# Window.spin_LB_height')
         lr_wlib.createToolTip(self.change_folder_cbx, 'Определить Файлы, для поиска(2)\n On - Только файлы прописанные '
                                                       'в *.inf - формат LoadRunner\n Off - Все файлы каталога\n\t'
-                                                      '# Window.change_folder_cbx\n\t# defaults.VarIsInfFiles -> '
+                                                      '# Window.change_folder_cbx\n\t# defaults.VarIsSnapshotFiles -> '
                                                       'defaults.AllFiles')
         lr_wlib.createToolTip(self.ButtonLB_note, 'LB в Блокнот/Editor\n\t# Window.ButtonLB_note')
         lr_wlib.createToolTip(self.cbxPopupWindow, 'показывать popup окна\nфинальные результаты, ошибки и тд\n\t'
                                                    '# Window.cbxPopupWindow\n\t# defaults.VarShowPopupWindow')
         lr_wlib.createToolTip(self.min_inf, 'min номер inf.\nнижняя граница t*.inf, при поиске(2)\n\t# Window.min_inf'
-                                            '\n\t# defaults.VarSearchMinInf -> defaults.VarParam.set')
+                                            '\n\t# defaults.VarSearchMinSnapshot -> defaults.VarParam.set')
         lr_wlib.createToolTip(self.max_inf, 'max номер inf.\nверхняя граница t*.inf, при поиске(2)\n\t# Window.max_inf'
-                                            '\n\t# defaults.VarSearchMaxInf -> defaults.VarParam.set')
+                                            '\n\t# defaults.VarSearchMaxSnapshot -> defaults.VarParam.set')
         lr_wlib.createToolTip(self.cbxAutoNoteParam, 'открыть web_reg_save_param в Блокнот/Editor,\nпри выводе(6)\n\t'
                                                      '# Window.cbxAutoNoteParam')
         lr_wlib.createToolTip(self.deny_file_cbx, 'Определить Файлы, для поиска(2)\n On - Все файлы.\n '
@@ -763,7 +763,7 @@ class Window(ttk.Frame):
         self.comboParts.current(0)
         lr_widj.LBRBText.set_label_text()
         self.set_comboFiles_width()
-        self.sortKey1.set('Inf')
+        self.sortKey1.set('Snapshot')
         self.sortKey2.set('Nums')
         self.last_frame_text_set()
         lr_wlib.createToolTip(self.comboFiles, self._TT_text_comboFiles)
@@ -820,8 +820,8 @@ class Window(ttk.Frame):
     def show_frame_info_file(self) -> None:
         '''отображение всякой информации'''
         dt = defaults.VarWrspDict.get()
-        defaults.Tk.title('"{param_Name}", {Name}, {inf_nums} > Файлы(из {files_all} найдено {file_index}/{param_files}) | Вхождения({param_part}/{param_count}, всего {param_all} в {_param_inf_all} inf) | {ver}'.format(ver=defaults.VERSION, **dt))
-        self.main_frame['text'] = 'Inf{inf_nums}, Файл[{file_index}/{param_files}], Часть[{param_part}/{param_count}], {len} символов.'.format(**dt)
+        defaults.Tk.title('"{param}", {Name}, {inf_nums} > Файлы(из {files_all} найдено {file_index}/{param_files}) | Вхождения({param_part}/{param_count}, всего {param_all} в {_param_inf_all} inf) | {ver}'.format(ver=defaults.VERSION, **dt))
+        self.main_frame['text'] = 'Snapshot{inf_nums}, Файл[{file_index}/{param_files}], Часть[{param_part}/{param_count}], {len} символов.'.format(**dt)
 
     def show_frame_info_working(self) -> None:
         '''отображение всякой информации'''
@@ -912,7 +912,7 @@ class Window(ttk.Frame):
         if defaults.FilesWithParam:
             self.sortKey1['values'] = sorted(set(k for f in defaults.FilesWithParam for k in f))
 
-        self.last_frame['text'] = 'Файлы({files_all}->{param_files}) | INF(все[{all_inf_min}:{all_inf_max}]={all_inf_len}->поиск[{param_inf_min}:{param_inf_max}]={search_inf_len}->найдено[{_param_inf_min}:{_param_inf_max}]={_param_inf_all}) | Найдено {param_all} param.'.format(
+        self.last_frame['text'] = 'Файлы({files_all}->{param_files}) | Snapshot(все[{all_inf_min}:{all_inf_max}]={all_inf_len}->поиск[{param_inf_min}:{param_inf_max}]={search_inf_len}->найдено[{_param_inf_min}:{_param_inf_max}]={_param_inf_all}) | Найдено {param_all} param.'.format(
             **defaults.VarWrspDict.get())
 
     def set_folder(self, callback=None) -> None:

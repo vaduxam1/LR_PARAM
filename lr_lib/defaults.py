@@ -35,13 +35,13 @@ FindParamPOOLEnable = True  # использовать M_POOL, для поиск
 VarStrongSearchInFile = tk.IntVar(value=True)  # принудительно использовать контроль LB/RB(на недопустимые символы), при поиске param, в файлах ответов
 ReplaceParamDialogWindow = True  # вкл диалог окна(автозамены), для одиночной замены param в action.c
 
-VarFileSortKey1 = lr_var.Var(value='Inf')  # сортировка файлов
+VarFileSortKey1 = lr_var.Var(value='Snapshot')  # сортировка файлов
 VarFileSortKey2 = lr_var.Var(value='Nums')  # сортировка файлов
 VarFirstLastFile = tk.IntVar(value=0)  # 0=первый, выбрать последний или первый файл из FilesWithParam
 VarOrdVersion = tk.IntVar(value=1)  # версия(старая/новая) функции для получения Ord, например если не ищется?
 VarFileNamesNumsShow = tk.BooleanVar(value=True)  # показывать инфо о найденых файлах с param
-VarSearchMinInf = tk.IntVar(value=-1)  # ограничение(для поиска param) минимального номера inf файла
-VarSearchMaxInf = tk.IntVar(value=-1)  # ограничение(для поиска param) максимального номера inf файла
+VarSearchMinSnapshot = tk.IntVar(value=-1)  # ограничение(для поиска param) минимального номера inf файла
+VarSearchMaxSnapshot = tk.IntVar(value=-1)  # ограничение(для поиска param) максимального номера inf файла
 
 cbxClearShowVar = False  # mainWind: перед (2), очищать центральный виджет текста
 cbxWrspClipboard = False  # mainWind: после (2), копировать web_reg_save_param в буфер обмена
@@ -107,8 +107,8 @@ MaxFileStringWidth = 150  # макс ширина подсказки для фа
 
 DefaultActionForceAsk = False  # Автозамена - подтверждать любую замену
 DefaultActionNoVar = True  # Автозамена - Принудительно отвечать "Нет, для Всех" в вопросе замены
-DefaultActionMaxInf = True  # ограничить диапазон поиска param - максимальный номер inf
-DefaultActionAddInf = True  # ограничить максимальный inf, не номером(param_inf - 1), а самим param-inf номером
+DefaultActionMaxSnapshot = True  # ограничить диапазон поиска param - максимальный номер inf
+DefaultActionAddSnapshot = True  # ограничить максимальный inf, не номером(param_inf - 1), а самим param-inf номером
 DefaultActionForceYes = True  # отвечать "Да", при вопросе о создании param, если inf-номер запроса <= inf-номер web_reg_save_param
 DefaultActionFontcp1251 = False  # принудительная перекодировка(могут быть потери unicode текста)
 DefaultActionFinalWind = True  # окно результата создания param
@@ -303,7 +303,7 @@ DENY_EXT = {
 }
 
 VarFilesFolder = tk.StringVar(value=DEFAULT_FILES_FOLDER)  # каталог с файлами
-VarIsInfFiles = tk.BooleanVar(value=True)  # брать файлы, проаписанные в inf файлах каталога / или все файлы
+VarIsSnapshotFiles = tk.BooleanVar(value=True)  # брать файлы, проаписанные в inf файлах каталога / или все файлы
 VarAllowDenyFiles = tk.BooleanVar(value=False)  # разрешить поиск, в DENY_ исключенных из поиска файлах
 VarAllFilesStatistic = tk.IntVar(value=True)  # создавать подробную статистику файлов(размер, символы и тд), сильно замедляет старт утилиты
 SetFilesPOOLEnable = True  # использовать M_POOL, для создания файлов, при старте программы
