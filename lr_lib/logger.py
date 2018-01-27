@@ -33,9 +33,6 @@ class ConsoleHandler(logging.StreamHandler):
         super().__init__(*args, **kwargs)
         self.setFormatter(logging.Formatter(formatter, datefmt=datefmt))
 
-    def emit(self, record: logging, **kwargs) -> None:
-        super().emit(record)
-
 
 class LogHandler(logging.FileHandler):
     '''logging в лог'''
@@ -45,9 +42,6 @@ class LogHandler(logging.FileHandler):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.setFormatter(logging.Formatter(formatter, datefmt=datefmt))
-
-    def emit(self, record: logging) -> None:
-        super().emit(record)
 
 
 def loggingLevelCreator(level_num: int, level: str) -> None:
@@ -100,3 +94,4 @@ def Logger_Creator() -> iter((None,)):
         raise
     else:
         listener.stop()
+        logging.shutdown()
