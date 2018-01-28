@@ -67,10 +67,18 @@ def create_files_from_infs(folder: str, enc: str, allow_deny: bool, statistic: b
     executer = (lr_vars.M_POOL.imap_unordered if lr_vars.SetFilesPOOLEnable else map)
     folder_files = next(os.walk(folder))
     folder_files = folder_files[2]
-    arg = (folder, enc, allow_deny, statistic, )
-    args = ((arg, files) for files in lr_other.chunks(folder_files, lr_vars.FilesCreatePortionSize))
-    yield from filter(bool, itertools.chain(*executer(get_files_portions, args)))
 
+    arg = (folder, enc, allow_deny, statistic, )
+    chunks = tuple(lr_other.chunks(folder_files, lr_vars.FilesCreatePortionSize))
+    args = ((arg, files) for files in chunks)
+
+    proc1 = 100 / len(chunks)
+    for (e, files) in enumerate(executer(get_files_portions, args)):
+        for file in files:
+            if file:
+                yield file
+        lr_vars.Tk.title('создание файлов({f}) ответов: {p} % | {v}'.format(
+            p=round(proc1 * e), f=len(lr_vars.AllFiles), v=lr_vars.VERSION))
 
 def get_files_portions(args: [(str, str, bool, bool), (str, )]) -> [dict, ]:
     '''создать файлы, для порции inf-файлов'''

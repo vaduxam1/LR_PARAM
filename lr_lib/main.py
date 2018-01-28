@@ -4,9 +4,8 @@
 import sys
 import contextlib
 
-import lr_lib.gui.main
-import lr_lib.core.main
-
+import lr_lib.gui.main as lr_gui
+import lr_lib.core.main as lr_core
 import lr_lib.core.var.vars as lr_vars
 import lr_lib.etc.logger as lr_logger
 import lr_lib.core.etc.other as lr_other
@@ -17,14 +16,14 @@ import lr_lib.etc.pool.other as lr_other_pool
 @contextlib.contextmanager
 def _start():
     '''запуск core/gui'''
-    lr_lib.core.main.init()  # проинициализировать
+    lr_core.init()  # проинициализировать
 
     # работа
     if sys.argv[1:]:  # консольное использование
-        lr_lib.core.main.console_start(echo=True)
+        lr_core.console_start(echo=True)
     else:  # gui использование
         lr_other.keyboard_listener()  # hotkey(param from clipboard)
-        lr_lib.gui.main.init(mainloop_lock=True, action=True, auto_param_creator=False)
+        lr_gui.init(mainloop_lock=True, action=True, auto_param_creator=False)
 
     yield sys.exc_info()  # выход
 

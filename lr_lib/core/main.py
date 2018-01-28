@@ -12,7 +12,7 @@ import lr_lib.core.wrsp.param as lr_param
 def init() -> None:
     '''стартовать core'''
     lr_vars_func.init()  # связь основных Var
-    lr_files.init()  # создать файлы ответов
+    # lr_files.init()  # создать файлы ответов
 
 
 def console_start(echo=True) -> str:
@@ -20,7 +20,8 @@ def console_start(echo=True) -> str:
     args_dict = console_argument_parser()
     console_vars_setter(args_dict)
 
-    web_reg_save_param = core_find_wrsp(args_dict['param'])
+    param = args_dict['param']
+    web_reg_save_param = core_find_wrsp(param)
     if echo:
         lr_vars.Logger.info(web_reg_save_param, notepad=True)
     return web_reg_save_param
@@ -45,6 +46,8 @@ def console_vars_setter(args_dict: dict) -> None:
         lr_vars.VarEncode.set(args_dict['encoding'])
     lr_vars.VarFileNamesNumsShow.set(args_dict['file_names'])
     lr_vars.VarAllFilesStatistic.set(args_dict['statistic'])
+
+    lr_files.init()  # создать файлы ответов
 
 
 def console_argument_parser() -> {str: str}:

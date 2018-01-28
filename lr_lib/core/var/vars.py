@@ -210,7 +210,8 @@ HighlightMPool = tk.BooleanVar(value=False)  # искать индексы дл�
 HighlightLinesPortionSize = tk.IntVar(value=1)  # для скольки линий, искать индексы, за один проход/поток
 Background = 'khaki'
 
-highlight_words_main_file = os.path.join(lib_folder, 'highlight_words.txt')
+highlight_words_folder = os.path.join(lib_folder, 'etc')
+highlight_words_main_file = os.path.join(highlight_words_folder, 'highlight_words.txt')
 highlight_words_files_startswith = 'highlight_words'
 
 ColorIterator = itertools.cycle(COLORS.keys() - {'black'})
@@ -233,9 +234,9 @@ _LB_LIST_highlight.update({
 
 # слова для подсветки
 highlight_words = set()
-for file in next(os.walk(lib_folder))[2]:
+for file in next(os.walk(highlight_words_folder))[2]:
     if file.startswith(highlight_words_files_startswith):
-        with open(os.path.join(lib_folder, file)) as hws:
+        with open(os.path.join(highlight_words_folder, file)) as hws:
             for line in hws:
                 lr = line.rstrip('\n')
                 ls = lr.strip()
