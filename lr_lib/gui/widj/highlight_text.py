@@ -240,7 +240,6 @@ class HighlightText(tk.Text):
             self.bind("<Configure>", self._on_change)
 
         self.linenumbers = TextLineNumbers(self)
-        self.linenumbers.attach(self)
 
         self.bind_all("<Control-z>", self.undo)
         self.bind_all("<Control-y>", self.redo)
