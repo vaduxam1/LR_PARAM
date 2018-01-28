@@ -81,14 +81,13 @@ class POOL:
 
 
 @contextlib.contextmanager
-def POOL_Creator() -> None:
+def POOL_Creator() -> iter((POOL, POOL),):
     '''создание пулов'''
     try:
-        lr_vars.M_POOL = POOL(lr_vars.M_POOL_NAME, lr_vars.M_POOL_Size)
-        lr_vars.T_POOL = POOL(lr_vars.T_POOL_NAME, lr_vars.T_POOL_Size)
-        yield
+        M_POOL = POOL(lr_vars.M_POOL_NAME, lr_vars.M_POOL_Size)
+        T_POOL = POOL(lr_vars.T_POOL_NAME, lr_vars.T_POOL_Size)
+
+        yield M_POOL, T_POOL
     finally:
-        if lr_vars.M_POOL:
-            lr_vars.M_POOL.pool_exit()
-        if lr_vars.T_POOL:
-            lr_vars.T_POOL.pool_exit()
+        lr_vars.M_POOL.pool_exit()
+        lr_vars.T_POOL.pool_exit()

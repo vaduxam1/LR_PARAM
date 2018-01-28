@@ -31,11 +31,16 @@ def _start():
 
 def start() -> bool:
     '''запуск скрипта'''
-    with lr_logger.Logger_Creator():  # лог инит
+    with lr_logger.init(name='__main__', encoding='cp1251') as _Logger:
+        lr_vars.Logger = _Logger
+
+        lr_vars.Logger.trace(sys.exc_info())
         lr_vars.Logger.info('version={v}, sys.getdefaultencoding={e}, defaults.VarEncode={ce}'.format(
             v=lr_vars.VERSION, e=sys.getdefaultencoding(), ce=lr_vars.VarEncode.get()))
 
-        with lr_other_pool.MainThreadUpdater(), lr_main_pool.POOL_Creator():  # пул инит
+        with lr_other_pool.MainThreadUpdater() as main_executer, lr_main_pool.POOL_Creator() as mt_pools:
+            (lr_vars.M_POOL, lr_vars.T_POOL) = mt_pools
+            lr_vars.MainThreadUpdater = main_executer
 
             with run_with_report_callback_exception() as err:  # core/gui инит
                 # вся работа в _start(), в теле with - работа окончена

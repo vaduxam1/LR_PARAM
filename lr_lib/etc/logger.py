@@ -24,7 +24,7 @@ class GuiHandler(logging.Handler):
         self.setFormatter(logging.Formatter(formatter, datefmt=datefmt))
 
     def emit(self, record: logging) -> None:
-        if lr_vars.Window:
+        if lr_vars.Window and lr_vars.MainThreadUpdater:
             lr_vars.Window.print(record.levelname, self.format(record))
 
 
@@ -45,7 +45,7 @@ class LogHandler(logging.FileHandler):
         self.setFormatter(logging.Formatter(formatter, datefmt=datefmt))
 
 
-def loggingLevelCreator(level_num: int, level: str) -> None:
+def _LoggerLevelCreator(level_num: int, level: str) -> None:
     ''' создать/переопределить новый level-exception, для *Handler.level -> logging.level'''
     logging.addLevelName(level_num, level.upper())
     level = level.lower()
@@ -75,24 +75,37 @@ def loggingLevelCreator(level_num: int, level: str) -> None:
     setattr(logging.getLoggerClass(), level, logging_level)  # создать
 
 
+def LoggerLevelCreator(levels: {str: int}) -> None:
+    '''создать logging.level'''
+    for level in levels:
+        _LoggerLevelCreator(levels[level], level)
+
+
 @contextlib.contextmanager
-def Logger_Creator() -> iter((None,)):
-    '''слушатель QueueHandler: Logger_listener.start() / Logger_listener.stop()'''
-    for level in lr_vars.loggingLevels:  # создать logging.level
-        loggingLevelCreator(lr_vars.loggingLevels[level], level)
+def init(name='__main__', encoding='cp1251', levels=lr_vars.loggingLevels) -> iter((logging.getLogger,)):
+    LoggerLevelCreator(levels)
 
-    lr_vars.Logger = logging.getLogger('__main__')
-    lr_vars.Logger.setLevel(lr_vars.logger_level)
-
-    LoggerQueue = queue.Queue()
-    LoggerQueueListener = logging.handlers.QueueHandler(LoggerQueue)
-    lr_vars.Logger.addHandler(LoggerQueueListener)
-
-    listener = logging.handlers.QueueListener(LoggerQueue, GuiHandler(), ConsoleHandler(), LogHandler(lr_vars.logFullName, lr_vars.log_overdrive, encoding='cp1251'))
+    (Logger, listener) = LoggerCreator(name, encoding=encoding)
     try:
-        yield listener.start()
+        listener.start()
+        yield Logger
     except Exception:
         raise
     else:
         listener.stop()
         logging.shutdown()
+
+
+def LoggerCreator(name: str, encoding: str) -> logging.getLogger:
+    '''создать Logger и QueueHandler'''
+    LoggerQueue = queue.Queue()
+    LoggerQueueListener = logging.handlers.QueueHandler(LoggerQueue)
+
+    Logger = logging.getLogger(name)
+    Logger.setLevel(lr_vars.logger_level)
+    Logger.addHandler(LoggerQueueListener)
+
+    listener = logging.handlers.QueueListener(
+        LoggerQueue, GuiHandler(), ConsoleHandler(), LogHandler(lr_vars.logFullName, lr_vars.log_overdrive, encoding=encoding))
+
+    return (Logger, listener)

@@ -46,6 +46,10 @@ VarWRSPStatsTransac = tk.BooleanVar(value=True)  # для wrsp, статисти
 VarWRSPStatsTransacNames = tk.BooleanVar(value=True)  # для wrsp, имена транзакций в которых используется param
 VarWRSPStats = tk.BooleanVar(value=True)  # для wrsp, создавать подробные/короткие коментарии
 
+DENY_WEB_ = {
+    'google.com', 'yandex.ru', 'mail.ru',
+}  # web_ запросы, содержащие эти слова, помечять WARNING
+
 #####################################
 # поиск web_reg_save_param
 
@@ -374,10 +378,6 @@ _SThreadMonitorUpdate = tk.IntVar(value=1000)  # SThreadPool (мс) время �
 EDITOR = dict(exe='notepad.exe')  # программа для открытия "в Editor"
 
 FIND_PARAM_HOTKEY = 'ctrl+shift+c'  # хоткей "найти(2) param"
-
-DENY_WEB_ = {
-    'google.com', 'yandex.ru', 'mail.ru',
-}  # web_ запросы, содержащие эти слова, помечять WARNING
 
 #####################################
 # чтото чтобы не импортировать лишнего

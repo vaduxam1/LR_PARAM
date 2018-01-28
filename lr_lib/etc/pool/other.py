@@ -14,11 +14,11 @@ class MainThreadUpdater:
     def __init__(self):
         self.queue_in = queue.Queue()
         self.working = None
-        lr_vars.MainThreadUpdater = self
 
     def __enter__(self):
         self.working = True
         lr_vars.Tk.after(0, self.queue_listener)
+        return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         self.working = False
