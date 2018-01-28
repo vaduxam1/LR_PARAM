@@ -1,5 +1,5 @@
 ﻿# -*- coding: UTF-8 -*-
-# переменная, по типу tkiner.StringVar
+# Var
 
 
 def default_callback(value, *args, **kwargs) -> None:
