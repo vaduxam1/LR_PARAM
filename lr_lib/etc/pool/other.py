@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# пулы потоков
+# примеры разных пулов потоков
 
 import sys
 import asyncio

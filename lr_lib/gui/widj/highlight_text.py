@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# gui виджеты
+# gui виджет цветного текста с номерами линий
 
 import re
 import copy
@@ -334,12 +334,8 @@ class TextLineNumbers(tk.Canvas):
     '''номера линий tk.Text'''
     def __init__(self, parent_: HighlightText):
         super().__init__(parent_.action, background=lr_vars.Background)
-        self.parent_ = parent_
-        self.textwidget = None
+        self.textwidget = parent_
         self.linenum = -1
-
-    def attach(self, text_widget) -> None:
-        self.textwidget = text_widget
 
     def redraw(self, *args, __restart=False) -> None:
         '''redraw line numbers'''
@@ -357,4 +353,4 @@ class TextLineNumbers(tk.Canvas):
             self.create_text(2, y, anchor="nw", text=self.linenum)
             i = self.textwidget.index("%s+1line" % i)
 
-        self.parent_.action.scroll_lab.config(text=self.textwidget.highlight_lines._max_line)
+        self.textwidget.action.scroll_lab.config(text=self.textwidget.highlight_lines._max_line)

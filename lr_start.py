@@ -1,10 +1,11 @@
 ﻿# -*- coding: UTF-8 -*-
-# v9.3 __main__
+# v10.0 __main__
 
 import sys
-import lr_lib.main
+
+from lr_lib.main import start
 
 
 if __name__ == '__main__':
-    s = lr_lib.main.start()
+    s = start()
     sys.exit(s)

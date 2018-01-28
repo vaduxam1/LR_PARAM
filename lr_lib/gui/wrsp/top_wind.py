@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# основное gui окно
+# Toplevel окна для основного gui окна lr_vars.Window
 
 import contextlib
 import subprocess
@@ -146,4 +146,3 @@ def pool_state_updater(self) -> None:
     y = lr_dialog.YesNoCancel(['выйти'], 'T_POOL\nмонитор', 'инфо о задачах, выполняющихся в SThread потоках', title=pool_state_updater, parent=self, is_text=pool_state_string())
     y.after(100, thread_info_updater, y)
     y.ask()
-

@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# разное для gui
+# всплывающие подсказки
 
 import threading
 import contextlib

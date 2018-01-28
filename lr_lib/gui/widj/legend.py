@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# gui виджеты
+# web_ леленда
 
 import itertools
 import tkinter as tk

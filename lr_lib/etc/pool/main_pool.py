@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# пулы потоков
+# M_POOL(процессы), T_POOL(потоки) пулы
 
 import contextlib
 import concurrent.futures

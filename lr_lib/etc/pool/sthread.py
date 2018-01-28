@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# пулы потоков
+# SThread - пул потоков с авторазмером
 
 import sys
 import contextlib

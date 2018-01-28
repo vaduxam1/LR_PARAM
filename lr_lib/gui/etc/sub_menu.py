@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# разное для gui
+# меню мыши
 
 import contextlib
 import tkinter as tk

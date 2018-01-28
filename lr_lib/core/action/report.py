@@ -1,5 +1,5 @@
 ﻿# -*- coding: UTF-8 -*-
-# action.c "ядро"
+# action.c статистика
 
 import copy
 import string
