@@ -77,7 +77,7 @@ def create_files_from_infs(folder: str, enc: str, allow_deny: bool, statistic: b
         for file in files:
             if file:
                 yield file
-        lr_vars.Tk.title('создание файлов({f}) ответов: {p} % | {v}'.format(
+        lr_vars.Tk.title('создание файлов ответов: {p} % | {v}'.format(
             p=round(proc1 * e), f=len(lr_vars.AllFiles), v=lr_vars.VERSION))
 
 def get_files_portions(args: [(str, str, bool, bool), (str, )]) -> [dict, ]:
