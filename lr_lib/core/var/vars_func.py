@@ -131,19 +131,23 @@ def set_part_num(num=0) -> None:
     
     try:  # обрезать из SplitList
         lb_combo = lr_vars.Window.LBent_SplitList
+        lb_combo = splitters_combo(lb_combo)
         rb_combo = lr_vars.Window.RBent_SplitList
+        rb_combo = splitters_combo(rb_combo)
     except AttributeError:
         lb_combo = rb_combo = lr_vars.SplitList
 
     if lr_vars.VarSplitListLB.get():
         i_lb = lr_vars.VarSplitListNumLB.get()
-        for word in splitters_combo(lb_combo):
+        for word in lb_combo:
             lb = lb[:-i_lb].rsplit(word, 1)[-1] + lb[-i_lb:]
+
     if lr_vars.VarSplitListRB.get():
         i_rb = lr_vars.VarSplitListNumRB.get()
-        for word in splitters_combo(rb_combo):
+        for word in rb_combo:
             rb = rb[:i_rb] + rb[i_rb:].split(word, 1)[0]
-    lr_vars.VarSplitListNumRB.set(VarSplitListNumRB)
+
+    lr_vars.VarSplitListNumRB.set(VarSplitListNumRB)  # вернуть
 
     if lr_vars.VarRbRstrip.get():
         rb = rb.rstrip()

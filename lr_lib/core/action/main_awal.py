@@ -18,12 +18,14 @@ class ActionWebsAndLines:
         self.transactions = lr_lib.core.action.transac.Transactions(self)
 
     def get_web_all(self) -> iter((lr_web_.WebAny,)):
+        '''все объекты'''
         for web in self.webs_and_lines:
             if isinstance(web, str):
                 continue
             yield web
 
     def get_web_by(self, **kwargs) -> iter((lr_web_.WebAny,)):
+        '''объекты по kwargs условию: kwargs={'abc': [123]} -> web's.abc == [123]'''
         source = kwargs.pop('__source', None)
         if source is None:
             source = self.get_web_all()
@@ -34,19 +36,23 @@ class ActionWebsAndLines:
                 yield web
 
     def get_web_snapshot_all(self) -> iter((lr_web_.WebSnapshot,)):
+        '''snapshot объекты'''
         for web in self.get_web_all():
             if web.snapshot:
                 yield web
 
     def get_web_snapshot_by(self, **kwargs) -> iter((lr_web_.WebSnapshot,)):
+        '''snapshot объекты по kwargs условию'''
         for web in self.get_web_by(__source=self.get_web_snapshot_all(), **kwargs):
             yield web
 
     def get_web_reg_save_param_all(self) -> iter((lr_web_.WebRegSaveParam,)):
+        '''web_reg_save_param объекты'''
         for web in self.get_web_snapshot_all():
             yield from web.web_reg_save_param_list
 
     def get_web_reg_save_param_by(self, **kwargs) -> iter((lr_web_.WebRegSaveParam,)):
+        '''web_reg_save_param объекты по kwargs условию'''
         for web_wrsp in self.get_web_by(__source=self.get_web_reg_save_param_all(), **kwargs):
             yield web_wrsp
 

@@ -16,6 +16,7 @@ is_ascii = set(string.printable).__contains__
 
 
 class WebReport:
+    '''статистика использования web_reg_save_param'''
     def __init__(self, parent_AWAL):
         self.parent_AWAL = parent_AWAL
 
@@ -31,6 +32,7 @@ class WebReport:
         self.all_in_one = {}
 
     def create(self):
+        '''создать статистику'''
         self.wrsp_and_param_names = {}
         self.param_statistic = {}
         self.web_snapshot_param_in_count = {}
@@ -163,6 +165,7 @@ class WebReport:
             lr_action_lib.highlight_mode(t, web_.name)
 
     def stats_in_web(self, snapshot: int) -> str:
+        ''''статистика по web_reg_save_param, используемых в теле web.snapshot'''
         params_in = self.web_snapshot_param_in_count[snapshot]
         if not params_in:
             return ''
@@ -179,6 +182,7 @@ class WebReport:
         return s
 
     def stats_out_web(self, snapshot: int) -> str:
+        ''''статистика по web_reg_save_param, созданным в web.snapshot'''
         web = next(self.parent_AWAL.get_web_snapshot_by(snapshot=snapshot))
 
         if not web.web_reg_save_param_list:
@@ -194,6 +198,7 @@ class WebReport:
         return '\n\t{c} OUT({n})-> {s}'.format(s=', '.join(statistic), c=lr_param.LR_COMENT, n=len(statistic))
 
     def stats_transaction_web(self, web) -> str:
+        ''''статистика transaction, для web'''
         transaction = web.transaction
         mm = self.web_transaction[transaction]['minmax_snapshots']
         if isinstance(web, lr_web_.WebSnapshot):
