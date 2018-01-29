@@ -136,12 +136,17 @@ def iter_to_list(item: iter) -> list:
         return list(item)
 
 
+def _openTextInEditor(file: str):
+    '''открытие файл в Блокноте'''
+    return subprocess.Popen([lr_vars.EDITOR['exe'], file])
+
+
 def openTextInEditor(text: str) -> None:
     '''открытие сообщения в Блокноте'''
     with tempfile.NamedTemporaryFile(delete=False) as f:
         with open(f.name, 'w', errors='replace') as tf:
             tf.write(text)
-        subprocess.Popen([lr_vars.EDITOR['exe'], f.name])
+        _openTextInEditor(f.name)
         f.close()
 
 

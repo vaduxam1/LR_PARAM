@@ -466,9 +466,12 @@ def rClick_add_highlight(event, option: str, color: str, val: str, find=False) -
         event.widget.action.tk_text_see()
 
 
-def snapshot_files(event) -> None:
+def snapshot_files(event, folder='') -> None:
     '''показать окно файлов snapshot'''
     selection = event.widget.selection_get()
+    if not folder:
+        folder = lr_vars.VarFilesFolder.get()
+
     top = tk.Toplevel()
     top.transient(event.widget)
     tt = 'окно файлов snapshot'
@@ -478,17 +481,25 @@ def snapshot_files(event) -> None:
     fEntry = ttk.Combobox(top, justify='center', textvariable=fvar, foreground='grey',
                                background=lr_vars.Background, font=lr_vars.DefaultFont + ' italic')
 
-    folder = lr_vars.VarFilesFolder.get()
-
     def get_files_names() -> str:
         i = ''.join(filter(str.isnumeric, selection))
         with open(os.path.join(folder, 't{}.inf'.format(i))) as inf:
             for line in inf:
-                s = line.strip()
-                if ('File' in s) and ('=' in s):
-                    yield s.split('=', 1)[1]
+                ls = line.strip()
+                if 'File' in ls:
+                    sls = ls.split('=', 1)
+                    if len(sls) == 2:
+                        yield sls[1]
 
     fEntry['values'] = list(get_files_names())
-    fEntry.bind("<<ComboboxSelected>>", lambda *a: lr_other.openTextInEditor(open(os.path.join(folder, fEntry.get())).read()))
+
+    m = max(map(len, fEntry['values']))
+    if m < 30:
+        m = 30
+    fEntry.config(width=m)
+
+    fEntry.bind("<<ComboboxSelected>>", lambda *a: lr_other._openTextInEditor(os.path.join(folder, fEntry.get())))
     lr_tooltip.createToolTip(fEntry, tt)
+
     fEntry.pack()
+    lr_dialog.center_widget(top)

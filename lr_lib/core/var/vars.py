@@ -313,7 +313,7 @@ VarWindowLogger = tk.StringVar(value='INFO')  # минимальный уров�
 EHOME, EEND = [3, 1]  # при ошибке, показать строк выше/ниже, строки в файле-кода
 
 #####################################
-# поиск файло ответов, при старте
+# поиск файлов ответов, при старте
 
 DEFAULT_FILES_FOLDER = 'data'  # каталог поиска
 DEFAULT_FILES_FOLDER = os.path.realpath(DEFAULT_FILES_FOLDER) if os.path.isdir(DEFAULT_FILES_FOLDER) else os.getcwd()
