@@ -213,7 +213,8 @@ def wrsp_name_creator(param: str, Lb: str, Rb: str, file: dict) -> str:
         else: transaction = ''
     else: transaction = ''
 
-    wrsp_name = WEB_REG_NUM.format(wrsp_rnd_num=wrsp_rnd_num, wrsp_name=wrsp_param_name, lb_name=lb_name, rb_name=rb_name, infs=snaps, letter=lr_vars.WrspNameFirst.get(), transaction=transaction)
+    wrsp_name = WEB_REG_NUM.format(wrsp_rnd_num=wrsp_rnd_num, wrsp_name=wrsp_param_name, lb_name=lb_name, rb_name=rb_name,
+                                   infs=snaps, letter=lr_vars.WrspNameFirst.get(), transaction=transaction)
     wrsp_name = str.translate(wrsp_name, wrsp_deny_punctuation).rstrip('_')
     while '___' in wrsp_name: wrsp_name = wrsp_name.replace('___', '__')
     return wrsp_name
@@ -338,10 +339,22 @@ def get_files_with_param(param: str, action=None, set_file=True) -> None:
     lr_vars.FilesWithParam = sorted(filter(bool, map_executer(param_searcher, files)), key=lr_other.sort_by_file_keys)
 
     if not lr_vars.FilesWithParam:
-        if action: lai, a_min, a_max, afa = (len(action.action_infs), min(action.action_infs), max(action.action_infs), (len(lr_vars.AllFiles) - len(action.drop_files)))
-        else: lai = a_min = a_max = afa = None
-        raise UserWarning('Не найдены файлы содержащие param "{param}"\n\nsearch_data: {d}\n\nВсего Snapshot {i}=[ t{ai_min}:t{ai_max} ]/файлов={f}\nВ action.c: Snapshot {ai}=[ t{a_min}:t{a_max} ] / Файлов={afa}\nПоиск происходил в: Snapshot {lf}=[ t{min_iaf}:t{max_iaf} ] / файлах={f_}\nДиректория поиска: {folder}\nоткл чекб "strong", вероятно может помочь найти варианты'.format(
-            ai_min=min(tuple(lr_other.get_files_infs(lr_vars.AllFiles))), ai=lai, afa=afa, ai_max=max(lr_other.get_files_infs(lr_vars.AllFiles)), folder=lr_vars.VarFilesFolder.get(), min_iaf=files[0]['Param']['inf_min'], max_iaf=files[0]['Param']['inf_max'], a_min=a_min, a_max=a_max, d=search_data, f=len(lr_vars.AllFiles), f_=len(files), lf=len(tuple(lr_other.get_files_infs(files))), param=param, i=len(tuple(lr_other.get_files_infs(lr_vars.AllFiles)))))
+        if action:
+            lai, a_min, a_max, afa = (len(action.action_infs), min(action.action_infs), max(action.action_infs),
+                                      (len(lr_vars.AllFiles) - len(action.drop_files)))
+        else:
+            lai = a_min = a_max = afa = None
+        raise UserWarning(
+            'Не найдены файлы содержащие param "{param}"\n\nsearch_data: {d}\n\n'
+            'Всего Snapshot {i}=[ t{ai_min}:t{ai_max} ]/файлов={f}\n'
+            'В action.c: Snapshot {ai}=[ t{a_min}:t{a_max} ] / Файлов={afa}\n'
+            'Поиск происходил в: Snapshot {lf}=[ t{min_iaf}:t{max_iaf} ] / файлах={f_}\n'
+            'Директория поиска: {folder}\nоткл чекб "strong", вероятно может помочь найти варианты'.format(
+                ai_min=min(tuple(lr_other.get_files_infs(lr_vars.AllFiles))), ai=lai, afa=afa,
+                ai_max=max(lr_other.get_files_infs(lr_vars.AllFiles)), folder=lr_vars.VarFilesFolder.get(),
+                min_iaf=files[0]['Param']['inf_min'], max_iaf=files[0]['Param']['inf_max'], a_min=a_min, a_max=a_max,
+                d=search_data, f=len(lr_vars.AllFiles), f_=len(files), lf=len(tuple(lr_other.get_files_infs(files))),
+                param=param, i=len(tuple(lr_other.get_files_infs(lr_vars.AllFiles)))))
 
     if set_file:
         file = lr_vars.FilesWithParam[-1 if lr_vars.VarFirstLastFile.get() else 0]
@@ -370,8 +383,13 @@ def new_find_param_ord() -> (int, int):
     lb_text_index = [len(part) for part in text.split(lb)]  # индексы для определения param в тексте
     len_lbti = len(lb_text_index)
 
-    assert all(items), 'Формирование Ord для web_reg_save_param невозможно, тк поле пусто\n[param, lb, rb, text] == {empty}\nVarWrspDict={wrsp}\nVarPartNum={pn}, max={len_lbti}\nVarFile={fl}'.format(wrsp=lr_vars.VarWrspDict.get(), empty=list(map(bool, items)), pn=lr_vars.VarPartNum.get(), len_lbti=len_lbti, fl=lr_vars.VarFile.get(),)
-    assert len_lbti > 1, 'Формирование web_reg_save_param невозможно, тк файл не содержит LB(5)\n{wrsp}'.format(wrsp=lr_vars.VarWrspDict.get())
+    assert all(items), 'Формирование Ord для web_reg_save_param невозможно, тк поле пусто\n' \
+                       '[param, lb, rb, text] == {empty}\n' \
+                       'VarWrspDict={wrsp}\nVarPartNum={pn}, max={len_lbti}\n' \
+                       'VarFile={fl}'.format(wrsp=lr_vars.VarWrspDict.get(), empty=list(map(bool, items)),
+                                             pn=lr_vars.VarPartNum.get(), len_lbti=len_lbti, fl=lr_vars.VarFile.get(),)
+    assert len_lbti > 1, 'Формирование web_reg_save_param невозможно, тк файл не содержит LB(5)\n' \
+                         '{wrsp}'.format(wrsp=lr_vars.VarWrspDict.get())
 
     Ord, index = 0, 0  # искомый Ord, текущий LB index
     iter_index = iter(lb_text_index)  # следующий LB index

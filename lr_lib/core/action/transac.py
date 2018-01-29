@@ -39,7 +39,8 @@ class Transactions:
             self.__is_no_transaction_name = ''
 
         if transaction in self.names:
-            lr_vars.Logger.error('транзакция: start после start\nПовторное использование start_transaction("{}")'.format(transaction))
+            lr_vars.Logger.error(
+                'транзакция: start после start\nПовторное использование start_transaction("{}")'.format(transaction))
         else:
             dt = self.sub_transaction
             for t in self.names:
@@ -52,6 +53,7 @@ class Transactions:
 
     def stop_transaction(self, transaction: str) -> None:
         if transaction not in self.names:
-            lr_vars.Logger.error('транзакция: stop перед start\nОтсутствует start_transaction("{}")'.format(transaction))
+            lr_vars.Logger.error(
+                'транзакция: stop перед start\nОтсутствует start_transaction("{}")'.format(transaction))
         else:
             self.start_stop['stop'].append(transaction)

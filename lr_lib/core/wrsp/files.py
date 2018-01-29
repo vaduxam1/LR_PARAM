@@ -152,7 +152,8 @@ def init() -> None:
                     lr_vars.AllFiles.append(file)
 
     if not lr_vars.AllFiles:
-        lr_vars.Logger.critical('В "{}" отсутствуют t*.inf LoadRunner файлы!\nнеобходимо выбрать каталог " lr_скрипт\\data "\nлибо сменить директорию кнопкой "Folder"'.format(folder))
+        lr_vars.Logger.critical('В "{}" отсутствуют t*.inf LoadRunner файлы!\nнеобходимо выбрать каталог " lr_скрипт\\data "\n'
+                                'либо сменить директорию кнопкой "Folder"'.format(folder))
 
     for file in lr_vars.AllFiles:  # Snapshot_Nums: set -> list
         file['Snapshot']['Nums'] = sorted(file['Snapshot']['Nums'])

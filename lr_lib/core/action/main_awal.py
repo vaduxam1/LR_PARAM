@@ -53,7 +53,8 @@ class ActionWebsAndLines:
     def replace_bodys(self, replace_list: [(str, str), ]) -> None:
         '''заменить группу param, во всех web_ body'''
         web_actions = tuple(self.get_web_snapshot_all())
-        lr_vars.Logger.trace('web_actions={lw}, replace_list={lrl}:{rl}'.format(rl=replace_list, lrl=len(replace_list), lw=len(web_actions)))
+        lr_vars.Logger.trace('web_actions={lw}, replace_list={lrl}:{rl}'.format(
+            rl=replace_list, lrl=len(replace_list), lw=len(web_actions)))
 
         for web_ in web_actions:
             body = web_.get_body()
@@ -156,7 +157,8 @@ class ActionWebsAndLines:
                     continue
 
                 else:
-                    lr_vars.Logger.critical('вероятно ошибка распознавания\n{line}\n{lwl}\n{web_list}'.format(line=line, lwl=len(web_list), web_list=web_list))
+                    lr_vars.Logger.critical('вероятно ошибка распознавания\n{line}\n{lwl}\n{web_list}'.format(
+                        line=line, lwl=len(web_list), web_list=web_list))
                     self.add_to_text_list(line)
                     continue
 
@@ -176,8 +178,10 @@ class ActionWebsAndLines:
             self.add_to_text_list('\n'.join(_multiline_comment))
 
         if reg_param_list:
-            lr_vars.Logger.critical('Ненайден web_* запрос, которому принадлежат web_reg_save_param:\n{}'.format([w.name for w in reg_param_list]))
-            self.add_to_text_list('\n// ERROR web_reg_save_param !\n{}'.format('\n\n'.join(map(lr_web_.WebRegSaveParam.to_str, reg_param_list))))
+            lr_vars.Logger.critical('Ненайден web_* запрос, которому принадлежат web_reg_save_param:\n{}'.format(
+                [w.name for w in reg_param_list]))
+            self.add_to_text_list('\n// ERROR web_reg_save_param !\n{}'.format(
+                '\n\n'.join(map(lr_web_.WebRegSaveParam.to_str, reg_param_list))))
 
     def set_transaction_name(self, strip_line: str, _s='"') -> (str or None):
         '''проверить линию, сохранить имя transaction'''

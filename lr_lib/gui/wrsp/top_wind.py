@@ -94,13 +94,16 @@ def pool_wind(self) -> None:
     lr_tooltip.createToolTip(entryTName, 'тип T пула(чтото из thread)')
     entryTName.grid(row=4, column=0, columnspan=7)
 
-    spinT = tk.Spinbox(top, from_=0, to=999, textvariable=lr_vars.T_POOL.size, width=3, font=lr_vars.DefaultFont, command=set_pool(lr_vars.T_POOL))
+    spinT = tk.Spinbox(top, from_=0, to=999, textvariable=lr_vars.T_POOL.size, width=3, font=lr_vars.DefaultFont,
+                       command=set_pool(lr_vars.T_POOL))
     spinT.grid(row=4, column=7)
     lr_tooltip.createToolTip(spinT, 'размер T пула')
 
-    spinSThreadAutoSizeTimeOut = tk.Spinbox(top, from_=0, to=10**5, textvariable=lr_vars.SThreadAutoSizeTimeOut, width=4, font=lr_vars.DefaultFont)
+    spinSThreadAutoSizeTimeOut = tk.Spinbox(top, from_=0, to=10**5, textvariable=lr_vars.SThreadAutoSizeTimeOut, width=4,
+                                            font=lr_vars.DefaultFont)
     spinSThreadAutoSizeTimeOut.grid(row=5, column=2)
-    lr_tooltip.createToolTip(spinSThreadAutoSizeTimeOut, 'SThreadAutoSizeTimeOut отзывчивость(мсек) SThreadPool - период опроса, для изменения размера пула')
+    lr_tooltip.createToolTip(spinSThreadAutoSizeTimeOut, 'SThreadAutoSizeTimeOut отзывчивость(мсек) SThreadPool - '
+                                                         'период опроса, для изменения размера пула')
 
     spinMainThreadUpdateTime = tk.Spinbox(top, from_=0, to=10**5, textvariable=lr_vars.MainThreadUpdateTime, width=4, font=lr_vars.DefaultFont)
     spinMainThreadUpdateTime.grid(row=5, column=0)

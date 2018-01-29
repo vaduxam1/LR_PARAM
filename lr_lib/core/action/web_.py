@@ -134,7 +134,8 @@ class WebAny:
         t2 = 'хотя строка и содержит param-имя "{p}"\nоно является частью другого, более длинного имени:\nЗаменить на "{r}" ?'.format(
             p=param, r=replace)
         t1 = 'заменяемая строка:\n{prev}{p}{part}'.format(
-            prev=left[-lr_vars.AskLbRbMaxLen:].rsplit('\n', 1)[-1].lstrip(), p=param, part=right[:lr_vars.AskLbRbMaxLen].split('\n', 1)[0].rstrip())
+            prev=left[-lr_vars.AskLbRbMaxLen:].rsplit('\n', 1)[-1].lstrip(), p=param,
+            part=right[:lr_vars.AskLbRbMaxLen].split('\n', 1)[0].rstrip())
         y = lr_dialog.YesNoCancel(buttons=buttons, text_before=t1, text_after=t2, title='автозамена "{s}" на "{r}"'.format(
             s=param, r=replace), parent=self.parent_AWAL.action, default_key=nta, focus=self.parent_AWAL.action.tk_text)
         a = y.ask()

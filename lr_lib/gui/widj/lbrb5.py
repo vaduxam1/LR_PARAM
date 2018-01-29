@@ -15,11 +15,13 @@ class LBRBText(tk.Text):
     def __init__(self, name: str, parent: object):
         self.heightVar = tk.IntVar(value=lr_vars.DEFAULT_LB_RB_MIN_HEIGHT)
 
-        self.label_info = tk.LabelFrame(parent, text=self.info_text[name], font=lr_vars.DefaultFont + ' bold italic', padx=0, pady=0, relief='groove', labelanchor=tk.N, bd=4)
+        self.label_info = tk.LabelFrame(parent, text=self.info_text[name], font=lr_vars.DefaultFont + ' bold italic',
+                                        padx=0, pady=0, relief='groove', labelanchor=tk.N, bd=4)
         self.label_info.grid_rowconfigure(0, weight=1)
         self.label_info.grid_columnconfigure(0, weight=1)
 
-        super().__init__(self.label_info, height=lr_vars.DEFAULT_LB_RB_MIN_HEIGHT, background=lr_vars.Background, font=lr_vars.DefaultLBRBFont, wrap=tk.NONE, padx=0, pady=0)
+        super().__init__(self.label_info, height=lr_vars.DEFAULT_LB_RB_MIN_HEIGHT, background=lr_vars.Background,
+                         font=lr_vars.DefaultLBRBFont, wrap=tk.NONE, padx=0, pady=0)
         self.name = name
 
         self.bounds[name] = self

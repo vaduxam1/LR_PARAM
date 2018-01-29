@@ -37,12 +37,14 @@ class WebLegend(tk.Toplevel):
         self.interior = tk.Frame(self.canvas)
         self.interior.bind('<Configure>', self._configure_interior)
 
-        self.h_entry = tk.Spinbox(self, width=4, justify='center', from_=0, to=9999, command=lambda *a: self.print(transac_show=False), textvariable=self.H)
+        self.h_entry = tk.Spinbox(self, width=4, justify='center', from_=0, to=9999,
+                                  command=lambda *a: self.print(transac_show=False), textvariable=self.H)
         self.h_entry.pack()
 
     def _configure_interior(self, *args) -> None:
         '''update the scrollbars to match the size of the inner frame'''
-        size = (max(self.interior.winfo_reqwidth(), self.minimal_canvas_size[0]), max(self.interior.winfo_reqheight(), self.minimal_canvas_size[1]))
+        size = (max(self.interior.winfo_reqwidth(), self.minimal_canvas_size[0]),
+                max(self.interior.winfo_reqheight(), self.minimal_canvas_size[1]))
         self.canvas.config(scrollregion='0 0 %s %s' % size)
         if self.interior.winfo_reqwidth() != self.canvas.winfo_width():
             self.canvas.config(width=self.interior.winfo_reqwidth())
@@ -141,8 +143,10 @@ class WebLegend(tk.Toplevel):
 
                             def title(*a, w=w, web_=web_, dt=dt, rep=rep, i=i) -> None:
                                 '''описание param в title'''
-                                self.title('OUT(t{oi}.snapshot): {p} | {n} | count(in_webs={c}, webs={wwp}, transac_={twp}, infs={il}  ||  IN(t{i}.snapshot): {rep}'.format(
-                                    p=w.param, n=w.name, c=dt['param_count'], wwp=dt['snapshots'], twp=dt['transaction_count'], il=len(dt['snapshots']), rep=rep[i], oi=web_.snapshot, i=i))
+                                self.title('OUT(t{oi}.snapshot): {p} | {n} | count(in_webs={c}, webs={wwp}, transac_={twp}, '
+                                           'infs={il}  ||  IN(t{i}.snapshot): {rep}'.format(
+                                    p=w.param, n=w.name, c=dt['param_count'], wwp=dt['snapshots'], oi=web_.snapshot,
+                                    twp=dt['transaction_count'], il=len(dt['snapshots']), rep=rep[i], i=i))
 
                             self.canvas.tag_bind(l, '<ButtonPress-1>', title)
 

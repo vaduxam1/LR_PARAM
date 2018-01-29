@@ -143,7 +143,9 @@ def find_tag_indxs(line_num: int, line: str, tag_names: {str: {(str, int), }, })
 
         if _NC in line_indxs:
             line_indxs[_NC] -= set(itertools.chain(*map(line_indxs.__getitem__, (line_indxs.keys() - {_NC}))))
-        line_indxs = {k: [set_tk_indxs(line_num, i_start, i_end) for (i_start, i_end) in join_indxs(indxs)] for (k, indxs) in line_indxs.items() if indxs}
+
+        line_indxs = {k: [set_tk_indxs(line_num, i_start, i_end) for (i_start, i_end) in join_indxs(indxs)]
+                      for (k, indxs) in line_indxs.items() if indxs}
 
     return line_num, line_indxs
 

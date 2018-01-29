@@ -124,7 +124,8 @@ class WebReport:
 
         n = ('snapshots', 'transaction_names', 'snapshots_count', )
         stats = lambda w: {k: v for (k, v) in self.param_statistic[w.name].items() if k not in n}
-        web_reg = lambda s: {w.name: {'param': w.param, 'stats': stats(w)} for w in next(self.parent_AWAL.get_web_by(snapshot=s)).web_reg_save_param_list}
+        web_reg = lambda s: {w.name: {'param': w.param, 'stats': stats(w)}
+                             for w in next(self.parent_AWAL.get_web_by(snapshot=s)).web_reg_save_param_list}
         for t in self.web_transaction:
             dtt = next(self.get_sub_transaction_dt(t, self.all_in_one))
             dtt.update(copy.deepcopy(self.web_transaction[t]))
@@ -169,11 +170,13 @@ class WebReport:
 
         def get(wr_name, format='{param}(P:{p_in}/{p_all}|S:{snap}|T:{transac})'.format):
             ps = self.param_statistic[wr_name]
-            s = format(param=self.wrsp_and_param_names[wr_name], p_in=params_in[wr_name], p_all=ps['param_count'], snap=ps['minmax_snapshots'], transac=ps['transaction_count'])
+            s = format(param=self.wrsp_and_param_names[wr_name], p_in=params_in[wr_name], p_all=ps['param_count'],
+                       snap=ps['minmax_snapshots'], transac=ps['transaction_count'])
             return s
 
         statistic = (get(wr_name) for wr_name in sorted(params_in, key=len))
-        s = '\n\t{c} IN({i})<-[{ui}]: {s}'.format(s=', '.join(statistic), c=lr_param.LR_COMENT, i=sum(params_in[w] for w in params_in), ui=len(params_in))
+        s = '\n\t{c} IN({i})<-[{ui}]: {st}'.format(
+            st=', '.join(statistic), c=lr_param.LR_COMENT, i=sum(params_in[w] for w in params_in), ui=len(params_in))
         return s
 
     def stats_out_web(self, snapshot: int) -> str:
@@ -185,7 +188,8 @@ class WebReport:
         statistic = []
         for wr in sorted(web.web_reg_save_param_list, key=lambda w: len(w.param)):
             ps = self.param_statistic[wr.name]
-            pss = '{p}(P:{p_all}|S:{snap}|T:{transac})'.format(p=wr.param, p_all=ps['param_count'], snap=ps['minmax_snapshots'], transac=ps['transaction_count'])
+            pss = '{p}(P:{p_all}|S:{snap}|T:{transac})'.format(
+                p=wr.param, p_all=ps['param_count'], snap=ps['minmax_snapshots'], transac=ps['transaction_count'])
             statistic.append(pss)
 
         return '\n\t{c} OUT({n})-> {s}'.format(s=', '.join(statistic), c=lr_param.LR_COMENT, n=len(statistic))

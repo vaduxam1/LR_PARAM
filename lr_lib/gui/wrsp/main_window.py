@@ -60,11 +60,14 @@ class Window(ttk.Frame):
         self.show_param_frame = ttk.Frame(self.main_frame, padding="0 0 0 0")
         self.last_frame = tk.LabelFrame(self, labelanchor=tk.S, bd=1, relief='groove', padx=0, pady=0, font=lr_vars.DefaultFont)
 
-        self.sortKey1 = ttk.Combobox(self.last_frame, textvariable=lr_vars.VarFileSortKey1, justify='center', font=lr_vars.DefaultFont + ' italic', style="BW.TButton", width=10)
-        self.sortKey2 = ttk.Combobox(self.last_frame, textvariable=lr_vars.VarFileSortKey2, justify='center', font=lr_vars.DefaultFont + ' italic', style="BW.TButton")
+        self.sortKey1 = ttk.Combobox(self.last_frame, textvariable=lr_vars.VarFileSortKey1, justify='center',
+                                     font=lr_vars.DefaultFont + ' italic', style="BW.TButton", width=10)
+        self.sortKey2 = ttk.Combobox(self.last_frame, textvariable=lr_vars.VarFileSortKey2, justify='center',
+                                     font=lr_vars.DefaultFont + ' italic', style="BW.TButton")
 
         # text
-        self.tk_text = lr_lib.gui.widj.highlight_text.HighlightText(self, foreground='grey', background=lr_vars.Background, wrap=tk.NONE, height=10, padx=0, pady=0, undo=True, )
+        self.tk_text = lr_lib.gui.widj.highlight_text.HighlightText(
+            self, foreground='grey', background=lr_vars.Background, wrap=tk.NONE, height=10, padx=0, pady=0, undo=True, )
         self.text_scrolly = ttk.Scrollbar(self, orient=tk.VERTICAL, command=self.tk_text.yview)
         self.text_scrollx = ttk.Scrollbar(self, orient=tk.HORIZONTAL, command=self.tk_text.xview)
         self.tk_text.configure(yscrollcommand=self.text_scrolly.set, xscrollcommand=self.text_scrollx.set, bd=0, padx=0, pady=0)
@@ -75,17 +78,24 @@ class Window(ttk.Frame):
         self.t01 = tk.Label(self.show_param_frame, text='?', font=lr_vars.DefaultFont + ' italic', padx=0, pady=0, foreground='grey')
         self.t02 = tk.Label(self.mid_frame, text='?', font=lr_vars.DefaultFont + ' italic', padx=0, pady=0, foreground='grey')
         self.comboParam = ttk.Combobox(self.find_frame, textvariable=lr_vars.VarParam, justify='center', font=lr_vars.DefaultFont, width=54)
-        self.cbxFirstLastFile = tk.Checkbutton(self.mid_frame, variable=lr_vars.VarFirstLastFile, text='last', font=lr_vars.DefaultFont + ' italic', padx=0, pady=0, command=self.firstOrLastFile)
-        self.StrongSearchInFile_cbx = tk.Checkbutton(self.mid_frame, variable=lr_vars.VarStrongSearchInFile, padx=0, pady=0, text='strong', font=lr_vars.DefaultFont + ' italic')
+        self.cbxFirstLastFile = tk.Checkbutton(self.mid_frame, variable=lr_vars.VarFirstLastFile, text='last',
+                                               font=lr_vars.DefaultFont + ' italic', padx=0, pady=0, command=self.firstOrLastFile)
+        self.StrongSearchInFile_cbx = tk.Checkbutton(self.mid_frame, variable=lr_vars.VarStrongSearchInFile, padx=0, pady=0,
+                                                     text='strong', font=lr_vars.DefaultFont + ' italic')
 
-        self.actionButton = tk.Button(self.find_frame, text=' action.c  editor ', font=lr_vars.DefaultFont + ' italic bold', padx=0, pady=0, command=lr_action.ActionWindow, relief='ridge', background='orange')
+        self.actionButton = tk.Button(self.find_frame, text=' action.c  editor ', font=lr_vars.DefaultFont + ' italic bold',
+                                      padx=0, pady=0, command=lr_action.ActionWindow, relief='ridge', background='orange')
 
         # (2)
         self.t2 = tk.Label(self.show_param_frame, text='(2)', font=lr_vars.DefaultFont + ' italic bold', padx=0, pady=0, foreground='brown')
-        self.ButtonFindParamFiles = tk.Button(self.show_param_frame, text='поиск {param} в файлах ответов', font=lr_vars.DefaultFont + ' italic bold', padx=0, pady=0, command=lambda *a: lr_vars.Tk.after(0, self.get_files), background='orange')
-        self.max_inf = ttk.Combobox(self.show_param_frame, width=10, textvariable=lr_vars.VarSearchMaxSnapshot, justify='center', foreground='grey', font=lr_vars.DefaultFont, style="BW.TButton")
+        self.ButtonFindParamFiles = tk.Button(self.show_param_frame, text='поиск {param} в файлах ответов',
+                                              font=lr_vars.DefaultFont + ' italic bold', padx=0, pady=0,
+                                              command=lambda *a: lr_vars.Tk.after(0, self.get_files), background='orange')
+        self.max_inf = ttk.Combobox(self.show_param_frame, width=10, textvariable=lr_vars.VarSearchMaxSnapshot,
+                                    justify='center', foreground='grey', font=lr_vars.DefaultFont, style="BW.TButton")
 
-        self.min_inf = ttk.Combobox(self.show_param_frame, width=10, textvariable=lr_vars.VarSearchMinSnapshot, justify='center', foreground='grey', font=lr_vars.DefaultFont, style="BW.TButton")
+        self.min_inf = ttk.Combobox(self.show_param_frame, width=10, textvariable=lr_vars.VarSearchMinSnapshot,
+                                    justify='center', foreground='grey', font=lr_vars.DefaultFont, style="BW.TButton")
 
         # (3)
         self.t3 = tk.Label(self.mid_frame, text='(3)', font=lr_vars.DefaultFont + ' italic bold', padx=0, pady=0, foreground='brown')
@@ -108,13 +118,17 @@ class Window(ttk.Frame):
         self.t5l = tk.Label(self, text='(5)', font=lr_vars.DefaultFont + ' italic bold', padx=0, pady=0, foreground='brown')
         self.t5r = tk.Label(self, text='(5)', font=lr_vars.DefaultFont + ' italic bold', padx=0, pady=0, foreground='brown')
 
-        SplitList = (lr_vars.SplitList, lr_vars.SplitList0, lr_vars.SplitList1, lr_vars.SplitList2, lr_vars.SplitList_3, list(string.whitespace), 'list(string.ascii_letters)', 'list(string.digits)', 'list(string.punctuation)', )
+        SplitList = (lr_vars.SplitList, lr_vars.SplitList0, lr_vars.SplitList1, lr_vars.SplitList2, lr_vars.SplitList_3,
+                     list(string.whitespace), 'list(string.ascii_letters)', 'list(string.digits)', 'list(string.punctuation)', )
         SplitList = tuple(str(l) for l in SplitList)
 
         # ---LB
-        self.ButtonNewLB = tk.Button(self.last_frameCbx1, text='->', command=self.comboParts_change, font=lr_vars.DefaultFont + ' italic', width=2, padx=0, pady=0)
-        self.LBcbx_return = tk.Checkbutton(self.last_frameCbx1, variable=lr_vars.VarReturnLB, text='\\n', font=lr_vars.DefaultFont + ' italic', command=self.comboParts_change, padx=0, pady=0, anchor=tk.S)
-        self.LBcbx_rus = tk.Checkbutton(self.last_frameCbx1, variable=lr_vars.VarRusLB, text='ascii', font=lr_vars.DefaultFont + ' italic', command=self.comboParts_change, padx=0, pady=0)
+        self.ButtonNewLB = tk.Button(self.last_frameCbx1, text='->', command=self.comboParts_change,
+                                     font=lr_vars.DefaultFont + ' italic', width=2, padx=0, pady=0)
+        self.LBcbx_return = tk.Checkbutton(self.last_frameCbx1, variable=lr_vars.VarReturnLB, text='\\n',
+                                           font=lr_vars.DefaultFont + ' italic', command=self.comboParts_change, padx=0, pady=0, anchor=tk.S)
+        self.LBcbx_rus = tk.Checkbutton(self.last_frameCbx1, variable=lr_vars.VarRusLB, text='ascii',
+                                        font=lr_vars.DefaultFont + ' italic', command=self.comboParts_change, padx=0, pady=0)
 
         self.lb_split_label = tk.LabelFrame(self.last_frameCbx1, bd=1, padx=0, pady=0, relief='ridge')
 
@@ -131,17 +145,24 @@ class Window(ttk.Frame):
                 self.LbB2Cbx.configure(state='disabled')
             self.comboParts_change()
 
-        self.LBcbx_SplitList = tk.Checkbutton(self.lb_split_label, variable=lr_vars.VarSplitListLB, text='eval', font=lr_vars.DefaultFont + ' bold', command=spl_cbx_cmd_lb, padx=0, pady=0)
+        self.LBcbx_SplitList = tk.Checkbutton(self.lb_split_label, variable=lr_vars.VarSplitListLB, text='eval',
+                                              font=lr_vars.DefaultFont + ' bold', command=spl_cbx_cmd_lb, padx=0, pady=0)
         self.LBent_SplitList = ttk.Combobox(self.lb_split_label, font=lr_vars.DefaultFont, width=10)
         self.LBent_SplitList['values'] = list(SplitList)
         self.LBent_SplitList.current(0)
-        self.LBSpinSplitList = tk.Spinbox(self.lb_split_label, from_=0, to=100, textvariable=lr_vars.VarSplitListNumLB, width=2, font=lr_vars.DefaultFont, command=self.comboParts_change)
+        self.LBSpinSplitList = tk.Spinbox(self.lb_split_label, from_=0, to=100, textvariable=lr_vars.VarSplitListNumLB, width=2,
+                                          font=lr_vars.DefaultFont, command=self.comboParts_change)
 
-        self.max_lb = tk.Entry(self.last_frameCbx1, width=5, textvariable=lr_vars.VarMaxLenLB, justify='center', foreground='grey', background=lr_vars.Background, font=lr_vars.DefaultFont + ' italic')
-        self.spin_LB_height = tk.Spinbox(self.last_frameCbx1, from_=1, to=99, textvariable=self.LB.heightVar, width=2, command=self.LB.set_height, font=lr_vars.DefaultFont + ' italic', background=lr_vars.Background)
-        self.ButtonLB_note = tk.Button(self.last_frameCbx1, text='edit', command=lambda: lr_note(self.LB), width=3, font=lr_vars.DefaultFont + ' italic', padx=0, pady=0)
-        self.partNumEmptyLbNext = tk.Checkbutton(self.last_frameCbx1, variable=lr_vars.VarPartNumEmptyLbNext, text='strip', font=lr_vars.DefaultFont + ' bold', padx=0, pady=0)
-        self.partNumDenyLbNext = tk.Checkbutton(self.last_frameCbx1, variable=lr_vars.VarPartNumDenyLbNext, text='deny', font=lr_vars.DefaultFont + ' bold', padx=0, pady=0)
+        self.max_lb = tk.Entry(self.last_frameCbx1, width=5, textvariable=lr_vars.VarMaxLenLB, justify='center',
+                               foreground='grey', background=lr_vars.Background, font=lr_vars.DefaultFont + ' italic')
+        self.spin_LB_height = tk.Spinbox(self.last_frameCbx1, from_=1, to=99, textvariable=self.LB.heightVar, width=2,
+                                         command=self.LB.set_height, font=lr_vars.DefaultFont + ' italic', background=lr_vars.Background)
+        self.ButtonLB_note = tk.Button(self.last_frameCbx1, text='edit', command=lambda: lr_note(self.LB), width=3,
+                                       font=lr_vars.DefaultFont + ' italic', padx=0, pady=0)
+        self.partNumEmptyLbNext = tk.Checkbutton(self.last_frameCbx1, variable=lr_vars.VarPartNumEmptyLbNext, text='strip',
+                                                 font=lr_vars.DefaultFont + ' bold', padx=0, pady=0)
+        self.partNumDenyLbNext = tk.Checkbutton(self.last_frameCbx1, variable=lr_vars.VarPartNumDenyLbNext, text='deny',
+                                                font=lr_vars.DefaultFont + ' bold', padx=0, pady=0)
 
         self.LbB1Cbx = tk.Checkbutton(self.lb_split_label, variable=lr_vars.VarLbB1, text='{', font=lr_vars.DefaultFont, padx=0, pady=0)
         self.LbB2Cbx = tk.Checkbutton(self.lb_split_label, variable=lr_vars.VarLbB2, text='[', font=lr_vars.DefaultFont, padx=0, pady=0)
@@ -149,9 +170,12 @@ class Window(ttk.Frame):
         self.LbEndCbx = tk.Checkbutton(self.last_frameCbx1, variable=lr_vars.VarLEnd, text='end', font=lr_vars.DefaultFont, padx=0, pady=0)
 
         # ---RB
-        self.ButtonNewRB = tk.Button(self.last_frameCbx2, text='->', command=self.comboParts_change, font=lr_vars.DefaultFont + ' italic', width=2, padx=0, pady=0)
-        self.RBcbx_return = tk.Checkbutton(self.last_frameCbx2, variable=lr_vars.VarReturnRB, text='\\n', font=lr_vars.DefaultFont + ' italic', command=self.comboParts_change, padx=0, pady=0)
-        self.RBcbx_rus = tk.Checkbutton(self.last_frameCbx2, variable=lr_vars.VarRusRB, text='ascii', font=lr_vars.DefaultFont + ' italic', command=self.comboParts_change, padx=0, pady=0)
+        self.ButtonNewRB = tk.Button(self.last_frameCbx2, text='->', command=self.comboParts_change,
+                                     font=lr_vars.DefaultFont + ' italic', width=2, padx=0, pady=0)
+        self.RBcbx_return = tk.Checkbutton(self.last_frameCbx2, variable=lr_vars.VarReturnRB, text='\\n', font=lr_vars.DefaultFont + ' italic',
+                                           command=self.comboParts_change, padx=0, pady=0)
+        self.RBcbx_rus = tk.Checkbutton(self.last_frameCbx2, variable=lr_vars.VarRusRB, text='ascii', font=lr_vars.DefaultFont + ' italic',
+                                        command=self.comboParts_change, padx=0, pady=0)
 
         self.rb_split_label = tk.LabelFrame(self.last_frameCbx2, bd=1, padx=0, pady=0, relief='ridge')
 
@@ -168,17 +192,24 @@ class Window(ttk.Frame):
                 self.RbB2Cbx.configure(state='disabled')
             self.comboParts_change()
 
-        self.RBcbx_SplitList = tk.Checkbutton(self.rb_split_label, variable=lr_vars.VarSplitListRB, text='eval', font=lr_vars.DefaultFont + ' bold', command=spl_cbx_cmd_rb, padx=0, pady=0)
+        self.RBcbx_SplitList = tk.Checkbutton(self.rb_split_label, variable=lr_vars.VarSplitListRB, text='eval',
+                                              font=lr_vars.DefaultFont + ' bold', command=spl_cbx_cmd_rb, padx=0, pady=0)
         self.RBent_SplitList = ttk.Combobox(self.rb_split_label, font=lr_vars.DefaultFont, width=10)
         self.RBent_SplitList['values'] = list(SplitList)
         self.RBent_SplitList.current(0)
-        self.RBSpinSplitList = tk.Spinbox(self.rb_split_label, from_=0, to=100, textvariable=lr_vars.VarSplitListNumRB, width=2, font=lr_vars.DefaultFont, command=self.comboParts_change)
+        self.RBSpinSplitList = tk.Spinbox(self.rb_split_label, from_=0, to=100, textvariable=lr_vars.VarSplitListNumRB,
+                                          width=2, font=lr_vars.DefaultFont, command=self.comboParts_change)
 
-        self.max_rb = tk.Entry(self.last_frameCbx2, width=5, textvariable=lr_vars.VarMaxLenRB, justify='center', foreground='grey', background=lr_vars.Background, font=lr_vars.DefaultFont + ' italic')
-        self.partNumEmptyRbNext = tk.Checkbutton(self.last_frameCbx2, variable=lr_vars.VarPartNumEmptyRbNext, text='strip', font=lr_vars.DefaultFont + ' bold', padx=0, pady=0)
-        self.partNumDenyRbNext = tk.Checkbutton(self.last_frameCbx2, variable=lr_vars.VarPartNumDenyRbNext, text='deny', font=lr_vars.DefaultFont + ' bold', padx=0, pady=0)
-        self.spin_RB_height = tk.Spinbox(self.last_frameCbx2, from_=1, to=99, textvariable=self.RB.heightVar, width=2, command=self.RB.set_height, font=lr_vars.DefaultFont + ' italic', background=lr_vars.Background)
-        self.ButtonRB_note = tk.Button(self.last_frameCbx2, text='edit', command=lambda: lr_note(self.RB), width=3, font=lr_vars.DefaultFont + ' italic', padx=0, pady=0)
+        self.max_rb = tk.Entry(self.last_frameCbx2, width=5, textvariable=lr_vars.VarMaxLenRB, justify='center', foreground='grey',
+                               background=lr_vars.Background, font=lr_vars.DefaultFont + ' italic')
+        self.partNumEmptyRbNext = tk.Checkbutton(self.last_frameCbx2, variable=lr_vars.VarPartNumEmptyRbNext, text='strip',
+                                                 font=lr_vars.DefaultFont + ' bold', padx=0, pady=0)
+        self.partNumDenyRbNext = tk.Checkbutton(self.last_frameCbx2, variable=lr_vars.VarPartNumDenyRbNext, text='deny',
+                                                font=lr_vars.DefaultFont + ' bold', padx=0, pady=0)
+        self.spin_RB_height = tk.Spinbox(self.last_frameCbx2, from_=1, to=99, textvariable=self.RB.heightVar, width=2,
+                                         command=self.RB.set_height, font=lr_vars.DefaultFont + ' italic', background=lr_vars.Background)
+        self.ButtonRB_note = tk.Button(self.last_frameCbx2, text='edit', command=lambda: lr_note(self.RB), width=3,
+                                       font=lr_vars.DefaultFont + ' italic', padx=0, pady=0)
 
         self.RbB1Cbx = tk.Checkbutton(self.rb_split_label, variable=lr_vars.VarRbB1, text='}', font=lr_vars.DefaultFont, padx=0, pady=0)
         self.RbB2Cbx = tk.Checkbutton(self.rb_split_label, variable=lr_vars.VarRbB2, text=']', font=lr_vars.DefaultFont, padx=0, pady=0)
@@ -187,15 +218,23 @@ class Window(ttk.Frame):
 
         # (6)
         self.t6 = tk.Label(self.mid_frame, text='(6)', font=lr_vars.DefaultFont + ' italic bold', padx=0, pady=0, foreground='brown')
-        self.ButtonShowParam = tk.Button(self.mid_frame, text='сформировать web_reg_save_param ', command=self.show_LR_Param, padx=0, pady=0, font=lr_vars.DefaultFont + ' bold', background='orange')
+        self.ButtonShowParam = tk.Button(self.mid_frame, text='сформировать web_reg_save_param ',
+                                         command=self.show_LR_Param, padx=0, pady=0, font=lr_vars.DefaultFont + ' bold', background='orange')
 
-        self.cbxClipboard = tk.Checkbutton(self.mid_frame, variable=self.cbxWrspClipboard, text='clipboard', font=lr_vars.DefaultFont + ' italic', padx=0, pady=0)
-        self.filesStats_cbx = tk.Checkbutton(self.last_frame, variable=lr_vars.VarAllFilesStatistic, padx=0, pady=0, text='stats', font=lr_vars.DefaultFont + ' italic', command=self.set_folder)
-        self.cbxClearShow = tk.Checkbutton(self.mid_frame, variable=self.cbxClearShowVar, text='clear', font=lr_vars.DefaultFont + ' italic', padx=0, pady=0)
-        self.cbxAutoShowParam = tk.Checkbutton(self.show_param_frame, variable=self.cbxWrspAutoCreate, text='auto', font=lr_vars.DefaultFont + ' italic', padx=0, pady=0)
-        self.cbxAutoNoteParam = tk.Checkbutton(self.mid_frame, variable=self.cbxNotepadWrsp, text='notepad', font=lr_vars.DefaultFont + ' italic', padx=0, pady=0)
-        self.cbxFileNamesNumsShow = tk.Checkbutton(self.show_param_frame, variable=lr_vars.VarFileNamesNumsShow, text='name', font=lr_vars.DefaultFont + ' italic', padx=0, pady=0)
-        self.cbxPopupWindow = tk.Checkbutton(self.last_frame, variable=lr_vars.VarShowPopupWindow, text='Window', padx=0, pady=0, background='orange', font=lr_vars.DefaultFont + ' italic bold')
+        self.cbxClipboard = tk.Checkbutton(self.mid_frame, variable=self.cbxWrspClipboard, text='clipboard',
+                                           font=lr_vars.DefaultFont + ' italic', padx=0, pady=0)
+        self.filesStats_cbx = tk.Checkbutton(self.last_frame, variable=lr_vars.VarAllFilesStatistic, padx=0, pady=0, text='stats',
+                                             font=lr_vars.DefaultFont + ' italic', command=self.set_folder)
+        self.cbxClearShow = tk.Checkbutton(self.mid_frame, variable=self.cbxClearShowVar, text='clear',
+                                           font=lr_vars.DefaultFont + ' italic', padx=0, pady=0)
+        self.cbxAutoShowParam = tk.Checkbutton(self.show_param_frame, variable=self.cbxWrspAutoCreate, text='auto',
+                                               font=lr_vars.DefaultFont + ' italic', padx=0, pady=0)
+        self.cbxAutoNoteParam = tk.Checkbutton(self.mid_frame, variable=self.cbxNotepadWrsp, text='notepad',
+                                               font=lr_vars.DefaultFont + ' italic', padx=0, pady=0)
+        self.cbxFileNamesNumsShow = tk.Checkbutton(self.show_param_frame, variable=lr_vars.VarFileNamesNumsShow,
+                                                   text='name', font=lr_vars.DefaultFont + ' italic', padx=0, pady=0)
+        self.cbxPopupWindow = tk.Checkbutton(self.last_frame, variable=lr_vars.VarShowPopupWindow, text='Window', padx=0, pady=0,
+                                             background='orange', font=lr_vars.DefaultFont + ' italic bold')
 
         def force_unblock(*a) -> None:
             self._block_ = False
@@ -203,24 +242,32 @@ class Window(ttk.Frame):
 
         self.unblock = tk.Button(self.last_frame, text='unblock', font=lr_vars.DefaultFont + ' bold', padx=0, pady=0, command=force_unblock)
         self.ButtonClearDown = tk.Button(self.last_frame, text='clearW', command=self.clear, font=lr_vars.DefaultFont + ' italic', padx=0, pady=0)
-        self.ButtonClearUp = tk.Button(self.last_frame, text='clearT', command=lambda: self.tk_text.delete(0.0, 'end'), font=lr_vars.DefaultFont + ' italic', padx=0, pady=0)
-        self.ButtonNote = tk.Button(self.last_frame, text='text', command=lambda: lr_other.openTextInEditor(self.tk_text.get('1.0', tk.END)), font=lr_vars.DefaultFont + ' italic', padx=0, pady=0)
-        self.ButtonLog = tk.Button(self.last_frame, text='log', font=lr_vars.DefaultFont + ' italic', padx=0, pady=0, command=lambda: subprocess.Popen([lr_vars.EDITOR['exe'], lr_vars.logFullName]))
+        self.ButtonClearUp = tk.Button(self.last_frame, text='clearT', command=lambda: self.tk_text.delete(0.0, 'end'),
+                                       font=lr_vars.DefaultFont + ' italic', padx=0, pady=0)
+        self.ButtonNote = tk.Button(self.last_frame, text='text', command=lambda: lr_other.openTextInEditor(self.tk_text.get('1.0', tk.END)),
+                                    font=lr_vars.DefaultFont + ' italic', padx=0, pady=0)
+        self.ButtonLog = tk.Button(self.last_frame, text='log', font=lr_vars.DefaultFont + ' italic', padx=0, pady=0,
+                                   command=lambda: subprocess.Popen([lr_vars.EDITOR['exe'], lr_vars.logFullName]))
 
         @lr_vars.T_POOL_decorator
         def editor_fn(*a):
             '''открыть в editor'''
             return subprocess.Popen([lr_vars.EDITOR['exe'], lr_files.get_file_with_kwargs(lr_vars.FilesWithParam)['File']['FullName']])
 
-        self.ButtonParamFileOpen = tk.Button(self.last_frame, text='file(3)', font=lr_vars.DefaultFont + ' bold', padx=0, pady=0, command=editor_fn)
-        self.Button_change_folder = tk.Button(self.last_frame, text='Folder', padx=0, pady=0, command=self.change_folder_ask, font=lr_vars.DefaultFont + ' italic bold')
-        self.change_folder_cbx = tk.Checkbutton(self.last_frame, variable=lr_vars.VarIsSnapshotFiles, padx=0, pady=0, font=lr_vars.DefaultFont + ' italic', command=self.set_folder, text='inf')
-        self.deny_file_cbx = tk.Checkbutton(self.last_frame, variable=lr_vars.VarAllowDenyFiles, padx=0, pady=0, font=lr_vars.DefaultFont + ' italic', command=self.set_folder, text='deny_ext')
+        self.ButtonParamFileOpen = tk.Button(self.last_frame, text='file(3)', font=lr_vars.DefaultFont + ' bold', padx=0, pady=0,
+                                             command=editor_fn)
+        self.Button_change_folder = tk.Button(self.last_frame, text='Folder', padx=0, pady=0, command=self.change_folder_ask,
+                                              font=lr_vars.DefaultFont + ' italic bold')
+        self.change_folder_cbx = tk.Checkbutton(self.last_frame, variable=lr_vars.VarIsSnapshotFiles, padx=0, pady=0,
+                                                font=lr_vars.DefaultFont + ' italic', command=self.set_folder, text='inf')
+        self.deny_file_cbx = tk.Checkbutton(self.last_frame, variable=lr_vars.VarAllowDenyFiles, padx=0, pady=0,
+                                            font=lr_vars.DefaultFont + ' italic', command=self.set_folder, text='deny_ext')
         self.spin_toolTipTimeout = tk.Entry(self.last_frame, textvariable=lr_vars.VarToolTipTimeout, width=4, font=lr_vars.DefaultFont + ' italic')
         self.cbxOrdVersion = tk.Checkbutton(self.mid_frame, variable=lr_vars.VarOrdVersion, padx=0, pady=0, font=lr_vars.DefaultFont, text='ord')
 
         log_vals = list(lr_vars.loggingLevels.keys())
-        self.comboLogger = ttk.Combobox(self.last_frame, textvariable=lr_vars.VarWindowLogger, justify='center', font=lr_vars.DefaultFont, width=max(len(k) for k in log_vals), style="BW.TButton")
+        self.comboLogger = ttk.Combobox(self.last_frame, textvariable=lr_vars.VarWindowLogger, justify='center',
+                                        font=lr_vars.DefaultFont, width=max(len(k) for k in log_vals), style="BW.TButton")
         self.comboLogger['values'] = log_vals
 
         self.main_frame.grid(row=2, column=0, sticky=tk.NS, padx=0, pady=0)
@@ -625,7 +672,11 @@ class Window(ttk.Frame):
         lr_vars.Tk.title(lr_vars.VERSION)
 
     def last_frame_text_set(self) -> None:
-        t = 'inf={i}: файлов={f} | MP: {pool}[{p_size}] | T: {tpool}[{tpool_size}] | {d}'.format(d=lr_vars.VarFilesFolder.get(), f=len(lr_vars.AllFiles), pool=lr_vars.M_POOL._name, i=len(list(lr_other.get_files_infs(lr_vars.AllFiles))), tpool_size=lr_vars.T_POOL._size, p_size=lr_vars.M_POOL._size, tpool=lr_vars.T_POOL._name)
+        t = 'inf={i}: файлов={f} | MP: {pool}[{p_size}] | T: {tpool}[{tpool_size}] | {d}'.format(
+            d=lr_vars.VarFilesFolder.get(), f=len(lr_vars.AllFiles), pool=lr_vars.M_POOL._name,
+            i=len(list(lr_other.get_files_infs(lr_vars.AllFiles))), tpool_size=lr_vars.T_POOL._size,
+            p_size=lr_vars.M_POOL._size, tpool=lr_vars.T_POOL._name)
+
         self.last_frame['text'] = t
 
     def clear_before_find_param_files(self) -> None:
@@ -665,7 +716,8 @@ class Window(ttk.Frame):
     def setSortKey1(self, *args):
         '''комбо сортировки'''
         lr_vars.VarFileSortKey1.set(self.sortKey1.get())
-        self.sortKey2['values'] = list(set(k for f in itertools.chain(lr_vars.AllFiles, lr_vars.FilesWithParam) for k in f.get(self.sortKey1.get(), ())))
+        self.sortKey2['values'] = list(set(k for f in itertools.chain(lr_vars.AllFiles, lr_vars.FilesWithParam)
+                                           for k in f.get(self.sortKey1.get(), ())))
 
     def setSortKey2(self, *args):
         '''комбо сортировки файлов(3)'''
@@ -675,12 +727,18 @@ class Window(ttk.Frame):
     def show_frame_info_file(self) -> None:
         '''отображение всякой информации'''
         dt = lr_vars.VarWrspDict.get()
-        lr_vars.Tk.title('"{param}", {Name}, {inf_nums} > Файлы(из {files_all} найдено {file_index}/{param_files}) | Вхождения({param_part}/{param_count}, всего {param_all} в {_param_inf_all} inf) | {ver}'.format(ver=lr_vars.VERSION, **dt))
-        self.main_frame['text'] = 'Snapshot{inf_nums}, Файл[{file_index}/{param_files}], Часть[{param_part}/{param_count}], {len} символов.'.format(**dt)
+
+        lr_vars.Tk.title('"{param}", {Name}, {inf_nums} > Файлы(из {files_all} найдено {file_index}/{param_files}) | '
+                         'Вхождения({param_part}/{param_count}, всего {param_all} в {_param_inf_all} inf) | {ver}'.format(
+            ver=lr_vars.VERSION, **dt))
+
+        self.main_frame['text'] = 'Snapshot{inf_nums}, Файл[{file_index}/{param_files}], ' \
+                                  'Часть[{param_part}/{param_count}], {len} символов.'.format(**dt)
 
     def show_frame_info_working(self) -> None:
         '''отображение всякой информации'''
-        self.main_frame['text'] = '{} | {} | ParamClipBoardSearchHotKey[{}]'.format(lr_vars.VarEncode.get(), time.strftime('%H:%M:%S'), lr_vars.FIND_PARAM_HOTKEY)
+        self.main_frame['text'] = '{} | {} | ParamClipBoardSearchHotKey[{}]'.format(
+            lr_vars.VarEncode.get(), time.strftime('%H:%M:%S'), lr_vars.FIND_PARAM_HOTKEY)
         self.last_frame['text'] = 'working ... %s' % lr_vars.VarFilesFolder.get()
 
     def set_maxmin_inf(self, files):
@@ -709,7 +767,9 @@ class Window(ttk.Frame):
             self.comboParts['values'] = file['Param']['Count_indexs']
         else:
             self.comboParts['values'] = list(range(file['Param']['Count']))
-        lr_lib.gui.widj.tooltip.createToolTip(lr_vars.Window.comboFiles, lr_other.file_string(lr_files.get_file_with_kwargs(lr_vars.FilesWithParam, Name=file['File']['Name'])))
+        lr_lib.gui.widj.tooltip.createToolTip(
+            lr_vars.Window.comboFiles, lr_other.file_string(lr_files.get_file_with_kwargs(
+                lr_vars.FilesWithParam, Name=file['File']['Name'])))
 
     def comboParts_change(self, *args) -> None:
         '''смена комбо(4)'''
@@ -767,8 +827,11 @@ class Window(ttk.Frame):
         if lr_vars.FilesWithParam:
             self.sortKey1['values'] = sorted(set(k for f in lr_vars.FilesWithParam for k in f))
 
-        self.last_frame['text'] = 'Файлы({files_all}->{param_files}) | Snapshot(все[{all_inf_min}:{all_inf_max}]={all_inf_len}->поиск[{param_inf_min}:{param_inf_max}]={search_inf_len}->найдено[{_param_inf_min}:{_param_inf_max}]={_param_inf_all}) | Найдено {param_all} param.'.format(
-            **lr_vars.VarWrspDict.get())
+        self.last_frame['text'] = 'Файлы({files_all}->{param_files}) | ' \
+                                  'Snapshot(все[{all_inf_min}:{all_inf_max}]={all_inf_len}->' \
+                                  'поиск[{param_inf_min}:{param_inf_max}]={search_inf_len}->' \
+                                  'найдено[{_param_inf_min}:{_param_inf_max}]={_param_inf_all}) | ' \
+                                  'Найдено {param_all} param.'.format(**lr_vars.VarWrspDict.get())
 
     def set_folder(self, callback=None) -> None:
         '''установка folder'''
@@ -787,7 +850,9 @@ class Window(ttk.Frame):
 
     def on_closing(self) -> None:
         '''не выходить, при открытых action.c окнах'''
-        if not self.action_windows or tk.messagebox.askokcancel('выход', "Есть открытые action.c окна\n{a}\n все равно выйти?".format(a=', '.join(map(str, self.action_windows)))):
+        if not self.action_windows or tk.messagebox.askokcancel(
+                'выход', "Есть открытые action.c окна\n{a}\n"
+                         "все равно выйти?".format(a=', '.join(map(str, self.action_windows)))):
             self.destroy()
             lr_vars.Tk.destroy()
 
@@ -836,4 +901,6 @@ class Window(ttk.Frame):
                 else:
                     pm = '  M {mp}'.format(mp=lr_vars.M_POOL._size)
 
-                act.scroll_lab2.config(text='{p:>3}%\n\npool:\n\n{pt}\n\n{pm}'.format(p=round(int(act.tk_text.linenumbers.linenum) / (act.tk_text.highlight_lines._max_line / 100)), pt=pt, pm=pm))
+                act.scroll_lab2.config(text='{p:>3}%\n\npool:\n\n{pt}\n\n{pm}'.format(
+                    p=round(int(act.tk_text.linenumbers.linenum) / (act.tk_text.highlight_lines._max_line / 100)),
+                    pt=pt, pm=pm))
