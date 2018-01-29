@@ -2,6 +2,7 @@
 # нахождение param, и др, для gui
 
 import json
+import os
 import re
 import sys
 import html
@@ -10,7 +11,10 @@ import codecs
 import contextlib
 import urllib.parse
 import tkinter as tk
+import tkinter.ttk as ttk
 
+import lr_lib.core.etc.other as lr_other
+import lr_lib.gui.widj.tooltip as lr_tooltip
 import lr_lib.core.var.vars as lr_vars
 import lr_lib.core.var.vars_func as lr_vars_func
 import lr_lib.core.wrsp.param as lr_param
@@ -352,8 +356,10 @@ def rename_transaction(event, parent=None, s='lr_start_transaction("', e='lr_end
         old_name = selection.split(s, 1)[1].split('"', 1)[0]
     except IndexError:
         old_name = selection.split(e, 1)[1].split('"', 1)[0]
-    with contextlib.suppress(AttributeError):
-        parent = event.widget.action
+
+    if not parent:
+        with contextlib.suppress(AttributeError):
+            parent = event.widget.action
 
     y = lr_dialog.YesNoCancel(['Переименовать', 'Отмена'], 'Переименовать выделенную(линию) transaction',
                               'указать только новое имя transaction', 'transaction', parent=parent, is_text=old_name)
@@ -458,3 +464,31 @@ def rClick_add_highlight(event, option: str, color: str, val: str, find=False) -
     if find:
         event.widget.action.search_in_action(word=selection)
         event.widget.action.tk_text_see()
+
+
+def snapshot_files(event) -> None:
+    '''показать окно файлов snapshot'''
+    selection = event.widget.selection_get()
+    top = tk.Toplevel()
+    top.transient(event.widget)
+    tt = 'окно файлов snapshot'
+    top.title(tt)
+
+    fvar = tk.StringVar(value='')
+    fEntry = ttk.Combobox(top, justify='center', textvariable=fvar, foreground='grey',
+                               background=lr_vars.Background, font=lr_vars.DefaultFont + ' italic')
+
+    folder = lr_vars.VarFilesFolder.get()
+
+    def get_files_names() -> str:
+        i = ''.join(filter(str.isnumeric, selection))
+        with open(os.path.join(folder, 't{}.inf'.format(i))) as inf:
+            for line in inf:
+                s = line.strip()
+                if ('File' in s) and ('=' in s):
+                    yield s.split('=', 1)[1]
+
+    fEntry['values'] = list(get_files_names())
+    fEntry.bind("<<ComboboxSelected>>", lambda *a: lr_other.openTextInEditor(open(os.path.join(folder, fEntry.get())).read()))
+    lr_tooltip.createToolTip(fEntry, tt)
+    fEntry.pack()

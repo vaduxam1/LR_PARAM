@@ -91,6 +91,8 @@ def rClicker(event) -> str:
         for (txt, cmd) in nclst:
             rmenu.add_command(label=txt, command=cmd)
 
+        rmenu.add_cascade(label='snapshot файлы', underline=0, command=lambda e=event: lr_action_lib.snapshot_files(e))
+
         if selection:
             submenu_maxmin = tk.Menu(rmenu, tearoff=False)
             submenu_maxmin.add_cascade(label='min', underline=0, command=lambda e=event: lr_action_lib.rClick_min_inf(e))
