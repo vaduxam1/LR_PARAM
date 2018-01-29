@@ -26,7 +26,7 @@ def excepthook(*args) -> None:
     lr_vars.Logger.critical(get_tb(exc_type, exc_val, exc_tb, ern))
 
 
-def full_tb_write(exc_type, exc_val, exc_tb) -> None:
+def full_tb_write(exc_type, exc_val, exc_tb):
     '''логировать полный traceback'''
     traceback.print_tb(exc_tb)  # в консоль
     # в лог
@@ -35,6 +35,8 @@ def full_tb_write(exc_type, exc_val, exc_tb) -> None:
         traceback.print_tb(exc_tb, file=log)
         log.write('{t}\n{v}'.format(t=exc_type, v=exc_val))
         log.write('\n{0}\n\t<<< traceback.print_tb\n{0}\n'.format(lr_vars.PRINT_SEPARATOR))
+
+    return exc_type, exc_val, exc_tb
 
 
 def get_tb(exc_type, exc_val, exc_tb, err_name: str) -> str:

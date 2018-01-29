@@ -12,7 +12,7 @@ import lr_lib.core.wrsp.param as lr_param
 def init() -> None:
     '''стартовать core'''
     lr_vars_func.init()  # связь основных Var
-    # lr_files.init()  # создать файлы ответов
+    # lr_files.init()  # комент, тк gui создаст сам, а core - после установки args_dict
 
 
 def console_start(echo=True) -> str:

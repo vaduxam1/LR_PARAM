@@ -7,5 +7,5 @@ from lr_lib.main import start
 
 
 if __name__ == '__main__':
-    s = start()
-    sys.exit(s)
+    ex = start(with_callback_exception=True)
+    sys.exit(ex)
