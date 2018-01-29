@@ -21,11 +21,14 @@ def folder_wind(self) -> None:
     top.resizable(width=False, height=False)
     top.title('список всех файлов - %s' % len(lr_vars.AllFiles))
     comboAllFilesFolder = ttk.Combobox(top, foreground='grey', font=lr_vars.DefaultFont)
-    buttonAllFilesFolder = tk.Button(top, text='open', font=lr_vars.DefaultFont + ' italic', padx=0, pady=0, command=lambda: subprocess.Popen([lr_vars.EDITOR['exe'], comboAllFilesFolder.get()]))
-    ttip = lambda a: lr_tooltip.createToolTip(comboAllFilesFolder, lr_other.file_string(lr_files.get_file_with_kwargs(lr_vars.AllFiles, FullName=comboAllFilesFolder.get()), deny=[]))
+    buttonAllFilesFolder = tk.Button(top, text='open', font=lr_vars.DefaultFont + ' italic', padx=0, pady=0,
+                                     command=lambda: subprocess.Popen([lr_vars.EDITOR['exe'], comboAllFilesFolder.get()]))
+    ttip = lambda a: lr_tooltip.createToolTip(comboAllFilesFolder, lr_other.file_string(
+        lr_files.get_file_with_kwargs(lr_vars.AllFiles, FullName=comboAllFilesFolder.get()), deny=[]))
     comboAllFilesFolder.bind("<<ComboboxSelected>>", ttip)
     lr_tooltip.createToolTip(buttonAllFilesFolder, 'открыть выбранный файл')
-    lr_tooltip.createToolTip(comboAllFilesFolder, 'список всех файлов, в которых производится поиск {param}\n\t# Window.folder_wind\n\t# lr_vars.AllFiles')
+    lr_tooltip.createToolTip(comboAllFilesFolder, 'список всех файлов, в которых производится поиск {param}'
+                                                  '\n\t# Window.folder_wind\n\t# lr_vars.AllFiles')
     files = list(f['File']['FullName'] for f in lr_vars.AllFiles)
     comboAllFilesFolder['values'] = files
     with contextlib.suppress(Exception):
@@ -43,7 +46,8 @@ def enc_wind(self) -> None:
     top.resizable(width=False, height=False)
     tt = 'кодировка файлов для (2)-(5)\n\t# Window.enc_wind'
     top.title(tt)
-    encodeEntry = ttk.Combobox(top, justify='center', textvariable=lr_vars.VarEncode, width=65, foreground='grey', background=lr_vars.Background, font=lr_vars.DefaultFont + ' italic')
+    encodeEntry = ttk.Combobox(top, justify='center', textvariable=lr_vars.VarEncode, width=65, foreground='grey',
+                               background=lr_vars.Background, font=lr_vars.DefaultFont + ' italic')
     encodeEntry['values'] = lr_vars.ENCODE_LIST
     encodeEntry.bind("<<ComboboxSelected>>", lambda *a: self.comboFiles_change())
     lr_tooltip.createToolTip(encodeEntry, tt)
@@ -67,13 +71,15 @@ def pool_wind(self) -> None:
     labMP.grid(row=1, column=1)
     lr_tooltip.createToolTip(labMP, 'основной пул(process), поиск в файлах и тд')
 
-    entryMPName = ttk.Combobox(top, justify='center', textvariable=lr_vars.M_POOL.name, width=65, foreground='grey', background=lr_vars.Background, font=lr_vars.DefaultFont + ' italic')
+    entryMPName = ttk.Combobox(top, justify='center', textvariable=lr_vars.M_POOL.name, width=65, foreground='grey',
+                               background=lr_vars.Background, font=lr_vars.DefaultFont + ' italic')
     entryMPName['values'] = list(lr_vars.T_POOL.pools.keys())
     entryMPName.bind("<<ComboboxSelected>>", lambda *a: set_pool(lr_vars.M_POOL))
     lr_tooltip.createToolTip(entryMPName, 'тип MP пула(любые стандартные(process))')
     entryMPName.grid(row=2, column=0, columnspan=7)
 
-    spinMP = tk.Spinbox(top, from_=0, to=999, textvariable=lr_vars.M_POOL.size, width=3, font=lr_vars.DefaultFont, command=lambda *a: set_pool(lr_vars.M_POOL))
+    spinMP = tk.Spinbox(top, from_=0, to=999, textvariable=lr_vars.M_POOL.size, width=3, font=lr_vars.DefaultFont,
+                        command=lambda *a: set_pool(lr_vars.M_POOL))
     spinMP.grid(row=2, column=7)
     lr_tooltip.createToolTip(spinMP, 'размер MP пула')
 
@@ -81,7 +87,8 @@ def pool_wind(self) -> None:
     labT.grid(row=3, column=1)
     lr_tooltip.createToolTip(labT, 'доп пул(thread only), выполнение в фоне, подсветка и тд')
 
-    entryTName = ttk.Combobox(top, justify='center', textvariable=lr_vars.T_POOL.name, width=65, foreground='grey', background=lr_vars.Background, font=lr_vars.DefaultFont + ' italic')
+    entryTName = ttk.Combobox(top, justify='center', textvariable=lr_vars.T_POOL.name, width=65, foreground='grey',
+                              background=lr_vars.Background, font=lr_vars.DefaultFont + ' italic')
     entryTName['values'] = list(lr_vars.T_POOL.pools.keys())
     entryTName.bind("<<ComboboxSelected>>", lambda *a: set_pool(lr_vars.T_POOL))
     lr_tooltip.createToolTip(entryTName, 'тип T пула(чтото из thread)')
@@ -131,7 +138,8 @@ def pool_state_updater(self) -> None:
     '''SThreadPool(threading.Thread) текст состояния пула'''
     def pool_state_string(st=lambda i: '{0:<6} : {1}'.format(*i)) -> str:
         '''инфо о потоках T_POOL'''
-        s = '\n'.join('\n{n} {t}'.format(t=('\n' + '\n'.join(map(st, t.task.items())) if t.task else 'sleep'), n=t.name) for t in lr_vars.T_POOL.threads)
+        s = '\n'.join('\n{n} {t}'.format(t=('\n' + '\n'.join(map(st, t.task.items())) if t.task else 'sleep'), n=t.name)
+                      for t in lr_vars.T_POOL.threads)
         return s
 
     def thread_info_updater(y: lr_dialog.YesNoCancel) -> None:
@@ -143,6 +151,7 @@ def pool_state_updater(self) -> None:
         if y.alive_:
             y.after(lr_vars._SThreadMonitorUpdate.get(), thread_info_updater, y)
 
-    y = lr_dialog.YesNoCancel(['выйти'], 'T_POOL\nмонитор', 'инфо о задачах, выполняющихся в SThread потоках', title=pool_state_updater, parent=self, is_text=pool_state_string())
+    y = lr_dialog.YesNoCancel(['выйти'], 'T_POOL\nмонитор', 'инфо о задачах, выполняющихся в SThread потоках',
+                              title=pool_state_updater, parent=self, is_text=pool_state_string())
     y.after(100, thread_info_updater, y)
     y.ask()

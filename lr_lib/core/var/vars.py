@@ -387,10 +387,12 @@ def T_POOL_decorator(func: callable):
     '''декоратор, выполнения func в T_POOL потоке'''
     @functools.wraps(func)
     def wrap(*args, **kwargs):
-        try:
+        if hasattr(T_POOL, 'submit'):
             return T_POOL.submit(func, *args, **kwargs)
-        except AttributeError:
+        elif hasattr(T_POOL, 'apply_async'):
             return T_POOL.apply_async(func, args, kwargs)
+        else:
+            raise AttributeError('у пула нет атрибута submit или apply_async')
     return wrap
 
 

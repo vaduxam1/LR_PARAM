@@ -12,6 +12,7 @@ import urllib.parse
 import tkinter as tk
 
 import lr_lib.core.var.vars as lr_vars
+import lr_lib.core.var.vars_func as lr_vars_func
 import lr_lib.core.wrsp.param as lr_param
 import lr_lib.core.etc.other as lr_other
 import lr_lib.gui.widj.dialog as lr_dialog
@@ -249,7 +250,7 @@ def all_wrsp_dict_web_reg_save_param(event) -> None:
 
     while True:
         try:
-            lr_setter.next_3_or_4_if_bad_or_enmpy_lb_rb('поиск всех возможных wrsp_dict')
+            lr_vars_func.next_3_or_4_if_bad_or_enmpy_lb_rb('поиск всех возможных wrsp_dict')
             wrsp_dict = lr_param.wrsp_dict_creator()
             if wrsp_dict:
                 dt = [wrsp_dict, lr_param.create_web_reg_save_param(wrsp_dict)]
