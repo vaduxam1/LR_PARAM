@@ -73,13 +73,15 @@ def create_files_from_infs(folder: str, enc: str, allow_deny: bool, statistic: b
     args = ((arg, files) for files in chunks)
 
     proc1 = 100 / len(chunks)
+    f = 0
     for (e, files) in enumerate(executer(get_files_portions, args)):
+        f += len(files)
         for file in files:
             if file:
                 yield file
+        lr_vars.Tk.title('чтение файлов({f}) ответов: {p} % | {v}'.format(p=round(proc1 * e), v=lr_vars.VERSION, f=f))
+    lr_vars.Tk.title('ready | {v}'.format(v=lr_vars.VERSION))
 
-        lr_vars.Tk.title('создание файлов ответов: {p} % | {v}'.format(
-            p=round(proc1 * e), f=len(lr_vars.AllFiles), v=lr_vars.VERSION))
 
 def get_files_portions(args: [(str, str, bool, bool), (str, )]) -> [dict, ]:
     '''создать файлы, для порции inf-файлов'''
@@ -168,7 +170,8 @@ def init() -> None:
     except TypeError:  # если VarFileSortKey2 предназначен только для FilesWithParam
         lr_vars.AllFiles = sorted(lr_vars.AllFiles, key=lambda file: file['Snapshot']['Nums'])
 
-    lr_vars.VarFileSortKey1.set(lr_vars.VarFileSortKey1.get())
+    if lr_vars.Window:
+        lr_vars.Window.setSortKeys()
     lr_vars.Logger.info(lr_other.all_files_info())
 
 

@@ -41,11 +41,10 @@ def start() -> bool:
             lr_vars.MainThreadUpdater = main_executer
             (lr_vars.M_POOL, lr_vars.T_POOL) = mt_pools
 
-            with run_with_report_callback_exception() as err:  # core/gui инит
+            with run_with_report_callback_exception() as exc_info:  # core/gui инит
                 # вся работа в _start(), в теле with - работа окончена
-                exc_info = exc_type, exc_val, exc_tb = err
                 if any(exc_info):
-                    lr_other.full_tb_write(exc_type, exc_val, exc_tb)
+                    lr_other.full_tb_write(*exc_info)
                     return exc_info
 
 

@@ -713,14 +713,22 @@ class Window(ttk.Frame):
         m = lr_vars.VarMaxComboFilesWidth.get()
         self.comboFiles.configure(width=l if l < m else m)
 
-    def setSortKey1(self, *args):
-        '''комбо сортировки'''
+    def setSortKeys(self) -> None:
+        '''задать комбо сортировки'''
+        self.sortKey1['values'] = sorted(set(k for f in lr_vars.AllFiles for k in f))
+        self.sortKey1.set(lr_vars.VarFileSortKey1.get())
+        self.setSortKey1()
+        self.sortKey2.set(lr_vars.VarFileSortKey2.get())
+
+    def setSortKey1(self, *args) -> None:
+        '''комбо сортировки 1'''
         lr_vars.VarFileSortKey1.set(self.sortKey1.get())
         self.sortKey2['values'] = list(set(k for f in itertools.chain(lr_vars.AllFiles, lr_vars.FilesWithParam)
                                            for k in f.get(self.sortKey1.get(), ())))
+        self.sortKey2.set('')
 
-    def setSortKey2(self, *args):
-        '''комбо сортировки файлов(3)'''
+    def setSortKey2(self, *args) -> None:
+        '''комбо сортировки файлов'''
         lr_vars.VarFileSortKey2.set(self.sortKey2.get())
         self.get_files()  # сортировка при поиске
 
@@ -824,9 +832,6 @@ class Window(ttk.Frame):
         elif self.cbxWrspAutoCreate.get():
             self.show_LR_Param(callback)
 
-        if lr_vars.FilesWithParam:
-            self.sortKey1['values'] = sorted(set(k for f in lr_vars.FilesWithParam for k in f))
-
         self.last_frame['text'] = 'Файлы({files_all}->{param_files}) | ' \
                                   'Snapshot(все[{all_inf_min}:{all_inf_max}]={all_inf_len}->' \
                                   'поиск[{param_inf_min}:{param_inf_max}]={search_inf_len}->' \
@@ -840,9 +845,6 @@ class Window(ttk.Frame):
             lr_files.init()
 
         self.set_maxmin_inf(lr_vars.AllFiles)
-        if lr_vars.AllFiles:
-            self.sortKey1['values'] = sorted(set(k for f in lr_vars.AllFiles for k in f))
-
         self.last_frame_text_set()
         self.setSortKey1()
         if callback:
