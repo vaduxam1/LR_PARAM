@@ -13,14 +13,13 @@ from tkinter import messagebox
 
 import lr_lib.gui.widj.highlight_text
 import lr_lib.gui.widj.legend
-
+import lr_lib.gui.widj.tooltip as lr_tooltip
 import lr_lib.core.var.vars as lr_vars
 import lr_lib.core.wrsp.param as lr_param
 import lr_lib.core.action.main_awal as lr_main_awal
 import lr_lib.core.etc.other as lr_other
 import lr_lib.gui.etc.action_lib as lr_action_lib
 import lr_lib.gui.etc.sub_menu as lr_sub_menu
-import lr_lib.gui.widj.tooltip as lr_tooltip
 import lr_lib.gui.widj.dialog as lr_dialog
 import lr_lib.etc.template as lr_template
 import lr_lib.etc.help as lr_help

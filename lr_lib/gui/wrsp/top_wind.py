@@ -123,7 +123,7 @@ def pool_wind(self) -> None:
     lr_tooltip.createToolTip(spinSThreadMonitorUpdate, 'SThreadPool (мс) время обновления Window.pool_wind текста состояния пула')
 
     if lr_vars.T_POOL_NAME == 'SThreadPool(threading.Thread)':
-        self.pool_state_updater(self)
+        pool_state_updater(self)
 
 
 @lr_vars.T_POOL_decorator

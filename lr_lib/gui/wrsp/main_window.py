@@ -559,7 +559,8 @@ class Window(ttk.Frame):
                                                       '# lr_vars.VarPartNumDenyRbNext')
         # виджеты для блокирования
         self.configure_attrs = {
-            a: getattr(self, a).configure for a in dir(self) if hasattr(getattr(self, a), 'configure')}
+            a: getattr(self, a).configure for a in dir(self) if hasattr(getattr(self, a), 'configure')
+        }
 
     def err_to_widgts(self, exc_type, exc_val, exc_tb, ern) -> None:
         '''отображение ошибки'''
