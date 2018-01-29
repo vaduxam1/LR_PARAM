@@ -4,8 +4,6 @@
 # VarParam ->> VarFileName -> VarFile -> VarFileText ->> VarPartNum ->> VarLB/VarRB -> VarWrspDict ->>
 #                                                                                       ->> lr_param.web_reg_save_param
 
-import string  # не удалять!, для пользовательского eval() из программы
-
 import lr_lib.core.var.vars as lr_vars
 import lr_lib.core.wrsp.param as lr_param
 import lr_lib.core.wrsp.files as lr_files

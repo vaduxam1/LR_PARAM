@@ -9,7 +9,7 @@ import contextlib
 import configparser
 
 import lr_lib.core.etc.other as lr_other
-import lr_lib.core.etc.excepthook as lr_excepthook
+import lr_lib.etc.excepthook as lr_excepthook
 import lr_lib.core.var.vars as lr_vars
 
 
@@ -68,7 +68,7 @@ def create_files_from_infs(folder: str, enc: str, allow_deny: bool, statistic: b
     executer = (lr_vars.M_POOL.imap_unordered if lr_vars.SetFilesPOOLEnable else map)
     folder_files = next(os.walk(folder))
     folder_files = folder_files[2]
-
+    len_folder_files = len(folder_files)
     arg = (folder, enc, allow_deny, statistic, )
     chunks = tuple(lr_other.chunks(folder_files, lr_vars.FilesCreatePortionSize))
     args = ((arg, files) for files in chunks)
@@ -80,7 +80,8 @@ def create_files_from_infs(folder: str, enc: str, allow_deny: bool, statistic: b
         for file in files:
             if file:
                 yield file
-        lr_vars.Tk.title('чтение файлов({f}) ответов: {p} % | {v}'.format(p=round(proc1 * e), v=lr_vars.VERSION, f=f))
+        lr_vars.Tk.title('{p}% : {f} / {fa} поиск файлов ответов | {v}'.format(
+            p=round(proc1 * e), v=lr_vars.VERSION, f=f, fa=len_folder_files))
     lr_vars.Tk.title('ready | {v}'.format(v=lr_vars.VERSION))
 
 

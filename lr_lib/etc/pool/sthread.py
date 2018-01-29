@@ -6,7 +6,7 @@ import contextlib
 import queue
 import threading
 
-import lr_lib.core.etc.excepthook as lr_excepthook
+import lr_lib.etc.excepthook as lr_excepthook
 import lr_lib.core.var.vars as lr_vars
 
 

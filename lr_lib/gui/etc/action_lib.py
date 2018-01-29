@@ -18,7 +18,7 @@ import lr_lib.gui.widj.tooltip as lr_tooltip
 import lr_lib.core.var.vars as lr_vars
 import lr_lib.core.var.vars_func as lr_vars_func
 import lr_lib.core.wrsp.param as lr_param
-import lr_lib.core.etc.excepthook as lr_excepthook
+import lr_lib.etc.excepthook as lr_excepthook
 import lr_lib.gui.widj.dialog as lr_dialog
 
 

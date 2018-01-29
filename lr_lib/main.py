@@ -1,10 +1,9 @@
 ﻿# -*- coding: UTF-8 -*-
 # старт классов скрипта
 # пример главного запускающего файла lr_start.py:
-# import sys
 # from lr_lib.main import start
 # if __name__ == '__main__':
-    # sys.exit(start())
+    # start()
 
 import sys
 import contextlib
@@ -14,8 +13,8 @@ import lr_lib.core.main_core as lr_core
 import lr_lib.core.var.vars as lr_vars
 import lr_lib.etc.logger as lr_logger
 import lr_lib.etc.sysinfo as lr_sysinfo
-import lr_lib.core.etc.excepthook as lr_excepthook
-import lr_lib.core.etc.keyb as lr_keyb
+import lr_lib.etc.excepthook as lr_excepthook
+import lr_lib.etc.keyb as lr_keyb
 import lr_lib.etc.pool.main_pool as lr_main_pool
 import lr_lib.etc.pool.other as lr_other_pool
 
