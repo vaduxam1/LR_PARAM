@@ -2,21 +2,16 @@
 # всяко разно
 
 import re
-import os
 import types
 import string
 import itertools
 import contextlib
-import sys
 import time
 import tempfile
 import subprocess
-import traceback
 import functools
 
 import lr_lib.core.var.vars as lr_vars
-import lr_lib.etc.help as lr_help
-
 
 
 def _chunks(_list, chunk_size: int) -> iter([iter,]):
@@ -133,53 +128,12 @@ def only_ascii_symbols(item: (str, ), allow=set(string.printable).__contains__) 
             break
 
 
-def keyboard_listener() -> None:
-    '''перехват keyboard-hotkey'''
-    try:
-        import keyboard
-    except ImportError:
-        lr_vars.Logger.info('ImportError keyboard [{}] не работает !\nНеобходимо установить библиотеку keyboard из cmd:\n'
-                            'cd c:\Python36\Scripts\ \npip install keyboard'.format(lr_vars.FIND_PARAM_HOTKEY))
-    else:
-        def get_param_hotkey() -> None:
-            '''найти {param} из clipboard, по хоткей'''
-            param = lr_vars.Tk.clipboard_get()
-            lr_vars.Window.get_files(param=param)
-
-        keyboard.add_hotkey(lr_vars.FIND_PARAM_HOTKEY, get_param_hotkey)
-
-
 def iter_to_list(item: iter) -> list:
     '''прирвести iter к list'''
     if isinstance(item, (list, tuple)):
         return item
     else:
         return list(item)
-
-
-def check_bound_lb_rb(left: 'id="', right: '",') -> bool:
-    '''id="zkau_11",'''
-    return check_bound_rb(right) and check_bound_lb(left)
-
-
-def check_bound_rb(right: '",', rb_allow=lr_vars.allow_symbols.__contains__) -> bool:
-    '''id="zkau_11",'''
-    return right and rb_allow(right[0])
-
-
-def check_bound_lb(left: 'id="', lb_allow=lr_vars.allow_symbols.__contains__) -> bool:
-    '''id="zkau_11",'''
-    return left and lb_allow(left[-1]) or check_lb_percent(left) or check_lb_tnrvf(left)
-
-
-def check_lb_percent(left: '%22', lb_allow=lr_help.HEX.__contains__) -> bool:
-    '''%22zkau_11",'''
-    return (len(left) > 2) and lb_allow(left[-3:])
-
-
-def check_lb_tnrvf(left: '\\r\\n', lb_allow=lr_vars.tnrvf.__contains__) -> bool:
-    '''\\r\\nzkau_11", - "\n" как два символа'''
-    return (len(left) > 1) and lb_allow(left[-2:])
 
 
 def openTextInEditor(text: str) -> None:
@@ -189,80 +143,6 @@ def openTextInEditor(text: str) -> None:
             tf.write(text)
         subprocess.Popen([lr_vars.EDITOR['exe'], f.name])
         f.close()
-
-
-def excepthook(*args) -> None:
-    """обработка raise: сокращенный стектрейс + исходный код"""
-    len_args = len(args)
-    if len_args == 1:
-        exc_type, exc_val, exc_tb = type(args[0]), args[0], args[0].__traceback__
-    elif len_args == 3:
-        exc_type, exc_val, exc_tb = args
-    else:
-        exc_type, exc_val, exc_tb = sys.exc_info()
-
-    full_tb_write(exc_type, exc_val, exc_tb)
-
-    ern = exc_type.__name__
-    if lr_vars.Window:
-        lr_vars.Window.err_to_widgts(exc_type, exc_val, exc_tb, ern)
-    lr_vars.Logger.critical(get_tb(exc_type, exc_val, exc_tb, ern))
-
-
-def full_tb_write(exc_type, exc_val, exc_tb) -> None:
-    '''логировать полный traceback'''
-    traceback.print_tb(exc_tb)  # в консоль
-    # в лог
-    with open(lr_vars.logFullName, 'a') as log:
-        log.write('\n{0}\n\t>>> traceback.print_tb\n{0}\n'.format(lr_vars.PRINT_SEPARATOR))
-        traceback.print_tb(exc_tb, file=log)
-        log.write('{t}\n{v}'.format(t=exc_type, v=exc_val))
-        log.write('\n{0}\n\t<<< traceback.print_tb\n{0}\n'.format(lr_vars.PRINT_SEPARATOR))
-
-
-def get_tb(exc_type, exc_val, exc_tb, err_name: str) -> str:
-    '''traceback + исходный код'''
-    if not exc_tb:
-        return '{} {} {}'.format(exc_type, exc_val, exc_tb)
-    exc_lines = traceback.format_exception(exc_type, exc_val, exc_tb)
-
-    def get_code(lib='\{}\\'.format(lr_vars.lib_folder)) -> str:
-        '''исходный код'''
-        line = ''
-        for line in reversed(exc_lines):
-            if lib in line:
-                break
-        try:
-            fileName = line.split('"')[1]
-            lineNum = int(line.split(',')[1].split('line')[-1])
-            with open(fileName, errors='replace', encoding='utf-8') as file:
-                text = file.read().split('\n')
-
-            left = []
-            for line in reversed(text[:lineNum]):
-                if line.strip():
-                    left.append(line)
-                    if len(left) == lr_vars.EHOME:
-                        break
-            _, f = os.path.split(fileName)
-            left[0] = '\n!!! {e} [ {f} : строка {l} ]\n{line}\n'.format(e=err_name, line=left[0], f=f, l=lineNum)
-            left.reverse()
-
-            right = []
-            for line in text[lineNum:]:
-                if line.strip():
-                    right.append(line)
-                    if len(right) == lr_vars.EEND:
-                        break
-
-            code = '{l}\n{r}'.format(l='\n'.join(left), r='\n'.join(right))
-            return code
-        except Exception as ex:
-            return 'неудалось загрузить код файла\n{}'.format(ex)
-
-    tb = ''.join(exc_lines[-1:]).rstrip()
-    code = get_code().rstrip()
-    return '{tb}\n{s}\n{code}'.format(tb=tb, code=code, s=lr_vars.PRINT_SEPARATOR)
 
 
 def exec_time(func: callable) -> callable:

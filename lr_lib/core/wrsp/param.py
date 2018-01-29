@@ -7,6 +7,7 @@ import random
 import string
 
 import lr_lib.core.etc.other as lr_other
+import lr_lib.core.etc.lbrb_checker as lr_lbrb_checker
 import lr_lib.core.var.vars as lr_vars
 import lr_lib.etc.help as lr_help
 
@@ -257,7 +258,7 @@ def search_param_in_file(file: dict) -> (dict or None):
             i = indx - 1
             left = split_line[i]
             right = split_line[indx]
-            if lr_other.check_bound_lb_rb(left, right):
+            if lr_lbrb_checker.check_bound_lb_rb(left, right):
                 Param['Count_indexs'].append(i)
 
     if Param['Count_indexs']:

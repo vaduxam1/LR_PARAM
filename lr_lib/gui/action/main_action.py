@@ -5,19 +5,25 @@ import os
 import re
 import contextlib
 import configparser
+
 import tkinter as tk
 import tkinter.ttk as ttk
 import tkinter.filedialog as tkf
-from tkinter import messagebox
 
+from tkinter import messagebox
 
 import lr_lib.gui.widj.highlight_text
 import lr_lib.gui.widj.legend
+import lr_lib.gui.action.tooltips
+import lr_lib.gui.action.grid
+import lr_lib.gui.action.wrsp_setting
+
 import lr_lib.gui.widj.tooltip as lr_tooltip
 import lr_lib.core.var.vars as lr_vars
 import lr_lib.core.wrsp.param as lr_param
 import lr_lib.core.action.main_awal as lr_main_awal
 import lr_lib.core.etc.other as lr_other
+import lr_lib.core.etc.lbrb_checker as lr_lbrb_checker
 import lr_lib.gui.etc.action_lib as lr_action_lib
 import lr_lib.gui.etc.sub_menu as lr_sub_menu
 import lr_lib.gui.widj.dialog as lr_dialog
@@ -98,34 +104,19 @@ class ActionWindow(tk.Toplevel):
         #
         self.wrsp_combo = ttk.Combobox(self.wrsp_bar, justify='center', font=lr_vars.DefaultFont)
 
-        @lr_vars.T_POOL_decorator
-        def goto_wrsp(*a) -> None:
-            with contextlib.suppress(tk.TclError):
-                self.search_in_action(word=self.wrsp_combo.get(), hist=False)
-
-        self.wrsp_combo.bind("<KeyRelease-Return>", goto_wrsp)
-        self.wrsp_combo.bind("<<ComboboxSelected>>", goto_wrsp)
+        self.wrsp_combo.bind("<KeyRelease-Return>", self.goto_wrsp)
+        self.wrsp_combo.bind("<<ComboboxSelected>>", self.goto_wrsp)
 
         self.param_combo = ttk.Combobox(self.wrsp_bar, justify='center', font=lr_vars.DefaultFont)
 
-        @lr_vars.T_POOL_decorator
-        def goto_param(*a) -> None:
-            with contextlib.suppress(tk.TclError):
-                self.search_in_action(word=self.param_combo.get(), hist=False)
-
-        self.param_combo.bind("<KeyRelease-Return>", goto_param)
-        self.param_combo.bind("<<ComboboxSelected>>", goto_param)
+        self.param_combo.bind("<KeyRelease-Return>", self.goto_param)
+        self.param_combo.bind("<<ComboboxSelected>>", self.goto_param)
 
         #
         self.transaction_combo = ttk.Combobox(self.transaction_bar, justify='center', font=lr_vars.DefaultFont)
 
-        @lr_vars.T_POOL_decorator
-        def goto_transaction(*a) -> None:
-            with contextlib.suppress(tk.TclError):
-                self.search_in_action(word=self.transaction_combo.get(), hist=False)
-
-        self.transaction_combo.bind("<KeyRelease-Return>", goto_transaction)
-        self.transaction_combo.bind("<<ComboboxSelected>>", goto_transaction)
+        self.transaction_combo.bind("<KeyRelease-Return>", self.goto_transaction)
+        self.transaction_combo.bind("<<ComboboxSelected>>", self.goto_transaction)
 
         self.font_size_entry = tk.Spinbox(self.font_toolbar, width=2, justify='center', from_=0, to=99, command=self.tk_text.set_font,
                                           textvariable=self.tk_text.size_var, font=lr_vars.DefaultFont)
@@ -211,7 +202,8 @@ class ActionWindow(tk.Toplevel):
                                                    command=self.auto_param_creator, background='orange')
 
         self.final_wnd_cbx = tk.Checkbutton(self.toolbar, text='final', font=lr_vars.DefaultFont, variable=self.final_wnd_var)
-        self.wrsp_setting = tk.Button(self.toolbar, text='wrsp_setting', font=lr_vars.DefaultFont, command=self.wrsp_setting_wnd)
+        self.wrsp_setting = tk.Button(self.toolbar, text='wrsp_setting', font=lr_vars.DefaultFont,
+                                      command=lambda *a: lr_lib.gui.action.wrsp_setting.WrspSettingWindow(parent=self))
 
         def force_ask_cmd(*a) -> None:
             if self.force_ask_var.get():
@@ -230,429 +222,136 @@ class ActionWindow(tk.Toplevel):
         self.backup_entry = tk.Entry(self.file_bar, font=lr_vars.DefaultFont, width=5, justify='center')
         self.backup_entry.insert('1', lr_vars.BackupActionFile)
 
-        @lr_vars.T_POOL_decorator
-        def repl_butt(*a) -> None:
-            '''кнопка замены текста'''
-            if messagebox.askyesno(str(ActionWindow), "action.c: Заменить ? :\n\n{s}\n\n на :\n\n{r}".format(
-                    s=self.SearchReplace_searchVar.get(), r=self.SearchReplace_replaceVar.get()), parent=self):
-                with self.block():
-                    self.backup()
-                    text = self.tk_text.get(1.0, tk.END)
-                    text = text.replace(self.SearchReplace_searchVar.get(), self.SearchReplace_replaceVar.get())
-                    self.web_action.set_text_list(text, websReport=True)
-                    self.web_action_to_tk_text(websReport=False)
-
-        self.SearchReplace_button = tk.Button(self.toolbar, text='> replace >', font=lr_vars.DefaultFont, command=repl_butt)
+        self.SearchReplace_button = tk.Button(self.toolbar, text='> replace >', font=lr_vars.DefaultFont,
+                                              command=self._replace_button_set)
         self.buttonColorReset = tk.Button(self.cbx_bar, text='reset', font=lr_vars.DefaultFont, command=self.resColor)
         self.highlight_Thread = tk.Checkbutton(self.cbx_bar, text='', variable=lr_vars.HighlightThread, font=lr_vars.DefaultFont)
         self.highlight_LineThread = tk.Checkbutton(self.cbx_bar, text='', variable=lr_vars.LineTagAddThread, font=lr_vars.DefaultFont)
         self.highlight_TagThread = tk.Checkbutton(self.cbx_bar, text='', variable=lr_vars.TagAddThread, font=lr_vars.DefaultFont)
         self.highlight_MThread = tk.Checkbutton(self.cbx_bar, text='', variable=lr_vars.HighlightMPool, font=lr_vars.DefaultFont)
-        self.highlight_LinesPortionSize = tk.Spinbox(self.cbx_bar, from_=0, to=100, textvariable=lr_vars.HighlightLinesPortionSize,
-                                                     width=2, font=lr_vars.DefaultFont)
-
-        def max_inf_set(*a) -> None:
-            if self.max_inf_cbx_var.get():
-                self.add_inf_cbx.configure(state='normal')
-            else:
-                self.add_inf_cbx.configure(state='disabled')
+        self.highlight_LinesPortionSize = tk.Spinbox(self.cbx_bar, from_=0, to=100, width=2, font=lr_vars.DefaultFont,
+                                                     textvariable=lr_vars.HighlightLinesPortionSize)
 
         self.max_inf_cbx = tk.Checkbutton(self.toolbar, text='ограничить\nmax inf', font=lr_vars.DefaultFont + ' bold',
-                                          variable=self.max_inf_cbx_var, command=max_inf_set)
+                                          variable=self.max_inf_cbx_var, command=self.max_inf_set)
         self.add_inf_cbx = tk.Checkbutton(self.toolbar, anchor=tk.E, text='max\nmode', font=lr_vars.DefaultFont,
                                           variable=self.add_inf_cbx_var)
 
-        def legend() -> None:
-            t = lr_lib.gui.widj.legend.WebLegend(self)
-            t.add_web_canavs()
-            t.print()
-
-        self.lr_legend = tk.Button(self.toolbar, text='web_legend', font=lr_vars.DefaultFont + ' bold', command=legend)
-
-        def thinktime_remove() -> None:
-            '''удалить thinktime'''
-            text = self.tk_text.get(1.0, tk.END)
-            counter = 0
-
-            def no_tt_lines() -> iter((str, )):
-                nonlocal counter
-                for line in text.split('\n'):
-                    if line.strip().startswith('lr_think_time'):
-                        counter += 1
-                    else:
-                        yield line
-
-            new_text = '\n'.join(no_tt_lines())
-            if messagebox.askokcancel('thinktime', 'удалить thinktime из action?\n{} шт.'.format(counter), parent=self):
-                with self.block():
-                    self.backup()
-                    self.web_action.set_text_list(new_text, websReport=True)
-                    self.web_action_to_tk_text(websReport=False)
-
+        self.lr_legend = tk.Button(self.toolbar, text='web_legend', font=lr_vars.DefaultFont + ' bold', command=self.legend)
         self.lr_think_time = tk.Button(self.toolbar, text='lr_think_time', font=lr_vars.DefaultFont + ' bold',
-                                       command=thinktime_remove)
+                                       command=self.thinktime_remove)
         self.lr_report_B = tk.Button(self.toolbar, text='reportB', font=lr_vars.DefaultFont + ' bold',
                                      command=lambda *a: lr_action_lib.repB(self.tk_text))
         self.lr_report_A = tk.Button(self.toolbar, text='reportA', font=lr_vars.DefaultFont + ' bold',
                                      command=lambda *a: lr_action_lib.repA(self.tk_text))
 
-        @lr_vars.T_POOL_decorator
-        def all_transaction_rename(*a) -> None:
-            '''переименавать все транзакции'''
-            _transactions = [t.split('"', 1)[1] for t in self.transaction]
-            transactions = list(sorted(set(_transactions), key=_transactions.index))
-            mx = max(map(len, transactions or ['']))
-            m = '"{:<%s}" -> "{}"' % mx
-            all_transaction = '\n'.join(m.format(old, new) for old, new in zip(transactions, transactions))
-            y = lr_dialog.YesNoCancel(['Переименовать', 'Отмена'], 'Переименовать transaction слева', 'в transaction справа', 'transaction',
-                                      parent=self, is_text=all_transaction)
-            st = 'lr_start_transaction("'
-            en = 'lr_end_transaction("'
-            if y.ask() == 'Переименовать':
-                new_transaction = [t.split('-> "', 1)[1].split('"', 1)[0].strip() for t in y.text.strip().split('\n')]
-                assert len(transactions) == len(new_transaction)
-                text = self.tk_text.get('1.0', tk.END)
-                for old, new in zip(transactions, new_transaction):
-                    text = text.replace((st + old), (st + new))
-                    text = text.replace((en + old), (en + new))
-
-                with self.block():
-                    self.backup()
-                    self.web_action.set_text_list(text, websReport=True)
-                    self.web_action_to_tk_text(websReport=False)
 
         self.transaction_rename = tk.Button(self.toolbar, text='rename\ntransaction', font=lr_vars.DefaultFont + ' bold',
-                                            background='orange', command=all_transaction_rename)
+                                            background='orange', command=self.all_transaction_rename)
         self.dummy_button = tk.Button(self.toolbar, text="Snapshot remove", font=lr_vars.DefaultFont + ' bold',
                                       background='orange', command=self.dummy_btn_cmd)
         self.force_yes_inf_checker_cbx = tk.Checkbutton(self.toolbar, text='fYes', font=lr_vars.DefaultFont,
                                                         variable=self.force_yes_inf)
-
-        self.search_entry.grid(row=5, column=0, columnspan=8, sticky=tk.NSEW)
-        self.search_button.grid(row=5, column=8, sticky=tk.NSEW)
-        self.down_search_button.grid(row=5, column=9, sticky=tk.NSEW)
-        self.search_res_combo.grid(row=5, column=10, sticky=tk.NSEW, columnspan=3)
-        self.up_search_button.grid(row=5, column=13, sticky=tk.NSEW)
-
-        self.backup_open_button.grid(row=5, column=16, columnspan=2, sticky=tk.NSEW)
-        self.save_action_button.grid(row=6, column=17, sticky=tk.NSEW)
-
-        self.highlight_cbx.grid(row=1, column=1, sticky=tk.NSEW, columnspan=5)
-        self.background_color_combo.grid(row=2, column=1, sticky=tk.NSEW, columnspan=5)
-        self.buttonColorReset.grid(row=3, column=1, sticky=tk.NSEW, columnspan=5)
-        self.highlight_Thread.grid(row=4, column=1, sticky=tk.NSEW)
-        self.highlight_LineThread.grid(row=4, column=2, sticky=tk.NSEW)
-        self.highlight_TagThread.grid(row=4, column=3, sticky=tk.NSEW)
-        self.highlight_MThread.grid(row=4, column=4, sticky=tk.NSEW)
-        self.highlight_LinesPortionSize.grid(row=4, column=5, sticky=tk.NSEW)
-
-        self.open_button.grid(row=6, column=16, sticky=tk.NSEW)
-        self.editor_button.grid(row=7, column=16, sticky=tk.NSEW, columnspan=2)
-        self.no_cbx.grid(row=7, column=10, sticky=tk.W)
-        self.auto_param_creator_button.grid(row=7, column=8, sticky=tk.NSEW, rowspan=2)
-        self.force_ask_cbx.grid(row=8, column=10, sticky=tk.W)
-        self.unblock.grid(row=9, column=17, sticky=tk.NSEW)
-        self.final_wnd_cbx.grid(row=8, column=12, sticky=tk.W)
-        self.wrsp_setting.grid(row=7, column=9, sticky=tk.NSEW, rowspan=2)
-
-        self.font_size_entry.grid(row=12, column=4, sticky=tk.NSEW)
-        self.font_combo.grid(row=10, column=0, columnspan=10, sticky=tk.NSEW)
-        self.bold_cbx.grid(row=12, column=5, sticky=tk.NSEW)
-        self.overstrike_cbx.grid(row=12, column=6, sticky=tk.NSEW)
-        self.underline_cbx.grid(row=12, column=7, sticky=tk.NSEW)
-        self.slant_cbx.grid(row=12, column=8, sticky=tk.NSEW)
-        self.backup_entry.grid(row=9, column=16, sticky=tk.NSEW)
-
-        self.selection_font_combo.grid(row=11, column=0, columnspan=10, sticky=tk.NSEW)
-        self.selection_font_size_entry.grid(row=13, column=4, sticky=tk.NSEW)
-        self.selection_bold_cbx.grid(row=13, column=5, sticky=tk.NSEW)
-        self.selection_overstrike_cbx.grid(row=13, column=6, sticky=tk.NSEW)
-        self.selection_underline_cbx.grid(row=13, column=7, sticky=tk.NSEW)
-        self.selection_slant_cbx.grid(row=13, column=8, sticky=tk.NSEW)
-
-        self.SearchReplace_searchCombo.grid(row=6, column=0, columnspan=8, sticky=tk.NSEW)
-        self.SearchReplace_replaceCombo.grid(row=6, column=9, columnspan=8, sticky=tk.NSEW)
-        self.SearchReplace_button.grid(row=6, column=8, sticky=tk.NSEW)
-
-        self.toolbar.grid(row=2, column=0, sticky=tk.N, columnspan=100)
-
-        self.middle_bar.grid(row=3, column=0, sticky=tk.N)
-        self.inf_bar.grid(row=1, column=0, sticky=tk.N)
-        self.transaction_bar.grid(row=3, column=0, sticky=tk.E)
-        self.wrsp_bar.grid(row=3, column=1, sticky=tk.W)
-
-        self.file_bar.grid(row=5, column=20, sticky=tk.NSEW, rowspan=5)
-        self.cbx_bar.grid(row=5, column=50, sticky=tk.NSEW, rowspan=5)
-        self.font_toolbar.grid(row=5, column=21, sticky=tk.NSEW, rowspan=4)
-
-        self.text_scrolly.grid(row=0, column=201, sticky=tk.NSEW)
-        self.text_scrollx.grid(row=1, column=0, sticky=tk.NSEW, columnspan=201)
-        self.scroll_lab.grid(row=1, column=300, sticky=tk.NSEW)
-        self.scroll_lab2.grid(row=2, column=300, sticky=tk.NSEW, rowspan=2)
-
-        self.inf_combo.grid(row=1, column=1, sticky=tk.NSEW)
-        self.transaction_combo.grid(row=1, column=2, sticky=tk.NSEW)
-        self.wrsp_combo.grid(row=1, column=3, sticky=tk.NSEW)
-        self.param_combo.grid(row=1, column=4, sticky=tk.NSEW)
-
-        self.help1.grid(row=1, column=201, sticky=tk.NSEW)
-        self.help2.grid(row=2, column=201, sticky=tk.NSEW)
-        self.help3.grid(row=3, column=201, sticky=tk.NSEW)
-
-        self.tk_text.grid(row=0, column=0, sticky=tk.NSEW, columnspan=201)
-        self.tk_text.linenumbers.grid(row=0, column=300, sticky=tk.NS)
-        self.tk_text.linenumbers.config(width=30)
-
-        self.max_inf_cbx.grid(row=7, column=1, sticky=tk.NSEW, rowspan=2)
-        self.add_inf_cbx.grid(row=7, column=2, sticky=tk.NSEW, rowspan=2)
-        self.dummy_button.grid(row=7, column=13, sticky=tk.NSEW, rowspan=2)
-        self.force_yes_inf_checker_cbx.grid(row=7, column=12, sticky=tk.W)
-        self.lr_legend.grid(row=7, column=3, sticky=tk.NSEW)
-        self.lr_think_time.grid(row=7, column=4, sticky=tk.NSEW)
-        self.lr_report_B.grid(row=8, column=4, sticky=tk.NSEW)
-        self.lr_report_A.grid(row=8, column=3, sticky=tk.NSEW)
-        self.transaction_rename.grid(row=7, column=5, sticky=tk.NSEW, rowspan=2)
-
-        lr_tooltip.createToolTip(self.editor_button, 'открыть текст action в блокноте\n\t'
-                                                     '# editor_button')
-        lr_tooltip.createToolTip(self.wrsp_setting, 'настройки каментов и имени wrsp\n\t'
-                                                    '# wrsp_setting')
-        lr_tooltip.createToolTip(self.backup_entry, 'макс кол-во backup файлов(запись по кругу)\n'
-                                                    'перед автозаменой, в директорию {}, делается action бэкап\n\t'
-                                                    '# backup_entry'.format(os.path.join(os.getcwd(), lr_vars.BackupFolder)))
-        lr_tooltip.createToolTip(self.buttonColorReset, 'сбросить цвет текста\n\t'
-                                                        '# buttonColorReset')
-        lr_tooltip.createToolTip(self.highlight_Thread, 'выполнять в фоне, весь код подсветки\n\t'
-                                                        '# highlight_Thread')
-        lr_tooltip.createToolTip(self.highlight_LineThread, 'выполнять в фоне, код подсветки для одной линии\n\t'
-                                                            '# highlight_LineThread')
-        lr_tooltip.createToolTip(self.highlight_TagThread, 'выполнять в фоне, код подсветки для одного тега\n\t'
-                                                           '# highlight_TagThread')
-        lr_tooltip.createToolTip(self.highlight_MThread, 'искать индексы для подсветки линий, в M_POOL\n\t'
-                                                         '# highlight_MThread')
-        lr_tooltip.createToolTip(self.highlight_LinesPortionSize, 'для скольки линий, искать индексы, за один проход/поток'
-                                                                  '\n\t# highlight_LinesPortionSize')
-
-        lr_tooltip.createToolTip(self.open_button, 'открыть action.c файл\n\t'
-                                                   '# open_button')
-        lr_tooltip.createToolTip(self.highlight_cbx, 'On - применить подсветку\n'
-                                                     'Off - убрать подсветку\n'
-                                                     'Чтобы применмть новую подсветку, необходимо снять/установить повторно\n\t'
-                                                     '# highlight_cbx')
-        lr_tooltip.createToolTip(self.search_res_combo, 'результаты(координаты) поиска слова в тексте action.c:\n'
-                                                     '"201.33+2c" - [Строка].[Столбец]+[ДлинаСлова]c\nпри выборе - '
-                                                     'переход в область,колесом мыши - переход между областями\n'
-                                                     'учной ввод координат по <<Enter>>\n\t# search_res_combo')
-        lr_tooltip.createToolTip(self.search_button, 'Поиск слова из search_entry в тексте action\n'
-                                                     'результат - заполняет комбобокс координат search_res_combo\n\t'
-                                                     '# search_button')
-        lr_tooltip.createToolTip(self.search_entry, 'слово для поиска в тексте action\n\t'
-                                                    '# search_entry')
-        lr_tooltip.createToolTip(self.SearchReplace_searchCombo, 'слово, для замены\n\t'
-                                                                 '# SearchReplace_searchCombo')
-        lr_tooltip.createToolTip(self.SearchReplace_replaceCombo, 'слово, на которое заменить\n\t'
-                                                                  '# SearchReplace_replaceCombo')
-        lr_tooltip.createToolTip(self.SearchReplace_button, 'Найти и Заменить, для SearchReplace_комбобоксов\n'
-                                                            'Обычная(как в блокноте) автозамена\n\t'
-                                                            '# SearchReplace_button')
-        lr_tooltip.createToolTip(self.up_search_button, 'перейти вверх, по результатам поиска\n\t'
-                                                        '# up_search_button')
-        lr_tooltip.createToolTip(self.down_search_button, 'перейти вниз, по результатам поиска\n\t'
-                                                          '# down_search_button')
-        lr_tooltip.createToolTip(self.backup_open_button, 'открыть бэкап файл, для текущего окна\n\t'
-                                                          '# backup_open_button')
-        lr_tooltip.createToolTip(self.force_ask_cbx, 'Автозамена - подтверждать любую замену.\n'
-                                                     'Те показывать окно диалога подтверждения, для каждой замены.\n\t'
-                                                     '# force_ask_cbx')
-        lr_tooltip.createToolTip(self.no_cbx, 'Автозамена - Принудительно отвечать "Нет, для Всех" в вопросе замены,\n'
-                                              'В обычной ситуации, от пользователя, требуетcя подтверждение,\n'
-                                              'если заменяемое слово, является частью другого, более длинного слова\n'
-                                              'Например при замене "zkau_2", для "zkau_201", "zkau_20", "Azkau_2",...\n'
-                                              'В результате - не показывать окно диалога подтверждения.\n\t'
-                                              '# no_cbx')
-        lr_tooltip.createToolTip(self.final_wnd_cbx, 'окно результата создания param\n'
-                                                     'перед показом окна, будет сделан переход на web_reg_save_param\n'
-                                                     'и пока не нажата кнопка OK, можно визуально проконтролировать LR/RB.\n'
-                                                     'после закрытия окна, будет сделан переход на первый замененный param\n\t'
-                                                     '# final_wnd_cbx')
-        lr_tooltip.createToolTip(self.auto_param_creator_button, 'автоматичейский поиск и создание web_reg_save_param\n '
-                                                                 'для param, имя которых начинается на ...\n'
-                                                                 'аналог нескольких меню_мыши/web_reg_save_param/группа\n\t'
-                                                                 '# auto_param_creator_button')
-        lr_tooltip.createToolTip(self.help1, lr_help.ACTION1)
-        lr_tooltip.createToolTip(self.help2, lr_help.ACTION2)
-        lr_tooltip.createToolTip(self.help3, lr_help.ACTION3)
-        lr_tooltip.createToolTip(self.save_action_button, 'сохранить текст action окна\n'
-                                                          '+ обновить "служебную" инфу об удаленных "inf-блоках", если чтото удаляли вручную\n\t'
-                                                          '# save_action_button')
-
-        lr_tooltip.createToolTip(self.selection_font_combo, 'шрифт, для выделения\n\t'
-                                                            '# selection_font_combo')
-        lr_tooltip.createToolTip(self.selection_font_size_entry, 'размер шрифта, для выделения\n\t'
-                                                                 '# selection_font_size_entry')
-        lr_tooltip.createToolTip(self.selection_bold_cbx, 'жирный шрифт, для выделения\n\t'
-                                                          '# selection_bold_cbx')
-        lr_tooltip.createToolTip(self.selection_underline_cbx, 'подчеркнутый шрифт, для выделения\n\t'
-                                                               '# selection_underline_cbx')
-        lr_tooltip.createToolTip(self.selection_overstrike_cbx, 'зачеркнутый шрифт, для выделения\n\t'
-                                                                '# selection_overstrike_cbx')
-        lr_tooltip.createToolTip(self.selection_slant_cbx, 'курсив шрифт, для выделения\n\t'
-                                                           '# selection_slant_cbx')
-
-        lr_tooltip.createToolTip(self.wrsp_combo, 'имя web_reg_save_param\n'
-                                                  'переход в область action.c текста\n\t'
-                                                  '# wrsp_combo')
-        lr_tooltip.createToolTip(self.param_combo, 'имя param\n'
-                                                   'переход в область action.c текста\n\t'
-                                                   '# param_combo')
-        lr_tooltip.createToolTip(self.inf_combo, 'номер inf блока\n'
-                                                 'переход в область action.c текста\n\t'
-                                                 '# inf_combo')
-        lr_tooltip.createToolTip(self.transaction_combo, 'имя транцакции\n'
-                                                         'переход в область action.c текста\n\t'
-                                                         '# transaction_combo')
-
-        lr_tooltip.createToolTip(self.font_combo, 'шрифт\n\t'
-                                                  '# font_combo')
-        lr_tooltip.createToolTip(self.font_size_entry, 'размер шрифта\n\t'
-                                                       '# font_size_entry')
-        lr_tooltip.createToolTip(self.bold_cbx, 'жирный шрифт\n\t'
-                                                '# bold_cbx')
-        lr_tooltip.createToolTip(self.underline_cbx, 'подчеркнутый шрифт\n\t'
-                                                     '# underline_cbx')
-        lr_tooltip.createToolTip(self.overstrike_cbx, 'зачеркнутый шрифт\n\t'
-                                                      '# overstrike_cbx')
-        lr_tooltip.createToolTip(self.slant_cbx, 'курсив шрифт\n\t'
-                                                 '# slant_cbx')
-        lr_tooltip.createToolTip(self.dummy_button, 'удалить все dummy web_submit_data из action.c текста\n\t'
-                                                    '# dummy_button')
-        lr_tooltip.createToolTip(self.background_color_combo, 'цвет фона tk.Text\n\t'
-                                                              '# background_color_combo')
-        lr_tooltip.createToolTip(self.force_yes_inf_checker_cbx, 'принудительно отвечать "Да", при вопросе о создании param\n'
-                                                                 'если inf-номер запроса <= inf-номер web_reg_save_param\n\t'
-                                                                 '# force_yes_inf_checker_cbx')
-        lr_tooltip.createToolTip(self.unblock, 'разблокировать виджеты, во время работы\n\t'
-                                               '# unblock')
-        lr_tooltip.createToolTip(self.lr_think_time, 'удалить все lr_think_time\n\t'
-                                                     '# lr_think_time')
-        lr_tooltip.createToolTip(self.lr_report_A, 'краткий отчет об action.c, с учетом вложенности транзакций\n\t'
-                                                   '# lr_report_A')
-        lr_tooltip.createToolTip(self.lr_report_B, 'полный отчет об action.c\n\t'
-                                                   '# lr_report_B')
-        lr_tooltip.createToolTip(self.transaction_rename, 'переименовать имена транзакций\n\t'
-                                                          '# transaction_rename')
-        lr_tooltip.createToolTip(self.max_inf_cbx, 'ограничить диапазон поиска param - максимальный номер inf\n'
-                                                   'Это номер inf, в action.c, где первый раз встречается pram\n\t'
-                                                   '# max_inf_cbx')
-        lr_tooltip.createToolTip(self.add_inf_cbx, 'макс номер inf, для поиска param, в LoadRunner файлах ответов\n '
-                                                   'On - inf, где первый раз встречается pram, в action.c\n\t'
-                                                   'что неправильно но необходимо, тк LoadRunner так записывает\n'
-                                                   'Off - inf, предшествующий, номеру inf, где первый раз встречается pram, в action.c\n\t'
-                                                   'используется, совместно с чекбоксом last, для поиска inf-ответа,\n\t'
-                                                   'максимально близкого, к param-inf, те поиску с конца\n\t'
-                                                   '# add_inf_cbx')
 
         ws = self.search_res_combo, self.SearchReplace_searchCombo, self.SearchReplace_replaceCombo, self.search_entry,
         for widj in ws:
             with contextlib.suppress(Exception):
                 self.bind_class(widj, sequence='<Button-3>', func=lr_sub_menu.rClicker, add='')
 
-        self.open_action()
+        lr_lib.gui.action.tooltips.set_all_action_window_tooltip(self)  # создать все tooltip окна
+        lr_lib.gui.action.grid.grid_widj(self)  # grid виджетов action.с окна
+        self.open_action()  # action текст
 
-    def wrsp_setting_wnd(self) -> None:
-        '''окно настройки каментов и имени wrsp'''
-        top = tk.Toplevel()
-        top.transient(self)
-        top.resizable(width=False, height=False)
-        top.title('настройка каментов и имени wrsp')
-        VarWebStatsTransac = tk.Checkbutton(top, text='VarWebStatsTransac', font=lr_vars.DefaultFont,
-                                            variable=lr_vars.VarWebStatsTransac)
-        VarWebStatsIn = tk.Checkbutton(top, text='VarWebStatsIn', font=lr_vars.DefaultFont,
-                                       variable=lr_vars.VarWebStatsIn)
-        VarWebStatsOut = tk.Checkbutton(top, text='VarWebStatsOut', font=lr_vars.DefaultFont,
-                                        variable=lr_vars.VarWebStatsOut)
-        VarWebStatsWarn = tk.Checkbutton(top, text='VarWebStatsWarn', font=lr_vars.DefaultFont,
-                                         variable=lr_vars.VarWebStatsWarn)
-        VarWRSPStatsTransac = tk.Checkbutton(top, text='VarWRSPStatsTransac', font=lr_vars.DefaultFont,
-                                             variable=lr_vars.VarWRSPStatsTransac)
-        VarWRSPStatsTransacNames = tk.Checkbutton(top, text='VarWRSPStatsTransacNames', font=lr_vars.DefaultFont,
-                                                  variable=lr_vars.VarWRSPStatsTransacNames)
-        VarWRSPStats = tk.Checkbutton(top, text='VarWRSPStats', font=lr_vars.DefaultFont,
-                                      variable=lr_vars.VarWRSPStats)
-        SnapshotInName = tk.Checkbutton(top, text='SnapshotInName', font=lr_vars.DefaultFont,
-                                        variable=lr_vars.SnapshotInName)
-        TransactionInNameMax = tk.Spinbox(top, font=lr_vars.DefaultFont, from_=0, to=1000,
-                                          textvariable=lr_vars.TransactionInNameMax)
+    def legend(self) -> None:
+        '''окно легенды'''
+        t = lr_lib.gui.widj.legend.WebLegend(self)
+        t.add_web_canavs()
+        t.print()
 
-        MaxLbWrspName = tk.Spinbox(top, textvariable=lr_vars.MaxLbWrspName, font=lr_vars.DefaultFont, from_=0, to=1000)
-        MaxRbWrspName = tk.Spinbox(top, textvariable=lr_vars.MaxRbWrspName, font=lr_vars.DefaultFont, from_=0, to=1000)
-        MaxParamWrspName = tk.Spinbox(top, textvariable=lr_vars.MaxParamWrspName, font=lr_vars.DefaultFont, from_=0, to=1000)
-        MinWrspRnum = tk.Spinbox(top, textvariable=lr_vars.MinWrspRnum, font=lr_vars.DefaultFont, from_=0, to=1000)
-        MaxWrspRnum = tk.Spinbox(top, textvariable=lr_vars.MaxWrspRnum, font=lr_vars.DefaultFont, from_=0, to=10**5)
-        wrsp_name_splitter = tk.Entry(top, textvariable=lr_vars.wrsp_name_splitter, font=lr_vars.DefaultFont)
-        WrspNameFirst = tk.Entry(top, textvariable=lr_vars.WrspNameFirst, font=lr_vars.DefaultFont)
+    def max_inf_set(self, *args) -> None:
+        '''max_inf_cbx_var вкл/выкл'''
+        if self.max_inf_cbx_var.get():
+            self.add_inf_cbx.configure(state='normal')
+        else:
+            self.add_inf_cbx.configure(state='disabled')
 
-        apply_btn = tk.Button(top, command=lambda: self.save_action_file(file_name=False), font=lr_vars.DefaultFont, text='применить')
-        lr_tooltip.createToolTip(apply_btn, 'применить изменения')
+    @lr_vars.T_POOL_decorator
+    def all_transaction_rename(self, *args) -> None:
+        '''переименавать все транзакции'''
+        _transactions = [t.split('"', 1)[1] for t in self.transaction]
+        transactions = list(sorted(set(_transactions), key=_transactions.index))
+        mx = max(map(len, transactions or ['']))
+        m = '"{:<%s}" -> "{}"' % mx
+        all_transaction = '\n'.join(m.format(old, new) for old, new in zip(transactions, transactions))
+        y = lr_dialog.YesNoCancel(['Переименовать', 'Отмена'], 'Переименовать transaction слева',
+                                  'в transaction справа', 'transaction',
+                                  parent=self, is_text=all_transaction)
+        st = 'lr_start_transaction("'
+        en = 'lr_end_transaction("'
+        if y.ask() == 'Переименовать':
+            new_transaction = [t.split('-> "', 1)[1].split('"', 1)[0].strip() for t in y.text.strip().split('\n')]
+            assert len(transactions) == len(new_transaction)
+            text = self.tk_text.get('1.0', tk.END)
+            for old, new in zip(transactions, new_transaction):
+                text = text.replace((st + old), (st + new))
+                text = text.replace((en + old), (en + new))
 
-        lr_tooltip.createToolTip(VarWebStatsTransac, 'коментарии с именем транзакции')
-        lr_tooltip.createToolTip(VarWebStatsIn, 'In коментарии')
-        lr_tooltip.createToolTip(VarWebStatsOut, 'Out коментарии')
-        lr_tooltip.createToolTip(VarWebStatsWarn, 'Warning коментарии')
-        lr_tooltip.createToolTip(VarWRSPStatsTransac, 'для wrsp, статистика использования param')
-        lr_tooltip.createToolTip(VarWRSPStatsTransacNames, 'для wrsp, имена транзакций в которых используется param')
-        lr_tooltip.createToolTip(VarWRSPStats, 'для wrsp, создавать подробные/короткие коментарии\n'
-                                               'Изменится только при пересоздании param')
-        lr_tooltip.createToolTip(SnapshotInName, 'в wrsp имени param, отображать номер Snapshot, в котором создан wrsp\n'
-                                                 'Изменится только при пересоздании param')
-        lr_tooltip.createToolTip(TransactionInNameMax, 'в wrsp имени param, отображать максимум символов transaction, в которой создан wrsp\n'
-                                                       'Изменится только при пересоздании param\n'
-                                                       '0 - откл')
-        lr_tooltip.createToolTip(MaxLbWrspName, 'макс число символов, взятых из LB, для wrsp имени param\n'
-                                                'Изменится только при пересоздании param\n'
-                                                '0 - откл')
-        lr_tooltip.createToolTip(MaxRbWrspName, 'макс число символов, взятых из RB, для wrsp имени param\n'
-                                                'Изменится только при пересоздании param\n'
-                                                '0 - откл')
-        lr_tooltip.createToolTip(MaxParamWrspName, 'макс число символов, взятых из param, для wrsp имени param\n'
-                                                   'Изменится только при пересоздании param\n'
-                                                   '0 - откл')
-        lr_tooltip.createToolTip(MinWrspRnum, 'мин число, для случайного номера, в wrsp имени param\n'
-                                              'Изменится только при пересоздании param\n'
-                                              '0 - откл')
-        lr_tooltip.createToolTip(MaxWrspRnum, 'макс число, для случайного номера, в wrsp имени param\n'
-                                              'Изменится только при пересоздании param\n'
-                                              '0 - откл')
-        lr_tooltip.createToolTip(wrsp_name_splitter, 'символ разделения в имени wrsp(для "_"): Win__aFFX9__id -> Win__a_FFX_9__id\n'
-                                                     'Изменится только при пересоздании param\nничего - откл')
-        lr_tooltip.createToolTip(WrspNameFirst, 'начало(P) wrsp имени param: {P_11_zkau_22}\n'
-                                                'Изменится только при пересоздании param\n'
-                                                'ничего - откл')
+            with self.block():
+                self.backup()
+                self.web_action.set_text_list(text, websReport=True)
+                self.web_action_to_tk_text(websReport=False)
 
-        VarWebStatsTransac.pack()
-        VarWebStatsIn.pack()
-        VarWebStatsOut.pack()
-        VarWebStatsWarn.pack()
-        VarWRSPStatsTransac.pack()
-        VarWRSPStatsTransacNames.pack()
-        VarWRSPStats.pack()
-        SnapshotInName.pack()
+    @lr_vars.T_POOL_decorator
+    def _replace_button_set(self, *args) -> None:
+        '''кнопка замены(обычной как в блокноте) текста'''
+        if messagebox.askyesno(str(ActionWindow), "action.c: Заменить ? :\n\n{s}\n\n на :\n\n{r}".format(
+                s=self.SearchReplace_searchVar.get(), r=self.SearchReplace_replaceVar.get()), parent=self):
+            with self.block():
+                self.backup()
+                text = self.tk_text.get(1.0, tk.END)
+                text = text.replace(self.SearchReplace_searchVar.get(), self.SearchReplace_replaceVar.get())
+                self.web_action.set_text_list(text, websReport=True)
+                self.web_action_to_tk_text(websReport=False)
 
-        MaxLbWrspName.pack()
-        MaxRbWrspName.pack()
-        MaxParamWrspName.pack()
-        MinWrspRnum.pack()
-        MaxWrspRnum.pack()
-        wrsp_name_splitter.pack()
-        WrspNameFirst.pack()
-        TransactionInNameMax.pack()
+    def thinktime_remove(self, *args) -> None:
+        '''удалить thinktime'''
+        text = self.tk_text.get(1.0, tk.END)
+        counter = 0
 
-        apply_btn.pack()
+        def no_tt_lines() -> iter((str,)):
+            nonlocal counter
+            for line in text.split('\n'):
+                if line.strip().startswith('lr_think_time'):
+                    counter += 1
+                else:
+                    yield line
+
+        new_text = '\n'.join(no_tt_lines())
+        if messagebox.askokcancel('thinktime', 'удалить thinktime из action?\n{} шт.'.format(counter), parent=self):
+            with self.block():
+                self.backup()
+                self.web_action.set_text_list(new_text, websReport=True)
+                self.web_action_to_tk_text(websReport=False)
 
     @lr_vars.T_POOL_decorator
     def goto_inf(self, *a) -> None:
         with contextlib.suppress(tk.TclError):
             self.search_in_action(word=lr_param.Snap.format(num=self.inf_combo.get().strip()), hist=False)
+
+    @lr_vars.T_POOL_decorator
+    def goto_transaction(self, *args) -> None:
+        with contextlib.suppress(tk.TclError):
+            self.search_in_action(word=self.transaction_combo.get(), hist=False)
+
+    @lr_vars.T_POOL_decorator
+    def goto_param(self, *args) -> None:
+        with contextlib.suppress(tk.TclError):
+            self.search_in_action(word=self.param_combo.get(), hist=False)
+
+    @lr_vars.T_POOL_decorator
+    def goto_wrsp(self, *args) -> None:
+        with contextlib.suppress(tk.TclError):
+            self.search_in_action(word=self.wrsp_combo.get(), hist=False)
 
     @lr_vars.T_POOL_decorator
     def bold_selection_set(self, *a) -> None:
@@ -1207,7 +906,7 @@ class ActionWindow(tk.Toplevel):
                 left = split_text[index].rsplit('\n', 1)[-1].lstrip()
                 right = split_text[index + 1].split('\n', 1)[0].rstrip()
 
-                if lr_other.check_bound_lb(left) if part_mode else (right[0] in lr_param.wrsp_allow_symb):
+                if lr_lbrb_checker.check_bound_lb(left) if part_mode else (right[0] in lr_param.wrsp_allow_symb):
                     param = []  # "5680"
 
                     for s in right:

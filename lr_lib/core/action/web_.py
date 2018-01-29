@@ -5,7 +5,7 @@ import contextlib
 
 import lr_lib.core.var.vars as lr_vars
 import lr_lib.core.wrsp.param as lr_param
-import lr_lib.core.etc.other as lr_other
+import lr_lib.core.etc.lbrb_checker as lr_lbrb_checker
 import lr_lib.gui.widj.dialog as lr_dialog
 
 
@@ -26,7 +26,7 @@ def _body_replace(body_split, len_body_split, search, replace) -> iter((str, )):
     for indx in range(1, len_body_split):
         left = body_split[indx - 1]
         right = body_split[indx]
-        if lr_other.check_bound_lb_rb(left, right):
+        if lr_lbrb_checker.check_bound_lb_rb(left, right):
             yield replace + right
         else:
             yield search + right
@@ -160,7 +160,7 @@ class WebAny:
                 chunk_indxs.append(indx)
 
         def normal_replace(indx: int, left: str, right: str, ask=(not action.no_var.get())) -> None:
-            if lr_other.check_bound_lb_rb(left, right) or (ask and self.ask_replace(param, replace, left, right, ask_dict)):
+            if lr_lbrb_checker.check_bound_lb_rb(left, right) or (ask and self.ask_replace(param, replace, left, right, ask_dict)):
                 chunk_indxs.append(indx)
 
         add_index = force_ask_replace if action.force_ask_var.get() else normal_replace

@@ -10,6 +10,7 @@ import lr_lib.core.var.vars as lr_vars
 import lr_lib.core.wrsp.param as lr_param
 import lr_lib.core.wrsp.files as lr_files
 import lr_lib.core.etc.other as lr_other
+import lr_lib.core.etc.lbrb_checker as lr_lbrb_checker
 
 
 def init() -> None:
@@ -175,9 +176,9 @@ def set_part_num(num=0) -> None:
         return next_3_or_4_if_bad_or_enmpy_lb_rb('пустом[LB]')
     elif lr_vars.VarPartNumEmptyRbNext.get() and not rb.strip():
         return next_3_or_4_if_bad_or_enmpy_lb_rb('пустом[RB]')
-    if lr_vars.VarPartNumDenyLbNext.get() and not lr_other.check_bound_lb(__lb):
+    if lr_vars.VarPartNumDenyLbNext.get() and not lr_lbrb_checker.check_bound_lb(__lb):
         return next_3_or_4_if_bad_or_enmpy_lb_rb('недопустимом[LB]')
-    if lr_vars.VarPartNumDenyRbNext.get() and (not lr_other.check_bound_rb(__rb)):
+    if lr_vars.VarPartNumDenyRbNext.get() and (not lr_lbrb_checker.check_bound_rb(__rb)):
         return next_3_or_4_if_bad_or_enmpy_lb_rb('недопустимом[RB]')
 
     # сохранить

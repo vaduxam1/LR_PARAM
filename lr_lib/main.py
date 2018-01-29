@@ -4,11 +4,12 @@
 import sys
 import contextlib
 
-import lr_lib.gui.main as lr_gui
-import lr_lib.core.main as lr_core
+import lr_lib.gui.main_gui as lr_gui
+import lr_lib.core.main_core as lr_core
 import lr_lib.core.var.vars as lr_vars
 import lr_lib.etc.logger as lr_logger
-import lr_lib.core.etc.other as lr_other
+import lr_lib.core.etc.excepthook as lr_excepthook
+import lr_lib.core.etc.keyb as lr_keyb
 import lr_lib.etc.pool.main_pool as lr_main_pool
 import lr_lib.etc.pool.other as lr_other_pool
 
@@ -22,7 +23,7 @@ def _start():
     if sys.argv[1:]:  # консольное использование
         lr_core.console_start(echo=True)
     else:  # gui использование
-        lr_other.keyboard_listener()  # hotkey(param from clipboard)
+        lr_keyb.keyboard_listener()  # hotkey(param from clipboard)
         lr_gui.init(mainloop_lock=True, action=True, auto_param_creator=False)
 
     yield sys.exc_info()  # выход
@@ -44,14 +45,14 @@ def start() -> bool:
             with run_with_report_callback_exception() as exc_info:  # core/gui инит
                 # вся работа в _start(), в теле with - работа окончена
                 if any(exc_info):
-                    lr_other.full_tb_write(*exc_info)
+                    lr_excepthook.full_tb_write(*exc_info)
                     return exc_info
 
 
 @contextlib.contextmanager
 def run_with_report_callback_exception() -> iter((None, )):
     '''запуск скрипта в excepthook(перехват raise) обертке'''
-    lr_vars.Tk.report_callback_exception = lr_other.excepthook
+    lr_vars.Tk.report_callback_exception = lr_excepthook.excepthook
     try:
         with _start() as err:
             yield err
