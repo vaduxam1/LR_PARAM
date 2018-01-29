@@ -51,7 +51,7 @@ def console_vars_setter(args_dict: dict) -> None:
 
 
 def console_argument_parser() -> {str: str}:
-    ''''аргументы из консоли + задать переданные переменные'''
+    ''''аргументы из консоли'''
     p = argparse.ArgumentParser()
     p.add_argument('param', nargs='?', help='параметр из LoadRunner')
     p.add_argument('-last', '--last_file', help='выбрать последний, из найденных файлов, иначе первый', type=int)

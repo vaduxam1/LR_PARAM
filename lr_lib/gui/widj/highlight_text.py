@@ -105,7 +105,7 @@ def set_tk_indxs(line_num: int, i_start: int, i_end: int, get_xy='{}.{}'.format)
 
 
 def join_indxs(indxs: {int, }) -> iter((int, int),):
-    '''объединить идущие подряд индексы: (3, 4, 10, 7, 9, 2, 10) -> (2, 4), (7, 7), (9, 10)'''
+    '''объединить идущие подряд индексы: {3, 4, 10, 7, 9, 2} -> (2, 4), (7, 7), (9, 10)'''
     index, *indexs = sorted(indxs)
     i_end = i_start = index
 
@@ -118,7 +118,7 @@ def join_indxs(indxs: {int, }) -> iter((int, int),):
         yield i_start, i_end
 
 
-_NC = 'foregroundolive'  # не подсветит этим тегом, если подсвечено любым другим
+Olive = 'foregroundolive'  # не подсветит этим тегом, если подсвечено любым другим
 _BG = 'background'  # не подсветит другим тегом, если подсвечено этим
 
 
@@ -141,8 +141,8 @@ def find_tag_indxs(line_num: int, line: str, tag_names: {str: {(str, int), }, })
             if not teg.startswith(_BG):
                 line_indxs[teg] -= bg_indxs
 
-        if _NC in line_indxs:
-            line_indxs[_NC] -= set(itertools.chain(*map(line_indxs.__getitem__, (line_indxs.keys() - {_NC}))))
+        if Olive in line_indxs:
+            line_indxs[Olive] -= set(itertools.chain(*map(line_indxs.__getitem__, (line_indxs.keys() - {Olive}))))
 
         line_indxs = {k: [set_tk_indxs(line_num, i_start, i_end) for (i_start, i_end) in join_indxs(indxs)]
                       for (k, indxs) in line_indxs.items() if indxs}
@@ -152,7 +152,7 @@ def find_tag_indxs(line_num: int, line: str, tag_names: {str: {(str, int), }, })
 
 def genetate_line_tags_names_indxs(line: str, line_indxs: dict, teg_names: {str: {(str,int)}}) -> None:
     '''индексы tags для подсветки, для линии - слова из словаря'''
-    olive_callback = line_indxs.setdefault('foregroundolive', []).extend
+    olive_callback = line_indxs.setdefault(Olive, []).extend
 
     for tag in teg_names:
         teg_callback = line_indxs.setdefault(tag, []).extend
