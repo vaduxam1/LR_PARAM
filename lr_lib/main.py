@@ -21,12 +21,12 @@ import lr_lib.etc.pool.other as lr_other_pool
 
 
 @contextlib.contextmanager
-def _start(console_args=sys.argv[1:]):
+def _start(console_args=sys.argv):
     '''запуск core/gui'''
     lr_core.init()  # проинициализировать
 
     # работа
-    if console_args:  # консольное использование
+    if console_args[1:]:  # консольное использование
         lr_core.console_start(echo=True)
     else:  # gui использование
         with lr_keyb.keyboard_listener():  # hotkey(param from clipboard)

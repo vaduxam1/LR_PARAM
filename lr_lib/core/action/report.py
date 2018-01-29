@@ -30,7 +30,6 @@ class WebReport:
         self._wrsp = {}  # {'P_6046_1__z_k62_0': <lr_lib.web_.WebRegSaveParam object at 0x09252770>, ...}
         self.all_in_one = {}
 
-    # @lr_log.exec_time
     def create(self):
         self.wrsp_and_param_names = {}
         self.param_statistic = {}

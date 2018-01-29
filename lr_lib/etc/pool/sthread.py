@@ -6,7 +6,7 @@ import contextlib
 import queue
 import threading
 
-import lr_lib.core.etc.other as lr_other
+import lr_lib.core.etc.excepthook as lr_excepthook
 import lr_lib.core.var.vars as lr_vars
 
 
@@ -58,7 +58,7 @@ class SThread(threading.Thread, SThreadIOQueue):
                     try:  # выполнить задачу
                         out = self.task['target'](*self.task['args'], **self.task['kwargs'])
                     except Exception:  # выход
-                        return '' if (self.task is None) else lr_other.excepthook(*sys.exc_info())
+                        return '' if (self.task is None) else lr_excepthook.excepthook(*sys.exc_info())
                     finally:  # вернуть результат
                         self.queue_out.put_nowait(out)
                         self.queue_in.task_done()

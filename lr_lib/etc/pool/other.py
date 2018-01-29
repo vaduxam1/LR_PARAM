@@ -5,7 +5,7 @@ import sys
 import asyncio
 import queue
 
-import lr_lib.core.etc.other as lr_other
+import lr_lib.core.etc.excepthook as lr_excepthook
 import lr_lib.core.var.vars as lr_vars
 
 
@@ -23,7 +23,7 @@ class MainThreadUpdater:
     def __exit__(self, exc_type, exc_val, exc_tb):
         self.working = False
         if exc_type:
-            lr_other.excepthook(exc_type, exc_val, exc_tb)
+            lr_excepthook.excepthook(exc_type, exc_val, exc_tb)
         return exc_type, exc_val, exc_tb
 
     def submit(self, callback: callable) -> None:
@@ -37,7 +37,7 @@ class MainThreadUpdater:
                 callback = self.queue_in.get()
                 callback()
             except Exception:
-                lr_other.excepthook(*sys.exc_info())
+                lr_excepthook.excepthook(*sys.exc_info())
                 continue
 
         if lr_vars.Window:  # отображение всякого инфо

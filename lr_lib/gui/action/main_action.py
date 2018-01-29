@@ -638,7 +638,6 @@ class ActionWindow(tk.Toplevel):
         self.widj_reset()
 
     @lr_vars.T_POOL_decorator
-    # @lr_other.exec_time
     def open_action(self, file=None) -> None:
         '''сформировать action.c'''
         self.action_file = file or get_action_file()

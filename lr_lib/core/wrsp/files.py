@@ -9,6 +9,7 @@ import contextlib
 import configparser
 
 import lr_lib.core.etc.other as lr_other
+import lr_lib.core.etc.excepthook as lr_excepthook
 import lr_lib.core.var.vars as lr_vars
 
 
@@ -115,7 +116,7 @@ def create_files_from_inf(args: [(str, str, bool, bool), str]) -> iter((dict, ))
                             yield file
 
         except Exception as ex:
-            lr_other.excepthook(ex)
+            lr_excepthook.excepthook(ex)
 
             with open(os.path.join(folder, file), encoding='utf-8', errors='ignore') as inf_file:
                 num, *lines = inf_file.read().split('\n')
@@ -133,7 +134,6 @@ def create_files_from_inf(args: [(str, str, bool, bool), str]) -> iter((dict, ))
                             yield file
 
 
-# @lr_other.exec_time
 def init() -> None:
     '''создать все файлы ответов, для поиска в них param'''
     lr_vars.AllFiles.clear()

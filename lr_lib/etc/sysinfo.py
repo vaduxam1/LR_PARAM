@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# инфо о системк
+# инфо о системе
 
 import sys
 import contextlib

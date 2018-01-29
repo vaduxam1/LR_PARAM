@@ -72,7 +72,6 @@ class ActionWebsAndLines:
         else:
             self.webs_and_lines.append(element)
 
-    # @lr_log.exec_time
     def set_text_list(self, text: str, websReport=True) -> None:
         '''создать все web_action объекты'''
         with self.action.block():
@@ -230,7 +229,6 @@ class ActionWebsAndLines:
 
         return _param
 
-    # @lr_log.exec_time
     def to_str(self, websReport=False) -> str:
         '''весь action текст как строка'''
         if websReport:

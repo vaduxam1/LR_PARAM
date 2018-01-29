@@ -14,7 +14,7 @@ import tkinter as tk
 import lr_lib.core.var.vars as lr_vars
 import lr_lib.core.var.vars_func as lr_vars_func
 import lr_lib.core.wrsp.param as lr_param
-import lr_lib.core.etc.other as lr_other
+import lr_lib.core.etc.excepthook as lr_excepthook
 import lr_lib.gui.widj.dialog as lr_dialog
 
 
@@ -155,7 +155,7 @@ def thread_wrsp_dict_creator(wrsp_dict_queue, params, unsuccess_params, action) 
             wrsp_dict_queue.put_nowait(lr_vars.VarWrspDict.get())
         except Exception:
             unsuccess_params.append(param)
-            lr_other.excepthook(*sys.exc_info())
+            lr_excepthook.excepthook(*sys.exc_info())
     wrsp_dict_queue.put_nowait(None)  # stop
 
 
