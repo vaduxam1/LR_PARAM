@@ -586,8 +586,12 @@ class Window(ttk.Frame):
 
     def get_main_action(self) -> lr_action.ActionWindow:
         '''если открыто несколько action онон, какое вернуть'''
-        action = self.action_windows[next(iter(self.action_windows))]
-        return action
+        try:
+            action = self.action_windows[next(iter(self.action_windows))]
+        except StopIteration:
+            pass  # нет action онон
+        else:
+            return action
 
     def auto_update_action_pool_lab(self) -> None:
         '''обновление action.label с процентами и пулом'''
