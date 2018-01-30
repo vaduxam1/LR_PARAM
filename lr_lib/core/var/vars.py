@@ -57,12 +57,42 @@ Params_names = {
 }  # "начало" имен для поиска param(1)
 
 LB_PARAM_FIND_LIST = [
-    'sessionid=', 'docSessionId=', 'Value=', 'UID=', 'row.id=', 'row.id="', 'value="', ':[\\"', 'appid=\\"',
-    'contentId\\":\\"', 'reference\\":\\"', 'items%22%3A%5B%22', 'reference%22%3A%22', 'dtid=', 'items\\":[\\"',
-    'ViewState" value="', 'navigator.id="', '_sn=', 'jdemafjascacheUID=', 'jdemafjasUID=', '_adf.ctrl-state=',
-    '_adf.winId=', '_adf.winId=', '_afrLoop=', '_adf.ctrlstate=', '_adfp_rendition_cahce_key=',
-    '_adfp_request_hash=', '_adfp_full_page_mode_request=', '_afrLoop=', '_afrWindowMode=', '_afrWindowId=',
-    '_afPfm=', '_rtrnId=', 'dfp_request_id=', 'ViewState=', '/consumer/', 'PSI=',
+    'sessionid=',
+    'docSessionId=',
+    'Value=', 'UID=',
+    'row.id=',
+    'row.id="',
+    'value="',
+    ':[\\"',
+    'appid=\\"',
+    'contentId\\":\\"',
+    'reference\\":\\"',
+    'items%22%3A%5B%22',
+    'reference%22%3A%22',
+    'dtid=',
+    'items\\":[\\"',
+    'ViewState" value="',
+    'navigator.id="',
+    '_sn=',
+    'jdemafjascacheUID=',
+    'jdemafjasUID=',
+    '_adf.ctrl-state=',
+    '_adf.winId=',
+    '_adf.winId=',
+    '_afrLoop=',
+    '_adf.ctrlstate=',
+    '_adfp_rendition_cahce_key=',
+    '_adfp_request_hash=',
+    '_adfp_full_page_mode_request=',
+    '_afrLoop=',
+    '_afrWindowMode=',
+    '_afrWindowId=',
+    '_afPfm=',
+    '_rtrnId=',
+    'dfp_request_id=',
+    'ViewState=',
+    '/consumer/',
+    'PSI=',
 ]  # использовать для поиска param(1) по LB=
 
 DENY_PARAMS = [
@@ -285,7 +315,7 @@ minus_teg = {OliveChildTeg}  # other_tegs = (tegs_indxs.keys() - minus_teg)
 #####################################
 # Backup
 
-BackupActionFile = 100  # 'макс кол-во backup файлов(по кругу), в директорию lr_action_backup
+BackupActionFile = 100  # макс(по кругу) кол-во backup файлов
 BackupFolder = 'lr_backup'
 BackupName = '{i}_backup_{ind}_action.c'
 
