@@ -64,22 +64,26 @@ def file_dict_creator(name: str, full_name: str, inf_num: int, enc: str, inf_key
 
 
 def create_files_from_infs(folder: str, enc: str, allow_deny: bool, statistic: bool) -> iter([dict, ]):
-    '''создать файлы, из LoadRunner ini-файлов'''
+    '''создать файлы ответов, из всех t*.ini файлов'''
     executer = (lr_vars.M_POOL.imap_unordered if lr_vars.SetFilesPOOLEnable else map)
+
     folder_files = next(os.walk(folder))
     folder_files = folder_files[2]
     len_folder_files = len(folder_files)
+
     arg = (folder, enc, allow_deny, statistic, )
     chunks = tuple(lr_other.chunks(folder_files, lr_vars.FilesCreatePortionSize))
     args = ((arg, files) for files in chunks)
 
     proc1 = 100 / len(chunks)
     f = 0
+
     for (e, files) in enumerate(executer(get_files_portions, args)):
         f += len(files)
         for file in files:
             if file:
                 yield file
+
         lr_vars.Tk.title('{p}% : {f} / {fa} поиск файлов ответов | {v}'.format(
             p=round(proc1 * e), v=lr_vars.VERSION, f=f, fa=len_folder_files))
     lr_vars.Tk.title('ready | {v}'.format(v=lr_vars.VERSION))
@@ -88,25 +92,23 @@ def create_files_from_infs(folder: str, enc: str, allow_deny: bool, statistic: b
 def get_files_portions(args: [(str, str, bool, bool), (str, )]) -> [dict, ]:
     '''создать файлы, для порции inf-файлов'''
     (arg, files) = args
-    files = list(itertools.chain(*map(create_files_from_inf, ((arg, file) for file in files))))
+    files = map(create_files_from_inf, ((arg, file) for file in files))
+    files = tuple(itertools.chain(*files))
     return files
 
 
 def create_files_from_inf(args: [(str, str, bool, bool), str]) -> iter((dict, )):
-    '''создать файлы, из inf-файла'''
+    '''создать файлы ответов, из одного inf-файла'''
     ((folder, enc, allow_deny, statistic), file) = args
     (name, ext) = os.path.splitext(file)
-    lr_vars.VarAllSnapshotConfig.clear()
 
     n = name[1:]
     if (ext == '.inf') and (name[0] == 't') and all(map(str.isnumeric, n)):
-        try:
+        try:  # ConfigParser(вроде когдато были какието проблемы, с кодировкой?)
             config = configparser.ConfigParser()
             config.read(os.path.join(folder, file), encoding='utf-8')
 
             num = int(n)
-            lr_vars.VarAllSnapshotConfig[num] = config
-
             for sect in config.sections():
                 for opt in config.options(sect):
                     if any(map(opt.startswith, lr_vars.FileOptionsStartswith)):
@@ -114,17 +116,19 @@ def create_files_from_inf(args: [(str, str, bool, bool), str]) -> iter((dict, ))
                         full_name = os.path.join(folder, file_name)
                         if os.path.isfile(full_name):
                             file = file_dict_creator(file_name, full_name, num, enc, opt, allow_deny, statistic)
-                            yield file
+                            if file:
+                                file.update(config._sections)
+                                yield file
 
         except Exception as ex:
-            lr_excepthook.excepthook(ex)
-
+            lr_excepthook.full_tb_write(ex)
+            # как текст файл
             with open(os.path.join(folder, file), encoding='utf-8', errors='ignore') as inf_file:
                 num, *lines = inf_file.read().split('\n')
                 try:  # inf номер '[t75]' -> 75
                     num = int(num[2:-1])
-                except: num = -1
-                lr_vars.VarAllSnapshotConfig[num] = {}
+                except:
+                    num = -1
 
                 for line in lines:  # создать файлы из ключей файла t75.inf
                     if any(map(line.startswith, lr_vars.FileOptionsStartswith)):
@@ -140,12 +144,15 @@ def init() -> None:
     lr_vars.AllFiles.clear()
     folder = lr_vars.VarFilesFolder.get()
     lr_vars.Logger.info('обработка файлов из [ {d} ] ...'.format(d=folder))
+
     enc = lr_vars.VarEncode.get()
     allow_deny = lr_vars.VarAllowDenyFiles.get()
     statistic = lr_vars.VarAllFilesStatistic.get()
 
     if lr_vars.VarIsSnapshotFiles.get():    # файлы ответов  из LoadRunner inf
-        lr_vars.AllFiles = lr_other.iter_to_list(create_files_from_infs(folder, enc, allow_deny, statistic))
+        files = create_files_from_infs(folder, enc, allow_deny, statistic)
+        lr_vars.AllFiles = lr_other.iter_to_list(files)
+
     else:  # все файлы каталога
         for e, name in enumerate(os.listdir(folder)):
             full_name = os.path.join(folder, name)

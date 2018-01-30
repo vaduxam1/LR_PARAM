@@ -26,9 +26,20 @@ def excepthook(*args) -> None:
     lr_vars.Logger.critical(get_tb(exc_type, exc_val, exc_tb, ern))
 
 
-def full_tb_write(exc_type, exc_val, exc_tb):
+def full_tb_write(*args):
     '''логировать полный traceback'''
-    traceback.print_tb(exc_tb)  # в консоль
+    if not args:
+        exc_type, exc_val, exc_tb = sys.exc_info()
+    elif len(args) == 3:
+        exc_type, exc_val, exc_tb = args
+    elif len(args) == 1:
+        exc_ = args[0]
+        exc_type, exc_val, exc_tb = exc_.__class__, exc_, exc_.__traceback__
+    else:
+        raise UserWarning('{e}\n{a}'.format(e=sys.exc_info(), a=list(zip(args, (map(type, args))))))
+
+    # в консоль
+    traceback.print_tb(exc_tb)
     # в лог
     with open(lr_vars.logFullName, 'a') as log:
         log.write('\n{0}\n\t>>> traceback.print_tb\n{0}\n'.format(lr_vars.PRINT_SEPARATOR))

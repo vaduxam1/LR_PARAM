@@ -17,7 +17,7 @@ from lr_lib.etc.help import (COLORS, HEX, )
 #####################################
 # главные переменные
 
-VERSION = 'v10.1'
+VERSION = 'v10.1.1'
 lib_folder = 'lr_lib'
 Tk = tk.Tk()  # tkinter
 
@@ -33,7 +33,6 @@ VarRB = Var(value='')  # текст RB
 VarFileText = Var(value='')  # тект файла
 VarWrspDict = Var(value={})  # текущий web_reg_save_param словарь
 VarWrspDictList = []  # все возможные web_reg_save_param словари, для данного param
-VarAllSnapshotConfig = {}  # configparser.ConfigParser() для всех Snapshot
 
 #####################################
 # статистика в каментах
