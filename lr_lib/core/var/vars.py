@@ -278,6 +278,10 @@ ForceOlive = (
     'value={\\"command',
 )  # всегда подсвечивать olive цветом
 
+ColorMainTegStartswith = 'background'  # не подсветит другим тегом, если подсвечено этим
+OliveChildTeg = 'foregroundolive'  # не подсветит этим тегом, если подсвечено любым другим
+minus_teg = {OliveChildTeg}  # other_tegs = (tegs_indxs.keys() - minus_teg)
+
 #####################################
 # Backup
 
@@ -286,6 +290,11 @@ BackupFolder = 'lr_backup'
 BackupName = '{i}_backup_{ind}_action.c'
 
 #####################################
+# область выделения двойным кликом мыши
+tcl_wordchars = '[a-zA-Z0-9_.!-]'
+tcl_nonwordchars = '[^a-zA-Z0-9_.!-]'
+
+# #####################################
 # логирование
 
 # вывод сообщений во все Handler: Logger.info('msg', notepad=True, parent=action)

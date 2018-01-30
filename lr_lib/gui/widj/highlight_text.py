@@ -22,8 +22,8 @@ def set_word_boundaries(root) -> None:
 
     # this defines what tcl considers to be a "word". For more
     # information see http://www.tcl.tk/man/tcl8.5/TclCmd/library.htm#M19
-    root.tk.call('set', 'tcl_wordchars', '[a-zA-Z0-9_.!-]')
-    root.tk.call('set', 'tcl_nonwordchars', '[^a-zA-Z0-9_.!-]')
+    root.tk.call('set', 'tcl_wordchars', lr_vars.tcl_wordchars)
+    root.tk.call('set', 'tcl_nonwordchars', lr_vars.tcl_nonwordchars)
 
 
 class HighlightLines:
@@ -118,10 +118,6 @@ def join_indxs(indxs: {int, }) -> iter((int, int),):
         yield i_start, i_end
 
 
-Olive = 'foregroundolive'  # не подсветит этим тегом, если подсвечено любым другим
-_BG = 'background'  # не подсветит другим тегом, если подсвечено этим
-
-
 def find_tag_indxs(line_num: int, line: str, tag_names: {str: {(str, int), }, }) -> (int, {str: [(str, str), ], }):
     '''вычислить координаты подсветки линии'''
     line_indxs = {}
@@ -134,15 +130,16 @@ def find_tag_indxs(line_num: int, line: str, tag_names: {str: {(str, int), }, })
         for teg in line_indxs:
             indxs = set(line_indxs[teg])
             line_indxs[teg] = indxs
-            if teg.startswith(_BG):
+            if teg.startswith(lr_vars.ColorMainTegStartswith):
                 bg_indxs.update(indxs)
 
         for teg in line_indxs:
-            if not teg.startswith(_BG):
+            if not teg.startswith(lr_vars.ColorMainTegStartswith):
                 line_indxs[teg] -= bg_indxs
 
-        if Olive in line_indxs:
-            line_indxs[Olive] -= set(itertools.chain(*map(line_indxs.__getitem__, (line_indxs.keys() - {Olive}))))
+        if lr_vars.OliveChildTeg in line_indxs:
+            other_tegs = (line_indxs.keys() - lr_vars.minus_teg)
+            line_indxs[lr_vars.OliveChildTeg] -= set(itertools.chain(*map(line_indxs.__getitem__, other_tegs)))
 
         line_indxs = {k: [set_tk_indxs(line_num, i_start, i_end) for (i_start, i_end) in join_indxs(indxs)]
                       for (k, indxs) in line_indxs.items() if indxs}
@@ -152,7 +149,7 @@ def find_tag_indxs(line_num: int, line: str, tag_names: {str: {(str, int), }, })
 
 def genetate_line_tags_names_indxs(line: str, line_indxs: dict, teg_names: {str: {(str,int)}}) -> None:
     '''индексы tags для подсветки, для линии - слова из словаря'''
-    olive_callback = line_indxs.setdefault(Olive, []).extend
+    olive_callback = line_indxs.setdefault(lr_vars.OliveChildTeg, []).extend
 
     for tag in teg_names:
         teg_callback = line_indxs.setdefault(tag, []).extend
@@ -262,10 +259,10 @@ class HighlightText(tk.Text):
 
     def _text_checkbox(self) -> (str, str, int, int):
         '''text checkbox's get'''
-        w = 'bold' if self.weight_var.get() else 'normal'
-        s = 'italic' if self.slant_var.get() else 'roman'
-        u = 1 if self.underline_var.get() else 0
-        o = 1 if self.overstrike_var.get() else 0
+        w = ('bold' if self.weight_var.get() else 'normal')
+        s = ('italic' if self.slant_var.get() else 'roman')
+        u = (1 if self.underline_var.get() else 0)
+        o = (1 if self.overstrike_var.get() else 0)
         return w, s, u, o,
 
     def set_tegs(self, *a, remove=False, parent=None, ground=('background', 'foreground',)) -> None:
