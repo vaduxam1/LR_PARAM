@@ -13,24 +13,29 @@ def rClicker(event) -> str:
     ''' right click context menu for all Tk Entry and Text widgets'''
     with contextlib.suppress(tk.TclError):
         event.widget.focus()
-        try: selection = event.widget.selection_get()
-        except: selection = None
+        try:
+            selection = event.widget.selection_get()
+        except:
+            selection = None
         rmenu = tk.Menu(None, tearoff=False)
 
         nclst = [
-            ('Копировать', lambda e=event: e.widget.event_generate('<Control-c>')),
-            ('Вырезать', lambda e=event: e.widget.event_generate('<Control-x>')),
-            ('Вставить', lambda e=event: e.widget.event_generate('<Control-v>')),
-            ('* encoding: "РџРµСЂРІ" -> "Перв"', lambda e=event: lr_action_lib.encoder(e)),
-            ('* commit/backup/обновить action.c', lambda e=event: e.widget.action.save_action_file(file_name=False)),
-            ('P: wrsp', lambda e=event: lr_action_lib.all_wrsp_dict_web_reg_save_param(e)),
-            ('переименование транзакции', lambda e=event: lr_action_lib.rename_transaction(e)),
+            ('web_reg_save_param - все варианты', lambda e=event: lr_action_lib.all_wrsp_dict_web_reg_save_param(e)),
+            ('файлы snapshot(из цифр веделения)', lambda e=event: lr_action_lib.snapshot_files(e)),
+            ('Encoding: "РџРµСЂРІ" -> "Перв"', lambda e=event: lr_action_lib.encoder(e)),
+            ('Поиск выделеного текста', lambda e=event: lr_action_lib.rClick_Search(e)),
+            ('    Копировать', lambda e=event: e.widget.event_generate('<Control-c>')),
+            ('    Вырезать', lambda e=event: e.widget.event_generate('<Control-x>')),
+            ('    Вставить', lambda e=event: e.widget.event_generate('<Control-v>')),
+            ('Сommit/backup/обновить action.c', lambda e=event: e.widget.action.save_action_file(file_name=False)),
+            ('transaction rename(выделять всю линию)', lambda e=event: lr_action_lib.rename_transaction(e)),
         ]
+        for (txt, cmd) in nclst:
+            rmenu.add_command(label=txt, command=cmd)
 
         if selection:
-            nclst.insert(3, ('* поиск выделеного текста', lambda e=event: lr_action_lib.rClick_Search(e)))
             submenu_param = tk.Menu(rmenu, tearoff=False)
-            rmenu.add_cascade(label='P: web_reg_save_param', menu=submenu_param, underline=0)
+            rmenu.add_cascade(label='web_reg_save_param', menu=submenu_param, underline=0)
 
             submenu_param.add_cascade(
                 label='* одиночный -> найти и заменить', underline=0,
@@ -87,11 +92,6 @@ def rClicker(event) -> str:
             if param:
                 p_wrsp = lr_param.wrsp_start_end.format(param=param)
                 submenu_goto.add_cascade(label=p_wrsp, underline=0, command=lambda e=event, n=p_wrsp: action_goto(e, n))
-
-        for (txt, cmd) in nclst:
-            rmenu.add_command(label=txt, command=cmd)
-
-        rmenu.add_cascade(label='snapshot файлы', underline=0, command=lambda e=event: lr_action_lib.snapshot_files(e))
 
         if selection:
             submenu_maxmin = tk.Menu(rmenu, tearoff=False)

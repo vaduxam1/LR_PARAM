@@ -171,10 +171,10 @@ class ActionWindow(tk.Toplevel):
 
         self.search_entry.bind("<KeyRelease-Return>", self.search_in_action)
 
-        self.search_button = tk.Button(self.toolbar, text='> search >', command=self.search_in_action, font=lr_vars.DefaultFont + ' bold')
+        self.search_button = tk.Button(self.toolbar, text='> Поиск >', command=self.search_in_action, font=lr_vars.DefaultFont)
         self._uptext = '<-up %s'
-        self.up_search_button = tk.Button(self.toolbar, text=self._uptext, command=self.search_up, font=lr_vars.DefaultFont + ' bold')
-        self.down_search_button = tk.Button(self.toolbar, text='down->', command=self.search_down, font=lr_vars.DefaultFont + ' bold')
+        self.up_search_button = tk.Button(self.toolbar, text=self._uptext, command=self.search_up, font=lr_vars.DefaultFont)
+        self.down_search_button = tk.Button(self.toolbar, text='down->', command=self.search_down, font=lr_vars.DefaultFont)
 
         self.unblock = tk.Button(self.file_bar, text='unblock', font=lr_vars.DefaultFont + ' bold', command=lambda *a: self._block(False))
         self.backup_open_button = tk.Button(self.file_bar, text='backup_open', background='orange', font=lr_vars.DefaultFont + ' bold',
@@ -229,7 +229,7 @@ class ActionWindow(tk.Toplevel):
         self.backup_entry = tk.Entry(self.file_bar, font=lr_vars.DefaultFont, width=5, justify='center')
         self.backup_entry.insert('1', lr_vars.BackupActionFile)
 
-        self.SearchReplace_button = tk.Button(self.toolbar, text='> replace >', font=lr_vars.DefaultFont,
+        self.SearchReplace_button = tk.Button(self.toolbar, text='> замена >', font=lr_vars.DefaultFont,
                                               command=self._replace_button_set)
         self.buttonColorReset = tk.Button(self.cbx_bar, text='reset', font=lr_vars.DefaultFont, command=self.resColor)
         self.highlight_Thread = tk.Checkbutton(self.cbx_bar, text='', variable=lr_vars.HighlightThread, font=lr_vars.DefaultFont)
@@ -645,11 +645,15 @@ class ActionWindow(tk.Toplevel):
     @lr_vars.T_POOL_decorator
     def open_action(self, file=None) -> None:
         '''сформировать action.c'''
+        with self.block(), lr_vars.Window.block():
+            self._open_action(file=file)
+
+    def _open_action(self, file=None) -> None:
+        '''сформировать action.c'''
         self.action_file = file or get_action_file()
 
         if os.path.isfile(self.action_file):
-            with self.block(), lr_vars.Window.block(), \
-                 open(self.action_file, errors='replace', encoding=lr_vars.VarEncode.get()) as act:
+            with open(self.action_file, errors='replace', encoding=lr_vars.VarEncode.get()) as act:
                 text = act.read()
                 self.tk_text.new_text_set(text)
                 self.web_action.set_text_list(text, websReport=True)
@@ -669,7 +673,6 @@ class ActionWindow(tk.Toplevel):
                 w=self.web_action.websReport.google_webs, s=lr_vars.DENY_WEB_))
 
         self.background_color_set(color='')  # оригинальный цвет
-        # self.get_result_files()
 
     def get_transaction(self, text: str) -> iter((str, )):
         '''имена транзакций'''

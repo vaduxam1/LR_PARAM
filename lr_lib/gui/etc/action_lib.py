@@ -352,6 +352,7 @@ def rClick_Search(event) -> None:
 
 @lr_vars.T_POOL_decorator
 def rename_transaction(event, parent=None, s='lr_start_transaction("', e='lr_end_transaction("') -> None:
+    '''переименование транзакции - необходимо выделять всю линию с транзакцией'''
     selection = event.widget.selection_get().strip()
     try:
         old_name = selection.split(s, 1)[1].split('"', 1)[0]
@@ -384,7 +385,8 @@ def rename_transaction(event, parent=None, s='lr_start_transaction("', e='lr_end
 @lr_vars.T_POOL_decorator
 def encoder(event, action=None) -> None:
     '''декодирование выделения'''
-    try: widget = event.widget
+    try:
+        widget = event.widget
     except AttributeError:
         widget = event
     if not action:
