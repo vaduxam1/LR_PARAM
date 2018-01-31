@@ -64,25 +64,29 @@ def sort_by_file_keys(file: dict):
             return value
 
 
-def file_string(file=None, deny=(), width=20) -> str:
+def file_string(file=None, deny=(), min_width=25, max_width=50) -> str:
     '''инфо о файле, во всплывающей подсказке'''
     if file is None:
         file = lr_vars.VarFile.get()
     if not file:
         return 'None'
 
-    items = tuple(sorted(file.items()))
-    m = max(len(k) for v in file.values() for k in v.keys())
-    if m < width:
-        width = m
-    _s = '{:<%s}\t{}'
-    st = _s % width
-    _st = _s % 2
-    _b = lambda b, mx=lr_vars.MaxFileStringWidth: ('{} ...'.format(b[:mx]) if (len(b) > mx) else b)
-    lv = lambda v: '\n'.join((st if (len(a) < width) else _st).format(a, _b(str(b)))
-                             for (a, b) in sorted(v.items()) if a not in deny)
-    s = ('\t[ {k} ] :\n{v}'.format(k=k, v=lv(v)) for (k, v) in items)
-    return '\n'.join(s)
+    len_all = [len(k) for v in file.values() for k in v.keys()]
+    width = (sum(len_all) // len(len_all))
+    if width > max_width:
+        width = max_width
+    elif width < min_width:
+        width = min_width
+
+    st = '{:<%s}\t{}' % width
+    _st = '{} {}'
+    sep = lambda a: (st if (len(a) < width) else _st)
+
+    vmax = lambda b, mx=lr_vars.MaxFileStringWidth: ('{} ...'.format(b[:mx]) if (len(b) > mx) else b)
+    val = lambda dt: '\n'.join(sep(a).format('{}:'.format(a), vmax(str(dt[a]))) for a in sorted(dt) if a not in deny)
+
+    s = '\n'.join('\t[ {k} ] :\n{v}'.format(k=k, v=val(file[k])) for k in sorted(file))
+    return s
 
 
 def not_printable(s: str, printable=set(string.printable).__contains__) -> int:
