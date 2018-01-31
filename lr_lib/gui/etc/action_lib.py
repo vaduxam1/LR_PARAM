@@ -466,24 +466,26 @@ def rClick_add_highlight(event, option: str, color: str, val: str, find=False) -
         event.widget.action.tk_text_see()
 
 
-def snapshot_files(event, folder='') -> None:
+def snapshot_files(event, folder='', i_num=0) -> None:
     '''показать окно файлов snapshot'''
     selection = event.widget.selection_get()
     if not folder:
         folder = lr_vars.VarFilesFolder.get()
+    if not i_num:
+        i_num = ''.join(filter(str.isnumeric, selection))
 
     top = tk.Toplevel()
     top.transient(event.widget)
-    tt = 'окно файлов snapshot'
-    top.title(tt)
+    top.title('окно файлов snapshot=t{i}.inf'.format(i=i_num))
+    lr_dialog.center_widget(top)
 
-    fvar = tk.StringVar(value='')
-    fEntry = ttk.Combobox(top, justify='center', textvariable=fvar, foreground='grey',
-                               background=lr_vars.Background, font=lr_vars.DefaultFont + ' italic')
+    def get_files_names(folder: str, i_num: int) -> iter((str,)):
+        '''имена файлов'''
+        fi = os.path.join(folder, 't{}.inf'.format(i_num))
+        if not os.path.isfile(fi):
+            return []
 
-    def get_files_names() -> str:
-        i = ''.join(filter(str.isnumeric, selection))
-        with open(os.path.join(folder, 't{}.inf'.format(i))) as inf:
+        with open(fi) as inf:
             for line in inf:
                 ls = line.strip()
                 if 'File' in ls:
@@ -491,15 +493,28 @@ def snapshot_files(event, folder='') -> None:
                     if len(sls) == 2:
                         yield sls[1]
 
-    fEntry['values'] = list(get_files_names())
+    def widj(folder: str, i_num: int, tt='', mx=40) -> None:
+        '''виджеты'''
+        lab = tk.Label(top, text=tt)
+        fEntry = ttk.Combobox(top, justify='center', foreground='grey', background=lr_vars.Background,
+                              font=lr_vars.DefaultFont + ' italic')
+        files = list(get_files_names(folder, i_num))
+        if not files:
+            return
 
-    m = max(map(len, fEntry['values']))
-    if m < 30:
-        m = 30
-    fEntry.config(width=m)
+        fEntry['values'] = files
 
-    fEntry.bind("<<ComboboxSelected>>", lambda *a: lr_other._openTextInEditor(os.path.join(folder, fEntry.get())))
-    lr_tooltip.createToolTip(fEntry, tt)
+        m = max(map(len, fEntry['values']))
+        if m < mx:
+            m = mx
+        fEntry.config(width=m)
 
-    fEntry.pack()
-    lr_dialog.center_widget(top)
+        fEntry.bind("<<ComboboxSelected>>", lambda *a, e=fEntry: lr_other._openTextInEditor(os.path.join(folder, e.get())))
+        lr_tooltip.createToolTip(fEntry, '{t}\n{f}'.format(t=tt, f=folder))
+
+        lab.pack()
+        fEntry.pack()
+
+    widj(folder, i_num, tt='файлы при записи')
+    folder = event.widget.action.get_result_folder()
+    widj(folder, i_num, tt='файлы при воспроизведении')

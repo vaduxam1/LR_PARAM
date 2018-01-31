@@ -1001,7 +1001,8 @@ class ActionWindow(tk.Toplevel):
         config.read(os.path.join(os.getcwd(), self.usr_file))
         return config
 
-    def get_result_files(self, file='Results.xml'):
+    def get_result_folder(self, file='Results.xml') -> str:
+        '''директория файлов ответов'''
         result_folder = self.usr_config['General']['LastResultDir']
         folder = os.path.join(os.getcwd(), result_folder)
         file = os.path.join(folder, file)
@@ -1012,21 +1013,24 @@ class ActionWindow(tk.Toplevel):
             text = text.rsplit('t', 1)
             rdir = text[0].rsplit('\\', 2)
             rdir = rdir[1]
-            snap = text[1]
-            last_snapshot = int(snap) - 1
+            return os.path.join(folder, rdir)
 
-        if self.action_infs:
-            max_snap = max(self.action_infs)
-        else: max_snap = 0
-
-        if last_snapshot < max_snap:
-            self.inf_combo.set(last_snapshot)
-            self.goto_inf()
-            lr_vars.Logger.info('При воспроизведении({r})\nне все Snapshot были выполненны: last:{l} < max:{m}'.format(
-                r=os.path.join(folder, rdir), l=last_snapshot, m=max_snap))
-
+            # snap = text[1]
+            # last_snapshot = int(snap) - 1
+        #
+        # if self.action_infs:
+        #     max_snap = max(self.action_infs)
+        # else:
+        #     max_snap = 0
+        #
+        # if last_snapshot < max_snap:
+        #     self.inf_combo.set(last_snapshot)
+        #     self.goto_inf()
+        #     lr_vars.Logger.info('При воспроизведении({r})\nне все Snapshot были выполненны: last:{l} < max:{m}'.format(
+        #         r=os.path.join(folder, rdir), l=last_snapshot, m=max_snap))
+        #
         # a = lr_param.get_search_data('None')
-        # a = next(lr_param.create_files_with_search_data(lr_vars.AllFiles, a, action_infs=[last_snapshot]))
+        # a = next(lr_param.create_files_with_search_data(lr_vars.AllFiles, a, action_infs=[last_snapshot-3]))
         # with open(os.path.join(folder, rdir, a['File']['Name'])) as f:
         #     print(f.read())
         # y = lr_dialog.YesNoCancel(

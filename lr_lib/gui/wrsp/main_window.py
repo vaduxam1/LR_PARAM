@@ -40,7 +40,7 @@ class Window(ttk.Frame):
         super().__init__(lr_vars.Tk, padding="0 0 0 0")
         lr_vars.Tk.protocol("WM_DELETE_WINDOW", self.on_closing)
         lr_vars.Tk.geometry('{}x{}'.format(*lr_vars._Tk_WIND_SIZE))
-        lr_vars.Tk.option_add("*TCombobox*Listbox*Background", lr_vars.Background)
+        lr_vars.Tk.option_add("*Listbox*Background", lr_vars.Background)
         # "масштабирование" виджетов окна
         lr_vars.Tk.grid_rowconfigure(0, weight=1)
         lr_vars.Tk.grid_columnconfigure(0, weight=1)
