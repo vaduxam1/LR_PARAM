@@ -21,7 +21,7 @@ def init() -> None:
     lr_vars.VarParam.callback_set = lr_param.get_files_with_param
     lr_vars.VarFileName.callback_set = _set_file_name
     lr_vars.VarFile.callback_set = _set_file
-    lr_vars.VarPartNum.callback_set = _set_part_num
+    lr_vars.VarPartNum.callback_set = set_part_num
 
 
 def _set_file_name(name: str) -> None:
@@ -61,10 +61,6 @@ def _is_mutable_bound(st: str, b1: '{', b2: '}', a2=0) -> int:
 def is_mutable_bound(left: str, right: str, b1='{', b2='}') -> [int, int]:
     '''находится ли внутри скобок'''
     return [_is_mutable_bound(left[::-1], b2, b1), _is_mutable_bound(right, b1, b2)]
-
-
-def _set_part_num(num=0) -> None:
-    return set_part_num(num=num)
 
 
 def set_part_num(num=0) -> None:

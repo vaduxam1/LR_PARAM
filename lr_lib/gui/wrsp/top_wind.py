@@ -14,7 +14,7 @@ import lr_lib.gui.widj.tooltip as lr_tooltip
 import lr_lib.gui.widj.dialog as lr_dialog
 
 
-def folder_wind(self) -> None:
+def folder_wind(self, mx=150) -> None:
     '''окно списка всех файлов'''
     top = tk.Toplevel()
     top.transient(self)
@@ -33,8 +33,9 @@ def folder_wind(self) -> None:
     comboAllFilesFolder['values'] = files
     with contextlib.suppress(Exception):
         m = max(len(f) for f in files)
-        if m > 100: m = 100
-        comboAllFilesFolder.configure(width=m)
+        if m < mx:
+            mx = m
+        comboAllFilesFolder.configure(width=mx)
     buttonAllFilesFolder.pack()
     comboAllFilesFolder.pack()
 

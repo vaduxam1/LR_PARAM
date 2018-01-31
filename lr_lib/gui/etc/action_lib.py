@@ -495,7 +495,7 @@ def snapshot_files(event, folder='', i_num=0) -> None:
 
     def widj(folder: str, i_num: int, tt='', mx=40) -> None:
         '''виджеты'''
-        lab = tk.Label(top, text=tt)
+        lab = tk.Label(top, text='{t}\n{f}'.format(t=tt, f=folder))
         fEntry = ttk.Combobox(top, justify='center', foreground='grey', background=lr_vars.Background,
                               font=lr_vars.DefaultFont + ' italic')
         files = list(get_files_names(folder, i_num))
