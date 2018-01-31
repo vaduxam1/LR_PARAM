@@ -67,7 +67,6 @@ class ActionWindow(tk.Toplevel):
         self.size_var = tk.IntVar(value=lr_vars.DefaultActionHighlightFontSize)
         self.SearchReplace_searchVar = tk.StringVar(value=__a)
         self.SearchReplace_replaceVar = tk.StringVar(value=__b)
-        self.cp1251_var = tk.BooleanVar(value=lr_vars.DefaultActionFontcp1251)
         self.final_wnd_var = tk.BooleanVar(value=lr_vars.DefaultActionFinalWind)
         self.force_ask_var = tk.BooleanVar(value=lr_vars.DefaultActionForceAsk)
         self.no_var = tk.BooleanVar(value=lr_vars.DefaultActionNoVar)

@@ -149,7 +149,6 @@ DefaultActionNoVar = True  # Автозамена - Принудительно �
 DefaultActionMaxSnapshot = True  # ограничить диапазон поиска param - максимальный номер inf
 DefaultActionAddSnapshot = True  # ограничить максимальный inf, не номером(param_inf - 1), а самим param-inf номером
 DefaultActionForceYes = True  # отвечать "Да", при вопросе о создании param, если inf-номер запроса <= inf-номер web_reg_save_param
-DefaultActionFontcp1251 = False  # принудительная перекодировка(могут быть потери unicode текста)
 DefaultActionFinalWind = True  # окно результата создания param
 
 VarPartNumEmptyLbNext = tk.BooleanVar(value=True)  # Использовать следующий номер вхождения(4) или файл(3), при пустом LB/RB(5)
@@ -319,6 +318,8 @@ ForceOlive = (
 ColorMainTegStartswith = 'background'  # не подсветит другим тегом, если подсвечено этим
 OliveChildTeg = 'foregroundolive'  # не подсветит этим тегом, если подсвечено любым другим
 minus_teg = {OliveChildTeg}  # other_tegs = (tegs_indxs.keys() - minus_teg)
+
+web_reg_highlight_len = 6  # выделить начало имени web_reg_save_param
 
 #####################################
 # Backup

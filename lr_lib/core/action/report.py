@@ -156,8 +156,9 @@ class WebReport:
             lr_action_lib.highlight_mode(t, line.strip())
 
         if isinstance(web_, lr_web_.WebRegSaveParam):
-            lr_action_lib.highlight_mode(t, '{}'.format(web_.name[:6]), option='background', color=lr_vars.wrsp_color1)
-            lr_action_lib.highlight_mode(t, web_.name[6:], option='foreground', color=lr_vars.wrsp_color2)
+            m = lr_vars.web_reg_highlight_len
+            lr_action_lib.highlight_mode(t, '{}'.format(web_.name[:m]), option='background', color=lr_vars.wrsp_color1)
+            lr_action_lib.highlight_mode(t, web_.name[m:], option='foreground', color=lr_vars.wrsp_color2)
             lr_action_lib.highlight_mode(t, web_.param, option='foreground', color=lr_vars.wrsp_color2)
             for line in web_.lines_list[1:]:
                 lr_action_lib.highlight_mode(t, line.strip())
