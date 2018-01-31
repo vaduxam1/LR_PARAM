@@ -174,15 +174,23 @@ VarRbB2 = tk.BooleanVar(value=True)  # по RB определить, если pa
 VarRbRstrip = tk.BooleanVar(value=True)  # обрезать RB
 VarREnd = tk.BooleanVar(value=True)  # обрезать RB
 
+# LB/RB обрежутся до этих строк
+_SplitList0 = list('{},=$')
+_SplitList1 = list('{}=$;,')
+_SplitList2 = ['\\n', '\\', '"']
+_SplitList_3 = _SplitList1 + _SplitList2
+SplitList = tuple(_SplitList0 + _SplitList2 + list(string.digits))
+
+StripLBEnd1 = ['{', '}', '[', ']', ]
+StripLBEnd2 = ['},', ]
+StripLBEnd3 = ['{', ',', ]
+
+StripRBEnd1 = ['{', '}', '[', ']', ]
+StripRBEnd2 = [',{', ]
+StripRBEnd3 = ['{', ',']
+
 # символы для экранирования слешем
 Screening = ['\\', '"', ]
-
-# LB/RB обрежутся до этих строк
-SplitList0 = list('{},=$')
-SplitList1 = list('{}=$;,')
-SplitList2 = ['\\n', '\\', '"']
-SplitList_3 = SplitList1 + SplitList2
-SplitList = tuple(SplitList0 + SplitList2 + list(string.digits))
 
 VarSplitListLB = tk.BooleanVar(value=True)  # обрезать LB до SplitList строк
 VarSplitListRB = tk.BooleanVar(value=True)  # обрезать RB до SplitList строк
@@ -210,7 +218,7 @@ VarShowPopupWindow = tk.BooleanVar(value=True)  # показ popup - ошибо�
 PRINT_SEPARATOR = '_' * 50  # строка разделитель сообщений
 VarToolTipTimeout = tk.StringVar(value=9000)  # время жизни всплывающкй подсказки, в мс
 
-ToolTipFont = ('Arial', '8')  # всплывающие подсказки
+ToolTipFont = ('Arial', '7', 'bold italic')  # всплывающие подсказки
 DefaultFont = 'Arial 8'  # шрифт кнопок и тд
 DefaultLBRBFont = 'Arial 8 bold'  # шрифт LB/RB(5)
 

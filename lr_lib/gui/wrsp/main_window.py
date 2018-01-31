@@ -120,7 +120,7 @@ class Window(ttk.Frame):
         self.t5l = tk.Label(self, text='(5)', font=lr_vars.DefaultFont + ' italic bold', padx=0, pady=0, foreground='brown')
         self.t5r = tk.Label(self, text='(5)', font=lr_vars.DefaultFont + ' italic bold', padx=0, pady=0, foreground='brown')
 
-        SplitList = (lr_vars.SplitList, lr_vars.SplitList0, lr_vars.SplitList1, lr_vars.SplitList2, lr_vars.SplitList_3,
+        SplitList = (lr_vars.SplitList, lr_vars._SplitList0, lr_vars._SplitList1, lr_vars._SplitList2, lr_vars._SplitList_3,
                      list(string.whitespace), 'list(string.ascii_letters)', 'list(string.digits)', 'list(string.punctuation)', )
         SplitList = tuple(str(l) for l in SplitList)
 

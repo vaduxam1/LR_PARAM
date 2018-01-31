@@ -147,31 +147,31 @@ def set_part_num(num=0) -> None:
 
     lr_vars.VarSplitListNumRB.set(VarSplitListNumRB)  # вернуть
 
-    if lr_vars.VarRbRstrip.get():
-        rb = rb.rstrip()
     if lr_vars.VarLbLstrip.get():
         lb = lb.lstrip()
-
-    if lr_vars.VarREnd.get():
-        lrb = len(rb)
-        if lrb < 5:
-            for s in ['{', '}', '[', ']', ]:
-                rb = rb.split(s, 1)[0]
-        if (lrb > 2) and any(map(rb.endswith, [',{', ])):
-            rb = rb[:-2].rstrip()
-        elif (lrb > 1) and any(map(rb.endswith, ['{', ','])):
-            rb = rb[:-1].rstrip()
+    if lr_vars.VarRbRstrip.get():
+        rb = rb.rstrip()
 
     if lr_vars.VarLEnd.get():
         llb = len(lb)
         if llb < 5:
-            for s in ['{', '}', '[', ']', ]:
+            for s in lr_vars.StripLBEnd1:
                 lb = lb.rsplit(s, 1)
                 lb = lb[1 if (len(lb) == 2) else 0]
-        if (llb > 2) and any(map(lb.startswith, ['},', ])):
+        if (llb > 2) and any(map(lb.startswith, lr_vars.StripLBEnd2)):
             lb = lb[2:].lstrip()
-        elif (llb > 1) and any(map(lb.startswith, ['{', ',', ])):
+        elif (llb > 1) and any(map(lb.startswith, lr_vars.StripLBEnd3)):
             lb = lb[1:].lstrip()
+
+    if lr_vars.VarREnd.get():
+        lrb = len(rb)
+        if lrb < 5:
+            for s in lr_vars.StripRBEnd1:
+                rb = rb.split(s, 1)[0]
+        if (lrb > 2) and any(map(rb.endswith, lr_vars.StripRBEnd2)):
+            rb = rb[:-2].rstrip()
+        elif (lrb > 1) and any(map(rb.endswith, lr_vars.StripRBEnd3)):
+            rb = rb[:-1].rstrip()
 
     # next (3) либо (4), при некорректном LB/RB(5)
     if lr_vars.VarPartNumEmptyLbNext.get() and not lb.strip():
@@ -192,7 +192,7 @@ def set_part_num(num=0) -> None:
 
 
 def next_3_or_4_if_bad_or_enmpy_lb_rb(text='') -> None:
-    '''увеличить(3) либо (4))'''
+    '''увеличить(3) либо (4)'''
     len_files = len(lr_vars.FilesWithParam) - 1  # нумерация с 0
     num = lr_vars.VarPartNum.get()
     n = num + 1

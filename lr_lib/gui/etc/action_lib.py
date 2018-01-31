@@ -483,7 +483,7 @@ def snapshot_files(event, folder='', i_num=0) -> None:
         '''имена файлов'''
         fi = os.path.join(folder, 't{}.inf'.format(i_num))
         if not os.path.isfile(fi):
-            return []
+            return
 
         with open(fi) as inf:
             for line in inf:
