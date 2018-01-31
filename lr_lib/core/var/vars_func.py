@@ -104,7 +104,60 @@ def set_part_num(num=0) -> None:
     if lr_vars.VarRusRB.get():
         rb = ''.join(lr_other.only_ascii_symbols(rb))
 
-    # lr_vars.VarSplitListNumRB.set(1) если {} : {... , 'value': 'param', ...}
+    lb, rb = lb_rb_split_list_set(__lb, __rb, lb, rb)
+    lb, rb = lb_rb_split_end(lb, rb)
+
+    if lr_vars.VarLbLstrip.get():
+        lb = lb.lstrip()
+    if lr_vars.VarRbRstrip.get():
+        rb = rb.rstrip()
+
+    # next (3) либо (4), при некорректном LB/RB(5)
+    if lr_vars.VarPartNumEmptyLbNext.get() and not lb.strip():
+        return next_3_or_4_if_bad_or_enmpy_lb_rb('пустом[LB]')
+    elif lr_vars.VarPartNumEmptyRbNext.get() and not rb.strip():
+        return next_3_or_4_if_bad_or_enmpy_lb_rb('пустом[RB]')
+    if lr_vars.VarPartNumDenyLbNext.get() and not lr_lbrb_checker.check_bound_lb(__lb):
+        return next_3_or_4_if_bad_or_enmpy_lb_rb('недопустимом[LB]')
+    if lr_vars.VarPartNumDenyRbNext.get() and (not lr_lbrb_checker.check_bound_rb(__rb)):
+        return next_3_or_4_if_bad_or_enmpy_lb_rb('недопустимом[RB]')
+
+    # сохранить
+    lr_vars.VarLB.set(lb)
+    lr_vars.VarRB.set(rb)
+
+    wrsp_dict = lr_param.wrsp_dict_creator()
+    lr_vars.VarWrspDict.set(wrsp_dict)
+
+
+def lb_rb_split_end(lb: str, rb: str) -> (str, str):
+    '''обрезакть конечные символы lb rb'''
+    if lr_vars.VarLEnd.get():
+        llb = len(lb)
+        if llb < 5:
+            for s in lr_vars.StripLBEnd1:
+                lb = lb.rsplit(s, 1)
+                lb = lb[1 if (len(lb) == 2) else 0]
+        if (llb > 2) and any(map(lb.startswith, lr_vars.StripLBEnd2)):
+            lb = lb[2:].lstrip()
+        elif (llb > 1) and any(map(lb.startswith, lr_vars.StripLBEnd3)):
+            lb = lb[1:].lstrip()
+
+    if lr_vars.VarREnd.get():
+        lrb = len(rb)
+        if lrb < 5:
+            for s in lr_vars.StripRBEnd1:
+                rb = rb.split(s, 1)[0]
+        if (lrb > 2) and any(map(rb.endswith, lr_vars.StripRBEnd2)):
+            rb = rb[:-2].rstrip()
+        elif (lrb > 1) and any(map(rb.endswith, lr_vars.StripRBEnd3)):
+            rb = rb[:-1].rstrip()
+
+    return lb, rb
+
+
+def lb_rb_split_list_set(__lb: str, __rb: str, lb: str, rb: str) -> (str, str):
+    '''lr_vars.VarSplitListNumRB.set(1) если {}: {...,'value':'param',...} / или .set(1) если []'''
     VarSplitListNumRB = lr_vars.VarSplitListNumRB.get()
     vlb1 = lr_vars.VarLbB1.get()
     vlb2 = lr_vars.VarLbB2.get()
@@ -128,15 +181,17 @@ def set_part_num(num=0) -> None:
             elif allow_2 and indx_2:
                 lr_vars.VarSplitListNumRB.set(3)
                 break
-    
-    try:  # обрезать из SplitList
-        lb_combo = lr_vars.Window.LBent_SplitList
-        lb_combo = splitters_combo(lb_combo)
-        rb_combo = lr_vars.Window.RBent_SplitList
-        rb_combo = splitters_combo(rb_combo)
-    except AttributeError:
-        lb_combo = rb_combo = lr_vars.SplitList
 
+    try:
+        lb_combo = splitters_combo(lr_vars.Window.LBent_SplitList)
+    except AttributeError:
+        lb_combo = lr_vars.SplitList
+    try:
+        rb_combo = splitters_combo(lr_vars.Window.RBent_SplitList)
+    except AttributeError:
+        rb_combo = lr_vars.SplitList
+
+    # обрезать из SplitList
     if lr_vars.VarSplitListLB.get():
         i_lb = lr_vars.VarSplitListNumLB.get()
         for word in lb_combo:
@@ -148,49 +203,7 @@ def set_part_num(num=0) -> None:
             rb = rb[:i_rb] + rb[i_rb:].split(word, 1)[0]
 
     lr_vars.VarSplitListNumRB.set(VarSplitListNumRB)  # вернуть
-
-    if lr_vars.VarLbLstrip.get():
-        lb = lb.lstrip()
-    if lr_vars.VarRbRstrip.get():
-        rb = rb.rstrip()
-
-    if lr_vars.VarLEnd.get():
-        llb = len(lb)
-        if llb < 5:
-            for s in lr_vars.StripLBEnd1:
-                lb = lb.rsplit(s, 1)
-                lb = lb[1 if (len(lb) == 2) else 0]
-        if (llb > 2) and any(map(lb.startswith, lr_vars.StripLBEnd2)):
-            lb = lb[2:].lstrip()
-        elif (llb > 1) and any(map(lb.startswith, lr_vars.StripLBEnd3)):
-            lb = lb[1:].lstrip()
-
-    if lr_vars.VarREnd.get():
-        lrb = len(rb)
-        if lrb < 5:
-            for s in lr_vars.StripRBEnd1:
-                rb = rb.split(s, 1)[0]
-        if (lrb > 2) and any(map(rb.endswith, lr_vars.StripRBEnd2)):
-            rb = rb[:-2].rstrip()
-        elif (lrb > 1) and any(map(rb.endswith, lr_vars.StripRBEnd3)):
-            rb = rb[:-1].rstrip()
-
-    # next (3) либо (4), при некорректном LB/RB(5)
-    if lr_vars.VarPartNumEmptyLbNext.get() and not lb.strip():
-        return next_3_or_4_if_bad_or_enmpy_lb_rb('пустом[LB]')
-    elif lr_vars.VarPartNumEmptyRbNext.get() and not rb.strip():
-        return next_3_or_4_if_bad_or_enmpy_lb_rb('пустом[RB]')
-    if lr_vars.VarPartNumDenyLbNext.get() and not lr_lbrb_checker.check_bound_lb(__lb):
-        return next_3_or_4_if_bad_or_enmpy_lb_rb('недопустимом[LB]')
-    if lr_vars.VarPartNumDenyRbNext.get() and (not lr_lbrb_checker.check_bound_rb(__rb)):
-        return next_3_or_4_if_bad_or_enmpy_lb_rb('недопустимом[RB]')
-
-    # сохранить
-    lr_vars.VarLB.set(lb)
-    lr_vars.VarRB.set(rb)
-
-    wrsp_dict = lr_param.wrsp_dict_creator()
-    lr_vars.VarWrspDict.set(wrsp_dict)
+    return lb, rb
 
 
 def next_3_or_4_if_bad_or_enmpy_lb_rb(text='') -> None:
@@ -232,7 +245,7 @@ def next_3_or_4_if_bad_or_enmpy_lb_rb(text='') -> None:
 
 
 def splitters_combo(combo) -> [str, ]:
-    '''eval + история'''
+    '''eval разделителей из gui'''
     splitter = combo.get()
     all_splitters = list(combo['values'])
 
