@@ -189,9 +189,9 @@ def genetate_line_tags_purct_etc_indxs(line: str, line_indxs: dict) -> None:
 class HighlightText(tk.Text):
     '''tk.Text'''
     def __init__(self, *args, **kwargs):
-        self.action = args[0]
         bind = kwargs.pop('bind', None)
         super().__init__(*args, **kwargs)
+        self.action = args[0]  # parent
 
         self.highlight_dict = copy.deepcopy(lr_vars.VarDefaultColorTeg)
         self.highlight_lines = HighlightLines(self, self.get_tegs_names())

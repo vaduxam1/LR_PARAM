@@ -21,7 +21,7 @@ VERSION = 'v10.1.2'
 lib_folder = 'lr_lib'
 Tk = tk.Tk()  # tkinter
 
-Window = None  # класс gui окна lr_lib.gui.main_wind
+Window = None  # класс gui окна # lr_lib.gui.main_wind.Window
 AllFiles = []  # все файлы ответов
 FilesWithParam = []  # файлы ответов, с param
 VarParam = Var(value='')  # {param} для поиска
@@ -330,14 +330,14 @@ BackupName = '{i}_backup_{ind}_action.c'
 
 #####################################
 # область выделения двойным кликом мыши
+
 tcl_wordchars = '[a-zA-Z0-9_.!-]'
 tcl_nonwordchars = '[^a-zA-Z0-9_.!-]'
 
 # #####################################
 # логирование
 
-# вывод сообщений во все Handler: Logger.info('msg', notepad=True, parent=action)
-Logger = None  # lr_lib.etc.logger
+Logger = None  # lr_lib.etc.logger.Logger # вывод сообщений во все Handler: Logger.info('m', notepad=True, parent=act)
 
 log_overdrive = 'a'
 logFolder = 'lr_logs'
@@ -384,7 +384,7 @@ VarIsSnapshotFiles = tk.BooleanVar(value=True)  # брать файлы, про�
 VarAllowDenyFiles = tk.BooleanVar(value=False)  # разрешить поиск, в DENY_ исключенных из поиска файлах
 VarAllFilesStatistic = tk.IntVar(value=True)  # создавать подробную статистику файлов(размер, символы и тд), сильно замедляет старт утилиты
 SetFilesPOOLEnable = True  # использовать M_POOL, для создания файлов, при старте программы
-FilesCreatePortionSize = 25  # порция, число обрабатываемых файлов, для создания из них файлой ответов, за один вызов/в одном потоке
+FilesCreatePortionSize = 100  # порция, число обрабатываемых файлов, для создания из них файлой ответов, за один вызов/в одном потоке
 
 #####################################
 # все кодировки
@@ -400,15 +400,15 @@ ENCODE_LIST = list(sorted(ENCODE_LIST))
 #####################################
 # пулы
 
-MainThreadUpdater = None  # выполнять callback из main потока
+MainThreadUpdater = None  # выполнять callback из main потока # lr_lib.etc.pool.other.MainThreadUpdater
 MainThreadUpdateTime = tk.IntVar(value=500)  # интервал(мс) проверки очереди, callback(из потоков)
 
-M_POOL = None  # пул процессов
+M_POOL = None  # пул процессов  # lr_lib.etc.pool.main_pool.POOL
 M_POOL_NAME = 'multiprocessing.Pool'  # тип основной пул
 cpu_count = multiprocessing.cpu_count()
 M_POOL_Size = cpu_count if (cpu_count < 5) else 4  # основной MP пул(int/None)
 
-T_POOL = None  # пул потоков
+T_POOL = None  # пул потоков # lr_lib.etc.pool.main_pool.POOL
 T_POOL_NAME = 'SThreadPool(threading.Thread)'  # тип фоновый пул
 T_POOL_Size = 4  # фоновый T пул(int>2 / None), кроме SThreadPool
 # 'threading.Thread': SThreadPool - auto size
@@ -427,8 +427,10 @@ EDITOR = dict(exe='notepad.exe')  # программа для открытия "
 
 FIND_PARAM_HOTKEY = 'ctrl+shift+c'  # хоткей "найти(2) param"
 
+
 #####################################
 # чтото чтобы не импортировать лишнего
+
 
 def T_POOL_decorator(func: callable):
     '''декоратор, выполнения func в T_POOL потоке'''

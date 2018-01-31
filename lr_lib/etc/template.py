@@ -4,7 +4,7 @@
 
 def dummy_remove(web_: [str, ], mode=False) -> bool:
     '''похожая web_submit_data или нет'''
-    if (mode == 'endswith'):
+    if mode == 'endswith':
         return dummy_endswith_remove(web_)
     else:
         return (len(web_) == Dummy.dummy_len) and \

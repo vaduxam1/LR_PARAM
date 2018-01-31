@@ -119,9 +119,12 @@ class ActionWindow(tk.Toplevel):
 
         self.font_size_entry = tk.Spinbox(self.font_toolbar, width=2, justify='center', from_=0, to=99, command=self.tk_text.set_font,
                                           textvariable=self.tk_text.size_var, font=lr_vars.DefaultFont)
+
         self.font_size_entry.bind("<KeyRelease-Return>", self.tk_text.set_font)
+
         self.selection_font_size_entry = tk.Spinbox(self.font_toolbar, width=2, justify='center', from_=0, to=99, textvariable=self.size_var,
                                                     font=lr_vars.DefaultFont, command=lambda *a: self.tk_text.set_tegs(parent=self, remove=False))
+
         self.selection_font_size_entry.bind("<KeyRelease-Return>", lambda *a: self.tk_text.set_tegs(parent=self, remove=False))
 
         self.bold_cbx = tk.Checkbutton(self.font_toolbar, text='', font=lr_vars.DefaultFont + ' bold',
@@ -144,11 +147,13 @@ class ActionWindow(tk.Toplevel):
 
         self.font_combo = ttk.Combobox(self.font_toolbar, textvariable=self.tk_text.font_var, justify='center', font=lr_vars.DefaultFont)
         self.font_combo['values'] = list(sorted(tk.font.families()))
+
         self.font_combo.bind("<KeyRelease-Return>", self.tk_text.set_font)
         self.font_combo.bind("<<ComboboxSelected>>", self.tk_text.set_font)
 
         self.selection_font_combo = ttk.Combobox(self.font_toolbar, textvariable=self.font_var, justify='center', font=lr_vars.DefaultFont)
         self.selection_font_combo['values'] = list(sorted(tk.font.families()))
+
         self.selection_font_combo.bind("<KeyRelease-Return>", self.bold_selection_set)
         self.selection_font_combo.bind("<<ComboboxSelected>>", self.bold_selection_set)
 
@@ -157,12 +162,15 @@ class ActionWindow(tk.Toplevel):
 
         self.background_color_combo = ttk.Combobox(self.cbx_bar, textvariable=self.background_var, justify='center', font=lr_vars.DefaultFont)
         self.background_color_combo['values'] = list(sorted(lr_help.COLORS.keys()))
+
         self.background_color_combo.bind("<KeyRelease-Return>", self.background_color_set)
         self.background_color_combo.bind("<<ComboboxSelected>>", self.background_color_set)
         self.config(background=self.background_color_combo.get())
 
         self.search_entry = ttk.Combobox(self.toolbar, textvariable=self.searchVar, font=lr_vars.DefaultFont + ' italic', justify='center')
+
         self.search_entry.bind("<KeyRelease-Return>", self.search_in_action)
+
         self.search_button = tk.Button(self.toolbar, text='> search >', command=self.search_in_action, font=lr_vars.DefaultFont + ' bold')
         self._uptext = '<-up %s'
         self.up_search_button = tk.Button(self.toolbar, text=self._uptext, command=self.search_up, font=lr_vars.DefaultFont + ' bold')
@@ -183,12 +191,12 @@ class ActionWindow(tk.Toplevel):
         self.scroll_lab = ttk.Label(self, text='0')
         self.scroll_lab2 = ttk.Label(self, text='0 %', background=lr_vars.Background)
 
-        self.tk_text.action = self  # !!! доступ извне
-
         self.search_res_combo = ttk.Combobox(self.toolbar, textvariable=self.searchPosVar, justify='center',
                                              font=lr_vars.DefaultFont, background=lr_vars.Background)
+
         self.search_res_combo.bind("<<ComboboxSelected>>", self.tk_text_see)
         self.search_res_combo.bind("<KeyRelease-Return>", self.tk_text_see)
+
         self.SearchReplace_searchCombo = ttk.Combobox(self.toolbar, textvariable=self.SearchReplace_searchVar,
                                                       justify='center', font=lr_vars.DefaultFont + ' italic', foreground="purple")
         self.SearchReplace_replaceCombo = ttk.Combobox(self.toolbar, textvariable=self.SearchReplace_replaceVar,
@@ -244,7 +252,6 @@ class ActionWindow(tk.Toplevel):
         self.lr_report_A = tk.Button(self.toolbar, text='reportA', font=lr_vars.DefaultFont + ' bold',
                                      command=lambda *a: lr_action_lib.repA(self.tk_text))
 
-
         self.transaction_rename = tk.Button(self.toolbar, text='rename\ntransaction', font=lr_vars.DefaultFont + ' bold',
                                             background='orange', command=self.all_transaction_rename)
         self.dummy_button = tk.Button(self.toolbar, text="Snapshot remove", font=lr_vars.DefaultFont + ' bold',
@@ -252,9 +259,8 @@ class ActionWindow(tk.Toplevel):
         self.force_yes_inf_checker_cbx = tk.Checkbutton(self.toolbar, text='fYes', font=lr_vars.DefaultFont,
                                                         variable=self.force_yes_inf)
 
-        ws = self.search_res_combo, self.SearchReplace_searchCombo, self.SearchReplace_replaceCombo, self.search_entry,
-        for widj in ws:
-            with contextlib.suppress(Exception):
+        for widj in (self.search_res_combo, self.SearchReplace_searchCombo, self.SearchReplace_replaceCombo, self.search_entry,):
+            with contextlib.suppress(Exception):  # виджетам доступно меню мыши
                 self.bind_class(widj, sequence='<Button-3>', func=lr_sub_menu.rClicker, add='')
 
         lr_lib.gui.action.tooltips.set_all_action_window_tooltip(self)  # создать все tooltip окна
@@ -1016,12 +1022,8 @@ class ActionWindow(tk.Toplevel):
 
             # snap = text[1]
             # last_snapshot = int(snap) - 1
-        #
-        # if self.action_infs:
-        #     max_snap = max(self.action_infs)
-        # else:
-        #     max_snap = 0
-        #
+
+        # max_snap = (max(self.action_infs) if self.action_infs else 0)
         # if last_snapshot < max_snap:
         #     self.inf_combo.set(last_snapshot)
         #     self.goto_inf()
@@ -1029,7 +1031,7 @@ class ActionWindow(tk.Toplevel):
         #         r=os.path.join(folder, rdir), l=last_snapshot, m=max_snap))
         #
         # a = lr_param.get_search_data('None')
-        # a = next(lr_param.create_files_with_search_data(lr_vars.AllFiles, a, action_infs=[last_snapshot-3]))
+        # a = next(lr_param.create_files_with_search_data(lr_vars.AllFiles, a, action_infs=[last_snapshot]))
         # with open(os.path.join(folder, rdir, a['File']['Name'])) as f:
         #     print(f.read())
         # y = lr_dialog.YesNoCancel(
