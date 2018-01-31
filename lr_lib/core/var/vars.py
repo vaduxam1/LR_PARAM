@@ -139,7 +139,7 @@ LRB_rep_list = [
 
 AskLbRbMaxLen = 30  # макс длина LB/RB, в вопросе при автозамене
 DEFAULT_LB_RB_MIN_HEIGHT = 3  # высота полей LB/RB(5)
-VarActComboLenMin = tk.IntVar(value=5)  # min ширина Listbox виджетов
+VarActComboLenMin = tk.IntVar(value=2)  # min ширина Listbox виджетов
 VarActComboLenMax = tk.IntVar(value=75)  # max ширина Listbox виджетов
 VarMaxComboFilesWidth = Var(value=75)  # макс ширина combobox выбора файлов(3)
 MaxFileStringWidth = 200  # макс ширина подсказки для файлов(3)
@@ -153,7 +153,7 @@ DefaultActionFinalWind = True  # окно результата создания 
 
 VarPartNumEmptyLbNext = tk.BooleanVar(value=True)  # Использовать следующий номер вхождения(4) или файл(3), при пустом LB/RB(5)
 VarPartNumDenyLbNext = tk.BooleanVar(value=True)  # Использовать следующий номер вхождения(4) или файл(3), при недопустимом LB/RB(5)
-VarMaxLenLB = tk.IntVar(value=90)  # максимальная длина строк LB
+VarMaxLenLB = tk.IntVar(value=100)  # максимальная длина строк LB
 VarReturnLB = tk.BooleanVar(value=True)  # обрезать LB до переноса строки
 VarRusLB = tk.BooleanVar(value=True)  # обрезать LB до непечатных либо русских символов
 
@@ -164,7 +164,7 @@ VarLEnd = tk.BooleanVar(value=True)  # обрезать LB
 
 VarPartNumEmptyRbNext = tk.BooleanVar(value=True)  # Использовать следующий номер вхождения(4) или файл(3), при пустом LB/RB(5)
 VarPartNumDenyRbNext = tk.BooleanVar(value=True)  # Использовать следующий номер вхождения(4) или файл(3), при недопустимом LB/RB(5)
-VarMaxLenRB = tk.IntVar(value=90)  # максимальная длина строк RB
+VarMaxLenRB = tk.IntVar(value=100)  # максимальная длина строк RB
 VarReturnRB = tk.BooleanVar(value=True)  # обрезать RB до переноса строки
 VarRusRB = tk.BooleanVar(value=True)  # обрезать RB до непечатных либо русских символов
 
@@ -206,7 +206,7 @@ allow_symbols = set(allow_symbols)
 # gui
 
 _Tk_WIND_SIZE = [655, 700]  # размер главного окна
-_Tk_ActionWIND_SIZE = [1250, 800]  # размер action окна
+_Tk_ActionWIND_SIZE = [1300, 800]  # размер action окна
 
 _Tk_LegendWIND_SIZE = [1200, 600]  # размер legend окна
 LegendHight = 500  # расстояние между верхом и низом легенды

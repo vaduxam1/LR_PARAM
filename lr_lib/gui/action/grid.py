@@ -55,9 +55,9 @@ def grid_widj(self):
     self.toolbar.grid(row=2, column=0, sticky=tk.N, columnspan=100)
 
     self.middle_bar.grid(row=3, column=0, sticky=tk.N)
-    self.inf_bar.grid(row=1, column=0, sticky=tk.N)
-    self.transaction_bar.grid(row=3, column=0, sticky=tk.E)
-    self.wrsp_bar.grid(row=3, column=1, sticky=tk.W)
+    self.inf_bar.grid(row=3, column=1, sticky=tk.N)
+    self.transaction_bar.grid(row=3, column=2, sticky=tk.E)
+    self.wrsp_bar.grid(row=3, column=3, sticky=tk.W)
 
     self.file_bar.grid(row=5, column=20, sticky=tk.NSEW, rowspan=5)
     self.cbx_bar.grid(row=5, column=50, sticky=tk.NSEW, rowspan=5)
