@@ -454,7 +454,7 @@ def rClick_add_highlight(event, option: str, color: str, val: str, find=False) -
     if val == 'добавить':
         highlight_mode(event.widget, selection, option, color)
     else:
-        with contextlib.suppress():
+        with contextlib.suppress(KeyError):
             hd[option][color].remove(selection)
 
     event.widget.action.save_action_file(file_name=False)
