@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# нахождение param, и др, для gui
+# нахождение param и др команды из меню мыши, для gui
 
 import json
 import os
@@ -12,6 +12,8 @@ import contextlib
 import urllib.parse
 import tkinter as tk
 import tkinter.ttk as ttk
+
+import lr_lib.gui.etc.gui_other
 
 import lr_lib.core.etc.other as lr_other
 import lr_lib.gui.widj.tooltip as lr_tooltip
@@ -66,7 +68,6 @@ def rClick_Param(event, *args, **kwargs) -> None:
         # print('индекс(tk.Text) начала выделения')
         # count = widget.count("1.0", "sel.first")
         # print(count)
-        # print('------------------')
     except tk.TclError:
         return lr_vars.Logger.warning('сбросилось выделение текста\ntry again', parent=widget)
     try:
@@ -421,16 +422,6 @@ def encoder(event, action=None) -> None:
             widget.action.search_in_action(word=new_name)
 
 
-def add_highlight_words_to_file(event) -> None:
-    '''сохранить слово для подсветки в файл - "навсегда" '''
-    selection = event.widget.selection_get()
-
-    with open(lr_vars.highlight_words_main_file, 'a') as f:
-        f.write(selection + '\n')
-
-    rClick_add_highlight(event, 'foreground', 'olive', 'добавить', find=True)
-
-
 def highlight_mode(widget, word: str, option='foreground', color='olive') -> None:
     '''залить цветом все word в tk.Text widget'''
     colors = widget.highlight_dict.setdefault(option, {})
@@ -439,6 +430,16 @@ def highlight_mode(widget, word: str, option='foreground', color='olive') -> Non
         colors[color].add(word)
     except (KeyError, AttributeError):
         colors[color] = {word}
+
+
+def add_highlight_words_to_file(event) -> None:
+    '''сохранить слово для подсветки в файл - "навсегда" '''
+    selection = event.widget.selection_get()
+
+    with open(lr_vars.highlight_words_main_file, 'a') as f:
+        f.write(selection + '\n')
+
+    rClick_add_highlight(event, 'foreground', 'olive', 'добавить', find=True)
 
 
 def rClick_add_highlight(event, option: str, color: str, val: str, find=False) -> None:
@@ -451,13 +452,9 @@ def rClick_add_highlight(event, option: str, color: str, val: str, find=False) -
     selection = event.widget.selection_get()
 
     if val == 'добавить':
-        if option not in hd: hd[option] = {color: [selection]}
-        elif color not in hd[option]:
-            hd[option][color] = [selection]
-        elif selection not in hd[option][color]:
-            hd[option][color].add(selection)
+        highlight_mode(event.widget, selection, option, color)
     else:
-        if (option in hd) and (color in hd[option]) and (selection in hd[option][color]):
+        with contextlib.suppress():
             hd[option][color].remove(selection)
 
     event.widget.action.save_action_file(file_name=False)
@@ -477,7 +474,7 @@ def snapshot_files(event, folder='', i_num=0) -> None:
     top = tk.Toplevel()
     top.transient(event.widget)
     top.title('окно файлов snapshot=t{i}.inf'.format(i=i_num))
-    lr_dialog.center_widget(top)
+    lr_lib.gui.etc.gui_other.center_widget(top)
 
     def get_files_names(folder: str, i_num: int) -> iter((str,)):
         '''имена файлов'''

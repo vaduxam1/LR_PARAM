@@ -17,7 +17,7 @@ from lr_lib.etc.help import (COLORS, HEX, )
 #####################################
 # главные переменные
 
-VERSION = 'v10.1.2'
+VERSION = 'v10.1.3'
 lib_folder = 'lr_lib'
 Tk = tk.Tk()  # tkinter
 
@@ -331,8 +331,11 @@ BackupName = '{i}_backup_{ind}_action.c'
 #####################################
 # область выделения двойным кликом мыши
 
-tcl_wordchars = '[a-zA-Z0-9_.!-]'
-tcl_nonwordchars = '[^a-zA-Z0-9_.!-]'
+# this first statement triggers tcl to autoload the library # that defines the variables we want to override.
+Tk.tk.call('tcl_wordBreakAfter', '', 0)
+# this defines what tcl considers to be a "word". For more # information see http://www.tcl.tk/man/tcl8.5/TclCmd/library.htm#M19
+Tk.tk.call('set', 'tcl_wordchars', '[a-zA-Z0-9_.!-]')
+Tk.tk.call('set', 'tcl_nonwordchars', '[^a-zA-Z0-9_.!-]')
 
 # #####################################
 # логирование

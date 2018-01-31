@@ -6,6 +6,8 @@ import contextlib
 import tkinter as tk
 import tkinter.ttk as ttk
 
+import lr_lib.gui.etc.gui_other
+
 
 class YesNoCancel(tk.Toplevel):
     '''диалог окно, тк велосипед, работает только в потоке'''
@@ -84,7 +86,7 @@ class YesNoCancel(tk.Toplevel):
         self.attributes('-topmost', True)  # свсегда сверху
         # self.attributes("-toolwindow", 1)  # remove maximize/minimize
         self.protocol('WM_DELETE_WINDOW', self.close)  # remove close_threads
-        center_widget(self)
+        lr_lib.gui.etc.gui_other.center_widget(self)
         self.grid_rowconfigure(0, weight=1)
         self.grid_columnconfigure(0, weight=1)
 
@@ -100,13 +102,3 @@ class YesNoCancel(tk.Toplevel):
     def close(self) -> None:
         '''отмена при выходе'''
         self.queue.put_nowait(self.default_key)
-
-
-def center_widget(widget) -> None:
-    '''center window on screen'''
-    widget.withdraw()
-    widget.update_idletasks()
-    x = (widget.winfo_screenwidth() - widget.winfo_reqwidth()) / 2
-    y = (widget.winfo_screenheight() - widget.winfo_reqheight()) / 2
-    widget.geometry("+%d+%d" % (x, y))
-    widget.deiconify()
