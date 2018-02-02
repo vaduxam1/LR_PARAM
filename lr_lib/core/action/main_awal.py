@@ -12,26 +12,24 @@ import lr_lib.core.wrsp.param as lr_param
 class ActionWebsAndLines:
     '''внутреннее представление action.c текста, как список web_ объектов, и "неважного" текста между ними'''
     def __init__(self, action):
-        self.action = action
-        self.webs_and_lines = []
+        self.action = action  # lr_lib.gui.action.main_action.ActionWindow
+        self.webs_and_lines = []  # представление
         self.websReport = lr_lib.core.action.report.WebReport(parent_AWAL=self)
         self.transactions = lr_lib.core.action.transac.Transactions(self)
 
     def get_web_all(self) -> iter((lr_web_.WebAny,)):
         '''все объекты'''
         for web in self.webs_and_lines:
-            if isinstance(web, str):
-                continue
-            yield web
+            if not isinstance(web, str):
+                yield web
 
-    def get_web_by(self, **kwargs) -> iter((lr_web_.WebAny,)):
+    def get_web_by(self, __webs=None, **kwargs) -> iter((lr_web_.WebAny,)):
         '''объекты по kwargs условию: kwargs={'abc': [123]} -> web's.abc == [123]'''
-        source = kwargs.pop('__source', None)
-        if source is None:
-            source = self.get_web_all()
+        if __webs is None:
+            __webs = self.get_web_all()
 
         attrs = kwargs.items()
-        for web in source:
+        for web in __webs:
             if all((getattr(web, attr) == value) for (attr, value) in attrs):
                 yield web
 
@@ -43,7 +41,7 @@ class ActionWebsAndLines:
 
     def get_web_snapshot_by(self, **kwargs) -> iter((lr_web_.WebSnapshot,)):
         '''snapshot объекты по kwargs условию'''
-        for web in self.get_web_by(__source=self.get_web_snapshot_all(), **kwargs):
+        for web in self.get_web_by(__webs=self.get_web_snapshot_all(), **kwargs):
             yield web
 
     def get_web_reg_save_param_all(self) -> iter((lr_web_.WebRegSaveParam,)):
@@ -53,7 +51,7 @@ class ActionWebsAndLines:
 
     def get_web_reg_save_param_by(self, **kwargs) -> iter((lr_web_.WebRegSaveParam,)):
         '''web_reg_save_param объекты по kwargs условию'''
-        for web_wrsp in self.get_web_by(__source=self.get_web_reg_save_param_all(), **kwargs):
+        for web_wrsp in self.get_web_by(__webs=self.get_web_reg_save_param_all(), **kwargs):
             yield web_wrsp
 
     def replace_bodys(self, replace_list: [(str, str), ]) -> None:
@@ -72,9 +70,10 @@ class ActionWebsAndLines:
 
     def add_to_text_list(self, element: (str or object)) -> None:
         '''объединять строки, идущие подряд'''
-        tl = self.webs_and_lines[-1]
-        if isinstance(element, str) and isinstance(tl, str):
-            self.webs_and_lines[-1] = '{tl}\n{et}'.format(tl=tl, et=element)
+        last_ = self.webs_and_lines[-1]
+
+        if isinstance(element, str) and isinstance(last_, str):
+            self.webs_and_lines[-1] = '{tl}\n{et}'.format(tl=last_, et=element)
         else:
             self.webs_and_lines.append(element)
 
@@ -83,6 +82,7 @@ class ActionWebsAndLines:
         with self.action.block():
             self.transactions = lr_lib.core.action.transac.Transactions(self)
             self._set_text_list(text)
+
             if websReport:
                 self.websReport.create()
 
@@ -220,10 +220,8 @@ class ActionWebsAndLines:
         wrsp_web_ = lr_web_.WebRegSaveParam(self, w_lines, comments, transaction=web_.transaction, parent_snapshot=web_)
         web_.web_reg_save_param_list.append(wrsp_web_)
 
-    def web_reg_save_param_remove(self, name: str, keys=('param', 'name')) -> str:
+    def web_reg_save_param_remove(self, name: str, keys=('param', 'name'), _param='') -> str:
         '''удалить web_reg_save_param'''
-        _param = ''
-
         for web in self.get_web_snapshot_all():
             for wrsp_web in list(web.web_reg_save_param_list):
                 if any((getattr(wrsp_web, k) == name) for k in keys):
@@ -239,20 +237,20 @@ class ActionWebsAndLines:
         '''весь action текст как строка'''
         if websReport:
             self.websReport.create()
+        return ''.join(self._to_str()).strip()
 
-        def webs_and_lines(_bool=True) -> str:
-            for line in self.webs_and_lines:
-                is_str = isinstance(line, str)
-                if is_str != _bool:
-                    yield '\n'  # смена str/WEB_
+    def _to_str(self, sep=True) -> iter((str,)):
+        '''итератор - весь action текст как строка'''
+        for line in self.webs_and_lines:
+            is_str = isinstance(line, str)
+            if is_str != sep:
+                yield '\n'  # смена str/WEB_
 
-                if is_str:
-                    yield '\n{}'.format(line.strip('\n'))
-                elif isinstance(line, lr_web_.WebSnapshot):
-                    yield '\n\n{}\n'.format(line.to_str())
-                else:
-                    yield '\n{}'.format(line.to_str())
+            if is_str:
+                yield '\n{}'.format(line.strip('\n'))
+            elif isinstance(line, lr_web_.WebSnapshot):
+                yield '\n\n{}\n'.format(line.to_str())
+            else:
+                yield '\n{}'.format(line.to_str())
 
-                _bool = is_str
-
-        return ''.join(webs_and_lines()).strip()
+            sep = is_str
