@@ -180,6 +180,7 @@ def init() -> None:
 
     if lr_vars.Window:
         lr_vars.Window.setSortKeys()
+        lr_vars.Window.set_maxmin_inf(lr_vars.AllFiles)
     lr_vars.Logger.info(lr_other.all_files_info())
 
 

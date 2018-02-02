@@ -345,7 +345,7 @@ class Window(ttk.Frame):
         lr_lib.gui.etc.sub_menu.rClickbinder(self)  # все tk
         for widj in dir(self):
             with contextlib.suppress(Exception):
-                self.bind_class(getattr(self, widj), sequence='<Button-3>', func=lr_action_lib.rClicker, add='')
+                self.bind_class(getattr(self, widj), sequence='<Button-3>', func=lr_lib.gui.etc.sub_menu.rClicker, add='')
 
     def change_folder_ask(self, *args) -> None:
         '''смена директории поиска файлов'''
@@ -547,7 +547,6 @@ class Window(ttk.Frame):
         with self.block():
             lr_files.init()
 
-        self.set_maxmin_inf(lr_vars.AllFiles)
         self.last_frame_text_set()
         self.setSortKey1()
         if callback:
