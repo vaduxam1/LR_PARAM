@@ -257,8 +257,15 @@ class Window(ttk.Frame):
         self.comboFiles.bind("<<ComboboxSelected>>", self.comboFiles_change)
         self.comboParts.bind("<<ComboboxSelected>>", self.comboParts_change)
         self.comboParam.bind("<KeyRelease-Return>", self.get_files)
-        self.max_inf.bind("<<ComboboxSelected>>", self.get_files)
-        self.min_inf.bind("<<ComboboxSelected>>", self.get_files)
+
+        def min_max_set(*a) -> None:
+            '''max/min_inf'''
+            if not lr_vars.FilesWithParam:
+                return
+            self.get_files()
+
+        self.max_inf.bind("<<ComboboxSelected>>", min_max_set)
+        self.min_inf.bind("<<ComboboxSelected>>", min_max_set)
         self.sortKey1.bind("<<ComboboxSelected>>", self.setSortKey1)
         self.sortKey2.bind("<<ComboboxSelected>>", self.setSortKey2)
         self.comboLogger.bind("<<ComboboxSelected>>", lambda *a: lr_vars.VarWindowLogger.set(self.comboLogger.get()))
@@ -526,8 +533,10 @@ class Window(ttk.Frame):
         '''получить файлы с {param} (2)'''
         if param is not None:
             self.comboParam.set(param)
+
         self.show_frame_info_working()
         self.clear_before_find_param_files()
+
         param = self.comboParam.get()
         self.param_hist_list.insert(0, param)
         self.comboParam['values'] = self.param_hist_list
