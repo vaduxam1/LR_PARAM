@@ -134,21 +134,8 @@ class Window(ttk.Frame):
 
         self.lb_split_label = tk.LabelFrame(self.last_frameCbx1, bd=1, padx=0, pady=0, relief='ridge')
 
-        def spl_cbx_cmd_lb(*a) -> None:
-            if lr_vars.VarSplitListLB.get():
-                self.LBent_SplitList.configure(state='normal')
-                self.LBSpinSplitList.configure(state='normal')
-                self.LbB1Cbx.configure(state='normal')
-                self.LbB2Cbx.configure(state='normal')
-            else:
-                self.LBent_SplitList.configure(state='disabled')
-                self.LBSpinSplitList.configure(state='disabled')
-                self.LbB1Cbx.configure(state='disabled')
-                self.LbB2Cbx.configure(state='disabled')
-            self.comboParts_change()
-
         self.LBcbx_SplitList = tk.Checkbutton(self.lb_split_label, variable=lr_vars.VarSplitListLB, text='eval',
-                                              font=lr_vars.DefaultFont + ' bold', command=spl_cbx_cmd_lb, padx=0, pady=0)
+                                              font=lr_vars.DefaultFont + ' bold', command=self.spl_cbx_cmd_lb, padx=0, pady=0)
         self.LBent_SplitList = ttk.Combobox(self.lb_split_label, font=lr_vars.DefaultFont, width=10)
         self.LBent_SplitList['values'] = list(SplitList)
         self.LBent_SplitList.current(0)
@@ -181,21 +168,8 @@ class Window(ttk.Frame):
 
         self.rb_split_label = tk.LabelFrame(self.last_frameCbx2, bd=1, padx=0, pady=0, relief='ridge')
 
-        def spl_cbx_cmd_rb(*a) -> None:
-            if lr_vars.VarSplitListRB.get():
-                self.RBent_SplitList.configure(state='normal')
-                self.RBSpinSplitList.configure(state='normal')
-                self.RbB1Cbx.configure(state='normal')
-                self.RbB2Cbx.configure(state='normal')
-            else:
-                self.RBent_SplitList.configure(state='disabled')
-                self.RBSpinSplitList.configure(state='disabled')
-                self.RbB1Cbx.configure(state='disabled')
-                self.RbB2Cbx.configure(state='disabled')
-            self.comboParts_change()
-
         self.RBcbx_SplitList = tk.Checkbutton(self.rb_split_label, variable=lr_vars.VarSplitListRB, text='eval',
-                                              font=lr_vars.DefaultFont + ' bold', command=spl_cbx_cmd_rb, padx=0, pady=0)
+                                              font=lr_vars.DefaultFont + ' bold', command=self.spl_cbx_cmd_rb, padx=0, pady=0)
         self.RBent_SplitList = ttk.Combobox(self.rb_split_label, font=lr_vars.DefaultFont, width=10)
         self.RBent_SplitList['values'] = list(SplitList)
         self.RBent_SplitList.current(0)
@@ -311,6 +285,36 @@ class Window(ttk.Frame):
         self.configure_attrs = {
             a: getattr(self, a).configure for a in dir(self) if hasattr(getattr(self, a), 'configure')
         }
+
+    def spl_cbx_cmd_lb(self, *a) -> None:
+        '''lb SplitList widj'''
+        if lr_vars.VarSplitListLB.get():
+            self.LBent_SplitList.configure(state='normal')
+            self.LBSpinSplitList.configure(state='normal')
+            self.LbB1Cbx.configure(state='normal')
+            self.LbB2Cbx.configure(state='normal')
+        else:
+            self.LBent_SplitList.configure(state='disabled')
+            self.LBSpinSplitList.configure(state='disabled')
+            self.LbB1Cbx.configure(state='disabled')
+            self.LbB2Cbx.configure(state='disabled')
+
+        self.comboParts_change()
+
+    def spl_cbx_cmd_rb(self, *a) -> None:
+        '''rb SplitList widj'''
+        if lr_vars.VarSplitListRB.get():
+            self.RBent_SplitList.configure(state='normal')
+            self.RBSpinSplitList.configure(state='normal')
+            self.RbB1Cbx.configure(state='normal')
+            self.RbB2Cbx.configure(state='normal')
+        else:
+            self.RBent_SplitList.configure(state='disabled')
+            self.RBSpinSplitList.configure(state='disabled')
+            self.RbB1Cbx.configure(state='disabled')
+            self.RbB2Cbx.configure(state='disabled')
+
+        self.comboParts_change()
 
     def err_to_widgts(self, exc_type, exc_val, exc_tb, ern) -> None:
         '''отображение ошибки'''
@@ -433,7 +437,8 @@ class Window(ttk.Frame):
     def setSortKey2(self, *args) -> None:
         '''комбо сортировки файлов'''
         lr_vars.VarFileSortKey2.set(self.sortKey2.get())
-        self.get_files()  # сортировка при поиске
+        if lr_vars.FilesWithParam:
+            self.get_files()  # сортировка при поиске
 
     def show_frame_info_file(self) -> None:
         '''отображение всякой информации'''
@@ -484,12 +489,16 @@ class Window(ttk.Frame):
 
     def comboParts_change(self, *args) -> None:
         '''смена комбо(4)'''
+        if not lr_vars.FilesWithParam:
+            return
         lr_vars.VarPartNum.set(int(self.comboParts.get()))
         lr_lib.gui.widj.lbrb5.LBRBText.set_LB_RB()
         self.show_frame_info_file()
 
     def firstOrLastFile(self, *args) -> None:
         '''выбрать первый/последный файл в (3)'''
+        if not lr_vars.FilesWithParam:
+            return
         i = (len(self.comboFiles['values']) - 1) if lr_vars.VarFirstLastFile.get() else 0
         self.comboFiles.current(i)
         self.comboFiles_change()
