@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# action ядро - внутреннее предсталление action.c текста
+# внутреннее предсталление action.c текста
 
 import lr_lib.core.action.report
 import lr_lib.core.action.transac
@@ -23,13 +23,10 @@ class ActionWebsAndLines:
             if not isinstance(web, str):
                 yield web
 
-    def get_web_by(self, __webs=None, **kwargs) -> iter((lr_web_.WebAny,)):
+    def get_web_by(self, webs, **kwargs) -> iter((lr_web_.WebAny,)):
         '''объекты по kwargs условию: kwargs={'abc': [123]} -> web's.abc == [123]'''
-        if __webs is None:
-            __webs = self.get_web_all()
-
         attrs = kwargs.items()
-        for web in __webs:
+        for web in webs:
             if all((getattr(web, attr) == value) for (attr, value) in attrs):
                 yield web
 
@@ -41,7 +38,7 @@ class ActionWebsAndLines:
 
     def get_web_snapshot_by(self, **kwargs) -> iter((lr_web_.WebSnapshot,)):
         '''snapshot объекты по kwargs условию'''
-        for web in self.get_web_by(__webs=self.get_web_snapshot_all(), **kwargs):
+        for web in self.get_web_by(self.get_web_snapshot_all(), **kwargs):
             yield web
 
     def get_web_reg_save_param_all(self) -> iter((lr_web_.WebRegSaveParam,)):
@@ -51,7 +48,7 @@ class ActionWebsAndLines:
 
     def get_web_reg_save_param_by(self, **kwargs) -> iter((lr_web_.WebRegSaveParam,)):
         '''web_reg_save_param объекты по kwargs условию'''
-        for web_wrsp in self.get_web_by(__webs=self.get_web_reg_save_param_all(), **kwargs):
+        for web_wrsp in self.get_web_by(self.get_web_reg_save_param_all(), **kwargs):
             yield web_wrsp
 
     def replace_bodys(self, replace_list: [(str, str), ]) -> None:

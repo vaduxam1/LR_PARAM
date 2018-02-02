@@ -181,7 +181,8 @@ def wrsp_name_creator(param: str, Lb: str, Rb: str, file: dict) -> str:
                 lbn.append('')
         lbn = [b for b in filter(bool, lbn) if (b not in lr_vars.LRB_rep_list)]
         lb_name = '_'.join(sorted(set(lbn), key=lbn.index))[-MaxLbWrspName:]
-    else: lb_name = ''
+    else:
+        lb_name = ''
 
     if MaxRbWrspName and (len(Rb) > 2):
         rbn = ['']
@@ -192,10 +193,12 @@ def wrsp_name_creator(param: str, Lb: str, Rb: str, file: dict) -> str:
                 rbn.append('')
         rbn = [b for b in filter(bool, rbn) if (b not in lr_vars.LRB_rep_list)]
         rb_name = '_'.join(sorted(set(rbn), key=rbn.index))[:MaxRbWrspName]
-    else: rb_name = ''
+    else:
+        rb_name = ''
 
     p = tuple(filter(allow_lrb.__contains__, param))  # печатные символы искомого param
-    wrsp_param_name = lr_vars.wrsp_name_splitter.get().join((p[0], ''.join(p[1:-1]), p[-1]))
+    jp = [p[0], ''.join(p[1:-1]), p[-1]]
+    wrsp_param_name = lr_vars.wrsp_name_splitter.get().join(jp)
     MaxParamWrspName = lr_vars.MaxParamWrspName.get()
     if MaxParamWrspName:
         wrsp_param_name = wrsp_param_name[:MaxParamWrspName]
@@ -206,18 +209,25 @@ def wrsp_name_creator(param: str, Lb: str, Rb: str, file: dict) -> str:
     TransactionInNameMax = lr_vars.TransactionInNameMax.get()
     if TransactionInNameMax and lr_vars.Window:
         action = lr_vars.Window.get_main_action()
-        w = next(action.web_action.get_web_by(snapshot=snapshots[0]))
-        if w and w.transaction and (not w.transaction.startswith(action.web_action.transactions._no_transaction_name)):
+        web_action = action.web_action
+        w = next(web_action.get_web_by(web_action.get_web_snapshot_all(), snapshot=snapshots[0]))
+
+        if w and w.transaction and (not w.transaction.startswith(web_action.transactions._no_transaction_name)):
             transaction = '_'.join(''.join(filter(str.isalnum, t)).translate(lr_help.TRANSLIT_DT) for t in w.transaction.split())
             if TransactionInNameMax:
                 transaction = transaction[:TransactionInNameMax]
-        else: transaction = ''
-    else: transaction = ''
+        else:
+            transaction = ''
+    else:
+        transaction = ''
 
     wrsp_name = WEB_REG_NUM.format(wrsp_rnd_num=wrsp_rnd_num, wrsp_name=wrsp_param_name, lb_name=lb_name, rb_name=rb_name,
                                    infs=snaps, letter=lr_vars.WrspNameFirst.get(), transaction=transaction)
+
     wrsp_name = str.translate(wrsp_name, wrsp_deny_punctuation).rstrip('_')
-    while '___' in wrsp_name: wrsp_name = wrsp_name.replace('___', '__')
+    while '___' in wrsp_name:
+        wrsp_name = wrsp_name.replace('___', '__')
+
     return wrsp_name
 
 

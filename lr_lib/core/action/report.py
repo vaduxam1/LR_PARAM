@@ -125,8 +125,9 @@ class WebReport:
 
         n = ('snapshots', 'transaction_names', 'snapshots_count', )
         stats = lambda w: {k: v for (k, v) in self.param_statistic[w.name].items() if k not in n}
+        web_snapshot_all = tuple(self.parent_AWAL.get_web_snapshot_all())
         web_reg = lambda s: {w.name: {'param': w.param, 'stats': stats(w)}
-                             for w in next(self.parent_AWAL.get_web_by(snapshot=s)).web_reg_save_param_list}
+                             for w in next(self.parent_AWAL.get_web_by(web_snapshot_all, snapshot=s)).web_reg_save_param_list}
         for t in self.web_transaction:
             dtt = next(self.get_sub_transaction_dt(t, self.all_in_one))
             dtt.update(copy.deepcopy(self.web_transaction[t]))
