@@ -2,7 +2,6 @@
 # нахождение param и др команды из меню мыши, для gui
 
 import json
-import os
 import re
 import sys
 import html
@@ -11,12 +10,10 @@ import codecs
 import contextlib
 import urllib.parse
 import tkinter as tk
-import tkinter.ttk as ttk
 
 import lr_lib.gui.etc.gui_other
+import lr_lib.gui.widj.responce_files
 
-import lr_lib.core.etc.other as lr_other
-import lr_lib.gui.widj.tooltip as lr_tooltip
 import lr_lib.core.var.vars as lr_vars
 import lr_lib.core.var.vars_func as lr_vars_func
 import lr_lib.core.wrsp.param as lr_param
@@ -465,55 +462,15 @@ def rClick_add_highlight(event, option: str, color: str, val: str, find=False) -
         event.widget.action.tk_text_see()
 
 
-def snapshot_files(event, folder='', i_num=0) -> None:
+def snapshot_files(event, folder_record='', i_num=0) -> None:
     '''показать окно файлов snapshot'''
     selection = event.widget.selection_get()
-    if not folder:
-        folder = lr_vars.VarFilesFolder.get()
+
+    if not folder_record:
+        folder_record = lr_vars.VarFilesFolder.get()
+    folder_response = event.widget.action.get_result_folder()
+
     if not i_num:
         i_num = ''.join(filter(str.isnumeric, selection))
 
-    top = tk.Toplevel()
-    top.transient(event.widget)
-    top.title('окно файлов snapshot=t{i}.inf'.format(i=i_num))
-    lr_lib.gui.etc.gui_other.center_widget(top)
-
-    def get_files_names(folder: str, i_num: int) -> iter((str,)):
-        '''имена файлов'''
-        fi = os.path.join(folder, 't{}.inf'.format(i_num))
-        if not os.path.isfile(fi):
-            return
-
-        with open(fi) as inf:
-            for line in inf:
-                ls = line.strip()
-                if 'File' in ls:
-                    sls = ls.split('=', 1)
-                    if len(sls) == 2:
-                        yield sls[1]
-
-    def widj(folder: str, i_num: int, tt='', mx=40) -> None:
-        '''виджеты'''
-        lab = tk.Label(top, text='{t}\n{f}'.format(t=tt, f=folder))
-        fEntry = ttk.Combobox(top, justify='center', foreground='grey', background=lr_vars.Background,
-                              font=lr_vars.DefaultFont + ' italic')
-        files = list(get_files_names(folder, i_num))
-        if not files:
-            return
-
-        fEntry['values'] = files
-
-        m = max(map(len, fEntry['values']))
-        if m < mx:
-            m = mx
-        fEntry.config(width=m)
-
-        fEntry.bind("<<ComboboxSelected>>", lambda *a, e=fEntry: lr_other._openTextInEditor(os.path.join(folder, e.get())))
-        lr_tooltip.createToolTip(fEntry, '{t}\n{f}'.format(t=tt, f=folder))
-
-        lab.pack()
-        fEntry.pack()
-
-    widj(folder, i_num, tt='файлы при записи')
-    folder = event.widget.action.get_result_folder()
-    widj(folder, i_num, tt='файлы при воспроизведении')
+    lr_lib.gui.widj.responce_files.RespFiles(event.widget, i_num, folder_record, folder_response)

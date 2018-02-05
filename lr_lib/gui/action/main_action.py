@@ -16,7 +16,7 @@ import lr_lib.gui.widj.highlight_text
 import lr_lib.gui.widj.legend
 import lr_lib.gui.action.tooltips
 import lr_lib.gui.action.grid
-import lr_lib.gui.action.wrsp_setting
+import lr_lib.gui.widj.wrsp_setting
 
 import lr_lib.gui.widj.tooltip as lr_tooltip
 import lr_lib.core.var.vars as lr_vars

@@ -2,6 +2,7 @@
 # всяко разно
 
 import re
+import os
 import types
 import string
 import itertools
@@ -171,3 +172,18 @@ def exec_time(func: callable) -> callable:
         lr_vars.Logger.trace('<- {t} сек: {f}'.format(f=func, t=round(t, 1)))
         return out
     return wrap
+
+
+def get_files_names(folder: str, i_num: int, file_key='File', file_mask='t{}.inf') -> iter((str,)):
+    '''имена файлов из t{i_num}.inf'''
+    fi = os.path.join(folder, file_mask.format(i_num))
+    if not os.path.isfile(fi):
+        return
+
+    with open(fi) as inf:
+        for line in inf:
+            s_line = line.strip().split('=', 1)
+            if len(s_line) == 2:
+                key, value = s_line
+                if file_key in key:
+                    yield value
