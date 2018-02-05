@@ -210,7 +210,7 @@ class ActionWindow(tk.Toplevel):
 
         self.final_wnd_cbx = tk.Checkbutton(self.toolbar, text='final', font=lr_vars.DefaultFont, variable=self.final_wnd_var)
         self.wrsp_setting = tk.Button(self.toolbar, text='wrsp_setting', font=lr_vars.DefaultFont,
-                                      command=lambda *a: lr_lib.gui.action.wrsp_setting.WrspSettingWindow(parent=self))
+                                      command=lambda *a: lr_lib.gui.widj.wrsp_setting.WrspSettingWindow(parent=self))
 
         def force_ask_cmd(*a) -> None:
             if self.force_ask_var.get():
