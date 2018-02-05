@@ -127,7 +127,7 @@ def set_part_num(num=0) -> None:
 
 
 def lb_rb_split_end(lb: str, rb: str) -> (str, str):
-    '''обрезакть конечные символы lb rb'''
+    '''обрезать конечные символы lb rb'''
     if lr_vars.VarLEnd.get():
         llb = len(lb)
         if llb < 5:
