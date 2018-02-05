@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# окно настройки каментов и имени wrsp
+# окно файлов ответов, для i_num-snapshot
 
 import os
 import tkinter as tk
