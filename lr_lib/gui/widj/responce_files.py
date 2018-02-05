@@ -20,11 +20,12 @@ class RespFiles(tk.Toplevel):
         self.widget = widget
         self.i_num = i_num
         self.transient(self.widget)
-        self.title('окно файлов snapshot=t{i}.inf'.format(i=i_num))
+        self.inf_file = 't{i}.inf'.format(i=i_num)
+        self.title('окно файлов snapshot=' + self.inf_file)
         lr_lib.gui.etc.gui_other.center_widget(self)
 
-        self.response_widj_creator(folder_record, i_num, desc='файлы при записи')
-        self.response_widj_creator(folder_response, i_num, desc='файлы при воспроизведении')
+        self.response_widj_creator(folder_record, desc='файлы при записи')
+        self.response_widj_creator(folder_response, desc='файлы при воспроизведении')
 
     def combo_select(self, ent: tk.Entry, folder: str, cbx_var: tk.BooleanVar):
         full_name = os.path.join(folder, ent.get())
@@ -32,22 +33,25 @@ class RespFiles(tk.Toplevel):
             lr_other._openTextInEditor(full_name)
 
         file_dt = lr_files.file_dict_creator(
-            ent.get(), full_name, 0, enc=lr_vars.VarEncode.get(), inf_key='', allow_deny=True, set_statistic=True)
+            ent.get(), full_name, inf_num=0, enc=lr_vars.VarEncode.get(), inf_key='', allow_deny=True, set_statistic=True)
+        del file_dt['Param']
+        del file_dt['Snapshot']
 
         lr_tooltip.createToolTip(ent, lr_other.file_string(file_dt))
 
-    def response_widj_creator(self, folder: str, i_num: int, desc='', mx=40) -> None:
+    def response_widj_creator(self, folder: str, desc='', mx=40) -> None:
         '''виджеты для окна файлов snapshot'''
         text = '{desc}\n{folder}'.format(desc=desc, folder=folder)
 
-        lab = tk.Label(self, text=text)
+        lab = tk.Label(self, text=desc)
 
         cbx_var = tk.BooleanVar(value=True)
         cbx = tk.Checkbutton(self, text='open', variable=cbx_var)
+        lr_tooltip.createToolTip(cbx, 'не открывать файл, при выборе в комбобоксе')
 
         ent = ttk.Combobox(self, justify='center', background=lr_vars.Background, font=lr_vars.DefaultFont)
 
-        files = list(lr_other.get_files_names(folder, i_num))
+        files = list(lr_other.get_files_names(folder, self.i_num))
         if not files:
             return
         ent['values'] = files

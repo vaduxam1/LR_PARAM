@@ -176,14 +176,16 @@ def exec_time(func: callable) -> callable:
 
 def get_files_names(folder: str, i_num: int, file_key='File', file_mask='t{}.inf') -> iter((str,)):
     '''имена файлов из t{i_num}.inf'''
-    fi = os.path.join(folder, file_mask.format(i_num))
+    inf_file = file_mask.format(i_num)
+    fi = os.path.join(folder, inf_file)
     if not os.path.isfile(fi):
         return
 
+    yield fi
     with open(fi) as inf:
         for line in inf:
             s_line = line.strip().split('=', 1)
             if len(s_line) == 2:
                 key, value = s_line
-                if file_key in key:
+                if (file_key in key) and (value != 'NONE'):
                     yield value
