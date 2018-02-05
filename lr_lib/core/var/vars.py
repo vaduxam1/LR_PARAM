@@ -239,11 +239,11 @@ DefaultActionNoHighlightFontSlant = True  #
 # подсветка
 
 HighlightOn = True  # включить подсветку
-HighlightThread = tk.BooleanVar(value=False)  # выполнять в фоне, весь код подсветки
+HighlightThread = tk.BooleanVar(value=True)  # выполнять в фоне, весь код подсветки
 LineTagAddThread = tk.BooleanVar(value=True)  # выполнять в фоне, код подсветки для одной линии
-TagAddThread = tk.BooleanVar(value=False)  # выполнять в фоне, код подсветки для одного тега
-HighlightMPool = tk.BooleanVar(value=False)  # искать индексы для подсветки линий, в M_POOL
-HighlightLinesPortionSize = tk.IntVar(value=1)  # для скольки линий, искать индексы, за один проход/поток
+TagAddThread = tk.BooleanVar(value=True)  # выполнять в фоне, код подсветки для одного тега
+HighlightMPool = tk.BooleanVar(value=True)  # искать индексы для подсветки линий, в M_POOL
+HighlightLinesPortionSize = tk.IntVar(value=2)  # для скольки линий, искать индексы, за один проход/поток
 Background = 'khaki'
 
 highlight_words_folder = os.path.join(lib_folder, 'etc')

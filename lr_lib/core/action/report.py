@@ -113,25 +113,38 @@ class WebReport:
 
         for wr_name in self.param_statistic:
             statistic = self.param_statistic[wr_name]
-            statistic['snapshots_count'] = len(statistic['snapshots'])
-            statistic['transaction_count'] = len(statistic['transaction_names'])
-            statistic['minmax_snapshots'] = snapshot_diapason_string(statistic['snapshots'])
+            snaps = statistic['snapshots']
 
-            if (not statistic['param_count']) or (self._wrsp[wr_name].snapshot in statistic['snapshots']):
+            statistic['snapshots_count'] = len(snaps)
+            statistic['transaction_count'] = len(statistic['transaction_names'])
+            statistic['minmax_snapshots'] = snapshot_diapason_string(snaps)  # для in/out comment
+
+            if (not statistic['param_count']) or (self._wrsp[wr_name].snapshot in snaps):
                 self.bad_wrsp_in_usage.append(wr_name)
 
         for dt in self.web_transaction.values():
-            dt['minmax_snapshots'] = snapshot_diapason_string(dt['snapshots'])
+            dt['minmax_snapshots'] = snapshot_diapason_string(dt['snapshots'])  # для transac comment
 
-        n = ('snapshots', 'transaction_names', 'snapshots_count', )
-        stats = lambda w: {k: v for (k, v) in self.param_statistic[w.name].items() if k not in n}
         web_snapshot_all = tuple(self.parent_AWAL.get_web_snapshot_all())
-        web_reg = lambda s: {w.name: {'param': w.param, 'stats': stats(w)}
-                             for w in next(self.parent_AWAL.get_web_by(web_snapshot_all, snapshot=s)).web_reg_save_param_list}
+
+        def get_stats(name, deny=('snapshots', 'transaction_names', 'snapshots_count', )):
+            wps = self.param_statistic[name]
+            for k in wps:
+                if k not in deny:
+                    yield k, wps[k]
+
+        def web_reg(snapshot: int) -> iter((str, dict),):
+            web = self.parent_AWAL.get_web_by(web_snapshot_all, snapshot=snapshot)
+            web = next(web)
+            for wrsp in web.web_reg_save_param_list:
+                name = wrsp.name
+                pdt = {'param': wrsp.param, 'stats': dict(get_stats(name))}
+                yield name, pdt
+
         for t in self.web_transaction:
             dtt = next(self.get_sub_transaction_dt(t, self.all_in_one))
             dtt.update(copy.deepcopy(self.web_transaction[t]))
-            dtt['snapshots'] = {s: web_reg(s) for s in dtt['snapshots']}
+            dtt['snapshots'] = {s: dict(web_reg(s)) for s in dtt['snapshots']}
 
         dt = self.checker_warn()
         for lvl in dt:

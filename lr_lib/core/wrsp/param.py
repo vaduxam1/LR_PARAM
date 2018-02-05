@@ -213,9 +213,9 @@ def wrsp_name_creator(param: str, Lb: str, Rb: str, file: dict) -> str:
         w = next(web_action.get_web_by(web_action.get_web_snapshot_all(), snapshot=snapshots[0]))
 
         if w and w.transaction and (not w.transaction.startswith(web_action.transactions._no_transaction_name)):
-            transaction = '_'.join(''.join(filter(str.isalnum, t)).translate(lr_help.TRANSLIT_DT) for t in w.transaction.split())
-            if TransactionInNameMax:
-                transaction = transaction[:TransactionInNameMax]
+            transaction = '_'.join(''.join(filter(str.isalnum, t)).translate(lr_help.TRANSLIT_DT)
+                                   for t in w.transaction.split())
+            transaction = transaction[:TransactionInNameMax]
         else:
             transaction = ''
     else:
