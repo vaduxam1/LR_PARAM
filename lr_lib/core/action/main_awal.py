@@ -198,12 +198,22 @@ class ActionWebsAndLines:
                 transac = transac[1]
                 self.transactions.stop_transaction(transac)
 
-    def web_reg_save_param_insert(self, wrsp_dict: dict, wrsp='') -> None:
+    def web_reg_save_param_insert(self, wrsp_dict_or_snapshot: (dict or int), wrsp='') -> lr_web_.WebRegSaveParam:
         '''вставить web_reg_save_param'''
-        inf = wrsp_dict['inf_nums'][0]
+        if isinstance(wrsp_dict_or_snapshot, dict):
+            inf = wrsp_dict_or_snapshot['inf_nums'][0]
+            if not wrsp:
+                wrsp = lr_param.create_web_reg_save_param(wrsp_dict_or_snapshot)
+        elif isinstance(wrsp_dict_or_snapshot, int):
+            inf = wrsp_dict_or_snapshot
+            if not wrsp:
+                raise UserWarning('пустой wrsp {} | {} | {} | {}'.format(
+                    wrsp_dict_or_snapshot, type(wrsp_dict_or_snapshot), wrsp, type(wrsp)))
+        else:
+            raise UserWarning('тип wrsp_dict_or_snapshot {} | {} | {} | {}'.format(
+                wrsp_dict_or_snapshot, type(wrsp_dict_or_snapshot), wrsp, type(wrsp)))
+
         web_ = next(self.get_web_snapshot_by(snapshot=inf))
-        if not wrsp:
-            wrsp = lr_param.create_web_reg_save_param(wrsp_dict)
 
         ws = wrsp.split(lr_param.wrsp_lr_start, 1)
         if len(ws) == 2:
@@ -216,6 +226,8 @@ class ActionWebsAndLines:
         w_lines = w_lines.split('\n')
         wrsp_web_ = lr_web_.WebRegSaveParam(self, w_lines, comments, transaction=web_.transaction, parent_snapshot=web_)
         web_.web_reg_save_param_list.append(wrsp_web_)
+
+        return wrsp_web_
 
     def web_reg_save_param_remove(self, name: str, keys=('param', 'name'), _param='') -> str:
         '''удалить web_reg_save_param'''

@@ -13,6 +13,7 @@ import tkinter as tk
 
 import lr_lib.gui.etc.gui_other
 import lr_lib.gui.widj.responce_files
+import lr_lib.core.action.web_ as lr_web_
 
 import lr_lib.core.var.vars as lr_vars
 import lr_lib.core.var.vars_func as lr_vars_func
@@ -126,7 +127,8 @@ def group_param(event, widget=None, params=None, ask=True) -> None:
             lr_vars.MainThreadUpdater.submit(progress)
             wrsp_name = lr_param.param_bounds_setter(wrsp_dict['web_reg_name'])
             wrsp = lr_param.create_web_reg_save_param(wrsp_dict)
-            with contextlib.suppress(Exception): action.param_inf_checker(wrsp_dict, wrsp)
+            with contextlib.suppress(Exception):
+                action.param_inf_checker(wrsp_dict, wrsp)
 
             replace_list.append((wrsp_dict['param'], wrsp_name))
             action.web_action.web_reg_save_param_insert(wrsp_dict, wrsp)  # вставить web_reg_save_param
@@ -219,7 +221,7 @@ def get_json(obj, indent=5):
         return obj
 
 
-def remove_web_reg_save_param_from_action(event, selection=None) -> None:
+def remove_web_reg_save_param_from_action(event, selection=None, find=True) -> None:
     '''удалить web_reg_save_param с w.param или w.name == selection'''
     if selection is None:
         selection = event.widget.selection_get()
@@ -227,14 +229,28 @@ def remove_web_reg_save_param_from_action(event, selection=None) -> None:
     param = event.widget.action.web_action.web_reg_save_param_remove(selection)
     event.widget.action.web_action_to_tk_text(websReport=True)  # вставить в action.c
 
-    if param:
+    if find and param:
         event.widget.action.search_in_action(word=param)
 
 
 @lr_vars.T_POOL_decorator
+@contextlib.contextmanager
 def all_wrsp_dict_web_reg_save_param(event) -> None:
+    '''все варианты создания web_reg_save_param, искать не ограничивая верхний номер Snapshot'''
+    max_inf_original = event.widget.action.max_inf_cbx_var.get()
+    try:
+        event.widget.action.max_inf_cbx_var.set(0)
+        wrsp_web_ = _all_wrsp_dict_web_reg_save_param(event)
+        if wrsp_web_:
+            event.widget.action.search_in_action(word=wrsp_web_.to_str())
+    finally:
+        event.widget.action.max_inf_cbx_var.set(max_inf_original)
+
+
+def _all_wrsp_dict_web_reg_save_param(event) -> lr_web_.WebRegSaveParam:
     '''все варианты создания web_reg_save_param'''
     selection = event.widget.selection_get()
+
     with contextlib.suppress(AttributeError):
         wrsp_and_param = event.widget.action.web_action.websReport.wrsp_and_param_names
         if selection in wrsp_and_param:
@@ -244,6 +260,8 @@ def all_wrsp_dict_web_reg_save_param(event) -> None:
     lr_vars.VarWrspDictList.clear()
 
     wrsp_dict = lr_param.wrsp_dict_creator()
+    param = wrsp_dict['param']
+
     if wrsp_dict:
         dt = [wrsp_dict, lr_param.create_web_reg_save_param(wrsp_dict)]
         lr_vars.VarWrspDictList.append(dt)
@@ -271,28 +289,39 @@ def all_wrsp_dict_web_reg_save_param(event) -> None:
     ask = y.ask()
 
     if ask == 'Заменить/Создать':
-        remove_web_reg_save_param_from_action(event, selection=selection)
-        user_wrsp = y.text.strip('\n')
-        _wrsp = user_wrsp.strip()
-        for wrsp_dict, wrsp in lr_vars.VarWrspDictList:
-            if _wrsp == wrsp.strip():
-                return mouse_web_reg_save_param(event.widget, selection, wrsp=user_wrsp, wrsp_dict=wrsp_dict)
+        remove_web_reg_save_param_from_action(event, selection=selection, find=False)
+
+        wrsp = y.text.strip('\n')
+        # брать snapshot из камента
+        s = wrsp.split(lr_param.SnapInComentS, 1)[1]
+        s = s.split(lr_param.SnapInComentE, 1)[0]
+        s = s.split(',', 1)[0]  # может быть несколько?
+        snap = int(s)
+
+        wrsp_web_ = event.widget.action.web_action.web_reg_save_param_insert(snap, wrsp)  # сохр web_reg_save_param в web
+        w = lr_param.param_bounds_setter(wrsp_web_.name)
+        event.widget.action.web_action.replace_bodys([(param, w)])  # заменить в телах web's
+        event.widget.action.web_action_to_tk_text(websReport=True)  # вставить в action.c
+
+        return wrsp_web_
 
 
 @lr_vars.T_POOL_decorator
-def rClick_web_reg_save_param_regenerate(event, new_lb_rb=True) -> None:
+def rClick_web_reg_save_param_regenerate(event, new_lb_rb=True, selection=None, replace=True) -> (dict, str):
     '''из выделения, переформатировать LB/RB в уже созданном web_reg_save_param, меню правой кнопки мыши'''
-    selection = event.widget.selection_get()
+    if selection is None:
+        selection = event.widget.selection_get()
     try:
         action = event.widget.action
     except:
         action = next(iter(lr_vars.Window.action_windows.values()))
 
     if lr_param.wrsp_lr_start not in selection:
-        return tk.messagebox.showwarning(str(rClick_web_reg_save_param_regenerate),
-                                         'Ошибка, необходимо выделять весь блок, созданного web_reg_save_param, вместе с комментариями\n'
-                                         'Сейчас "{wr}" не содержится в выделенном тексте:\n{selection}'.format(
-                                             wr=lr_param.wrsp_lr_start, selection=selection[:1000]), parent=action)
+        return tk.messagebox.showwarning(
+            str(rClick_web_reg_save_param_regenerate),
+            'Ошибка, необходимо выделять весь блок, созданного web_reg_save_param, вместе с комментариями\n'
+            'Сейчас "{wr}" не содержится в выделенном тексте:\n{selection}'.format(
+                wr=lr_param.wrsp_lr_start, selection=selection[:1000]), parent=action)
 
     file_name = selection.split(lr_param.wrsp_file_start, 1)[-1]
     file_name = file_name.split(lr_param.wrsp_file_end, 1)[0]
@@ -307,23 +336,37 @@ def rClick_web_reg_save_param_regenerate(event, new_lb_rb=True) -> None:
     wrsp_name, sel = sel[0], sel[-1]
 
     if new_lb_rb:  # сохранить LB/RB
-        wrsp_lb = sel.split(lr_param.wrsp_LB_start, 1)[-1]
-        wrsp_lb = wrsp_lb.split(lr_param.wrsp_LB_end, 1)[0]
-        wrsp_rb = sel.split(lr_param.wrsp_RB_start, 1)[-1]
-        wrsp_rb = wrsp_rb.split(lr_param.wrsp_RB_end, 1)[0]
+        _lb = sel.split(lr_param.wrsp_LB_start, 1)[-1]
+        wrsp_lb = _lb.split(lr_param.wrsp_LB_end, 1)[0]
+        _rb = sel.split(lr_param.wrsp_RB_start, 1)[-1]
+        wrsp_rb = _rb.split(lr_param.wrsp_RB_end, 1)[0]
         lr_vars.VarLB.set(value=wrsp_lb)
         lr_vars.VarRB.set(value=wrsp_rb)
 
     wrsp_dict = lr_param.wrsp_dict_creator()  # сформировать wrsp_dict
-    wrsp_dict['web_reg_name'] = wrsp_name  # сохранить старое имя
     web_reg_save_param = lr_param.create_web_reg_save_param(wrsp_dict)  # создать
 
-    txt = event.widget.get(1.0, tk.END).replace(selection, web_reg_save_param)
-    action.backup()
-    event.widget.delete(1.0, tk.END)
-    event.widget.insert(1.0, txt)  # вставить
-    action.save_action_file(file_name=False)
-    action.search_in_action(word=wrsp_name)
+    if replace:  # заменить
+        try:
+            action = event.widget.action
+        except AttributeError:  # не  action
+            txt = event.widget.get(1.0, tk.END).replace(selection, web_reg_save_param)
+            event.widget.delete(1.0, tk.END)
+            event.widget.insert(1.0, txt)  # вставить
+        else:
+            action.backup()
+            remove_web_reg_save_param_from_action(event, selection=param, find=False)  # удалить(при замене)
+            with contextlib.suppress(Exception):
+                action.param_inf_checker(wrsp_dict, web_reg_save_param)
+
+            wrsp_name = wrsp_dict['web_reg_name']
+            action.web_action.web_reg_save_param_insert(wrsp_dict, web_reg_save_param)  # сохр web_reg_save_param в web
+            action.web_action.replace_bodys([(wrsp_dict['param'], wrsp_name)])  # заменить в телах web's
+            action.web_action_to_tk_text(websReport=True)  # вставить в action.c
+
+            action.search_in_action(word=wrsp_name)
+
+    return wrsp_dict, web_reg_save_param
 
 
 def rClick_max_inf(event) -> None:

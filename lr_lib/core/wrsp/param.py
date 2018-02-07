@@ -61,6 +61,8 @@ _block_endswith = '",'
 _block_endswith2 = '("'
 _block_endswith3 = '");'
 
+SnapInComentS = 'Snap['
+SnapInComentE = ']'
 Snap1 = '"Snapshot=t'
 Snap2 = '.inf",'
 Snap = '%s{num}%s' % (Snap1, Snap2)
@@ -89,6 +91,14 @@ def create_web_reg_save_param(wrsp_dict=None) -> str:
         wrsp_string = _web_reg_save_param
 
     return wrsp_string.format(**wrsp_dict)
+
+
+def create_web_reg_save_param_and_dict(wrsp_dict=None) -> (str, dict):
+    '''сформировать web_reg_save_param и его словарь'''
+    if wrsp_dict is None:
+        wrsp_dict = lr_vars.VarWrspDict.get()
+
+    return create_web_reg_save_param(wrsp_dict=wrsp_dict), wrsp_dict
 
 
 wrsp_allow_symb = string.ascii_letters + string.digits + '_!-'  # из каких символов, может состоять param
