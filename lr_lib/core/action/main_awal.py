@@ -65,6 +65,21 @@ class ActionWebsAndLines:
 
             web_.set_body(body)
 
+    def replace_bodys_iter(self) -> None:
+        '''заменить группу param, во всех web_ body - сопрограмма'''
+        web_actions = tuple(self.get_web_snapshot_all())
+
+        search_replace = yield
+        while search_replace is not None:
+            search, replace = search_replace
+
+            for web_ in web_actions:
+                body = web_.get_body()
+                new_body = lr_web_.body_replace(body, search, replace)
+                web_.set_body(new_body)
+
+            search_replace = yield
+
     def add_to_text_list(self, element: (str or object)) -> None:
         '''объединять строки, идущие подряд'''
         last_ = self.webs_and_lines[-1]

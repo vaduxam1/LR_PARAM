@@ -29,10 +29,11 @@ class WrspSettingWindow(tk.Toplevel):
                                                   variable=lr_vars.VarWRSPStatsTransacNames)
         VarWRSPStats = tk.Checkbutton(self, text='VarWRSPStats', font=lr_vars.DefaultFont,
                                       variable=lr_vars.VarWRSPStats)
-        SnapshotInName = tk.Checkbutton(self, text='SnapshotInName', font=lr_vars.DefaultFont,
+        tt_SnapshotInName = 'в wrsp имени param, отображать номер Snapshot, в котором создан wrsp\nИзменится только при пересоздании param'
+        SnapshotInName = tk.Checkbutton(self, text=tt_SnapshotInName, font=lr_vars.DefaultFont,
                                         variable=lr_vars.SnapshotInName)
         TransactionInNameMax = tk.Spinbox(self, font=lr_vars.DefaultFont, from_=0, to=1000,
-                                          textvariable=lr_vars.TransactionInNameMax)
+                                          textvariable=lr_vars.TransactionInNameMax, text=tt_SnapshotInName)
 
         MaxLbWrspName = tk.Spinbox(self, textvariable=lr_vars.MaxLbWrspName, font=lr_vars.DefaultFont, from_=0, to=1000)
         MaxRbWrspName = tk.Spinbox(self, textvariable=lr_vars.MaxRbWrspName, font=lr_vars.DefaultFont, from_=0, to=1000)
@@ -54,8 +55,7 @@ class WrspSettingWindow(tk.Toplevel):
         lr_tooltip.createToolTip(VarWRSPStatsTransacNames, 'для wrsp, имена транзакций в которых используется param')
         lr_tooltip.createToolTip(VarWRSPStats, 'для wrsp, создавать подробные/короткие коментарии\n'
                                                'Изменится только при пересоздании param')
-        lr_tooltip.createToolTip(SnapshotInName, 'в wrsp имени param, отображать номер Snapshot, в котором создан wrsp\n'
-                                                 'Изменится только при пересоздании param')
+        lr_tooltip.createToolTip(SnapshotInName, tt_SnapshotInName)
         lr_tooltip.createToolTip(TransactionInNameMax, 'в wrsp имени param, отображать максимум символов transaction, в которой создан wrsp\n'
                                                        'Изменится только при пересоздании param\n'
                                                        '0 - откл')
@@ -74,7 +74,7 @@ class WrspSettingWindow(tk.Toplevel):
         lr_tooltip.createToolTip(MaxWrspRnum, 'макс число, для случайного номера, в wrsp имени param\n'
                                               'Изменится только при пересоздании param\n'
                                               '0 - откл')
-        lr_tooltip.createToolTip(wrsp_name_splitter, 'символ разделения в имени wrsp(для "_"): Win__aFFX9__id -> Win__a_FFX_9__id\n'
+        lr_tooltip.createToolTip(wrsp_name_splitter, 'символ разделения в имени wrsp(для "_"): "aFFX9" -> "a_FFX_9"\n'
                                                      'Изменится только при пересоздании param\nничего - откл')
         lr_tooltip.createToolTip(WrspNameFirst, 'начало(P) wrsp имени param: {P_11_zkau_22}\n'
                                                 'Изменится только при пересоздании param\n'

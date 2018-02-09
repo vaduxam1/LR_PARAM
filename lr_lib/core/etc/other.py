@@ -3,6 +3,7 @@
 
 import re
 import os
+import json
 import types
 import string
 import itertools
@@ -189,3 +190,11 @@ def get_files_names(folder: str, i_num: int, file_key='File', file_mask='t{}.inf
                 key, value = s_line
                 if (file_key in key) and (value != 'NONE'):
                     yield value
+
+
+def get_json(obj, indent=5):
+    '''удобно-смотримый вид'''
+    try:
+        return json.dumps(obj, indent=indent)
+    except Exception:
+        return obj

@@ -1,6 +1,10 @@
 # -*- coding: UTF-8 -*-
 # всякое для gui
 
+import lr_lib.core.etc.other as lr_other
+import lr_lib.core.var.vars as lr_vars
+import lr_lib.gui.widj.dialog as lr_dialog
+
 
 def center_widget(widget) -> None:
     '''center window on screen'''
@@ -10,3 +14,33 @@ def center_widget(widget) -> None:
     y = (widget.winfo_screenheight() - widget.winfo_reqheight()) / 2
     widget.geometry("+%d+%d" % (x, y))
     widget.deiconify()
+
+
+def repA(widget) -> None:
+    '''отчет сокращенный'''
+    rep = widget.action.web_action.websReport.all_in_one
+    t = 'transac_len={}, param_len={}'.format(len(rep), len(widget.action.web_action.websReport.wrsp_and_param_names))
+    y = lr_dialog.YesNoCancel(buttons=['OK'], text_before='repA', text_after='websReport.all_in_one',
+                              is_text=lr_other.get_json(rep), title=t, parent=widget.action)
+    lr_vars.T_POOL_decorator(y.ask)()
+
+
+def repB(widget, counter=None) -> None:
+    '''отчет полный'''
+    wr = widget.action.web_action.websReport
+    if counter is None:
+        counter = len(wr.wrsp_and_param_names)
+
+    obj = [wr.wrsp_and_param_names, wr.rus_webs, wr.google_webs, wr.bad_wrsp_in_usage,
+           widget.action.web_action.transactions.sub_transaction, wr.web_transaction_sorted,
+           wr.param_statistic, wr.web_snapshot_param_in_count, wr.web_transaction]
+    ao = ['wrsp_and_param_names', 'rus_webs', 'google_webs', 'bad_wrsp_in_usage', 'sub_transaction',
+          'web_transaction_sorted', 'param_statistic', 'web_snapshot_param_in_count', 'web_transaction']
+    tb = ' | '.join('{}:{}'.format(e, a) for e, a in enumerate(ao, start=1))
+    st = '\n----\n'
+    ta = ('\n\n' + st).join('{}:{}{}{}'.format(e, ao[e - 1], st, lr_other.get_json(ob)) for e, ob in enumerate(obj, start=1))
+
+    y = lr_dialog.YesNoCancel(buttons=['OK'], text_before=tb, text_after='{} шт'.format(counter),
+                              is_text='\n\n{}'.format(ta), title='создано: {} шт.'.format(counter), parent=widget.action)
+    lr_vars.T_POOL_decorator(y.ask)()
+    lr_vars.Logger.trace('{}\n\n{}'.format(tb, ta))

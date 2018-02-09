@@ -17,6 +17,7 @@ import lr_lib.gui.widj.legend
 import lr_lib.gui.action.tooltips
 import lr_lib.gui.action.grid
 import lr_lib.gui.widj.wrsp_setting
+import lr_lib.gui.etc.gui_other
 
 import lr_lib.gui.widj.tooltip as lr_tooltip
 import lr_lib.core.var.vars as lr_vars
@@ -24,7 +25,7 @@ import lr_lib.core.wrsp.param as lr_param
 import lr_lib.core.action.main_awal as lr_main_awal
 import lr_lib.core.etc.other as lr_other
 import lr_lib.core.etc.lbrb_checker as lr_lbrb_checker
-import lr_lib.gui.etc.action_lib as lr_action_lib
+import lr_lib.gui.etc.group_param as lr_group_param
 import lr_lib.gui.etc.sub_menu as lr_sub_menu
 import lr_lib.gui.widj.dialog as lr_dialog
 import lr_lib.etc.template as lr_template
@@ -248,9 +249,9 @@ class ActionWindow(tk.Toplevel):
         self.lr_think_time = tk.Button(self.toolbar, text='lr_think_time', font=lr_vars.DefaultFont + ' bold',
                                        command=self.thinktime_remove)
         self.lr_report_B = tk.Button(self.toolbar, text='reportB', font=lr_vars.DefaultFont + ' bold',
-                                     command=lambda *a: lr_action_lib.repB(self.tk_text))
+                                     command=lambda *a: lr_lib.gui.etc.gui_other.repB(self.tk_text))
         self.lr_report_A = tk.Button(self.toolbar, text='reportA', font=lr_vars.DefaultFont + ' bold',
-                                     command=lambda *a: lr_action_lib.repA(self.tk_text))
+                                     command=lambda *a: lr_lib.gui.etc.gui_other.repA(self.tk_text))
 
         self.transaction_rename = tk.Button(self.toolbar, text='rename\ntransaction', font=lr_vars.DefaultFont + ' bold',
                                             background='orange', command=self.all_transaction_rename)
@@ -713,7 +714,7 @@ class ActionWindow(tk.Toplevel):
             ans = y.ask()
             if ans == 'Создать':
                 params = list(filter(bool, map(str.strip, y.text.split('\n'))))
-                lr_action_lib.group_param(None, widget=self.tk_text, params=params, ask=False)
+                lr_group_param.group_param(None, widget=self.tk_text, params=params, ask=False)
 
     @contextlib.contextmanager
     def block(self, w=('tk_text', 'unblock', 'search_entry', 'search_res_combo', 'toolbar', )) -> iter:

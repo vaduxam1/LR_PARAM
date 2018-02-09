@@ -1,64 +1,58 @@
 # -*- coding: UTF-8 -*-
-# нахождение param и др команды из меню мыши, для gui
+# команды из меню мыши
 
-import json
 import re
-import sys
 import html
-import queue
 import codecs
 import contextlib
 import urllib.parse
 import tkinter as tk
 
-import lr_lib.gui.etc.gui_other
 import lr_lib.gui.widj.responce_files
-import lr_lib.core.action.web_ as lr_web_
 
+import lr_lib.core.action.web_ as lr_web_
 import lr_lib.core.var.vars as lr_vars
 import lr_lib.core.var.vars_func as lr_vars_func
 import lr_lib.core.wrsp.param as lr_param
-import lr_lib.etc.excepthook as lr_excepthook
 import lr_lib.gui.widj.dialog as lr_dialog
 
 
 @lr_vars.T_POOL_decorator
 def mouse_web_reg_save_param(widget, param, mode=('SearchAndReplace', 'highlight', ), wrsp=None, wrsp_dict=None, set_param=True) -> None:
     '''в окне action.c, для param, автозамена, залить цветом, установить виджеты'''
-    action = widget.action
-
-    with action.block():
+    with widget.action.block():
         if 'SearchAndReplace' in mode:
             if not wrsp_dict:
                 if set_param:
-                    lr_vars.VarParam.set(param, action=action, set_file=True)
+                    lr_vars.VarParam.set(param, action=widget.action, set_file=True)
                     wrsp_dict = lr_param.wrsp_dict_creator()
                 else:
                     wrsp_dict = lr_vars.VarWrspDict.get()
 
             # найти и заменить в action.c
-            action.SearchAndReplace(search=param, wrsp_dict=wrsp_dict, is_param=True, is_wrsp=True, backup=True, wrsp=wrsp)
+            widget.action.SearchAndReplace(
+                search=param, wrsp_dict=wrsp_dict, is_param=True, is_wrsp=True, backup=True, wrsp=wrsp)
 
             w = wrsp_dict['web_reg_name']
             if lr_vars.VarShowPopupWindow.get() and action.final_wnd_var.get():
-                action.search_in_action(word=w)
-                s = '{wr}\n\n{wd}'.format(wr=action.web_action.websReport.param_statistic[w], wd=wrsp_dict)
+                widget.action.search_in_action(word=w)
+                s = '{wr}\n\n{wd}'.format(wr=widget.action.web_action.websReport.param_statistic[w], wd=wrsp_dict)
                 lr_vars.Logger.debug(s)
-                tk.messagebox.showinfo(wrsp_dict['param'], s, parent=action)
+                tk.messagebox.showinfo(wrsp_dict['param'], s, parent=widget.action)
                 try:
-                    action.search_res_combo.current(1)
+                    widget.action.search_res_combo.current(1)
                 except tk.TclError:
-                    action.search_res_combo.current(0)
-                action.tk_text_see()
+                    widget.action.search_res_combo.current(0)
+                widget.action.tk_text_see()
 
         elif 'highlight' in mode:
             highlight_mode(widget, param)
-            action.tk_text.set_highlight()
+            widget.action.tk_text.set_highlight()
 
 
 @lr_vars.T_POOL_decorator
 def rClick_Param(event, *args, **kwargs) -> None:
-    '''web_reg_save_param из выделения, меню правой кнопки мыши'''
+    '''web_reg_save_param из выделения, меню правой кнопки мыши, с отображением в виджетах lr_vars.Window окна'''
     widget = event.widget
 
     try:
@@ -76,149 +70,6 @@ def rClick_Param(event, *args, **kwargs) -> None:
 
     callback = lambda: mouse_web_reg_save_param(widget, param, *args, set_param=False, **kwargs)
     lr_vars.Window.get_files(param=param, callback=callback, action=action)
-
-
-@lr_vars.T_POOL_decorator
-def group_param(event, widget=None, params=None, ask=True) -> None:
-    '''группа web_reg_save_param из выделения, меню правой кнопки мыши'''
-    if widget is None:
-        widget = event.widget
-    action = widget.action
-
-    if params is None:
-        params = action.group_param_search(widget.selection_get())
-    elif params is False:
-        params = action.session_params(lb_list=[widget.selection_get()], ask=False)
-    if not params:
-        return lr_vars.Logger.warning('param не найдены! %s' % params, parent=action)
-
-    len_params = len(params)
-    lr_vars.Logger.info('для создания найдено {} param'.format(len_params))
-
-    if ask:
-        y = lr_dialog.YesNoCancel(
-            buttons=['Найти', 'Отменить', 'Пропуск'], text_before='найти group param', text_after='%s шт.' % len_params,
-            is_text='\n'.join(params), title='group param', parent=action, default_key='Найти')
-        ask = y.ask()
-        if ask == 'Найти':
-            params = sorted(filter(bool, y.text.split('\n')), key=len, reverse=True)
-        elif ask == 'Пропуск':
-            params = []
-        else:
-            return
-
-    lr_vars.Logger.debug('на текущий момент уже создано {} param'.format(len(action.web_action.websReport.wrsp_and_param_names)))
-    lr_vars.Logger.info('>>> для создания выбрано {} param'.format(len_params))
-
-    unsuccess_params = []  # param обработанные с ошибкой
-    wrsp_dict_queue = queue.Queue()
-
-    thread_wrsp_dict_creator(wrsp_dict_queue, params, unsuccess_params, action)  # создавать wrsp_dicts
-    p1 = ((len_params / 100) or 1)
-    progress = lambda: progress_group_param(counter, wrsp_dict['param'], p1, wrsp, unsuccess_params, len_params, action)
-
-    replace_list = []  # [('aFFXt', '{P_9882_4_Window_main_a_FFX_t}'), ('aFFX9', '{P_3768_1_Window_login_a_FFX_9}')]
-    action.backup()
-
-    with lr_vars.Window.block(), action.block():
-        lr_vars.Window._block_ = True
-
-        for counter, wrsp_dict in enumerate(iter(wrsp_dict_queue.get, None), start=1):
-            lr_vars.MainThreadUpdater.submit(progress)
-            wrsp_name = lr_param.param_bounds_setter(wrsp_dict['web_reg_name'])
-            wrsp = lr_param.create_web_reg_save_param(wrsp_dict)
-            with contextlib.suppress(Exception):
-                action.param_inf_checker(wrsp_dict, wrsp)
-
-            replace_list.append((wrsp_dict['param'], wrsp_name))
-            action.web_action.web_reg_save_param_insert(wrsp_dict, wrsp)  # вставить web_reg_save_param
-
-        action.web_action.replace_bodys(replace_list)  # заменить
-        action.web_action_to_tk_text(websReport=True)  # вставить в action.c
-        lr_vars.Window._block_ = False
-
-    lr_vars.MainThreadUpdater.submit(lambda: final_group_param(widget, unsuccess_params=unsuccess_params, log=True))
-
-
-def progress_group_param(counter: int, param: str, proc1: int, wrsp: str, unsuccess_params: [str,], len_params: int, action) -> None:
-    '''прогресс group_param()'''
-    lu = len(unsuccess_params)
-    u = (' | fail: %s' % lu if lu else '')
-    t = '{param} : web_reg_save_param : {counter}/{len_params} : {w} %{u}\n{wrsp}'.format(
-        counter=counter, len_params=len_params, u=u, w=round(counter / proc1), param=param, wrsp=wrsp)
-    action.toolbar['text'] = t
-    action.background_color_set(color=None)
-
-
-@lr_vars.T_POOL_decorator
-def thread_wrsp_dict_creator(wrsp_dict_queue, params, unsuccess_params, action) -> None:
-    '''создать wrsp_dicts в потоке, чтобы не терять время, при показе popup окон'''
-    for param in params:
-        try:
-            lr_vars.VarParam.set(param, action=action, set_file=True)
-            wrsp_dict_queue.put_nowait(lr_vars.VarWrspDict.get())
-        except Exception:
-            unsuccess_params.append(param)
-            lr_excepthook.excepthook(*sys.exc_info())
-    wrsp_dict_queue.put_nowait(None)  # stop
-
-
-def final_group_param(widget, unsuccess_params=None, log=False) -> None:
-    '''результаты работы group_param'''
-    widget.action.set_combo_len()
-    widget.action.background_color_set(color='')  # оригинальный цвет
-
-    pl = widget.action.param_counter(all_param_info=False)
-    widget.action.toolbar['text'] = pl
-
-    if unsuccess_params:
-        err = len(unsuccess_params)
-        n = ('{} param не были созданы ! {}'.format(err, ', '.join(unsuccess_params)) if err else '')
-        widget.action.toolbar['text'] = '{s} : {n}\n{pl}'.format(s=str(not err).upper(), pl=pl, n=n)
-        lr_vars.Logger.error('{} param не были обработаны:\n\t{}\nтребуется пересоздание, с OFF чекбоксом\n'
-                             '"ограничить max_inf"'.format(err, '\n\t'.join(unsuccess_params)), parent=widget.action)
-
-    if widget.action.final_wnd_var.get():
-        repA(widget)
-    if log:
-        lr_vars.Logger.debug(pl)
-
-
-def repA(widget) -> None:
-    '''отчет сокращенный'''
-    rep = widget.action.web_action.websReport.all_in_one
-    t = 'transac_len={}, param_len={}'.format(len(rep), len(widget.action.web_action.websReport.wrsp_and_param_names))
-    y = lr_dialog.YesNoCancel(buttons=['OK'], text_before='repA', text_after='websReport.all_in_one',
-                              is_text=get_json(rep), title=t, parent=widget.action)
-    lr_vars.T_POOL_decorator(y.ask)()
-
-
-def repB(widget, counter=None) -> None:
-    '''отчет полный'''
-    wr = widget.action.web_action.websReport
-    if counter is None:
-        counter = len(wr.wrsp_and_param_names)
-
-    obj = [wr.wrsp_and_param_names, wr.rus_webs, wr.google_webs, wr.bad_wrsp_in_usage,
-           widget.action.web_action.transactions.sub_transaction, wr.web_transaction_sorted,
-           wr.param_statistic, wr.web_snapshot_param_in_count, wr.web_transaction]
-    ao = ['wrsp_and_param_names', 'rus_webs', 'google_webs', 'bad_wrsp_in_usage', 'sub_transaction',
-          'web_transaction_sorted', 'param_statistic', 'web_snapshot_param_in_count', 'web_transaction']
-    tb = ' | '.join('{}:{}'.format(e, a) for e, a in enumerate(ao, start=1))
-    st = '\n----\n'
-    ta = ('\n\n' + st).join('{}:{}{}{}'.format(e, ao[e - 1], st, get_json(ob)) for e, ob in enumerate(obj, start=1))
-
-    y = lr_dialog.YesNoCancel(buttons=['OK'], text_before=tb, text_after='{} шт'.format(counter),
-                              is_text='\n\n{}'.format(ta), title='создано: {} шт.'.format(counter), parent=widget.action)
-    lr_vars.T_POOL_decorator(y.ask)()
-    lr_vars.Logger.trace('{}\n\n{}'.format(tb, ta))
-
-
-def get_json(obj, indent=5):
-    try:
-        return json.dumps(obj, indent=indent)
-    except Exception:
-        return obj
 
 
 def remove_web_reg_save_param_from_action(event, selection=None, find=True) -> None:
@@ -289,6 +140,7 @@ def _all_wrsp_dict_web_reg_save_param(event) -> lr_web_.WebRegSaveParam:
     ask = y.ask()
 
     if ask == 'Заменить/Создать':
+        event.widget.action.backup()
         remove_web_reg_save_param_from_action(event, selection=selection, find=False)
 
         wrsp = y.text.strip('\n')
@@ -338,9 +190,10 @@ def rClick_web_reg_save_param_regenerate(event, new_lb_rb=True, selection=None, 
     if new_lb_rb:  # сохранить LB/RB
         _lb = sel.split(lr_param.wrsp_LB_start, 1)[-1]
         wrsp_lb = _lb.split(lr_param.wrsp_LB_end, 1)[0]
+        lr_vars.VarLB.set(value=wrsp_lb)
+
         _rb = sel.split(lr_param.wrsp_RB_start, 1)[-1]
         wrsp_rb = _rb.split(lr_param.wrsp_RB_end, 1)[0]
-        lr_vars.VarLB.set(value=wrsp_lb)
         lr_vars.VarRB.set(value=wrsp_rb)
 
     wrsp_dict = lr_param.wrsp_dict_creator()  # сформировать wrsp_dict
@@ -348,7 +201,7 @@ def rClick_web_reg_save_param_regenerate(event, new_lb_rb=True, selection=None, 
 
     if replace:  # заменить
         try:
-            action = event.widget.action
+            _ = event.widget.action
         except AttributeError:  # не  action
             txt = event.widget.get(1.0, tk.END).replace(selection, web_reg_save_param)
             event.widget.delete(1.0, tk.END)
