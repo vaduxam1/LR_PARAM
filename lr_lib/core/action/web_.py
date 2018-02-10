@@ -99,8 +99,8 @@ class WebAny:
             if (len(self.lines_list) > 2) and (not self.snapshot):
                 comments += '\n\t{} WARNING: no "Snapshot=t.inf" (del?)'.format(lr_param.LR_COMENT)
 
-        txt = '{coment_text}\n{snap_text}'.format(coment_text=comments, snap_text='\n'.join(self.lines_list))
-        return txt.strip('\n')
+        text = '{coment}\n{snap_text}'.format(coment=comments, snap_text='\n'.join(self.lines_list)).strip('\n')
+        return text
 
     def _read_name(self, name='') -> str:
         try:
@@ -251,9 +251,9 @@ class WebSnapshot(WebAny):
                 text = '\t{c} WARNING: WrspInAndOutUsage: {lp}={p}\n{t}'.format(
                     t=text, c=lr_param.LR_COMENT, p=bad_wrsp, lp=len(bad_wrsp))
 
-        txt = '{wrsp}{stat_string}\n{text}'.format(
-            stat_string=stat_string, text=text, wrsp=''.join(map(WebRegSaveParam.to_str, self.web_reg_save_param_list)))
-        return txt.strip('\n')
+        wrsps = ''.join(map(WebRegSaveParam.to_str, self.web_reg_save_param_list))
+        txt = '{wrsp}{stat_string}\n{text}'.format(stat_string=stat_string, text=text, wrsp=wrsps).strip('\n')
+        return txt
 
     def get_body(self, a=1, b=-1) -> str:
         '''тело web_ - поиск и замену делать тут'''

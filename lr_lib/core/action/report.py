@@ -5,6 +5,8 @@ import copy
 import string
 import collections
 
+import lr_lib.core.etc.other
+
 import lr_lib.core.action.transac as lr_transac
 import lr_lib.core.var.vars as lr_vars
 import lr_lib.core.action.web_ as lr_web_
@@ -31,6 +33,7 @@ class WebReport:
         self._wrsp = {}  # {'P_6046_1__z_k62_0': <lr_lib.web_.WebRegSaveParam object at 0x09252770>, ...}
         self.all_in_one = {}
 
+    @lr_lib.core.etc.other.exec_time
     def create(self):
         '''создать статистику'''
         self.wrsp_and_param_names = {}

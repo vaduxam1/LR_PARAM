@@ -3,6 +3,7 @@
 
 import lr_lib.core.action.report
 import lr_lib.core.action.transac
+import lr_lib.core.etc.other
 
 import lr_lib.core.var.vars as lr_vars
 import lr_lib.core.action.web_ as lr_web_
@@ -76,7 +77,8 @@ class ActionWebsAndLines:
             for web_ in web_actions:
                 body = web_.get_body()
                 new_body = lr_web_.body_replace(body, search, replace)
-                web_.set_body(new_body)
+                if body != new_body:
+                    web_.set_body(new_body)
 
             search_replace = yield
 
@@ -89,6 +91,7 @@ class ActionWebsAndLines:
         else:
             self.webs_and_lines.append(element)
 
+    @lr_lib.core.etc.other.exec_time
     def set_text_list(self, text: str, websReport=True) -> None:
         '''создать все web_action объекты'''
         with self.action.block():
@@ -200,16 +203,16 @@ class ActionWebsAndLines:
             self.add_to_text_list('\n// ERROR web_reg_save_param !\n{}'.format(
                 '\n\n'.join(map(lr_web_.WebRegSaveParam.to_str, reg_param_list))))
 
-    def set_transaction_name(self, strip_line: str, _s='"') -> (str or None):
+    def set_transaction_name(self, strip_line: str) -> (str or None):
         '''проверить линию, сохранить имя transaction'''
-        if strip_line.startswith('lr_'):
+        if strip_line.startswith('lr_'):  # lr_start_transaction("login");
             if strip_line.startswith('lr_start_transaction'):
-                transac = strip_line.split(_s, 2)
+                transac = strip_line.split('"', 2)
                 transac = transac[1]
                 self.transactions.start_transaction(transac)
 
             elif strip_line.startswith('lr_end_transaction'):
-                transac = strip_line.split(_s, 2)
+                transac = strip_line.split('"', 2)
                 transac = transac[1]
                 self.transactions.stop_transaction(transac)
 
@@ -230,6 +233,7 @@ class ActionWebsAndLines:
 
         web_ = next(self.get_web_snapshot_by(snapshot=inf))
 
+        # разделить каменты и web текст
         ws = wrsp.split(lr_param.wrsp_lr_start, 1)
         if len(ws) == 2:
             comments, w_lines = ws
@@ -257,6 +261,7 @@ class ActionWebsAndLines:
 
         return _param
 
+    @lr_lib.core.etc.other.exec_time
     def to_str(self, websReport=False) -> str:
         '''весь action текст как строка'''
         if websReport:
