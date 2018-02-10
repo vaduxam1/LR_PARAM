@@ -579,14 +579,18 @@ class Window(ttk.Frame):
             lr_vars.Tk.destroy()
 
     @contextlib.contextmanager
-    def block(self, w=('text', 'tk_text', 'min_inf', 'max_inf', 'unblock', 'cbxPopupWindow', 'last_frame', )) -> iter:
+    def block(self, w=('text', 'tk_text', 'min_inf', 'max_inf', 'unblock', 'cbxPopupWindow', 'last_frame', ), force=False) -> iter:
         '''заблокировать/разблокировать виджеты в gui'''
         try:
             if self._block_:
                 yield
             else:
+                if force:
+                    self._block_ = True
                 yield self._block(True, w=w)
         finally:
+            if force:
+                self._block_ = False
             if not self._block_:
                 self._block(False, w=w)
 

@@ -15,25 +15,37 @@ class WrspSettingWindow(tk.Toplevel):
         self.transient(self.parent)
         self.resizable(width=False, height=False)
         self.title('настройка каментов и имени wrsp')
-        VarWebStatsTransac = tk.Checkbutton(self, text='VarWebStatsTransac', font=lr_vars.DefaultFont,
+        tt_stat = 'коментарии с именем транзакции (VarWebStatsTransac)\n//lr: "login"(4/10=[4:13])'
+        VarWebStatsTransac = tk.Checkbutton(self, text=tt_stat, font=lr_vars.DefaultFont,
                                             variable=lr_vars.VarWebStatsTransac)
-        VarWebStatsIn = tk.Checkbutton(self, text='VarWebStatsIn', font=lr_vars.DefaultFont,
+        tt_in = 'In-param коментарии (VarWebStatsIn)\n//lr: IN(2)<-[1]: aFFX9(P:2/3|S:2=[2:4]|T:2)'
+        VarWebStatsIn = tk.Checkbutton(self, text=tt_in, font=lr_vars.DefaultFont,
                                        variable=lr_vars.VarWebStatsIn)
-        VarWebStatsOut = tk.Checkbutton(self, text='VarWebStatsOut', font=lr_vars.DefaultFont,
+        tt_out = 'Out-param коментарии (VarWebStatsOut)\n//lr: OUT(1)-> aFFX9(P:3|S:2=[2:4]|T:2)'
+        VarWebStatsOut = tk.Checkbutton(self, text=tt_out, font=lr_vars.DefaultFont,
                                         variable=lr_vars.VarWebStatsOut)
-        VarWebStatsWarn = tk.Checkbutton(self, text='VarWebStatsWarn', font=lr_vars.DefaultFont,
+        tt_warn = 'Warning коментарии (VarWebStatsWarn)\n//lr: WARNING: WrspInAndOutUsage: 1=["z_k620"]'
+        VarWebStatsWarn = tk.Checkbutton(self, text=tt_warn, font=lr_vars.DefaultFont,
                                          variable=lr_vars.VarWebStatsWarn)
-        VarWRSPStatsTransac = tk.Checkbutton(self, text='VarWRSPStatsTransac', font=lr_vars.DefaultFont,
+        tt_wrsp_transac = 'для WRSP, статистика использования param (VarWRSPStatsTransac)\n' \
+                          '//lr: (login: 3=[1:4]) -> Param:3 | Snapshots:2=[2:4] | Transactions=1:["login"]'
+        VarWRSPStatsTransac = tk.Checkbutton(self, text=tt_wrsp_transac, font=lr_vars.DefaultFont,
                                              variable=lr_vars.VarWRSPStatsTransac)
-        VarWRSPStatsTransacNames = tk.Checkbutton(self, text='VarWRSPStatsTransacNames', font=lr_vars.DefaultFont,
+        tt_wrsp_trn = 'для WRSP, имена транзакций\nв которых используется param (VarWRSPStatsTransacNames)\n' \
+                      ' | Transactions=2:[["NoTransaction_1", "login"]'
+        VarWRSPStatsTransacNames = tk.Checkbutton(self, text=tt_wrsp_trn, font=lr_vars.DefaultFont,
                                                   variable=lr_vars.VarWRSPStatsTransacNames)
-        VarWRSPStats = tk.Checkbutton(self, text='VarWRSPStats', font=lr_vars.DefaultFont,
+        tt_wrsp_st = 'для WRSP, создавать подробные/короткие коментарии\n' \
+                     'Изменится только при пересоздании param (VarWRSPStats)\nкороткие: // PARAM["aFFX5"] // Snap[1]'
+        VarWRSPStats = tk.Checkbutton(self, text=tt_wrsp_st, font=lr_vars.DefaultFont,
                                       variable=lr_vars.VarWRSPStats)
-        tt_SnapshotInName = 'в wrsp имени param, отображать номер Snapshot, в котором создан wrsp\nИзменится только при пересоздании param'
+        tt_SnapshotInName = 'в WRSP имени param, отображать номер Snapshot, в котором создан wrsp\n' \
+                            'Изменится только при пересоздании param (SnapshotInName)\n' \
+                            'P_6637_1__zk620 -> P_6637__zk620'
         SnapshotInName = tk.Checkbutton(self, text=tt_SnapshotInName, font=lr_vars.DefaultFont,
                                         variable=lr_vars.SnapshotInName)
         TransactionInNameMax = tk.Spinbox(self, font=lr_vars.DefaultFont, from_=0, to=1000,
-                                          textvariable=lr_vars.TransactionInNameMax, text=tt_SnapshotInName)
+                                          textvariable=lr_vars.TransactionInNameMax)
 
         MaxLbWrspName = tk.Spinbox(self, textvariable=lr_vars.MaxLbWrspName, font=lr_vars.DefaultFont, from_=0, to=1000)
         MaxRbWrspName = tk.Spinbox(self, textvariable=lr_vars.MaxRbWrspName, font=lr_vars.DefaultFont, from_=0, to=1000)
@@ -47,14 +59,13 @@ class WrspSettingWindow(tk.Toplevel):
                               command=lambda: self.parent.save_action_file(file_name=False))
 
         lr_tooltip.createToolTip(apply_btn, 'применить изменения')
-        lr_tooltip.createToolTip(VarWebStatsTransac, 'коментарии с именем транзакции')
-        lr_tooltip.createToolTip(VarWebStatsIn, 'In коментарии')
-        lr_tooltip.createToolTip(VarWebStatsOut, 'Out коментарии')
-        lr_tooltip.createToolTip(VarWebStatsWarn, 'Warning коментарии')
-        lr_tooltip.createToolTip(VarWRSPStatsTransac, 'для wrsp, статистика использования param')
-        lr_tooltip.createToolTip(VarWRSPStatsTransacNames, 'для wrsp, имена транзакций в которых используется param')
-        lr_tooltip.createToolTip(VarWRSPStats, 'для wrsp, создавать подробные/короткие коментарии\n'
-                                               'Изменится только при пересоздании param')
+        lr_tooltip.createToolTip(VarWebStatsTransac, tt_stat)
+        lr_tooltip.createToolTip(VarWebStatsIn, tt_in)
+        lr_tooltip.createToolTip(VarWebStatsOut, tt_out)
+        lr_tooltip.createToolTip(VarWebStatsWarn, tt_warn)
+        lr_tooltip.createToolTip(VarWRSPStatsTransac, tt_wrsp_transac)
+        lr_tooltip.createToolTip(VarWRSPStatsTransacNames, tt_wrsp_trn)
+        lr_tooltip.createToolTip(VarWRSPStats, tt_wrsp_st)
         lr_tooltip.createToolTip(SnapshotInName, tt_SnapshotInName)
         lr_tooltip.createToolTip(TransactionInNameMax, 'в wrsp имени param, отображать максимум символов transaction, в которой создан wrsp\n'
                                                        'Изменится только при пересоздании param\n'

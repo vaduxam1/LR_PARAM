@@ -34,7 +34,7 @@ def mouse_web_reg_save_param(widget, param, mode=('SearchAndReplace', 'highlight
                 search=param, wrsp_dict=wrsp_dict, is_param=True, is_wrsp=True, backup=True, wrsp=wrsp)
 
             w = wrsp_dict['web_reg_name']
-            if lr_vars.VarShowPopupWindow.get() and action.final_wnd_var.get():
+            if lr_vars.VarShowPopupWindow.get() and widget.action.final_wnd_var.get():
                 widget.action.search_in_action(word=w)
                 s = '{wr}\n\n{wd}'.format(wr=widget.action.web_action.websReport.param_statistic[w], wd=wrsp_dict)
                 lr_vars.Logger.debug(s)

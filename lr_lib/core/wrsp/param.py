@@ -70,7 +70,7 @@ Web_LAST = 'LAST);'
 
 
 def param_bounds_setter(param: str, start='{', end='}') -> str:
-    '''web_reg_save_param имя "P_1212_2_z_kau_1" -> {} '''
+    '''web_reg_save_param имя "P_1212_2_z_kau_1" -> "{P_1212_2_z_kau_1}"'''
     if not param.startswith(start):
         param = start + param
     if not param.endswith(end):
