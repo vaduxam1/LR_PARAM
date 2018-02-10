@@ -75,7 +75,7 @@ def group_param(event, widget=None, params=None, ask=True) -> None:
     # заменить params
     widget.action.backup()
     unsuccess = []  # params, обработанные с ошибкой
-    with lr_vars.Window.block(force=True), widget.action.block(highlight=False):
+    with lr_vars.Window.block(force=True), widget.action.block(no_highlight=True):
         (counter, wrsp_dict, wrsp) = (0, {'param': None}, 'старт...')  # начальные vars для progressbar
         widget.action.after(0, progressbar)  # progressbar
         for (counter, wrsp_dict, wrsp) in _group_param_iter(params, unsuccess, widget.action):  # заменить
