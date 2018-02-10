@@ -12,7 +12,6 @@ import tkinter.filedialog as tkf
 
 from tkinter import messagebox
 
-import lr_lib.gui.widj.highlight_text
 import lr_lib.gui.widj.legend
 import lr_lib.gui.action.tooltips
 import lr_lib.gui.action.grid
@@ -20,6 +19,7 @@ import lr_lib.gui.widj.wrsp_setting
 import lr_lib.gui.etc.gui_other
 
 import lr_lib.gui.widj.tooltip as lr_tooltip
+import lr_lib.gui.widj.highlight_text as lr_highlight_text
 import lr_lib.core.var.vars as lr_vars
 import lr_lib.core.wrsp.param as lr_param
 import lr_lib.core.action.main_awal as lr_main_awal
@@ -94,7 +94,7 @@ class ActionWindow(tk.Toplevel):
         self.file_bar = tk.LabelFrame(self.toolbar, relief='groove', bd=0, text='', labelanchor=tk.N)
         self.cbx_bar = tk.LabelFrame(self.toolbar, relief='groove', bd=0, text='', labelanchor=tk.S)
 
-        self.tk_text = lr_lib.gui.widj.highlight_text.HighlightText(self, background=lr_vars.Background, wrap=tk.NONE, bind=True, bd=0)
+        self.tk_text = lr_highlight_text.HighlightText(self, background=lr_vars.Background, wrap=tk.NONE, bind=True, bd=0)
 
         #
         self.inf_combo = ttk.Combobox(self.inf_bar, justify='center', font=lr_vars.DefaultFont)
@@ -722,7 +722,6 @@ class ActionWindow(tk.Toplevel):
         highlight = self.tk_text.highlight_var.get()
         if no_highlight:  # откл подсветку
             self.tk_text.highlight_var.set(False)
-            self.tk_text.set_highlight()
         try:
             yield self._block(True, w=w)
         finally:

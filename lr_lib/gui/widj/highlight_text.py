@@ -26,9 +26,9 @@ class HighlightText(tk.Text):
         self.underline_var = tk.BooleanVar(value=lr_vars.DefaultActionNoHighlightFontUnderline)
         self.slant_var = tk.BooleanVar(value=lr_vars.DefaultActionNoHighlightFontSlant)
         self.overstrike_var = tk.BooleanVar(value=lr_vars.DefaultActionNoHighlightFontOverstrike)
-        self.highlight_var = tk.BooleanVar(value=lr_vars.HighlightOn)
 
         self.set_tegs()
+        self.highlight_var = tk.BooleanVar(value=lr_vars.HighlightOn)
 
         self.tk.eval('''
                     proc widget_proxy {widget widget_command args} {
@@ -80,7 +80,8 @@ class HighlightText(tk.Text):
         self.insert(1.0, text)
 
     def _text_checkbox(self) -> (str, str, int, int):
-        '''text checkbox's get'''
+        '''text checkbox's get,
+        + дополнительно используется как self.__class__._text_checkbox(parent) - color/nocolor?'''
         w = ('bold' if self.weight_var.get() else 'normal')
         s = ('italic' if self.slant_var.get() else 'roman')
         u = (1 if self.underline_var.get() else 0)
@@ -119,7 +120,7 @@ class HighlightText(tk.Text):
         w, s, u, o = self._text_checkbox()
         self.configure(font=Font(family=self.font_var.get(), size=size, weight=w, slant=s, underline=u, overstrike=o))
 
-    def set_highlight(self) -> None:
+    def set_highlight(self, *a) -> None:
         '''tk.Text tag_add/remove, сформировать on_screen_lines "карту" подсветки'''
         self.set_tegs(remove=True)
 

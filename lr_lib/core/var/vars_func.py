@@ -4,7 +4,7 @@
 # VarParam ->> VarFileName -> VarFile -> VarFileText ->> VarPartNum ->> VarLB/VarRB -> VarWrspDict ->>
 #                                                                                       ->> lr_param.web_reg_save_param
 
-import string  # тут не используется, но нужна, не удалять !
+import string  # используется в eval splitters_combo(), не удалять !
 
 import lr_lib.core.var.vars as lr_vars
 import lr_lib.core.wrsp.param as lr_param
@@ -29,6 +29,7 @@ def _set_file_name(name: str) -> None:
     file = lr_files.get_file_with_kwargs(lr_vars.FilesWithParam, Name=name)
     assert file, 'файл "{n}" ({tn}) ненайден. {tf} {f}'.format(n=name, tn=type(name), tf=type(file), f=file)
     lr_vars.VarFile.set(file)
+
 
 def _set_file(file: dict) -> None:
     '''чение файла в lr_vars.VarFileText'''
