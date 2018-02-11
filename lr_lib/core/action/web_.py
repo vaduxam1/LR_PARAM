@@ -19,9 +19,11 @@ def read_web_type(first_line: str, s1='("', s2='(') -> str:
         raise UserWarning('{l} не содержит {s}'.format(l=first_line, s=[s1, s2]))
 
 
-def _body_replace(body_split, len_body_split, search, replace) -> iter((str, )):
+def _body_replace(body_split, len_body_split, search, replace, is_wrsp=True) -> iter((str, )):
     '''замена search в body'''
     yield body_split[0]
+    if is_wrsp:
+        replace = lr_param.param_bounds_setter(replace)
 
     for indx in range(1, len_body_split):
         left = body_split[indx - 1]
@@ -32,7 +34,7 @@ def _body_replace(body_split, len_body_split, search, replace) -> iter((str, )):
             yield search + right
 
 
-def body_replace(body: str, search: str, replace: str) -> str:
+def body_replace(body: str, search: str, replace: str, is_wrsp=True) -> str:
     '''замена search в body'''
     body_split = body.split(search)
     len_body_split = len(body_split)
@@ -40,15 +42,15 @@ def body_replace(body: str, search: str, replace: str) -> str:
     if len_body_split < 2:
         return body
     else:
-        return ''.join(_body_replace(body_split, len_body_split, search, replace))
+        return ''.join(_body_replace(body_split, len_body_split, search, replace, is_wrsp=is_wrsp))
 
 
-def bodys_replace(replace_args: ({int: str}, [(str, str), ])) -> [str, ]:
+def bodys_replace(replace_args: ({int: str}, [(str, str), ]), is_wrsp=True) -> [str, ]:
     '''замена param's в body's'''
     body_portion, replace_list = replace_args
     for i in body_portion:
         for search, replace in replace_list:
-            body_portion[i] = body_replace(body_portion[i], search, replace)
+            body_portion[i] = body_replace(body_portion[i], search, replace, is_wrsp=is_wrsp)
     return body_portion
 
 

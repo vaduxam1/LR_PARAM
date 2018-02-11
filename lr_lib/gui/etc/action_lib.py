@@ -30,8 +30,7 @@ def mouse_web_reg_save_param(widget, param, mode=('SearchAndReplace', 'highlight
                     wrsp_dict = lr_vars.VarWrspDict.get()
 
             # найти и заменить в action.c
-            widget.action.SearchAndReplace(
-                search=param, wrsp_dict=wrsp_dict, is_param=True, is_wrsp=True, backup=True, wrsp=wrsp)
+            widget.action.SearchAndReplace(search=param, wrsp_dict=wrsp_dict, is_wrsp=True, backup=True, wrsp=wrsp)
 
             w = wrsp_dict['web_reg_name']
             if lr_vars.VarShowPopupWindow.get() and widget.action.final_wnd_var.get():
@@ -151,8 +150,7 @@ def _all_wrsp_dict_web_reg_save_param(event) -> lr_web_.WebRegSaveParam:
         snap = int(s)
 
         wrsp_web_ = event.widget.action.web_action.web_reg_save_param_insert(snap, wrsp)  # сохр web_reg_save_param в web
-        w = lr_param.param_bounds_setter(wrsp_web_.name)
-        event.widget.action.web_action.replace_bodys([(param, w)])  # заменить в телах web's
+        event.widget.action.web_action.replace_bodys([(param, wrsp_web_.name)])  # заменить в телах web's
         event.widget.action.web_action_to_tk_text(websReport=True)  # вставить в action.c
 
         return wrsp_web_

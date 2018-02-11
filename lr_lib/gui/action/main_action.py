@@ -785,11 +785,11 @@ class ActionWindow(tk.Toplevel):
                     else:
                         lr_vars.Logger.info('{q}\n\n{e}'.format(e=ex, q=qb))
 
-    def SearchAndReplace(self, search: str, replace='', wrsp_dict=None, wrsp=None, backup=False, is_param=True, is_wrsp=True, replace_callback=None, rep_stat=False) -> None:
+    def SearchAndReplace(self, search: str, replace='', wrsp_dict=None, wrsp=None, backup=False, is_wrsp=True, replace_callback=None, rep_stat=False) -> None:
         with self.block():
-            self._SearchAndReplace(search, replace, wrsp_dict, wrsp, backup, is_param, is_wrsp, replace_callback, rep_stat)
+            self._SearchAndReplace(search, replace, wrsp_dict, wrsp, backup, is_wrsp, replace_callback, rep_stat)
 
-    def _SearchAndReplace(self, search: str, replace='', wrsp_dict=None, wrsp=None, backup=False, is_param=True, is_wrsp=True, replace_callback=None, rep_stat=False) -> None:
+    def _SearchAndReplace(self, search: str, replace='', wrsp_dict=None, wrsp=None, backup=False, is_wrsp=True, replace_callback=None, rep_stat=False) -> None:
         '''VarWrspDict автозамена: [заменить param на {web_reg_save_param}] + [добавить блок с // web_reg_save_param, перед блоком c inf_line]'''
         assert search, 'пустой search "{s}" {ts}'.format(s=search, ts=type(search))
 
@@ -801,8 +801,6 @@ class ActionWindow(tk.Toplevel):
 
         if not replace:
             replace = wrsp_dict['web_reg_name']
-        if is_param:
-            replace = lr_param.param_bounds_setter(replace)
 
         self.param_inf_checker(wrsp_dict, wrsp)
         if backup:

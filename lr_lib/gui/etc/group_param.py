@@ -98,7 +98,7 @@ def _group_param_iter(params: [str, ], unsuccess, action) -> iter((int, dict, st
             # вставить web_reg_save_param перед web
             action.web_action.web_reg_save_param_insert(wrsp_dict, wrsp)
             # заменить param на web_reg_save_param
-            replace.send((wrsp_dict['param'], lr_param.param_bounds_setter(wrsp_dict['web_reg_name'])))
+            replace.send((wrsp_dict['param'], wrsp_dict['web_reg_name']))
 
             with contextlib.suppress(UserWarning, AssertionError):  # продолжать
                 action.param_inf_checker(wrsp_dict, wrsp)  # inf запроса <= inf web_reg_save_param
