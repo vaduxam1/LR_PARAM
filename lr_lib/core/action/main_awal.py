@@ -52,7 +52,7 @@ class ActionWebsAndLines:
         for web_wrsp in self.get_web_by(self.get_web_reg_save_param_all(), **kwargs):
             yield web_wrsp
 
-    def replace_bodys(self, replace_list: [(str, str), ]) -> None:
+    def replace_bodys(self, replace_list: [(str, str), ], is_wrsp=True) -> None:
         '''заменить группу param, во всех web_ body'''
         web_actions = tuple(self.get_web_snapshot_all())
         lr_vars.Logger.trace('web_actions={lw}, replace_list={lrl}:{rl}'.format(
@@ -62,11 +62,11 @@ class ActionWebsAndLines:
             body = web_.get_body()
 
             for search, replace in replace_list:
-                body = lr_web_.body_replace(body, search, replace)
+                body = lr_web_.body_replace(body, search, replace, is_wrsp=is_wrsp)
 
             web_.set_body(body)
 
-    def replace_bodys_iter(self) -> None:
+    def replace_bodys_iter(self, is_wrsp=True) -> None:
         '''заменить группу param, во всех web_ body - сопрограмма'''
         web_actions = tuple(self.get_web_snapshot_all())
 
@@ -76,7 +76,7 @@ class ActionWebsAndLines:
 
             for web_ in web_actions:
                 body = web_.get_body()
-                new_body = lr_web_.body_replace(body, search, replace)
+                new_body = lr_web_.body_replace(body, search, replace, is_wrsp=is_wrsp)
                 if body != new_body:
                     web_.set_body(new_body)
 
@@ -248,18 +248,21 @@ class ActionWebsAndLines:
 
         return wrsp_web_
 
-    def web_reg_save_param_remove(self, name: str, keys=('param', 'name'), _param='') -> str:
-        '''удалить web_reg_save_param'''
-        for web in self.get_web_snapshot_all():
-            for wrsp_web in list(web.web_reg_save_param_list):
+    def web_reg_save_param_remove(self, name: str, keys=('param', 'name'), param=None, is_wrsp=False) -> str:
+        '''удалить web_reg_save_param, is_wrsp=False'''
+        for web_request in self.get_web_snapshot_all():
+            for wrsp_web in list(web_request.web_reg_save_param_list):
+
                 if any((getattr(wrsp_web, k) == name) for k in keys):
-                    web.web_reg_save_param_list.remove(wrsp_web)
-                    _param = wrsp_web.param
+                    web_request.web_reg_save_param_list.remove(wrsp_web)
+                    param = wrsp_web.param
                     wn = lr_param.param_bounds_setter(wrsp_web.name)
-                    self.replace_bodys([(wn, _param), ])  # удалить из всех web
+                    replace_list = [(wn, param), ]
+
+                    self.replace_bodys(replace_list, is_wrsp=is_wrsp)  # удалить из всех web
                     break
 
-        return _param
+        return param
 
     @lr_lib.core.etc.other.exec_time
     def to_str(self, websReport=False) -> str:

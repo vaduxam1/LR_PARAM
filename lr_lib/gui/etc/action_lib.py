@@ -73,28 +73,30 @@ def rClick_Param(event, *args, **kwargs) -> None:
 
 def remove_web_reg_save_param_from_action(event, selection=None, find=True) -> None:
     '''удалить web_reg_save_param с w.param или w.name == selection'''
-    if selection is None:
-        selection = event.widget.selection_get()
+    with event.widget.action.block():
+        if selection is None:
+            selection = event.widget.selection_get()
 
-    param = event.widget.action.web_action.web_reg_save_param_remove(selection)
-    event.widget.action.web_action_to_tk_text(websReport=True)  # вставить в action.c
+        param = event.widget.action.web_action.web_reg_save_param_remove(selection)
+        event.widget.action.web_action_to_tk_text(websReport=True)  # вставить в action.c
 
-    if find and param:
-        event.widget.action.search_in_action(word=param)
+        if find and param:
+            event.widget.action.search_in_action(word=param)
 
 
 @lr_vars.T_POOL_decorator
 @contextlib.contextmanager
 def all_wrsp_dict_web_reg_save_param(event) -> None:
     '''все варианты создания web_reg_save_param, искать не ограничивая верхний номер Snapshot'''
-    max_inf_original = event.widget.action.max_inf_cbx_var.get()
-    try:
-        event.widget.action.max_inf_cbx_var.set(0)
-        wrsp_web_ = _all_wrsp_dict_web_reg_save_param(event)
-        if wrsp_web_:
-            event.widget.action.search_in_action(word=wrsp_web_.to_str())
-    finally:
-        event.widget.action.max_inf_cbx_var.set(max_inf_original)
+    with event.widget.action.block(no_highlight=True):
+        max_inf_original = event.widget.action.max_inf_cbx_var.get()
+        try:
+            event.widget.action.max_inf_cbx_var.set(0)
+            wrsp_web_ = _all_wrsp_dict_web_reg_save_param(event)
+            if wrsp_web_:
+                event.widget.action.search_in_action(word=wrsp_web_.to_str())
+        finally:
+            event.widget.action.max_inf_cbx_var.set(max_inf_original)
 
 
 def _all_wrsp_dict_web_reg_save_param(event) -> lr_web_.WebRegSaveParam:
