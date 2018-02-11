@@ -85,14 +85,16 @@ def create_files_from_infs(folder: str, enc: str, allow_deny: bool, statistic: b
 
     executer = (lr_vars.M_POOL.imap_unordered if lr_vars.SetFilesPOOLEnable else map)
     len_files = num = 0
-    lr_vars.MainThreadUpdater.submit(progress)
 
-    for (num, files_chunk) in enumerate(executer(get_files_portions, chunks)):
-        len_files += len(files_chunk)
-        for file in files_chunk:
-            if file:
-                yield file
-    len_files = -1
+    lr_vars.MainThreadUpdater.submit(progress)
+    try:
+        for (num, files_chunk) in enumerate(executer(get_files_portions, chunks)):
+            len_files += len(files_chunk)
+            for file in files_chunk:
+                if file:
+                    yield file
+    finally:
+        len_files = -1
 
 
 def get_files_portions(args: [(str, str, bool, bool), (str, )]) -> [dict, ]:
