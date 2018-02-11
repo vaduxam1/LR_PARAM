@@ -65,28 +65,34 @@ def file_dict_creator(name: str, full_name: str, inf_num: int, enc: str, inf_key
 
 def create_files_from_infs(folder: str, enc: str, allow_deny: bool, statistic: bool) -> iter([dict, ]):
     '''создать файлы ответов, из всех t*.ini файлов'''
-    executer = (lr_vars.M_POOL.imap_unordered if lr_vars.SetFilesPOOLEnable else map)
-
     folder_files = next(os.walk(folder))
     folder_files = folder_files[2]
     len_folder_files = len(folder_files)
 
     arg = (folder, enc, allow_deny, statistic, )
-    chunks = tuple(lr_other.chunks(folder_files, lr_vars.FilesCreatePortionSize))
-    args = ((arg, files) for files in chunks)
+    chunks = [(arg, files) for files in lr_other.chunks(folder_files, lr_vars.FilesCreatePortionSize)]
+    lc = len(chunks)
 
-    proc1 = 100 / len(chunks)
-    f = 0
+    def progress(proc1=(100 / (lc or 100))) -> None:
+        '''прогресс создания файлов'''
+        lr_vars.Tk.title('{p}% : {f} / {fa} поиск файлов ответов | {v}'.format(
+            p=round(proc1 * num), v=lr_vars.VERSION, f=len_files, fa=len_folder_files))
 
-    for (e, files) in enumerate(executer(get_files_portions, args)):
-        f += len(files)
-        for file in files:
+        if len_files >= 0:  # перезапуск
+            lr_vars.MainThreadUpdater.submit(progress)
+        else:
+            lr_vars.MainThreadUpdater.submit(lambda: lr_vars.Tk.title(lr_vars.VERSION))
+
+    executer = (lr_vars.M_POOL.imap_unordered if lr_vars.SetFilesPOOLEnable else map)
+    len_files = num = 0
+    lr_vars.MainThreadUpdater.submit(progress)
+
+    for (num, files_chunk) in enumerate(executer(get_files_portions, chunks)):
+        len_files += len(files_chunk)
+        for file in files_chunk:
             if file:
                 yield file
-
-        lr_vars.Tk.title('{p}% : {f} / {fa} поиск файлов ответов | {v}'.format(
-            p=round(proc1 * e), v=lr_vars.VERSION, f=f, fa=len_folder_files))
-    lr_vars.Tk.title('ready | {v}'.format(v=lr_vars.VERSION))
+    len_files = -1
 
 
 def get_files_portions(args: [(str, str, bool, bool), (str, )]) -> [dict, ]:

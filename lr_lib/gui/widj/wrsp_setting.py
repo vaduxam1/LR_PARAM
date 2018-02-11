@@ -17,32 +17,32 @@ class WrspSettingWindow(tk.Toplevel):
         self.title('настройка каментов и имени wrsp')
         tt_stat = 'коментарии с именем транзакции (VarWebStatsTransac)\n//lr: "login"(4/10=[4:13])'
         VarWebStatsTransac = tk.Checkbutton(self, text=tt_stat, font=lr_vars.DefaultFont,
-                                            variable=lr_vars.VarWebStatsTransac)
+                                            variable=lr_vars.VarWebStatsTransac, justify='left')
         tt_in = 'In-param коментарии (VarWebStatsIn)\n//lr: IN(2)<-[1]: aFFX9(P:2/3|S:2=[2:4]|T:2)'
-        VarWebStatsIn = tk.Checkbutton(self, text=tt_in, font=lr_vars.DefaultFont,
+        VarWebStatsIn = tk.Checkbutton(self, text=tt_in, font=lr_vars.DefaultFont, justify='left',
                                        variable=lr_vars.VarWebStatsIn)
         tt_out = 'Out-param коментарии (VarWebStatsOut)\n//lr: OUT(1)-> aFFX9(P:3|S:2=[2:4]|T:2)'
-        VarWebStatsOut = tk.Checkbutton(self, text=tt_out, font=lr_vars.DefaultFont,
+        VarWebStatsOut = tk.Checkbutton(self, text=tt_out, font=lr_vars.DefaultFont, justify='left',
                                         variable=lr_vars.VarWebStatsOut)
         tt_warn = 'Warning коментарии (VarWebStatsWarn)\n//lr: WARNING: WrspInAndOutUsage: 1=["z_k620"]'
-        VarWebStatsWarn = tk.Checkbutton(self, text=tt_warn, font=lr_vars.DefaultFont,
+        VarWebStatsWarn = tk.Checkbutton(self, text=tt_warn, font=lr_vars.DefaultFont, justify='left',
                                          variable=lr_vars.VarWebStatsWarn)
         tt_wrsp_transac = 'для WRSP, статистика использования param (VarWRSPStatsTransac)\n' \
                           '//lr: (login: 3=[1:4]) -> Param:3 | Snapshots:2=[2:4] | Transactions=1:["login"]'
-        VarWRSPStatsTransac = tk.Checkbutton(self, text=tt_wrsp_transac, font=lr_vars.DefaultFont,
+        VarWRSPStatsTransac = tk.Checkbutton(self, text=tt_wrsp_transac, font=lr_vars.DefaultFont, justify='left',
                                              variable=lr_vars.VarWRSPStatsTransac)
         tt_wrsp_trn = 'для WRSP, имена транзакций\nв которых используется param (VarWRSPStatsTransacNames)\n' \
                       ' | Transactions=2:[["NoTransaction_1", "login"]'
-        VarWRSPStatsTransacNames = tk.Checkbutton(self, text=tt_wrsp_trn, font=lr_vars.DefaultFont,
+        VarWRSPStatsTransacNames = tk.Checkbutton(self, text=tt_wrsp_trn, font=lr_vars.DefaultFont, justify='left',
                                                   variable=lr_vars.VarWRSPStatsTransacNames)
         tt_wrsp_st = 'для WRSP, создавать подробные/короткие коментарии\n' \
                      'Изменится только при пересоздании param (VarWRSPStats)\nкороткие: // PARAM["aFFX5"] // Snap[1]'
-        VarWRSPStats = tk.Checkbutton(self, text=tt_wrsp_st, font=lr_vars.DefaultFont,
+        VarWRSPStats = tk.Checkbutton(self, text=tt_wrsp_st, font=lr_vars.DefaultFont, justify='left',
                                       variable=lr_vars.VarWRSPStats)
         tt_SnapshotInName = 'в WRSP имени param, отображать номер Snapshot, в котором создан wrsp\n' \
                             'Изменится только при пересоздании param (SnapshotInName)\n' \
                             'P_6637_1__zk620 -> P_6637__zk620'
-        SnapshotInName = tk.Checkbutton(self, text=tt_SnapshotInName, font=lr_vars.DefaultFont,
+        SnapshotInName = tk.Checkbutton(self, text=tt_SnapshotInName, font=lr_vars.DefaultFont, justify='left',
                                         variable=lr_vars.SnapshotInName)
         TransactionInNameMax = tk.Spinbox(self, font=lr_vars.DefaultFont, from_=0, to=1000,
                                           textvariable=lr_vars.TransactionInNameMax)
@@ -91,9 +91,9 @@ class WrspSettingWindow(tk.Toplevel):
                                                 'Изменится только при пересоздании param\n'
                                                 'ничего - откл')
 
-        VarWebStatsTransac.pack()
-        VarWebStatsIn.pack()
-        VarWebStatsOut.pack()
+        VarWebStatsTransac.pack(side='left')
+        VarWebStatsIn.pack(side='left')
+        VarWebStatsOut.pack(side='rigth')
         VarWebStatsWarn.pack()
         VarWRSPStatsTransac.pack()
         VarWRSPStatsTransacNames.pack()
