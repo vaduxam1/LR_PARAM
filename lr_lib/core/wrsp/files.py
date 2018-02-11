@@ -71,30 +71,27 @@ def create_files_from_infs(folder: str, enc: str, allow_deny: bool, statistic: b
 
     arg = (folder, enc, allow_deny, statistic, )
     chunks = [(arg, files) for files in lr_other.chunks(folder_files, lr_vars.FilesCreatePortionSize)]
-    lc = len(chunks)
+    executer = (lr_vars.M_POOL.imap_unordered if lr_vars.SetFilesPOOLEnable else map)
 
-    def progress(proc1=(100 / (lc or 100))) -> None:
+    # progress
+    len_chunks = len(chunks) or -1
+    len_files = chunk_num = 0
+
+    def progress(_1_proc=(100 / len_chunks), update_time=lr_vars.MainThreadUpdateTime.get()) -> None:
         '''прогресс создания файлов'''
         lr_vars.Tk.title('{p}% : {f} / {fa} поиск файлов ответов | {v}'.format(
-            p=round(proc1 * num), v=lr_vars.VERSION, f=len_files, fa=len_folder_files))
+            p=round(_1_proc * chunk_num), v=lr_vars.VERSION, f=len_files, fa=len_folder_files))
 
-        if len_files >= 0:  # перезапуск
-            lr_vars.MainThreadUpdater.submit(progress)
+        if chunk_num < len_chunks:  # перезапуск
+            lr_vars.Tk.after(update_time, progress)
         else:
             lr_vars.MainThreadUpdater.submit(lambda: lr_vars.Tk.title(lr_vars.VERSION))
 
-    executer = (lr_vars.M_POOL.imap_unordered if lr_vars.SetFilesPOOLEnable else map)
-    len_files = num = 0
-
-    lr_vars.MainThreadUpdater.submit(progress)
-    try:
-        for (num, files_chunk) in enumerate(executer(get_files_portions, chunks)):
-            len_files += len(files_chunk)
-            for file in files_chunk:
-                if file:
-                    yield file
-    finally:
-        len_files = -1
+    lr_vars.Tk.after(500, progress)
+    # создать файлы ответов
+    for (chunk_num, files_chunk) in enumerate(executer(get_files_portions, chunks), start=1):
+        len_files += len(files_chunk)
+        yield from filter(bool, files_chunk)
 
 
 def get_files_portions(args: [(str, str, bool, bool), (str, )]) -> [dict, ]:
