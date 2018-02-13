@@ -288,11 +288,6 @@ class Window(ttk.Frame):
         lr_lib.gui.wrsp.tooltips.set_all_main_window_tooltip(self)  # создать все tooltip окна
         lr_lib.gui.wrsp.grid.grid_widj(self)  # grid всех виджетов окна
 
-        # виджеты для блокирования
-        self.configure_attrs = {
-            a: getattr(self, a).configure for a in dir(self) if hasattr(getattr(self, a), 'configure')
-        }
-
     def spl_cbx_cmd_lb(self, *a) -> None:
         '''lb SplitList widj'''
         if lr_vars.VarSplitListLB.get():
@@ -596,14 +591,15 @@ class Window(ttk.Frame):
 
     def _block(self, bl: bool, w=()) -> None:
         '''заблокировать/разблокировать виджеты в gui'''
-        state = 'disabled' if bl else 'normal'
-        attrs = self.configure_attrs
-        for a in attrs:
-            if a not in w:
-                with contextlib.suppress(Exception):
-                    attrs[a](state=state)
-        with contextlib.suppress(Exception):
+        def set_block(state=('disabled' if bl else 'normal')):
+            '''заблокировать/разблокировать'''
+            for attr in dir(self):
+                if not attr.startswith('_') and (attr not in w):
+                    with contextlib.suppress(AttributeError, tk.TclError):
+                        getattr(self, attr).configure(state=state)
             self.update()
+
+        lr_vars.MainThreadUpdater.submit(set_block)
 
     def get_main_action(self) -> lr_action.ActionWindow:
         '''если открыто несколько action онон, какое вернуть'''

@@ -131,7 +131,7 @@ wrsp_name_splitter = tk.StringVar(value='')  # символ разделения
 
 LRB_rep_list = [
     'zul', 'path', 'Set', 'wnd', 'sel', 'inp', 'dt', 'wgt', 'imp', 'false', 'true', 'visible', 'cmd', 'label', 'zclass',
-    'btn', 'menu', 'tab', 'cmb', 'amp',
+    'btn', 'menu', 'tab', 'cmb', 'amp', 'id',
 ]  # не использовать эти слова в LB/RB, для wrsp имени param
 
 #####################################
@@ -404,7 +404,7 @@ ENCODE_LIST = list(sorted(ENCODE_LIST))
 # пулы
 
 MainThreadUpdater = None  # выполнять callback из main потока # lr_lib.etc.pool.other.MainThreadUpdater
-MainThreadUpdateTime = tk.IntVar(value=1000)  # интервал(мс) проверки очереди, callback(из потоков)
+MainThreadUpdateTime = tk.IntVar(value=500)  # интервал(мс) проверки очереди, callback(из потоков)
 
 M_POOL = None  # пул процессов  # lr_lib.etc.pool.main_pool.POOL
 M_POOL_NAME = 'multiprocessing.Pool'  # тип основной пул

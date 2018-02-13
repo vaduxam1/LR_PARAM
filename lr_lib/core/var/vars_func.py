@@ -203,6 +203,19 @@ def lb_rb_split_list_set(__lb: str, __rb: str, lb: str, rb: str) -> (str, str):
     return lb, rb
 
 
+def gui_updater_comboParts() -> None:
+    '''при изменении из ядра, менять gui comboParts'''
+    if lr_vars.Window and not lr_vars.Window._block_:
+        lr_vars.Window.comboParts.set(lr_vars.VarPartNum.get())
+
+
+def gui_updater_comboFiles() -> None:
+    '''при изменении из ядра, менять gui comboFiles'''
+    if lr_vars.Window and not lr_vars.Window._block_:  #
+        lr_vars.Window.comboFiles.set(lr_vars.VarFileName.get())
+        lr_vars.Window.comboPartsFill()
+
+
 def next_3_or_4_if_bad_or_enmpy_lb_rb(text='') -> None:
     '''увеличить(3) либо (4)'''
     len_files = len(lr_vars.FilesWithParam) - 1  # нумерация с 0
@@ -213,9 +226,7 @@ def next_3_or_4_if_bad_or_enmpy_lb_rb(text='') -> None:
     if n < file['Param']['Count']:  # вхождение(4)
         lr_vars.VarPartNum.set(n)
 
-        if lr_vars.Window and not lr_vars.Window._block_:  # при изменении из ядра, менять gui виджеты
-            lr_vars.Window.comboParts.set(lr_vars.VarPartNum.get())
-
+        lr_vars.MainThreadUpdater.submit(gui_updater_comboParts)
         lr_vars.Logger.trace('next вхождение(4), при {text} в (5)\n\t{num}->{n}/{pc} : {f} | {p}'.format(
             num=num, n=n, pc=(file['Param']['Count'] - 1), f=file['File']['Name'], text=text, p=lr_vars.VarParam.get()))
         return
@@ -228,10 +239,7 @@ def next_3_or_4_if_bad_or_enmpy_lb_rb(text='') -> None:
             file_name = next_file['File']['Name']
             lr_vars.VarFileName.set(file_name)
 
-            if lr_vars.Window and not lr_vars.Window._block_:  # при изменении из ядра, менять gui виджеты
-                lr_vars.Window.comboFiles.set(lr_vars.VarFileName.get())
-                lr_vars.Window.comboPartsFill()
-
+            lr_vars.MainThreadUpdater.submit(gui_updater_comboFiles)
             lr_vars.Logger.trace('next файл(3), при {text} в (5)\n\t{indx}->{ni}/{len_files} : {f} -> {next_file} | {p}'.format(
                 len_files=len_files, indx=indx, ni=i, f=file['File']['Name'], next_file=file_name, text=text, p=lr_vars.VarParam.get()))
             return

@@ -76,19 +76,20 @@ def create_files_from_infs(folder: str, enc: str, allow_deny: bool, statistic: b
     # progress
     len_chunks = len(chunks) or -1
     len_files = chunk_num = 0
+    _1_proc = (100 / len_chunks)
 
-    def progress(_1_proc=(100 / len_chunks), update_time=lr_vars.MainThreadUpdateTime.get()) -> None:
+    def progress() -> None:
         '''прогресс создания файлов'''
-        lr_vars.Tk.title('{p}% : {f} / {fa} поиск файлов ответов | {v}'.format(
-            p=round(_1_proc * chunk_num), v=lr_vars.VERSION, f=len_files, fa=len_folder_files))
+        lr_vars.Tk.title('{proc}% : {files} / {folder_files} поиск файлов ответов | {v}'.format(
+            proc=round(_1_proc * chunk_num), v=lr_vars.VERSION, files=len_files, folder_files=len_folder_files))
 
         if chunk_num < len_chunks:  # перезапуск
-            lr_vars.Tk.after(update_time, progress)
+            lr_vars.MainThreadUpdater.submit(progress)
         else:
             lr_vars.MainThreadUpdater.submit(lambda: lr_vars.Tk.title(lr_vars.VERSION))
 
-    lr_vars.Tk.after(500, progress)
     # создать файлы ответов
+    lr_vars.MainThreadUpdater.submit(progress)
     for (chunk_num, files_chunk) in enumerate(executer(get_files_portions, chunks), start=1):
         len_files += len(files_chunk)
         yield from filter(bool, files_chunk)
