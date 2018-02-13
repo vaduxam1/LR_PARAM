@@ -173,11 +173,14 @@ class WebAny:
                 add_index(indx, left, right)
 
         if chunk_indxs and replace:
-            body_chunks = [body_split.pop(0)]
+            replace = lr_param.param_bounds_setter(replace)
             contains = chunk_indxs.__contains__
+
+            body_chunks = [body_split.pop(0)]
             for indx, body_chunk in enumerate(body_split, start=1):
                 splitter = (replace if contains(indx) else param)
                 body_chunks.append(splitter + body_chunk)
+
             self.set_body(''.join(body_chunks))  # замена
 
         param_count = len(chunk_indxs)

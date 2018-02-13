@@ -85,7 +85,6 @@ def remove_web_reg_save_param_from_action(event, selection=None, find=True) -> N
 
 
 @lr_vars.T_POOL_decorator
-@contextlib.contextmanager
 def all_wrsp_dict_web_reg_save_param(event) -> None:
     '''все варианты создания web_reg_save_param, искать не ограничивая верхний номер Snapshot'''
     with event.widget.action.block(no_highlight=True):
