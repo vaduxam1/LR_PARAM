@@ -316,7 +316,7 @@ def encoder(event, action=None) -> None:
             widget.action.search_in_action(word=new_name)
 
 
-def highlight_mode(widget, word: str, option='foreground', color='olive') -> None:
+def highlight_mode(widget, word: str, option='foreground', color=lr_vars.DefaultColor) -> None:
     '''залить цветом все word в tk.Text widget'''
     colors = widget.highlight_dict.setdefault(option, {})
 
@@ -333,7 +333,7 @@ def add_highlight_words_to_file(event) -> None:
     with open(lr_vars.highlight_words_main_file, 'a') as f:
         f.write(selection + '\n')
 
-    rClick_add_highlight(event, 'foreground', 'olive', 'добавить', find=True)
+    rClick_add_highlight(event, 'foreground', lr_vars.DefaultColor, 'добавить', find=True)
 
 
 def rClick_add_highlight(event, option: str, color: str, val: str, find=False) -> None:

@@ -17,7 +17,7 @@ from lr_lib.etc.help import (COLORS, HEX, )
 #####################################
 # главные переменные
 
-VERSION = 'v10.2.3'
+VERSION = 'v10.2.4'
 lib_folder = 'lr_lib'
 Tk = tk.Tk()  # tkinter
 
@@ -305,6 +305,9 @@ VarDefaultColorTeg = {
     },
 }
 
+DefaultColor = 'olive'  # цвет для "фонового" текста
+hex_unicode_ground = 'foreground'  # \\xCE\\xE1
+hex_unicode_color = 'olive'  # \\xCE\\xE1
 PunctDigitTag = 'foregroundblack'
 RusTag = 'backgroundorange'
 wrsp_color1 = 'chartreuse'

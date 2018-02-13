@@ -17,9 +17,9 @@ class HighlightLines:
         self.top_line_num = 1  # on screen line num
         self.bottom_line_num = 1  # on screen line num
         lines = self.tk_text.get(1.0, tk.END).lower().split('\n')
-        self._max_line = len(lines)  # номер последней линии
         # неподсвеченные линии текста
-        self.on_screen_lines = {num: line.rstrip() for num, line in enumerate(lines, start=1) if line.strip()}
+        self.on_screen_lines = {num: line.rstrip() for (num, line) in enumerate(lines, start=1) if line.strip()}
+        self._max_line = len(lines)  # номер последней линии
 
     def is_on_screen_lines_change(self, top: int, bottom: int) -> bool:
         '''изменились ли self.top_line_num и self.bottom_line_num'''

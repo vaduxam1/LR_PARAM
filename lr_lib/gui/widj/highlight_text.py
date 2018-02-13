@@ -134,7 +134,8 @@ class HighlightText(tk.Text):
         '''_tegs_names + \\xCE\\xE1'''
         tegs_names = {}
         hex_unicode_words = re.compile('\\\\x\w\w').findall(self.get(1.0, tk.END))  # \\xCE\\xE1
-        self.highlight_dict.setdefault('foreground', dict()).setdefault('olive', set()).update(hex_unicode_words)
+        self.highlight_dict.setdefault(
+            lr_vars.hex_unicode_ground, dict()).setdefault(lr_vars.hex_unicode_color, set()).update(hex_unicode_words)
 
         for ground in self.highlight_dict:
             colors = self.highlight_dict[ground]
