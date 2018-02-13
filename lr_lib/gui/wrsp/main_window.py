@@ -11,6 +11,8 @@ import time
 import tkinter as tk
 import tkinter.ttk as ttk
 
+from tkinter import filedialog
+
 import lr_lib.gui.widj.highlight_text
 import lr_lib.gui.widj.lbrb5
 import lr_lib.gui.etc.sub_menu
@@ -23,7 +25,6 @@ import lr_lib.core.wrsp.files as lr_files
 import lr_lib.core.wrsp.param as lr_param
 import lr_lib.core.etc.other as lr_other
 import lr_lib.gui.action.main_action as lr_action
-import lr_lib.gui.etc.action_lib as lr_action_lib
 import lr_lib.gui.widj.tooltip as lr_tooltip
 import lr_lib.etc.help as lr_help
 
@@ -355,7 +356,7 @@ class Window(ttk.Frame):
 
     def change_folder_ask(self, *args) -> None:
         '''смена директории поиска файлов'''
-        d = tk.filedialog.askdirectory()
+        d = filedialog.askdirectory()
         if d:
             lr_vars.VarFilesFolder.set(d)
             with self.block():

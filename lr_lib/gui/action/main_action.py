@@ -8,7 +8,6 @@ import configparser
 
 import tkinter as tk
 import tkinter.ttk as ttk
-import tkinter.filedialog as tkf
 
 from tkinter import messagebox
 

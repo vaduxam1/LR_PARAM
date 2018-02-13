@@ -5,6 +5,8 @@ import os
 import tkinter as tk
 import tkinter.ttk as ttk
 
+from tkinter import filedialog
+
 import lr_lib.gui.etc.gui_other
 
 import lr_lib.core.etc.other as lr_other
@@ -23,6 +25,9 @@ class RespFiles(tk.Toplevel):
         self.inf_file = 't{i}.inf'.format(i=i_num)
         self.title('окно файлов snapshot=' + self.inf_file)
         lr_lib.gui.etc.gui_other.center_widget(self)
+
+        self.folder_record = folder_record
+        self.folder_response = folder_response
 
         self.response_widj_creator(folder_record, desc='файлы при записи')
         self.response_widj_creator(folder_response, desc='файлы при воспроизведении')
@@ -44,6 +49,8 @@ class RespFiles(tk.Toplevel):
         text = '{desc}\n{folder}'.format(desc=desc, folder=folder)
 
         lab = tk.Label(self, text=desc)
+        btn = tk.Button(self, text='folder', command=lambda: self.select_folder(folder))
+        lr_tooltip.createToolTip(btn, 'выбор папки с файлами\nвнутри должен быть файл t{}.inf'.format(self.i_num))
 
         cbx_var = tk.BooleanVar(value=True)
         cbx = tk.Checkbutton(self, text='open', variable=cbx_var)
@@ -64,5 +71,17 @@ class RespFiles(tk.Toplevel):
         lr_tooltip.createToolTip(ent, text)
 
         cbx.pack()
+        btn.pack()
         lab.pack()
         ent.pack()
+
+    def select_folder(self, folder: str) -> None:
+        directory = filedialog.askdirectory()
+        if directory:
+            if self.folder_record == folder:
+                self.folder_record, self.folder_response = (directory, self.folder_response)
+            else:
+                self.folder_record, self.folder_response = (self.folder_record, directory)
+
+        self.destroy()
+        RespFiles(self.widget, self.i_num, self.folder_record, self.folder_response)
