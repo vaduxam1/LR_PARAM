@@ -19,13 +19,20 @@ class WrspSettingWindow(tk.Toplevel):
         self.resizable(width=False, height=False)
         self.title('настройка каментов и имени wrsp')
 
-        samp = '''
+        t1 = '''
         //lr: IN(1)<-[1]: z_k620(P:1/874|S:874=[1:875]|T:41)
         //lr: OUT(2)-> aFFX9(P:3|S:2=[2:4]|T:2), z_k620(P:874|S:874=[1:875]|T:41)
         //lr: (login: 3=[1:3]) -> Param:3 | Snapshots:2=[2:4] | Transactions=2:['login', 'logout']
         '''
-        t = '{s}\n{w}\n'.format(s=samp, w=lr_param.WEB_REG_NUM) + '{P_2092_2__login__Button__z_k620__auth}\n\n'
-        laf = tk.LabelFrame(self, text=t)
+        t2 = '''
+        z_k620(P:1/874|S:874=[1:875]|T:41)
+            z_k620 - исходный param, для WRSP {P_2092_2__login__Button__z_k620__auth}
+            P:1/874 - сколько раз использован данный param: текущий Snapshot / все Snapshot's
+            S:874=[1:875] - Snapshot's, использующие данный param: кол-во = [ мин номер : макс номер ]
+            T:41 - кол-во транзакций, использующих данный param
+        '''
+        t3 = '{p}\n{w}\n'.format(p='{P_2092_2__login__Button__z_k620__auth}', w=lr_param.WEB_REG_NUM)
+        laf = tk.LabelFrame(self, text='{t1}\n{t2}\n{t3}\n'.format(t1=t1, t2=t2, t3=t3), font='Arial 7', labelanchor=tk.NW)
 
         tt_stat = 'коментарии с именем транзакции\n//lr: "login"(1/3=[1:3])'
         VarWebStatsTransac = tk.Checkbutton(laf, text=tt_stat, font='Arial 7',
@@ -39,19 +46,19 @@ class WrspSettingWindow(tk.Toplevel):
         tt_warn = "WARNING коментарии\n//lr: WARNING: WrspInAndOutUsage: 1=['z_k620']"
         VarWebStatsWarn = tk.Checkbutton(laf, text=tt_warn, font='Arial 7', justify='left',
                                          variable=lr_vars.VarWebStatsWarn)
-        tt_wrsp_transac = 'для WRSP, статистика использования param\n' \
+        tt_wrsp_transac = 'WRSP, статистика использования param\n' \
                           '//lr: (login: 3=[1:3]) -> Param:3 ...'
         VarWRSPStatsTransac = tk.Checkbutton(laf, text=tt_wrsp_transac, font='Arial 7', justify='left',
                                              variable=lr_vars.VarWRSPStatsTransac)
-        tt_wrsp_trn = "для WRSP, имена транзакций, использующих param\n" \
+        tt_wrsp_trn = "WRSP, имена транзакций, использующих param\n" \
                       "... :['login', 'logout']"
         VarWRSPStatsTransacNames = tk.Checkbutton(laf, text=tt_wrsp_trn, font='Arial 7', justify='left',
                                                   variable=lr_vars.VarWRSPStatsTransacNames)
-        tt_wrsp_st = 'для WRSP, подробные/короткие коментарии\n' \
+        tt_wrsp_st = 'WRSP, подробные/короткие коментарии\n' \
                      'Изменится только при пересоздании param\nкороткие(off): // PARAM["aFFX5"] // Snap[1]'
         VarWRSPStats = tk.Checkbutton(laf, text=tt_wrsp_st, font='Arial 7', justify='left',
                                       variable=lr_vars.VarWRSPStats)
-        tt_SnapshotInName = '{infs}\nв WRSP имени, отображать номер Snapshot-родителя\n' \
+        tt_SnapshotInName = '{infs}\nномер Snapshot-родителя в имени WRSP\n' \
                             'Изменится только при пересоздании param\n' \
                             'P_6637_1__zk620 -> P_6637__zk620'
         SnapshotInName = tk.Checkbutton(laf, text=tt_SnapshotInName, font='Arial 7', justify='left',
@@ -103,7 +110,7 @@ class WrspSettingWindow(tk.Toplevel):
                                                 'Изменится только при пересоздании param\n'
                                                 'ничего - откл')
 
-        laf.grid(row=1, column=1)
+        laf.grid(row=1, column=1, sticky=tk.W)
 
         VarWebStatsTransac.grid(row=2, column=1, sticky=tk.W)
         VarWebStatsIn.grid(row=1, column=1, sticky=tk.W)
