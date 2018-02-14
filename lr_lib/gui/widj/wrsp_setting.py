@@ -126,9 +126,9 @@ class WrspSettingWindow(tk.Toplevel):
         MaxParamWrspName.grid(row=6, column=1)
         MinWrspRnum.grid(row=6, column=2)
         MaxWrspRnum.grid(row=7, column=2)
-        wrsp_name_splitter.grid(row=7, column=1)
+        wrsp_name_splitter.grid(row=8, column=2)
         WrspNameFirst.grid(row=8, column=1)
-        TransactionInNameMax.grid(row=8, column=2)
+        TransactionInNameMax.grid(row=7, column=1)
 
         apply_btn.grid(row=10, column=1, columnspan=3)
 

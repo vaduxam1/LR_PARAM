@@ -56,7 +56,7 @@ class RespFiles(tk.Toplevel):
 
         cbx_var = tk.BooleanVar(value=True)
         cbx = tk.Checkbutton(lab, text='', variable=cbx_var, font='Arial 7')
-        lr_tooltip.createToolTip(cbx, 'не открывать файл, при выборе в комбобоксе')
+        lr_tooltip.createToolTip(cbx, 'открывать файл, при выборе в комбобоксе')
 
         files_cmb = ttk.Combobox(lab, background=lr_vars.Background, font='Arial 7')
 
