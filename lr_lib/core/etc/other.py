@@ -16,18 +16,20 @@ import functools
 import lr_lib.core.var.vars as lr_vars
 
 
-def _chunks(_list, chunk_size: int) -> iter([iter,]):
+def _chunks(iterable: list, chunk_size: int) -> iter([iter,]):
     """Yield successive n-sized chunks from l. - не работает с генераторами"""
-    for i in range(0, len(_list), chunk_size):
-        yield _list[i:i + chunk_size]
+    for i in range(0, len(iterable), chunk_size):
+        val = iterable[i:(i + chunk_size)]
+        yield val
 
 
 def chunks(iterable: iter, chunk_size: int) -> iter((iter,)):
     """iter-версия, работает с генераторами, Yield successive n-sized chunks from l."""
     if isinstance(iterable, types.GeneratorType):
-        chunk_range = tuple(range(chunk_size - 1))
+        chunk_range = range(chunk_size - 1)
         for i in iterable:
-            yield list(itertools.chain([i], _chunks_range(chunk_range, iterable)))
+            val = tuple(itertools.chain([i], _chunks_range(chunk_range, iterable)))
+            yield val
     else:
         yield from _chunks(iterable, chunk_size)
 
@@ -105,8 +107,10 @@ def all_files_info() -> str:
     s = 'в {i} inf, найдено {f} файлов.\n symbols_count  : '.format(f=lf, i=len(list(get_files_infs(lr_vars.AllFiles))))
     sum_keys = ['Size', 'len', 'NotPrintable', 'Lines', 'ascii_letters', 'digits', 'whitespace', 'punctuation']
     _r = [(k, sum(f['File'].get(k, 0) for f in lr_vars.AllFiles)) for k in sum_keys]
-    try: sl = _r[-1][1] / lf
-    except ZeroDivisionError: sl = 0
+    try:
+        sl = _r[-1][1] / lf
+    except ZeroDivisionError:
+        sl = 0
     r = ' '.join('{}({})'.format(*a) for a in sorted(_r, key=lambda b: b[1], reverse=True))
     return '{s}{r}\n file_size byte : all({sa}) min({mn}) several({sl}) max({mx})\n{sep}'.format(
         s=s, r=r, mn=mn, mx=mx, sl=sl, sa=sa, sep=lr_vars.PRINT_SEPARATOR)
@@ -116,8 +120,10 @@ def param_files_info() -> str:
     '''инфо о param файлах'''
     res = [(str(f['Param']['Count']), f['File']['Name'], str(f['Snapshot']['Nums'])) for f in lr_vars.FilesWithParam]
     m = max(len(n) for r in res for n in r)
-    if m > 25: m = 25
-    elif m < 10: m = 10
+    if m > 25:
+        m = 25
+    elif m < 10:
+        m = 10
     s = '{:<%s} | {:<%s} | {:<%s}' % (m, m, m)
 
     i = '\n'.join(map(str, chunks(tuple(get_files_infs(lr_vars.FilesWithParam)), 15)))

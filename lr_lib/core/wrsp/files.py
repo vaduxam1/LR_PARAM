@@ -63,14 +63,19 @@ def file_dict_creator(name: str, full_name: str, inf_num: int, enc: str, inf_key
             return file
 
 
+def get_folder_infs(folder: str) -> iter((str, int),):
+    '''inf файлы/номера каталога'''
+    for file in next(os.walk(folder))[2]:
+        (name, ext) = os.path.splitext(file)
+        num = name[1:]
+        if (ext == '.inf') and (name[0] == 't') and all(map(str.isnumeric, num)):
+            yield file, int(num)
+
+
 def create_files_from_infs(folder: str, enc: str, allow_deny: bool, statistic: bool) -> iter([dict, ]):
     '''создать файлы ответов, из всех t*.ini файлов'''
-    folder_files = next(os.walk(folder))
-    folder_files = folder_files[2]
-    len_folder_files = len(folder_files)
-
     arg = (folder, enc, allow_deny, statistic, )
-    chunks = [(arg, files) for files in lr_other.chunks(folder_files, lr_vars.FilesCreatePortionSize)]
+    chunks = [(arg, files) for files in lr_other.chunks(get_folder_infs(folder), lr_vars.FilesCreatePortionSize)]
     executer = (lr_vars.M_POOL.imap_unordered if lr_vars.SetFilesPOOLEnable else map)
 
     # progress
@@ -80,69 +85,66 @@ def create_files_from_infs(folder: str, enc: str, allow_deny: bool, statistic: b
 
     def progress() -> None:
         '''прогресс создания файлов'''
-        lr_vars.Tk.title('{proc}% : {files} / {folder_files} поиск файлов ответов | {v}'.format(
-            proc=round(_1_proc * chunk_num), v=lr_vars.VERSION, files=len_files, folder_files=len_folder_files))
+        lr_vars.Tk.title('{proc}% : поиск файлов ответов {files} шт.| {v}'.format(
+            proc=round(_1_proc * chunk_num), v=lr_vars.VERSION, files=len_files))
 
         if chunk_num < len_chunks:  # перезапуск
             lr_vars.MainThreadUpdater.submit(progress)
         else:
             lr_vars.MainThreadUpdater.submit(lambda: lr_vars.Tk.title(lr_vars.VERSION))
 
-    # создать файлы ответов
     lr_vars.MainThreadUpdater.submit(progress)
-    for (chunk_num, files_chunk) in enumerate(executer(get_files_portions, chunks), start=1):
-        len_files += len(files_chunk)
-        yield from filter(bool, files_chunk)
+
+    # создать файлы ответов
+    for (chunk_num, chunk_files) in enumerate(executer(get_files_portions, chunks), start=1):
+        len_files += len(chunk_files)
+        yield from filter(bool, chunk_files)
 
 
-def get_files_portions(args: [(str, str, bool, bool), (str, )]) -> [dict, ]:
+def get_files_portions(args: [(str, str, bool, bool), ((str, int), )]) -> [dict, ]:
     '''создать файлы, для порции inf-файлов'''
     (arg, files) = args
-    files = map(create_files_from_inf, ((arg, file) for file in files))
+    files = map(_create_files_from_inf, ((arg, file) for file in files))
     files = tuple(itertools.chain(*files))
     return files
 
 
-def create_files_from_inf(args: [(str, str, bool, bool), str]) -> iter((dict, )):
+def _create_files_from_inf(args: [(str, str, bool, bool), (str, int)]) -> iter((dict,)):
     '''создать файлы ответов, из одного inf-файла'''
-    ((folder, enc, allow_deny, statistic), file) = args
-    (name, ext) = os.path.splitext(file)
+    ((folder, enc, allow_deny, statistic), (file, num)) = args
 
-    n = name[1:]
-    if (ext == '.inf') and (name[0] == 't') and all(map(str.isnumeric, n)):
-        try:  # ConfigParser(вроде когдато были какието проблемы, с кодировкой?)
-            config = configparser.ConfigParser()
-            config.read(os.path.join(folder, file), encoding='utf-8')
+    try:  # ConfigParser(вроде когдато были какието проблемы, с кодировкой?)
+        config = configparser.ConfigParser()
+        config.read(os.path.join(folder, file), encoding='utf-8')
 
-            num = int(n)
-            for sect in config.sections():
-                for opt in config.options(sect):
-                    if any(map(opt.startswith, lr_vars.FileOptionsStartswith)):
-                        file_name = config[sect][opt]
-                        full_name = os.path.join(folder, file_name)
-                        if os.path.isfile(full_name):
-                            file = file_dict_creator(file_name, full_name, num, enc, opt, allow_deny, statistic)
-                            if file:
-                                file.update(config._sections)
-                                yield file
-
-        except Exception as ex:
-            lr_excepthook.full_tb_write(ex)
-            # как текст файл
-            with open(os.path.join(folder, file), encoding='utf-8', errors='ignore') as inf_file:
-                num, *lines = inf_file.read().split('\n')
-                try:  # inf номер '[t75]' -> 75
-                    num = int(num[2:-1])
-                except:
-                    num = -1
-
-                for line in lines:  # создать файлы из ключей файла t75.inf
-                    if any(map(line.startswith, lr_vars.FileOptionsStartswith)):
-                        key_from_inf, file_name = line.split('=', 1)
-                        full_name = os.path.join(folder, file_name)
-                        if os.path.isfile(full_name):
-                            file = file_dict_creator(file_name, full_name, num, enc, key_from_inf, allow_deny, statistic)
+        for sect in config.sections():
+            for opt in config.options(sect):
+                if any(map(opt.startswith, lr_vars.FileOptionsStartswith)):
+                    file_name = config[sect][opt]
+                    full_name = os.path.join(folder, file_name)
+                    if os.path.isfile(full_name):
+                        file = file_dict_creator(file_name, full_name, num, enc, opt, allow_deny, statistic)
+                        if file:
+                            file.update(config._sections)
                             yield file
+
+    except Exception as ex:
+        lr_excepthook.full_tb_write(ex)
+        # как текст файл
+        with open(os.path.join(folder, file), encoding='utf-8', errors='ignore') as inf_file:
+            num, *lines = inf_file.read().split('\n')
+            try:  # inf номер '[t75]' -> 75
+                num = int(num[2:-1])
+            except:
+                num = -1
+
+            for line in lines:  # создать файлы из ключей файла t75.inf
+                if any(map(line.startswith, lr_vars.FileOptionsStartswith)):
+                    key_from_inf, file_name = line.split('=', 1)
+                    full_name = os.path.join(folder, file_name)
+                    if os.path.isfile(full_name):
+                        file = file_dict_creator(file_name, full_name, num, enc, key_from_inf, allow_deny, statistic)
+                        yield file
 
 
 def init() -> None:
