@@ -176,7 +176,7 @@ def exec_time(func: callable) -> callable:
 
 
 def get_files_names(folder: str, i_num: int, file_key='File', file_mask='t{}.inf') -> iter((str,)):
-    '''имена файлов из t{i_num}.inf'''
+    '''все имена файлов из t{i_num}.inf'''
     inf_file = file_mask.format(i_num)
     fi = os.path.join(folder, inf_file)
     if not os.path.isfile(fi):

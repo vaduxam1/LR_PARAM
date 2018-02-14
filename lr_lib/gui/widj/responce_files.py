@@ -23,7 +23,7 @@ class RespFiles(tk.Toplevel):
         self.i_num = i_num
         self.transient(self.widget)
         self.inf_file = 't{i}.inf'.format(i=i_num)
-        self.title('окно файлов snapshot=' + self.inf_file)
+        self.title('Snapshot=' + self.inf_file)
         lr_lib.gui.etc.gui_other.center_widget(self)
 
         self.folder_record = folder_record
@@ -49,9 +49,10 @@ class RespFiles(tk.Toplevel):
         '''виджеты для окна файлов snapshot'''
         text = '{desc}\n{folder}'.format(desc=desc, folder=folder)
 
-        lab = tk.LabelFrame(self, text='{d}\n{f}'.format(d=desc, f=folder), font='Arial 7')
+        lab = tk.LabelFrame(self, text=desc, font='Arial 7')
         btn = tk.Button(lab, text='folder', command=lambda: self.select_folder(folder), font='Arial 7')
-        lr_tooltip.createToolTip(btn, 'выбор папки с файлами\nвнутри должен быть файл {}'.format(self.inf_file))
+        lr_tooltip.createToolTip(btn, 'выбор папки с файлами\nвнутри должен быть файл {i}\n{d}'.format(
+            i=self.inf_file, d=folder))
 
         cbx_var = tk.BooleanVar(value=True)
         cbx = tk.Checkbutton(lab, text='', variable=cbx_var, font='Arial 7')
@@ -80,12 +81,15 @@ class RespFiles(tk.Toplevel):
             '''новый snapshot'''
             self.i_num = int(''.join(filter(str.isnumeric, inf_var.get())))
             RespFiles(self.widget, self.i_num, self.folder_record, self.folder_response)
+            inf_var.set(self.inf_file)
 
         inf_var = tk.StringVar(value=self.inf_file)
         inf_cmb = ttk.Combobox(lab, background=lr_vars.Background, font='Arial 7', textvariable=inf_var)
-        inf_cmb['values'] = list(get_inf_files())
+        inf_cmb['values'] = list(sorted(get_inf_files(), key=lr_other.numericalSort))
         inf_cmb.bind("<<ComboboxSelected>>", set_inf)
-        lr_tooltip.createToolTip(inf_cmb, 'сменить snapshot')
+        inf_cmb.config(width=max(len(i) for i in (inf_cmb['values'] or [''])))
+        with open(os.path.join(folder, self.inf_file)) as f:
+            lr_tooltip.createToolTip(inf_cmb, 'сменить snapshot\n' + f.read())
 
         lab.pack(side=side)
         files_cmb.pack(side='top')
@@ -95,7 +99,7 @@ class RespFiles(tk.Toplevel):
 
         # width
         self.resp_widj.append((lab, cbx, btn, files_cmb, inf_cmb, inf_var, cbx_var, folder))
-        w = max(len(e[-1]) for e in self.resp_widj) - 10
+        w = max(len(e[3]['values']) for e in self.resp_widj)
         if w < w1:
             w = w1
         elif w > w2:
@@ -114,5 +118,4 @@ class RespFiles(tk.Toplevel):
         else:
             self.folder_record, self.folder_response = (self.folder_record, directory)
 
-        self.destroy()
         RespFiles(self.widget, self.i_num, self.folder_record, self.folder_response)
