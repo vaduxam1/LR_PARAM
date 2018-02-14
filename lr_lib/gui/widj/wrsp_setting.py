@@ -24,7 +24,8 @@ class WrspSettingWindow(tk.Toplevel):
         //lr: OUT(2)-> aFFX9(P:3|S:2=[2:4]|T:2), z_k620(P:874|S:874=[1:875]|T:41)
         //lr: (login: 3=[1:3]) -> Param:3 | Snapshots:2=[2:4] | Transactions=2:['login', 'logout']
         '''
-        laf = tk.LabelFrame(self, text='{s}\n{w}\n\n'.format(s=samp, w=lr_param.WEB_REG_NUM))
+        t = '{s}\n{w}\n'.format(s=samp, w=lr_param.WEB_REG_NUM) + '{P_2092_2__login__Button__z_k620__auth}\n\n'
+        laf = tk.LabelFrame(self, text=t)
 
         tt_stat = 'коментарии с именем транзакции\n//lr: "login"(1/3=[1:3])'
         VarWebStatsTransac = tk.Checkbutton(laf, text=tt_stat, font='Arial 7',
