@@ -673,6 +673,8 @@ class ActionWindow(tk.Toplevel):
                 w=self.web_action.websReport.google_webs, s=lr_vars.DENY_WEB_))
 
         self.background_color_set(color='')  # оригинальный цвет
+        lr_vars.Window.focus_set()  # почемуто без этого не проходит self.focus_set()
+        self.focus_set()
 
     def get_transaction(self, text: str) -> iter((str, )):
         '''имена транзакций'''
