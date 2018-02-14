@@ -29,8 +29,9 @@ class RespFiles(tk.Toplevel):
         self.folder_record = folder_record
         self.folder_response = folder_response
 
-        self.response_widj_creator(folder_record, desc='файлы при записи')
-        self.response_widj_creator(folder_response, desc='файлы при воспроизведении')
+        self.resp_widj = []
+        self.response_widj_creator(folder_record, desc='файлы при записи', side='top')
+        self.response_widj_creator(folder_response, desc='файлы при воспроизведении', side='bottom')
 
     def combo_select(self, ent: tk.Entry, folder: str, cbx_var: tk.BooleanVar):
         full_name = os.path.join(folder, ent.get())
@@ -44,44 +45,74 @@ class RespFiles(tk.Toplevel):
 
         lr_tooltip.createToolTip(ent, lr_other.file_string(file_dt))
 
-    def response_widj_creator(self, folder: str, desc='', mx=40) -> None:
+    def response_widj_creator(self, folder: str, desc='', side='bottom', w1=25, w2=75) -> None:
         '''виджеты для окна файлов snapshot'''
         text = '{desc}\n{folder}'.format(desc=desc, folder=folder)
 
-        lab = tk.Label(self, text=desc)
-        btn = tk.Button(self, text='folder', command=lambda: self.select_folder(folder))
-        lr_tooltip.createToolTip(btn, 'выбор папки с файлами\nвнутри должен быть файл t{}.inf'.format(self.i_num))
+        lab = tk.LabelFrame(self, text='{d}\n{f}'.format(d=desc, f=folder), font='Arial 7')
+        btn = tk.Button(lab, text='folder', command=lambda: self.select_folder(folder), font='Arial 7')
+        lr_tooltip.createToolTip(btn, 'выбор папки с файлами\nвнутри должен быть файл {}'.format(self.inf_file))
 
         cbx_var = tk.BooleanVar(value=True)
-        cbx = tk.Checkbutton(self, text='open', variable=cbx_var)
+        cbx = tk.Checkbutton(lab, text='', variable=cbx_var, font='Arial 7')
         lr_tooltip.createToolTip(cbx, 'не открывать файл, при выборе в комбобоксе')
 
-        ent = ttk.Combobox(self, justify='center', background=lr_vars.Background, font=lr_vars.DefaultFont)
+        files_cmb = ttk.Combobox(lab, background=lr_vars.Background, font='Arial 7')
 
         files = list(lr_other.get_files_names(folder, self.i_num))
         if not files:
             return
-        ent['values'] = files
-        ent.bind("<<ComboboxSelected>>", lambda *a: self.combo_select(ent, folder, cbx_var))
+        files_cmb['values'] = files
 
-        m = max(map(len, ent['values']))
-        if m < mx:
-            m = mx
-        ent.config(width=m)
-        lr_tooltip.createToolTip(ent, text)
+        files_cmb.bind("<<ComboboxSelected>>", lambda *a: self.combo_select(files_cmb, folder, cbx_var))
+        lr_tooltip.createToolTip(files_cmb, text)
 
-        cbx.pack()
-        btn.pack()
-        lab.pack()
-        ent.pack()
+        def get_inf_files() -> iter((str,)):
+            '''все inf файлы директории'''
+            folder_files = next(os.walk(folder))
+            for file in folder_files[2]:
+                (name, ext) = os.path.splitext(file)
+                n = name[1:]
+                if (ext == '.inf') and (name[0] == 't') and all(map(str.isnumeric, n)):
+                    yield file
+
+        def set_inf(*a) -> None:
+            '''новый snapshot'''
+            self.i_num = int(''.join(filter(str.isnumeric, inf_var.get())))
+            RespFiles(self.widget, self.i_num, self.folder_record, self.folder_response)
+
+        inf_var = tk.StringVar(value=self.inf_file)
+        inf_cmb = ttk.Combobox(lab, background=lr_vars.Background, font='Arial 7', textvariable=inf_var)
+        inf_cmb['values'] = list(get_inf_files())
+        inf_cmb.bind("<<ComboboxSelected>>", set_inf)
+        lr_tooltip.createToolTip(inf_cmb, 'сменить snapshot')
+
+        lab.pack(side=side)
+        files_cmb.pack(side='top')
+        btn.pack(side='left')
+        cbx.pack(side='left')
+        inf_cmb.pack(side='bottom')
+
+        # width
+        self.resp_widj.append((lab, cbx, btn, files_cmb, inf_cmb, inf_var, cbx_var, folder))
+        w = max(len(e[-1]) for e in self.resp_widj) - 10
+        if w < w1:
+            w = w1
+        elif w > w2:
+            w = w2
+        for i in range(len(self.resp_widj)):
+            self.resp_widj[i][3].config(width=w)
 
     def select_folder(self, folder: str) -> None:
+        '''ноавя директория snapshot'''
         directory = filedialog.askdirectory()
-        if directory:
-            if self.folder_record == folder:
-                self.folder_record, self.folder_response = (directory, self.folder_response)
-            else:
-                self.folder_record, self.folder_response = (self.folder_record, directory)
+        if not directory:
+            return
+
+        if self.folder_record == folder:
+            self.folder_record, self.folder_response = (directory, self.folder_response)
+        else:
+            self.folder_record, self.folder_response = (self.folder_record, directory)
 
         self.destroy()
         RespFiles(self.widget, self.i_num, self.folder_record, self.folder_response)

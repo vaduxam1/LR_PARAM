@@ -182,7 +182,7 @@ def get_files_names(folder: str, i_num: int, file_key='File', file_mask='t{}.inf
     if not os.path.isfile(fi):
         return
 
-    yield fi
+    yield inf_file
     with open(fi) as inf:
         for line in inf:
             s_line = line.strip().split('=', 1)

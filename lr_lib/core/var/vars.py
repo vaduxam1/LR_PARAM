@@ -17,7 +17,7 @@ from lr_lib.etc.help import (COLORS, HEX, )
 #####################################
 # главные переменные
 
-VERSION = 'v10.2.4'
+VERSION = 'v10.2.5'
 lib_folder = 'lr_lib'
 Tk = tk.Tk()  # tkinter
 
