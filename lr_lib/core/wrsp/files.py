@@ -217,7 +217,7 @@ def set_file_statistic(file: dict, as_text=False, errors='replace') -> dict:
     ff['timeCreate'] = time.strftime('%H:%M:%S %m.%d.%y', time.gmtime(os.path.getmtime(full_name)))
 
     if as_text:  # есть текст файла
-        _set_fileFile_stats(ff, lr_vars.VarFileText.get().split('\n'))
+        _set_fileFile_stats(ff, lr_vars.VarFileText.get())
     else:  # новый файл
         with open(full_name, encoding=ff['encoding'], errors=errors) as f:
             _set_fileFile_stats(ff, f.read())
