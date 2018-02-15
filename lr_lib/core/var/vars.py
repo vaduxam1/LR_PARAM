@@ -209,7 +209,7 @@ _Tk_WIND_SIZE = [655, 700]  # размер главного окна
 _Tk_ActionWIND_SIZE = [1300, 800]  # размер action окна
 
 _Tk_LegendWIND_SIZE = [1200, 600]  # размер legend окна
-LegendHight = 1000  # расстояние между верхом и низом легенды
+LegendHight = 500  # расстояние между верхом и низом легенды
 Legend_minimal_canvas_size = (25000, 1000)  # перврначальная длина скроллов
 Legend_scroll_len_modificator = 75  # модификатор длины скроллов (увеличить, если canvas не умещается в окно)
 
@@ -407,7 +407,7 @@ ENCODE_LIST = list(sorted(ENCODE_LIST))
 # пулы
 
 MainThreadUpdater = None  # выполнять callback из main потока # lr_lib.etc.pool.other.MainThreadUpdater
-MainThreadUpdateTime = tk.IntVar(value=500)  # интервал(мс) проверки очереди, callback(из потоков)
+MainThreadUpdateTime = tk.IntVar(value=1000)  # интервал(мс) проверки очереди, callback(из потоков)
 
 M_POOL = None  # пул процессов  # lr_lib.etc.pool.main_pool.POOL
 M_POOL_NAME = 'multiprocessing.Pool'  # тип основной пул

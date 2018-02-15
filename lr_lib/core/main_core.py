@@ -62,5 +62,5 @@ def console_argument_parser() -> {str: str}:
     p.add_argument('-names', '--file_names', help='показывать имена найденных файлов', type=int, default=0)
     p.add_argument('-s', '--statistic', help='формировать статистику для найденных файлов', type=int, default=0)
 
-    args_dict = {k: v for k, v in p.parse_args().__dict__.items() if not k.startswith('_') if v is not None}
+    args_dict = {k: v for (k, v) in p.parse_args().__dict__.items() if ((not k.startswith('_')) and (v is not None))}
     return args_dict
