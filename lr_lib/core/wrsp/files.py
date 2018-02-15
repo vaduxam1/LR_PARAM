@@ -7,6 +7,7 @@ import string
 import itertools
 import contextlib
 import configparser
+import collections
 
 import lr_lib.core.etc.other as lr_other
 import lr_lib.etc.excepthook as lr_excepthook
@@ -83,15 +84,11 @@ def create_files_from_infs(folder: str, enc: str, allow_deny: bool, statistic: b
     len_files = chunk_num = 0
     _1_proc = (100 / len_chunks)
 
-    def progress() -> None:
+    def progress(t='{proc}% : поиск файлов ответов {files} шт.| {v}') -> None:
         '''прогресс создания файлов'''
-        lr_vars.Tk.title('{proc}% : поиск файлов ответов {files} шт.| {v}'.format(
-            proc=round(_1_proc * chunk_num), v=lr_vars.VERSION, files=len_files))
-
+        lr_vars.Tk.title(t.format(proc=round(_1_proc * chunk_num), v=lr_vars.VERSION, files=len_files))
         if chunk_num < len_chunks:  # перезапуск
             lr_vars.MainThreadUpdater.submit(progress)
-        else:
-            lr_vars.MainThreadUpdater.submit(lambda: lr_vars.Tk.title(lr_vars.VERSION))
 
     lr_vars.MainThreadUpdater.submit(progress)
 
@@ -100,6 +97,7 @@ def create_files_from_infs(folder: str, enc: str, allow_deny: bool, statistic: b
         len_files += len(chunk_files)
         yield from filter(bool, chunk_files)
 
+    lr_vars.Tk.title(lr_vars.VERSION)
 
 def get_files_portions(args: [(str, str, bool, bool), ((str, int), )]) -> [dict, ]:
     '''создать файлы, для порции inf-файлов'''
@@ -147,6 +145,7 @@ def _create_files_from_inf(args: [(str, str, bool, bool), (str, int)]) -> iter((
                         yield file
 
 
+@lr_other.exec_time
 def init() -> None:
     '''создать все файлы ответов, для поиска в них param'''
     lr_vars.AllFiles.clear()
@@ -170,12 +169,13 @@ def init() -> None:
                     lr_vars.AllFiles.append(file)
 
     if not lr_vars.AllFiles:
-        lr_vars.Logger.critical('В "{}" отсутствуют t*.inf LoadRunner файлы!\nнеобходимо выбрать каталог " lr_скрипт\\data "\n'
-                                'либо сменить директорию кнопкой "Folder"'.format(folder))
+        lr_vars.Logger.critical('В "{f}" отсутствуют t*.inf LoadRunner файлы!\nнеобходимо, кнопкой Folder, '
+                                'выбрать каталог lr_скрипт\\data'.format(f=folder))
 
-    for file in lr_vars.AllFiles:  # Snapshot_Nums: set -> list
-        file['Snapshot']['Nums'] = sorted(file['Snapshot']['Nums'])
-        file['Snapshot']['len'] = len(file['Snapshot']['Nums'])
+    for file in lr_vars.AllFiles:
+        fs = file['Snapshot']
+        fs['Nums'] = sorted(fs['Nums'])  # set -> list
+        fs['len'] = len(fs['Nums'])
 
     all_files_inf = tuple(lr_other.get_files_infs(lr_vars.AllFiles))
     lr_vars.VarSearchMaxSnapshot.set(max(all_files_inf or [-1]))
@@ -209,45 +209,41 @@ def get_files_with_kwargs(files: (dict,), key='File', **kwargs) -> iter((dict,))
                 yield file
 
 
-def set_file_statistic(file: dict, as_text=False) -> dict:
+def set_file_statistic(file: dict, as_text=False, errors='replace') -> dict:
     '''создание ключей статистики по файлу'''
     ff = file['File']
-    ff['Size'] = os.path.getsize(ff['FullName'])
-    ff['timeCreate'] = time.strftime('%H:%M:%S %m.%d.%y', time.gmtime(os.path.getmtime(ff['FullName'])))
+    full_name = ff['FullName']
+    ff['Size'] = os.path.getsize(full_name)
+    ff['timeCreate'] = time.strftime('%H:%M:%S %m.%d.%y', time.gmtime(os.path.getmtime(full_name)))
+
     if as_text:  # есть текст файла
         _set_fileFile_stats(ff, lr_vars.VarFileText.get().split('\n'))
     else:  # новый файл
-        with open(ff['FullName'], encoding=ff['encoding'], errors='replace') as iter_lines:
-            _set_fileFile_stats(ff, iter_lines)
+        with open(full_name, encoding=ff['encoding'], errors=errors) as f:
+            _set_fileFile_stats(ff, f.read())
+
     return file
 
 
-def _set_fileFile_stats(fileFile: dict, lines: (str,)) -> None:
+def _set_fileFile_stats(fileFile: dict, text: str, let=0, wts=0, ptn=0, dts=0, na=0) -> None:
     '''file['File'] статистика'''
-    line_counter = punctuation = whitespace = ascii_letters = no_ascii = digits = 0
-    for line_counter, line in enumerate(lines, start=1):
-        for symbol in line:
-            if symbols_letters(symbol):
-                ascii_letters += 1
-            elif symbols_whitespace(symbol):
-                whitespace += 1
-            elif symbols_punctuation(symbol):
-                punctuation += 1
-            elif symbols_digits(symbol):
-                digits += 1
-            else:
-                no_ascii += 1
+    counter = collections.Counter(text)  # Counter({' ': 12, 'T': 2, 'a': 2, '<': 1, '/': 1, ...
+    for key in counter:
+        if key in string.ascii_letters:
+            let += counter[key]
+        elif key in string.whitespace:
+            wts += counter[key]
+        elif key in string.punctuation:
+            ptn += counter[key]
+        elif key in string.digits:
+            dts += counter[key]
+        else:
+            na += counter[key]
 
-    fileFile['len'] = punctuation + whitespace + ascii_letters + digits + no_ascii
-    fileFile['ascii_letters'] = ascii_letters
-    fileFile['punctuation'] = punctuation
-    fileFile['digits'] = digits
-    fileFile['whitespace'] = whitespace
-    fileFile['NotPrintable'] = no_ascii
-    fileFile['Lines'] = line_counter
-
-
-symbols_punctuation = set(string.punctuation).__contains__
-symbols_digits = set(string.digits).__contains__
-symbols_letters = set(string.ascii_letters).__contains__
-symbols_whitespace = set(string.whitespace).__contains__
+    fileFile['ascii_letters'] = let
+    fileFile['whitespace'] = wts
+    fileFile['punctuation'] = ptn
+    fileFile['digits'] = dts
+    fileFile['NotPrintable'] = na
+    fileFile['len'] = (ptn + wts + let + dts + na)
+    fileFile['Lines'] = counter.get('\n', 0)
