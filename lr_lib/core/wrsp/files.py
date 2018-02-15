@@ -246,4 +246,4 @@ def _set_fileFile_stats(fileFile: dict, text: str, let=0, wts=0, ptn=0, dts=0, n
     fileFile['digits'] = dts
     fileFile['NotPrintable'] = na
     fileFile['len'] = (ptn + wts + let + dts + na)
-    fileFile['Lines'] = counter.get('\n', 0)
+    fileFile['Lines'] = (counter.get('\n', 0) + 1)  # ?
