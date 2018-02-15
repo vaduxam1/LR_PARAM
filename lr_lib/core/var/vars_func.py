@@ -44,7 +44,7 @@ def _set_file(file: dict, errors='replace') -> None:
         lr_files.set_file_statistic(file, as_text=True)
         # сохранить статистику в AllFiles
         file_from_allfiles = lr_files.get_file_with_kwargs(lr_vars.AllFiles, Name=ff['Name'])
-        file_from_allfiles['File'].update({k: file[k] for k in file if k != 'Param'})
+        file_from_allfiles.update({k: file[k] for k in file if k != 'Param'})
 
 
 def _is_mutable_bound(st: str, b1: '{', b2: '}', a2=0) -> int:
