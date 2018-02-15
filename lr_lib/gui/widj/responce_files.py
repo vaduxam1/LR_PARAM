@@ -72,9 +72,8 @@ class RespFiles(tk.Toplevel):
             '''все inf файлы директории'''
             folder_files = next(os.walk(folder))
             for file in folder_files[2]:
-                (name, ext) = os.path.splitext(file)
-                n = name[1:]
-                if (ext == '.inf') and (name[0] == 't') and all(map(str.isnumeric, n)):
+                num = lr_files.get_inf_file_num(file)
+                if num:
                     yield file
 
         def set_inf(*a) -> None:

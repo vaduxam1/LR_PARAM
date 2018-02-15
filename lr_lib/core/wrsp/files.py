@@ -64,13 +64,20 @@ def file_dict_creator(name: str, full_name: str, inf_num: int, enc: str, inf_key
             return file
 
 
+def get_inf_file_num(file: str) -> int:
+    '''если подходящий t*.inf, вернуть номер Snapshot'''
+    (name, ext) = os.path.splitext(file)
+    num = name[1:]
+    if (ext == '.inf') and (name[0] == 't') and all(map(str.isnumeric, num)):
+        return int(num)  # Snapshot > 0
+
+
 def get_folder_infs(folder: str) -> iter((str, int),):
     '''inf файлы/номера каталога'''
     for file in next(os.walk(folder))[2]:
-        (name, ext) = os.path.splitext(file)
-        num = name[1:]
-        if (ext == '.inf') and (name[0] == 't') and all(map(str.isnumeric, num)):
-            yield file, int(num)
+        num = get_inf_file_num(file)
+        if num:
+            yield file, num
 
 
 def create_files_from_infs(folder: str, enc: str, allow_deny: bool, statistic: bool) -> iter([dict, ]):
