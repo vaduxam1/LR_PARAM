@@ -30,7 +30,10 @@ def file_dict_creator(name: str, full_name: str, inf_num: int, enc: str, inf_key
     else:  # новый файл
         fil_e = is_responce_file(name)
         if allow_deny or fil_e:
-            name_, _ext = fil_e
+            if fil_e is None:  # из lr_lib.gui.widj.responce_files
+                name_, _ext = os.path.splitext(name)
+            else:
+                name_, _ext = fil_e
 
             file = dict(
                 File=dict(

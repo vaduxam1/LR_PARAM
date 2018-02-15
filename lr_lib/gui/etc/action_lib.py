@@ -8,8 +8,7 @@ import contextlib
 import urllib.parse
 import tkinter as tk
 
-import lr_lib.gui.widj.responce_files
-
+import lr_lib.gui.widj.responce_files as lr_responce_files
 import lr_lib.core.action.web_ as lr_web_
 import lr_lib.core.var.vars as lr_vars
 import lr_lib.core.var.vars_func as lr_vars_func
@@ -368,4 +367,4 @@ def snapshot_files(event, folder_record='', i_num=0) -> None:
     if not i_num:
         i_num = ''.join(filter(str.isnumeric, selection))
 
-    lr_lib.gui.widj.responce_files.RespFiles(event.widget, i_num, folder_record, folder_response)
+    lr_responce_files.RespFiles(event.widget, i_num, folder_record, folder_response)
