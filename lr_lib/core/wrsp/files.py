@@ -14,20 +14,30 @@ import lr_lib.etc.excepthook as lr_excepthook
 import lr_lib.core.var.vars as lr_vars
 
 
+def is_responce_file(name: str) -> (str, str):
+    '''вернуть файлы ответов, отбраковать "вероятно ненужные" файлы'''
+    n, ext = os.path.splitext(name)
+    if not ((name in lr_vars.DENY_FILES) or (ext in lr_vars.DENY_EXT) or any(p in n for p in lr_vars.DENY_PART_NAMES)):
+        return n, ext
+
+
 def file_dict_creator(name: str, full_name: str, inf_num: int, enc: str, inf_key: str, allow_deny: bool, set_statistic: bool, dn=-1) -> dict:
     '''создать словарь файла'''
     file = get_file_with_kwargs(lr_vars.AllFiles, Name=name) if inf_num else None
+
     if file:  # файл уже есть, те пришел из другого inf
         file['Snapshot']['Nums'].add(inf_num)
     else:  # новый файл
-        n, e = os.path.splitext(name)
-        if allow_deny or not ((name in lr_vars.DENY_FILES) or (e in lr_vars.DENY_EXT) or any(p in n for p in lr_vars.DENY_PART_NAMES)):
+        fil_e = is_responce_file(name)
+        if allow_deny or fil_e:
+            name_, _ext = fil_e
+
             file = dict(
                 File=dict(
                     Name=name,
                     FullName=full_name,
-                    _ext=e,
-                    name_=n,
+                    _ext=_ext,
+                    name_=name_,
                     encoding=enc,
                     len=dn,
                     NotPrintable=dn,
@@ -60,7 +70,6 @@ def file_dict_creator(name: str, full_name: str, inf_num: int, enc: str, inf_key
 
             if set_statistic:
                 set_file_statistic(file)
-
             return file
 
 

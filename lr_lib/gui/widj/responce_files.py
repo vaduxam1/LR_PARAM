@@ -7,8 +7,7 @@ import tkinter.ttk as ttk
 
 from tkinter import filedialog
 
-import lr_lib.gui.etc.gui_other
-
+import lr_lib.gui.etc.gui_other as lr_gui_other
 import lr_lib.core.etc.other as lr_other
 import lr_lib.gui.widj.tooltip as lr_tooltip
 import lr_lib.core.var.vars as lr_vars
@@ -24,7 +23,7 @@ class RespFiles(tk.Toplevel):
         self.transient(self.widget)
         self.inf_file = 't{i}.inf'.format(i=i_num)
         self.title('Snapshot=' + self.inf_file)
-        lr_lib.gui.etc.gui_other.center_widget(self)
+        lr_gui_other.center_widget(self)
 
         self.folder_record = folder_record
         self.folder_response = folder_response
@@ -45,7 +44,7 @@ class RespFiles(tk.Toplevel):
 
         lr_tooltip.createToolTip(ent, lr_other.file_string(file_dt))
 
-    def response_widj_creator(self, folder: str, desc='', side='bottom', w1=25, w2=75) -> None:
+    def response_widj_creator(self, folder: str, desc='', side='bottom', w1=30, w2=100) -> None:
         '''виджеты для окна файлов snapshot'''
         text = '{desc}\n{folder}'.format(desc=desc, folder=folder)
 
@@ -58,13 +57,18 @@ class RespFiles(tk.Toplevel):
         cbx = tk.Checkbutton(lab, text='', variable=cbx_var, font='Arial 7')
         lr_tooltip.createToolTip(cbx, 'открывать файл, при выборе в комбобоксе')
 
+        def files_cmb_set(files=tuple(lr_other.get_files_names(folder, self.i_num))) -> None:
+            '''записать файлы в files_cmb'''
+            if deny_cbx_var.get():  # отбраковать "вероятно ненужные" файлы
+                files = list(filter(lr_files.is_responce_file, files))
+            files_cmb['values'] = files
+
+        deny_cbx_var = tk.BooleanVar(value=True)
+        deny_cbx = tk.Checkbutton(lab, text='', variable=deny_cbx_var, command=files_cmb_set, font='Arial 7')
+        lr_tooltip.createToolTip(deny_cbx, 'отбраковать "вероятно ненужные" файлы')
+
         files_cmb = ttk.Combobox(lab, background=lr_vars.Background, font='Arial 7')
-
-        files = list(lr_other.get_files_names(folder, self.i_num))
-        if not files:
-            return
-        files_cmb['values'] = files
-
+        files_cmb_set()
         files_cmb.bind("<<ComboboxSelected>>", lambda *a: self.combo_select(files_cmb, folder, cbx_var))
         lr_tooltip.createToolTip(files_cmb, text)
 
@@ -94,10 +98,11 @@ class RespFiles(tk.Toplevel):
         files_cmb.pack(side='top')
         btn.pack(side='left')
         cbx.pack(side='left')
+        deny_cbx.pack(side='left')
         inf_cmb.pack(side='bottom')
 
         # width
-        self.resp_widj.append((lab, cbx, btn, files_cmb, inf_cmb, inf_var, cbx_var, folder))
+        self.resp_widj.append((lab, cbx, btn, files_cmb, inf_cmb, deny_cbx, deny_cbx_var, inf_var, cbx_var, folder))
         w = max(len(e[3]['values']) for e in self.resp_widj)
         if w < w1:
             w = w1
