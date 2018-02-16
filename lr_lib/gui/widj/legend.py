@@ -128,7 +128,8 @@ class WebLegend(tk.Toplevel):
             self.canvas.tag_bind(shape_2, '<ButtonPress-1>', onObjectClick2)
             self.web_canavs[i][2] = list(xy2)
 
-            t2 = self.canvas.create_text((sep + w_), (H + 15), text='in: {1}\nSnap: {0}'.format(i, ''))  # wdt[i].param_in_web_report()[1]
+            li = len(self.parent.web_action.websReport.web_snapshot_param_in_count[i])
+            t2 = self.canvas.create_text((sep + w_), (H + 15), text='in: {li}\nSnap: {i}'.format(i=i, li=li))
             self.canvas.tag_bind(t2, '<ButtonPress-1>', onObjectClick2)
 
             sep += 70
@@ -152,7 +153,7 @@ class WebLegend(tk.Toplevel):
 
                             r = 'Snapshot=t{i}.inf\n{r}'.format(r='\n'.join(in_count), i=i)
                             lr_tooltip_canvas.CanvasTooltip(self.canvas, line, text=r)
-                            self.canvas.tag_bind(line, '<ButtonPress-1>', lambda r=r: self.title(r))
+                            self.canvas.tag_bind(line, '<ButtonPress-1>', lambda *a, r=r.replace('\n', ', '): self.title(r))
 
         if transac_show:
             t = [(a, b) for (a, b) in tr if b]

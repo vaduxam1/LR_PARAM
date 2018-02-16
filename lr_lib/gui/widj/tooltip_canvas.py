@@ -45,7 +45,7 @@ class CanvasTooltip:
     def schedule(self):
         self.unschedule()
         self.id = self.canvas.after(self.waittime, self.show)
-        self.id = self.canvas.after(lr_vars.VarToolTipTimeout.get(), self.onLeave)
+        self.canvas.after(lr_vars.VarToolTipTimeout.get(), self.onLeave)
 
     def unschedule(self):
         id_ = self.id
