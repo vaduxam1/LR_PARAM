@@ -645,31 +645,35 @@ class ActionWindow(tk.Toplevel):
     def open_action(self, file=None) -> None:
         '''сформировать action.c'''
         with self.block(), lr_vars.Window.block():
-            self._open_action(file=file)
+            self.action_file = file or get_action_file()
 
-    def _open_action(self, file=None) -> None:
-        '''сформировать action.c'''
-        self.action_file = file or get_action_file()
+            if os.path.isfile(self.action_file):
+                with open(self.action_file, errors='replace', encoding=lr_vars.VarEncode.get()) as iter_lines:
+                    self.web_action.set_text_list(iter_lines, websReport=True)
+                    self.web_action_to_tk_text(websReport=False)
+                    self._open_action_final()
 
-        if os.path.isfile(self.action_file):
-            with open(self.action_file, errors='replace', encoding=lr_vars.VarEncode.get()) as act:
-                text = act.read()
-                self.tk_text.new_text_set(text)
-                self.web_action.set_text_list(text, websReport=True)
-                self.web_action_to_tk_text(websReport=False)
+    def _open_action_final(self) -> None:
+        '''сообщения и действия, после открытия нового файла'''
+        if not self.action_file:
+            return
+        self.tk_text.reset_highlight(highlight=False)
 
-            self.tk_text.reset_highlight(highlight=False)
-            lr_vars.Logger.info('{f} > {s}'.format(f=self.action_file, s=self.id_))
+        info = []
+        info.append('{f} : size={sa}, id={s}'.format(
+            f=self.action_file, s=self.id_, sa=os.path.getsize(self.action_file)))
 
         if self.web_action.websReport.rus_webs:
-            lr_vars.Logger.info('В следующих номерах inf, обнаружены Русские(NoASCII) символы, '
-                                'возможно требуется перекодировка(выделение/encoding из меню мыши)\n{}'.format(
-                self.web_action.websReport.rus_webs))
+            info.append('В следующих номерах inf, обнаружены Русские(NoASCII) символы, возможно требуется '
+                        'перекодировка(выделение/encoding из меню мыши)\n{}'.format(self.web_action.websReport.rus_webs))
 
         if self.web_action.websReport.google_webs:
-            lr_vars.Logger.info('Возможно следующие номера inf лишние, тк содержат слова {s}\n'
-                                'их можно удалить(+"commit/backup/обновить action.c" из меню мыши)\n{w}'.format(
+            info.append('Возможно следующие номера inf лишние, тк содержат слова {s}\nих можно удалить('
+                        '+"commit/backup/обновить action.c" из меню мыши)\n{w}'.format(
                 w=self.web_action.websReport.google_webs, s=lr_vars.DENY_WEB_))
+
+        if info:
+            lr_vars.Logger.info('\n\n'.join(info))
 
         self.background_color_set(color='')  # оригинальный цвет
         lr_vars.Window.focus_set()  # почемуто без этого не проходит self.focus_set()

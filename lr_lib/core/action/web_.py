@@ -71,7 +71,7 @@ class WebAny:
         self.name = self._read_name()
         self.snapshot = self._read_snapshot()
 
-        self.comments = comments.rstrip().lstrip('\n')
+        self.comments = comments.lstrip('\n')
         if self.comments:
             self.comments = '\n{}'.format(self.comments)
 

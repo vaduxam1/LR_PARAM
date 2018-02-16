@@ -164,7 +164,7 @@ def _create_files_from_inf(args: [(str, str, bool, bool), (str, int)]) -> iter((
                         yield file
 
 
-@lr_other.exec_time
+# @lr_other.exec_time
 def init() -> None:
     '''создать все файлы ответов, для поиска в них param'''
     lr_vars.AllFiles.clear()

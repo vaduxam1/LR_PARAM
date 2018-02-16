@@ -90,117 +90,117 @@ class ActionWebsAndLines:
         else:
             self.webs_and_lines.append(element)
 
-    @lr_other.exec_time
-    def set_text_list(self, text: str, websReport=True) -> None:
+    # @lr_other.exec_time
+    def set_text_list(self, text: (str or list), websReport=True) -> None:
         '''создать все web_action объекты'''
         with self.action.block():
             self.transactions = lr_transac.Transactions(self)
-            self._set_text_list(text)
+            
+            if isinstance(text, str):
+                text = text.split('\n')
 
-            if websReport:
+            self._set_text_list(text)
+            if websReport:  # статистика использования WRSP
                 self.websReport.create()
 
-    def _set_text_list(self, text: str) -> None:
+    def _set_text_list(self, iter_lines: (str, )) -> None:
         '''создать все web_action объекты'''
-        iter_lines = iter(text.split('\n'))
-        line = next(iter_lines, None)
-        line_num = 1
+        iter_lines = iter(line.rstrip() for line in iter_lines)
 
-        self.webs_and_lines = [line]
+        LINE = next(iter_lines, None)
+        self.webs_and_lines = [LINE]
 
-        reg_param_list = []  # web_reg_save_param's, для добавления в web_.web_reg_save_param_list
-        comments = ''  # //
-        _multiline_comment = []  # // /**/
+        RegParamList = []  # web_reg_save_param's, для добавления в web_.web_reg_save_param_list
+        COMMENT = ''  # //
+        MultiLine_COMMENT = []  # // /**/
         _OldPComment = lr_param.LR_COMENT + ' PARAM'
         lw_end = (lr_param.Web_LAST, lr_param._block_endswith3, )
         comment_format = '{}\n{}'.format
 
-        for line in iter_lines:
-            strip_line = line.strip()
-            line_num += 1
+        for LINE in iter_lines:
+            SLINE = LINE.lstrip()
 
-            if not strip_line:
+            if not SLINE:
                 continue
 
-            elif _multiline_comment or strip_line.startswith('/*'):
-                _multiline_comment.append(line)
+            elif MultiLine_COMMENT or SLINE.startswith('/*'):
+                MultiLine_COMMENT.append(LINE)
 
-                if strip_line.startswith('*/') or strip_line.endswith('*/'):
-                    comments = comment_format(comments, '\n'.join(_multiline_comment)).rstrip()
-                    _multiline_comment = []
+                if SLINE.startswith('*/') or SLINE.endswith('*/'):
+                    COMMENT = comment_format(COMMENT, '\n'.join(MultiLine_COMMENT))
+                    MultiLine_COMMENT = []
                 continue
 
-            elif strip_line.startswith(lr_param.LR_COMENT) and (not strip_line.startswith(_OldPComment)):
+            elif SLINE.startswith(lr_param.LR_COMENT) and (not SLINE.startswith(_OldPComment)):
                 continue
 
-            elif strip_line.startswith('//'):
-                comments = comment_format(comments, line).rstrip()
+            elif SLINE.startswith('//'):
+                COMMENT = comment_format(COMMENT, LINE)
                 continue
 
-            elif strip_line.startswith(lr_param._block_startswith):  # начало блока web_
-                web_list = [line]  # web_ текст Snapshot запроса
-                w_type = lr_web_.read_web_type(line)
+            elif SLINE.startswith(lr_param._block_startswith):  # начало блока web_
+                web_list = [LINE]  # web_ текст Snapshot запроса
+                w_type = lr_web_.read_web_type(LINE)
 
-                if strip_line.endswith(lr_param._block_endswith) or strip_line.endswith('('):  # тело запроса
+                if SLINE.endswith(lr_param._block_endswith) or SLINE.endswith('('):  # тело запроса
 
                     for web_line in iter_lines:
-                        line_num += 1
                         web_list.append(web_line)
-                        if any(map(web_line.rstrip().endswith, lw_end)):
+                        if any(map(web_line.endswith, lw_end)):
                             break
 
                     transaction = self.transactions._current()
 
                     if w_type.startswith('web_reg_save_param'):
-                        web_ = lr_web_.WebRegSaveParam(self, web_list, comments, transaction=transaction, _type=w_type)
-                        reg_param_list.append(web_)
+                        web_ = lr_web_.WebRegSaveParam(self, web_list, COMMENT, transaction=transaction, _type=w_type)
+                        RegParamList.append(web_)
 
                     else:
                         if (len(web_list) < 3) or (not any(lr_param.Snap1 in ln for ln in web_list)):
-                            web_ = lr_web_.WebAny(self, web_list, comments, transaction=transaction, _type=w_type)
+                            web_ = lr_web_.WebAny(self, web_list, COMMENT, transaction=transaction, _type=w_type)
                             self.add_to_text_list(web_)
 
                         else:
-                            web_ = lr_web_.WebSnapshot(self, web_list, comments, transaction=transaction, _type=w_type)
-                            web_.web_reg_save_param_list = reg_param_list
-                            reg_param_list = []
+                            web_ = lr_web_.WebSnapshot(self, web_list, COMMENT, transaction=transaction, _type=w_type)
+                            web_.web_reg_save_param_list = RegParamList
+                            RegParamList = []
                             self.add_to_text_list(web_)
 
-                    comments = ''
+                    COMMENT = ''
                     continue
 
-                elif any(map(strip_line.endswith, lw_end)):  # однострочные web_
-                    web_ = lr_web_.WebAny(self, web_list, comments, transaction=self.transactions._current(), _type=w_type)
+                elif any(map(SLINE.endswith, lw_end)):  # однострочные web_
+                    web_ = lr_web_.WebAny(self, web_list, COMMENT, transaction=self.transactions._current(), _type=w_type)
                     self.add_to_text_list(web_)
-                    comments = ''
+                    COMMENT = ''
                     continue
 
                 else:
                     lr_vars.Logger.critical('вероятно ошибка распознавания\n{line}\n{lwl}\n{web_list}'.format(
-                        line=line, lwl=len(web_list), web_list=web_list))
-                    self.add_to_text_list(line)
+                        line=LINE, lwl=len(web_list), web_list=web_list))
+                    self.add_to_text_list(LINE)
                     continue
 
-            elif strip_line:  # не web_ текст
-                self.set_transaction_name(strip_line)
+            elif SLINE:  # не web_ текст
+                self.set_transaction_name(SLINE)
 
-                if comments:
-                    line = comment_format(comments, line)
-                    comments = ''
+                if COMMENT:
+                    LINE = comment_format(COMMENT, LINE)
+                    COMMENT = ''
 
-                self.add_to_text_list(line)
+                self.add_to_text_list(LINE)
                 continue
 
-        if comments:
-            self.add_to_text_list(comments)
-        if _multiline_comment:
-            self.add_to_text_list('\n'.join(_multiline_comment))
+        if COMMENT:
+            self.add_to_text_list(COMMENT)
+        if MultiLine_COMMENT:
+            self.add_to_text_list('\n'.join(MultiLine_COMMENT))
 
-        if reg_param_list:
+        if RegParamList:
             lr_vars.Logger.critical('Ненайден web_* запрос, которому принадлежат web_reg_save_param:\n{}'.format(
-                [w.name for w in reg_param_list]))
+                [w.name for w in RegParamList]))
             self.add_to_text_list('\n// ERROR web_reg_save_param !\n{}'.format(
-                '\n\n'.join(map(lr_web_.WebRegSaveParam.to_str, reg_param_list))))
+                '\n\n'.join(map(lr_web_.WebRegSaveParam.to_str, RegParamList))))
 
     def set_transaction_name(self, strip_line: str) -> (str or None):
         '''проверить линию, сохранить имя transaction'''
@@ -263,7 +263,7 @@ class ActionWebsAndLines:
 
         return param
 
-    @lr_other.exec_time
+    # @lr_other.exec_time
     def to_str(self, websReport=False) -> str:
         '''весь action текст как строка'''
         if websReport:
