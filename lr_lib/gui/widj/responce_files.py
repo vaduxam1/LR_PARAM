@@ -92,8 +92,10 @@ class RespFiles(tk.Toplevel):
         inf_cmb['values'] = list(sorted(get_inf_files(), key=lr_other.numericalSort))
         inf_cmb.bind("<<ComboboxSelected>>", set_inf)
         inf_cmb.config(width=max(len(i) for i in (inf_cmb['values'] or [''])))
-        with open(os.path.join(folder, self.inf_file)) as f:
-            lr_tooltip.createToolTip(inf_cmb, 'сменить snapshot\n' + f.read())
+        inf = os.path.join(folder, self.inf_file)
+        if os.path.isfile(inf):
+            with open(inf) as f:
+                lr_tooltip.createToolTip(inf_cmb, 'сменить snapshot\n' + f.read())
 
         lab.pack(side=side)
         files_cmb.pack(side='top')
