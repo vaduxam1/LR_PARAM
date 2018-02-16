@@ -137,22 +137,22 @@ class WebLegend(tk.Toplevel):
         for web_ in web_actions:
             if self.web_canavs[web_.snapshot]['enable']:
                 color, *xy1 = self.web_canavs[web_.snapshot][1]
-
+                wn = [w.name for w in web_.web_reg_save_param_list]
                 for w in web_.web_reg_save_param_list:
-                    r_param = rep_param[w.name]
+                    name = w.name
+                    r_param = rep_param[name]
 
                     for i in r_param['snapshots']:
                         if self.web_canavs[i]['enable_in']:
+                            in_count = self.parent.web_action.websReport.web_snapshot_param_in_count[i]
+                            in_count = {k: in_count[k] for k in in_count if k in wn}
+
                             xy2 = self.web_canavs[i][2]
                             line = self.canvas.create_line(xy1[2]-x, xy1[3], xy2[0]+x, xy2[1], fill=color, arrow=tk.LAST, width=2)
 
-                            r = 'Snapshot=t{i}.inf\n{p} : {w}\n{r}'.format(r=r_param, i=i, p=w.param, w=w.name)
+                            r = 'Snapshot=t{i}.inf\n{r}'.format(r='\n'.join(in_count), i=i)
                             lr_tooltip_canvas.CanvasTooltip(self.canvas, line, text=r)
-
-                            def title(*a, r=r) -> None:
-                                '''описание param в title'''
-                                self.title(r)
-                            self.canvas.tag_bind(line, '<ButtonPress-1>', title)
+                            self.canvas.tag_bind(line, '<ButtonPress-1>', lambda r=r: self.title(r))
 
         if transac_show:
             t = [(a, b) for (a, b) in tr if b]

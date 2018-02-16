@@ -4,6 +4,8 @@
 import tkinter as tk
 import tkinter.ttk as ttk
 
+import lr_lib.core.var.vars as lr_vars
+
 
 class CanvasTooltip:
     '''
@@ -20,8 +22,7 @@ class CanvasTooltip:
     Alberto Vassena on 2016.12.10.
     '''
 
-    def __init__(self, canvas, tag_or_id, *, bg='#FFFFEA', pad=(5, 3, 5, 3), text='canvas info',
-                 waittime=0, wraplength=750):
+    def __init__(self, canvas, tag_or_id, *, bg='#FFFFEA', pad=(5, 3, 5, 3), text='', waittime=0, wraplength=750):
         self.waittime = waittime  # in miliseconds, originally 500
         self.wraplength = wraplength  # in pixels, originally 180
         self.canvas = canvas
@@ -44,6 +45,7 @@ class CanvasTooltip:
     def schedule(self):
         self.unschedule()
         self.id = self.canvas.after(self.waittime, self.show)
+        self.id = self.canvas.after(lr_vars.VarToolTipTimeout.get(), self.onLeave)
 
     def unschedule(self):
         id_ = self.id
