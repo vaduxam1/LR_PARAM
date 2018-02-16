@@ -3,6 +3,7 @@
 
 import os
 import re
+import time
 import contextlib
 import configparser
 
@@ -660,8 +661,9 @@ class ActionWindow(tk.Toplevel):
         self.tk_text.reset_highlight(highlight=False)
 
         info = []
-        info.append('{f} : size={sa}, id={s}'.format(
-            f=self.action_file, s=self.id_, sa=os.path.getsize(self.action_file)))
+        t = time.strftime('%H:%M:%S %m.%d.%y', time.gmtime(os.path.getmtime(self.action_file)))
+        info.append('{f} : size={sa}, id={s}, create={t}'.format(
+            f=self.action_file, s=self.id_, sa=os.path.getsize(self.action_file), t=t))
 
         if self.web_action.websReport.rus_webs:
             info.append('В следующих номерах inf, обнаружены Русские(NoASCII) символы, возможно требуется '
