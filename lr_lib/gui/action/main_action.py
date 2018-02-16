@@ -11,22 +11,21 @@ import tkinter.ttk as ttk
 
 from tkinter import messagebox
 
-import lr_lib.gui.widj.legend
-import lr_lib.gui.action.tooltips
-import lr_lib.gui.action.grid
-import lr_lib.gui.widj.wrsp_setting
-import lr_lib.gui.etc.gui_other
-
+import lr_lib.gui.action.tooltips as lr_a_tooltips
+import lr_lib.gui.action.grid as lr_a_grid
+import lr_lib.gui.widj.legend as lr_legend
+import lr_lib.gui.widj.wrsp_setting as lr_wrsp_setting
 import lr_lib.gui.widj.tooltip as lr_tooltip
 import lr_lib.gui.widj.highlight_text as lr_highlight_text
+import lr_lib.gui.widj.dialog as lr_dialog
+import lr_lib.gui.etc.gui_other as lr_gui_other
+import lr_lib.gui.etc.group_param as lr_group_param
+import lr_lib.gui.etc.sub_menu as lr_sub_menu
 import lr_lib.core.var.vars as lr_vars
 import lr_lib.core.wrsp.param as lr_param
 import lr_lib.core.action.main_awal as lr_main_awal
 import lr_lib.core.etc.other as lr_other
 import lr_lib.core.etc.lbrb_checker as lr_lbrb_checker
-import lr_lib.gui.etc.group_param as lr_group_param
-import lr_lib.gui.etc.sub_menu as lr_sub_menu
-import lr_lib.gui.widj.dialog as lr_dialog
 import lr_lib.etc.template as lr_template
 import lr_lib.etc.help as lr_help
 
@@ -210,7 +209,7 @@ class ActionWindow(tk.Toplevel):
 
         self.final_wnd_cbx = tk.Checkbutton(self.toolbar, text='final', font=lr_vars.DefaultFont, variable=self.final_wnd_var)
         self.wrsp_setting = tk.Button(self.toolbar, text='wrsp_setting', font=lr_vars.DefaultFont,
-                                      command=lambda *a: lr_lib.gui.widj.wrsp_setting.WrspSettingWindow(parent=self))
+                                      command=lambda *a: lr_wrsp_setting.WrspSettingWindow(parent=self))
 
         def force_ask_cmd(*a) -> None:
             if self.force_ask_var.get():
@@ -248,9 +247,9 @@ class ActionWindow(tk.Toplevel):
         self.lr_think_time = tk.Button(self.toolbar, text='lr_think_time', font=lr_vars.DefaultFont + ' bold',
                                        command=self.thinktime_remove)
         self.lr_report_B = tk.Button(self.toolbar, text='reportB', font=lr_vars.DefaultFont + ' bold',
-                                     command=lambda *a: lr_lib.gui.etc.gui_other.repB(self.tk_text))
+                                     command=lambda *a: lr_gui_other.repB(self.tk_text))
         self.lr_report_A = tk.Button(self.toolbar, text='reportA', font=lr_vars.DefaultFont + ' bold',
-                                     command=lambda *a: lr_lib.gui.etc.gui_other.repA(self.tk_text))
+                                     command=lambda *a: lr_gui_other.repA(self.tk_text))
 
         self.transaction_rename = tk.Button(self.toolbar, text='rename\ntransaction', font=lr_vars.DefaultFont + ' bold',
                                             background='orange', command=self.all_transaction_rename)
@@ -263,13 +262,13 @@ class ActionWindow(tk.Toplevel):
             with contextlib.suppress(Exception):  # виджетам доступно меню мыши
                 self.bind_class(widj, sequence='<Button-3>', func=lr_sub_menu.rClicker, add='')
 
-        lr_lib.gui.action.tooltips.set_all_action_window_tooltip(self)  # создать все tooltip окна
-        lr_lib.gui.action.grid.grid_widj(self)  # grid виджетов action.с окна
+        lr_a_tooltips.set_all_action_window_tooltip(self)  # создать все tooltip окна
+        lr_a_grid.grid_widj(self)  # grid виджетов action.с окна
         self.open_action()  # action текст
 
     def legend(self) -> None:
         '''окно легенды'''
-        t = lr_lib.gui.widj.legend.WebLegend(self)
+        t = lr_legend.WebLegend(self)
         t.add_web_canavs()
         t.print()
 

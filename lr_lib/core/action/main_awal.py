@@ -1,10 +1,9 @@
 # -*- coding: UTF-8 -*-
 # внутреннее предсталление action.c текста
 
-import lr_lib.core.action.report
-import lr_lib.core.action.transac
-import lr_lib.core.etc.other
-
+import lr_lib.core.action.transac as lr_transac
+import lr_lib.core.etc.other as lr_other
+import lr_lib.core.action.report as lr_report
 import lr_lib.core.var.vars as lr_vars
 import lr_lib.core.action.web_ as lr_web_
 import lr_lib.core.wrsp.param as lr_param
@@ -15,8 +14,8 @@ class ActionWebsAndLines:
     def __init__(self, action):
         self.action = action  # lr_lib.gui.action.main_action.ActionWindow
         self.webs_and_lines = []  # представление
-        self.websReport = lr_lib.core.action.report.WebReport(parent_AWAL=self)
-        self.transactions = lr_lib.core.action.transac.Transactions(self)
+        self.websReport = lr_report.WebReport(parent_AWAL=self)
+        self.transactions = lr_transac.Transactions(self)
 
     def get_web_all(self) -> iter((lr_web_.WebAny,)):
         '''все объекты'''
@@ -91,11 +90,11 @@ class ActionWebsAndLines:
         else:
             self.webs_and_lines.append(element)
 
-    @lr_lib.core.etc.other.exec_time
+    @lr_other.exec_time
     def set_text_list(self, text: str, websReport=True) -> None:
         '''создать все web_action объекты'''
         with self.action.block():
-            self.transactions = lr_lib.core.action.transac.Transactions(self)
+            self.transactions = lr_transac.Transactions(self)
             self._set_text_list(text)
 
             if websReport:
@@ -264,7 +263,7 @@ class ActionWebsAndLines:
 
         return param
 
-    @lr_lib.core.etc.other.exec_time
+    @lr_other.exec_time
     def to_str(self, websReport=False) -> str:
         '''весь action текст как строка'''
         if websReport:

@@ -7,7 +7,7 @@ import multiprocessing.pool
 import multiprocessing.dummy
 import tkinter
 
-import lr_lib.etc.pool.sthread
+import lr_lib.etc.pool.sthread as lr_sthread
 import lr_lib.etc.pool.other
 
 import lr_lib.core.var.vars as lr_vars
@@ -18,7 +18,7 @@ class POOL:
     pools = {
         'AsyncPool': lr_lib.etc.pool.other.AsyncPool,
         'NoPool': lr_lib.etc.pool.other.NoPool,
-        'SThreadPool(threading.Thread)': lr_lib.etc.pool.sthread.SThreadPool,
+        'SThreadPool(threading.Thread)': lr_sthread.SThreadPool,
         'concurrent.futures.ThreadPoolExecutor': concurrent.futures.ThreadPoolExecutor,
         'concurrent.futures.ProcessPoolExecutor': concurrent.futures.ProcessPoolExecutor,
         'multiprocessing.Pool': multiprocessing.Pool,

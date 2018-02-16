@@ -5,12 +5,11 @@ import sys
 import queue
 import contextlib
 
-import lr_lib.gui.etc.gui_other
-
+import lr_lib.gui.etc.gui_other as lr_gui_other
+import lr_lib.gui.widj.dialog as lr_dialog
 import lr_lib.core.var.vars as lr_vars
 import lr_lib.core.wrsp.param as lr_param
 import lr_lib.etc.excepthook as lr_excepthook
-import lr_lib.gui.widj.dialog as lr_dialog
 
 
 @lr_vars.T_POOL_decorator
@@ -69,7 +68,7 @@ def group_param(event, widget=None, params=None, ask=True) -> None:
                     err, '\n\t'.join(unsuccess)), parent=widget.action)
 
             if widget.action.final_wnd_var.get():
-                lr_lib.gui.etc.gui_other.repA(widget)
+                lr_gui_other.repA(widget)
             widget.action.background_color_set(color='')  # action оригинальный цвет
 
     # заменить params

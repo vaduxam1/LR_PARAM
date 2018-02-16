@@ -2,14 +2,15 @@
 # окно файлов ответов, для i_num-snapshot
 
 import os
+
 import tkinter as tk
 import tkinter.ttk as ttk
 
 from tkinter import filedialog
 
 import lr_lib.gui.etc.gui_other as lr_gui_other
-import lr_lib.core.etc.other as lr_other
 import lr_lib.gui.widj.tooltip as lr_tooltip
+import lr_lib.core.etc.other as lr_other
 import lr_lib.core.var.vars as lr_vars
 import lr_lib.core.wrsp.files as lr_files
 

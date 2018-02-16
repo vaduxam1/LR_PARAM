@@ -2,6 +2,7 @@
 # меню мыши
 
 import contextlib
+
 import tkinter as tk
 
 import lr_lib.core.var.vars as lr_vars

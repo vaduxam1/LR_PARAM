@@ -3,7 +3,9 @@
 
 import re
 import copy
+
 import tkinter as tk
+
 from tkinter.font import Font
 
 import lr_lib.core.var.vars as lr_vars

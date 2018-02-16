@@ -2,6 +2,7 @@
 # web_ леленда
 
 import itertools
+
 import tkinter as tk
 
 import lr_lib.core.var.vars as lr_vars

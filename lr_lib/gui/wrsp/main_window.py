@@ -13,19 +13,18 @@ import tkinter.ttk as ttk
 
 from tkinter import filedialog
 
-import lr_lib.gui.widj.highlight_text
-import lr_lib.gui.widj.lbrb5
-import lr_lib.gui.etc.sub_menu
-import lr_lib.gui.wrsp.top_wind
-import lr_lib.gui.wrsp.tooltips
-import lr_lib.gui.wrsp.grid
-
+import lr_lib.gui.widj.highlight_text as lr_highlight_text
+import lr_lib.gui.widj.lbrb5 as lr_lbrb5
+import lr_lib.gui.widj.tooltip as lr_tooltip
+import lr_lib.gui.wrsp.top_wind as lr_top_wind
+import lr_lib.gui.wrsp.tooltips as lr_w_tooltips
+import lr_lib.gui.wrsp.grid as lr_w_grid
+import lr_lib.gui.action.main_action as lr_action
+import lr_lib.gui.etc.sub_menu as lr_sub_menu
 import lr_lib.core.var.vars as lr_vars
 import lr_lib.core.wrsp.files as lr_files
 import lr_lib.core.wrsp.param as lr_param
 import lr_lib.core.etc.other as lr_other
-import lr_lib.gui.action.main_action as lr_action
-import lr_lib.gui.widj.tooltip as lr_tooltip
 import lr_lib.etc.help as lr_help
 
 
@@ -69,7 +68,7 @@ class Window(ttk.Frame):
                                      font=lr_vars.DefaultFont + ' italic', style="BW.TButton")
 
         # text
-        self.tk_text = lr_lib.gui.widj.highlight_text.HighlightText(
+        self.tk_text = lr_highlight_text.HighlightText(
             self, foreground='grey', background=lr_vars.Background, wrap=tk.NONE, height=10, padx=0, pady=0, undo=True, )
         self.text_scrolly = ttk.Scrollbar(self, orient=tk.VERTICAL, command=self.tk_text.yview)
         self.text_scrollx = ttk.Scrollbar(self, orient=tk.HORIZONTAL, command=self.tk_text.xview)
@@ -109,8 +108,8 @@ class Window(ttk.Frame):
         self.comboParts = ttk.Combobox(self.mid_frame, justify='center', width=5, font=lr_vars.DefaultFont + ' bold')
 
         # (5) LB/RB
-        self.LB = lr_lib.gui.widj.lbrb5.LBRBText('LB', self)
-        self.RB = lr_lib.gui.widj.lbrb5.LBRBText('RB', self)
+        self.LB = lr_lbrb5.LBRBText('LB', self)
+        self.RB = lr_lbrb5.LBRBText('RB', self)
         self.last_frameCbx1 = ttk.Label(self.LB.label_info, padding="0 0 0 0")
         self.last_frameCbx2 = ttk.Label(self.RB.label_info, padding="0 0 0 0")
 
@@ -286,8 +285,8 @@ class Window(ttk.Frame):
                                    '# Window.comboFiles == lr_vars.FilesWithParam\n\t# lr_vars.VarFileName -> ' \
                                    'lr_vars.VarFile ->(4):lr_vars.VarFileText\n\t\t\t-> lr_vars.VarPartNum'
 
-        lr_lib.gui.wrsp.tooltips.set_all_main_window_tooltip(self)  # создать все tooltip окна
-        lr_lib.gui.wrsp.grid.grid_widj(self)  # grid всех виджетов окна
+        lr_w_tooltips.set_all_main_window_tooltip(self)  # создать все tooltip окна
+        lr_w_grid.grid_widj(self)  # grid всех виджетов окна
 
     def spl_cbx_cmd_lb(self, *a) -> None:
         '''lb SplitList widj'''
@@ -336,11 +335,11 @@ class Window(ttk.Frame):
 
         self.menubar = tk.Menu(lr_vars.Tk)
         filemenu = tk.Menu(self.menubar, tearoff=0)
-        filemenu.add_command(label="Select Encode", command=lambda: lr_lib.gui.wrsp.top_wind.enc_wind(self))
-        filemenu.add_command(label="Pools", command=lambda: lr_lib.gui.wrsp.top_wind.pool_wind(self))
+        filemenu.add_command(label="Select Encode", command=lambda: lr_top_wind.enc_wind(self))
+        filemenu.add_command(label="Pools", command=lambda: lr_top_wind.pool_wind(self))
         filemenu.add_command(label="Select Editor", command=set_editor)
         filemenu.add_command(label="Select Folder", command=self.change_folder_ask)
-        filemenu.add_command(label="AllFiles list", command=lambda: lr_lib.gui.wrsp.top_wind.folder_wind(self))
+        filemenu.add_command(label="AllFiles list", command=lambda: lr_top_wind.folder_wind(self))
         filemenu.add_command(label="LoadRunner action.c", command=lr_action.ActionWindow)
         filemenu.add_command(label="Help", command=lambda *a: lr_vars.Logger.info(lr_help.CODE + '\n' + lr_help.HELP))
         filemenu.add_command(label="Exit", command=lr_vars.Tk.destroy)
@@ -349,10 +348,10 @@ class Window(ttk.Frame):
 
     def set_rclick_menu(self) -> None:
         '''меню правой кнопки мыши'''
-        lr_lib.gui.etc.sub_menu.rClickbinder(self)  # все tk
+        lr_sub_menu.rClickbinder(self)  # все tk
         for widj in dir(self):
             with contextlib.suppress(Exception):
-                self.bind_class(getattr(self, widj), sequence='<Button-3>', func=lr_lib.gui.etc.sub_menu.rClicker, add='')
+                self.bind_class(getattr(self, widj), sequence='<Button-3>', func=lr_sub_menu.rClicker, add='')
 
     def change_folder_ask(self, *args) -> None:
         '''смена директории поиска файлов'''
@@ -373,7 +372,7 @@ class Window(ttk.Frame):
         self.comboParts['values'] = [0]
         self.comboFiles.current(0)
         self.comboParts.current(0)
-        lr_lib.gui.widj.lbrb5.LBRBText.set_label_text()
+        lr_lbrb5.LBRBText.set_label_text()
         self.set_comboFiles_width()
         self.sortKey1.set('Snapshot')
         self.sortKey2.set('Nums')
@@ -393,7 +392,7 @@ class Window(ttk.Frame):
         '''очистка виджетов перед поиском'''
         self.LB.set('')
         self.RB.set('')
-        lr_lib.gui.widj.lbrb5.LBRBText.set_label_text()
+        lr_lbrb5.LBRBText.set_label_text()
         self.comboFiles['values'] = [self.no_files_text]
         self.comboParts['values'] = [-1]
         self.comboFiles.current(0)
@@ -495,7 +494,7 @@ class Window(ttk.Frame):
         if not lr_vars.FilesWithParam:
             return
         lr_vars.VarPartNum.set(int(self.comboParts.get()))
-        lr_lib.gui.widj.lbrb5.LBRBText.set_LB_RB()
+        lr_lbrb5.LBRBText.set_LB_RB()
         self.show_frame_info_file()
 
     def firstOrLastFile(self, *args) -> None:
