@@ -6,6 +6,7 @@ import itertools
 import tkinter as tk
 
 import lr_lib.core.var.vars as lr_vars
+import lr_lib.gui.widj.tooltip_canvas as lr_tooltip_canvas
 
 
 class WebLegend(tk.Toplevel):
@@ -54,8 +55,7 @@ class WebLegend(tk.Toplevel):
         for web_ in self.parent.web_action.get_web_snapshot_all():
             self.web_canavs[web_.snapshot] = {1: {}, 2: {}, 'enable': True, 'enable_in': True}
 
-    def print(self, transac_show=True) -> None:
-        colors = iter(itertools.cycle(lr_vars.VarColorTeg.get() - {'white', 'black', 'navy', }))
+    def print(self, transac_show=True, colors=iter(itertools.cycle(lr_vars.VarColorTeg.get() - {'white', 'black', 'navy', }))) -> None:
         self.canvas.delete("all")
         web_actions = tuple(self.parent.web_action.get_web_snapshot_all())
         sep = 25
@@ -70,6 +70,7 @@ class WebLegend(tk.Toplevel):
         lt = 0
         H = self.H.get()
         lcolor = 'black'
+        rep_param = self.parent.web_action.websReport.param_statistic
 
         for i in self.web_canavs:
             transaction = wdt[i].transaction
@@ -92,6 +93,10 @@ class WebLegend(tk.Toplevel):
                 lcolor = 'black'
 
             xy1 = lcolor, sep, 20, (width + sep + w_), (20 + height)
+            st = 'Snap: {}\nout: {}'.format(i, len(wdt[i].web_reg_save_param_list))
+
+            r_in = self.parent.web_action.websReport.stats_in_web(i).strip()
+            r_out = self.parent.web_action.websReport.stats_out_web(i).strip()
 
             def onObjectClick1(event, i=i) -> None:
                 '''показать/удалить линии out'''
@@ -107,11 +112,11 @@ class WebLegend(tk.Toplevel):
 
             if wdt[i].web_reg_save_param_list:
                 shape_1 = self.canvas.create_rectangle(*xy1[1:], fill=color, width=2)
-
+                lr_tooltip_canvas.CanvasTooltip(self.canvas, shape_1, text=r_out)
                 self.canvas.tag_bind(shape_1, '<ButtonPress-1>', onObjectClick1)
             self.web_canavs[i][1] = list(xy1)
 
-            t1 = self.canvas.create_text(sep + w_, 35, text='Snap: {}\nout: {}'.format(i, len(wdt[i].web_reg_save_param_list)))
+            t1 = self.canvas.create_text(sep + w_, 35, text=st)
             self.canvas.tag_bind(t1, '<ButtonPress-1>', onObjectClick1)
             if transaction != _transaction:
                 self.canvas.create_text((sep + w_), (H + 45), text='transac({})'.format(lt if transaction else "''"))
@@ -119,6 +124,7 @@ class WebLegend(tk.Toplevel):
 
             xy2 = sep, H, (width + sep + w_), (H + height)
             shape_2 = self.canvas.create_rectangle(*xy2, fill=color, width=2)
+            lr_tooltip_canvas.CanvasTooltip(self.canvas, shape_2, text=r_in)
             self.canvas.tag_bind(shape_2, '<ButtonPress-1>', onObjectClick2)
             self.web_canavs[i][2] = list(xy2)
 
@@ -127,29 +133,26 @@ class WebLegend(tk.Toplevel):
 
             sep += 70
 
-        rep = self.parent.web_action.websReport.param_statistic
-
-        x = 20
+        x = 20  # create_line's
         for web_ in web_actions:
             if self.web_canavs[web_.snapshot]['enable']:
                 color, *xy1 = self.web_canavs[web_.snapshot][1]
 
                 for w in web_.web_reg_save_param_list:
-                    dt = rep[w.name]
+                    r_param = rep_param[w.name]
 
-                    for i in dt['snapshots']:
+                    for i in r_param['snapshots']:
                         if self.web_canavs[i]['enable_in']:
                             xy2 = self.web_canavs[i][2]
-                            l = self.canvas.create_line(xy1[2]-x, xy1[3], xy2[0]+x, xy2[1], fill=color, arrow=tk.LAST, width=2)
+                            line = self.canvas.create_line(xy1[2]-x, xy1[3], xy2[0]+x, xy2[1], fill=color, arrow=tk.LAST, width=2)
 
-                            def title(*a, w=w, web_=web_, dt=dt, rep=rep, i=i) -> None:
+                            r = 'Snapshot=t{i}.inf\n{p} : {w}\n{r}'.format(r=r_param, i=i, p=w.param, w=w.name)
+                            lr_tooltip_canvas.CanvasTooltip(self.canvas, line, text=r)
+
+                            def title(*a, r=r) -> None:
                                 '''описание param в title'''
-                                self.title('OUT(t{oi}.snapshot): {p} | {n} | count(in_webs={c}, webs={wwp}, transac_={twp}, '
-                                           'infs={il}  ||  IN(t{i}.snapshot): {rep}'.format(
-                                    p=w.param, n=w.name, c=dt['param_count'], wwp=dt['snapshots'], oi=web_.snapshot,
-                                    twp=dt['transaction_count'], il=len(dt['snapshots']), rep=rep[i], i=i))
-
-                            self.canvas.tag_bind(l, '<ButtonPress-1>', title)
+                                self.title(r)
+                            self.canvas.tag_bind(line, '<ButtonPress-1>', title)
 
         if transac_show:
             t = [(a, b) for (a, b) in tr if b]

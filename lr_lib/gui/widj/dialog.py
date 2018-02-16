@@ -3,6 +3,7 @@
 
 import queue
 import contextlib
+
 import tkinter as tk
 import tkinter.ttk as ttk
 
