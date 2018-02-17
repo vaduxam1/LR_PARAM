@@ -10,6 +10,7 @@ from tkinter.font import Font
 
 import lr_lib.core.var.vars as lr_vars
 import lr_lib.gui.widj.highlight as lr_highlight
+import lr_lib.core.action.web_ as lr_web_
 
 
 class HighlightText(tk.Text):
@@ -20,7 +21,10 @@ class HighlightText(tk.Text):
         self.action = args[0]  # parent
 
         self.highlight_dict = copy.deepcopy(lr_vars.VarDefaultColorTeg)
-        self.highlight_lines = lr_highlight.HighlightLines(self, self.get_tegs_names())
+        try:
+            self.highlight_lines = lr_highlight.HighlightLines(self, self.get_tegs_names())
+        except AttributeError:
+            self.highlight_lines = lr_highlight.HighlightLines(self, {})
 
         self.font_var = tk.StringVar(value=kwargs.get('font_var', lr_vars.DefaultActionNoHighlightFont))
         self.size_var = tk.IntVar(value=kwargs.get('size_var', lr_vars.DefaultActionNoHighlightFontSize))
@@ -145,13 +149,48 @@ class HighlightText(tk.Text):
                 tag = ground + color
                 for name in colors[color]:
 
-                    task = (name.lower(), len(name))
+                    task = (name.lower(), len(name))  # name.lower() !
                     try:
                         tegs_names[tag].add(task)
                     except (KeyError, AttributeError):
                         tegs_names[tag] = {task}
 
+        wrsp_all = tuple(self.action.web_action.get_web_reg_save_param_all())
+        ps = self.action.web_action.websReport.param_statistic
+        for wr in wrsp_all:
+            n = wr.name
+            if (n in ps) and (not all(ps[n].values())):
+                self.highlight_mode(wr.name, option='background', color='yellow')
+
+        for n in self.action.web_action.transactions.names:
+            self.highlight_mode(n, option='foreground', color='darkslategrey')
+
         return tegs_names
+
+    def web_add_highlight(self, web_) -> None:
+        '''подсветить web_'''
+        self.highlight_mode(web_.type)
+
+        for line in web_.comments.split('\n'):
+            self.highlight_mode(line.strip())
+
+        if isinstance(web_, lr_web_.WebRegSaveParam):
+            m = lr_vars.web_reg_highlight_len
+            self.highlight_mode('{}'.format(web_.name[:m]), option='background', color=lr_vars.wrsp_color1)
+            self.highlight_mode(web_.name[m:], option='foreground', color=lr_vars.wrsp_color2)
+            self.highlight_mode(web_.param, option='foreground', color=lr_vars.wrsp_color2)
+            for line in web_.lines_list[1:]:
+                self.highlight_mode(line.strip())
+        else:
+            self.highlight_mode(web_.name)
+
+    def highlight_mode(self, word: str, option='foreground', color=lr_vars.DefaultColor) -> None:
+        '''залить цветом все word в tk.Text widget'''
+        colors = self.highlight_dict.setdefault(option, {})
+        try:
+            colors[color].add(word)
+        except (KeyError, AttributeError):
+            colors[color] = {word}
 
 
 class TextLineNumbers(tk.Canvas):

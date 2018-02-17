@@ -45,7 +45,7 @@ def mouse_web_reg_save_param(widget, param, mode=('SearchAndReplace', 'highlight
                 widget.action.tk_text_see()
 
         elif 'highlight' in mode:
-            highlight_mode(widget, param)
+            widget.action.tk_text.highlight_mode(param)
             widget.action.tk_text.set_highlight()
 
 
@@ -88,14 +88,9 @@ def remove_web_reg_save_param_from_action(event, selection=None, find=True) -> N
 def all_wrsp_dict_web_reg_save_param(event) -> None:
     '''все варианты создания web_reg_save_param, искать не ограничивая верхний номер Snapshot'''
     with event.widget.action.block(no_highlight=True):
-        max_inf_original = event.widget.action.max_inf_cbx_var.get()
-        try:
-            event.widget.action.max_inf_cbx_var.set(0)
-            wrsp_web_ = _all_wrsp_dict_web_reg_save_param(event)
-            if wrsp_web_:
-                event.widget.action.search_in_action(word=wrsp_web_.to_str())
-        finally:
-            event.widget.action.max_inf_cbx_var.set(max_inf_original)
+        wrsp_web_ = _all_wrsp_dict_web_reg_save_param(event)
+        if wrsp_web_:
+            event.widget.action.search_in_action(word=wrsp_web_.to_str())
 
 
 def _all_wrsp_dict_web_reg_save_param(event) -> lr_web_.WebRegSaveParam:
@@ -104,7 +99,7 @@ def _all_wrsp_dict_web_reg_save_param(event) -> lr_web_.WebRegSaveParam:
 
     with contextlib.suppress(AttributeError):
         wrsp_and_param = event.widget.action.web_action.websReport.wrsp_and_param_names
-        if selection in wrsp_and_param:
+        if selection in wrsp_and_param:  # сменить wrsp-имя в ориг. имя param
             selection = wrsp_and_param[selection]
 
     lr_vars.VarParam.set(selection, action=event.widget.action, set_file=True)
@@ -316,14 +311,14 @@ def encoder(event, action=None) -> None:
             widget.action.search_in_action(word=new_name)
 
 
-def highlight_mode(widget, word: str, option='foreground', color=lr_vars.DefaultColor) -> None:
-    '''залить цветом все word в tk.Text widget'''
-    colors = widget.highlight_dict.setdefault(option, {})
-
-    try:
-        colors[color].add(word)
-    except (KeyError, AttributeError):
-        colors[color] = {word}
+# def highlight_mode(widget, word: str, option='foreground', color=lr_vars.DefaultColor) -> None:
+#     '''залить цветом все word в tk.Text widget'''
+#     colors = widget.highlight_dict.setdefault(option, {})
+#
+#     try:
+#         colors[color].add(word)
+#     except (KeyError, AttributeError):
+#         colors[color] = {word}
 
 
 def add_highlight_words_to_file(event) -> None:
@@ -346,7 +341,7 @@ def rClick_add_highlight(event, option: str, color: str, val: str, find=False) -
     selection = event.widget.selection_get()
 
     if val == 'добавить':
-        highlight_mode(event.widget, selection, option, color)
+        event.widget.action.tk_text.highlight_mode(selection, option, color)
     else:
         with contextlib.suppress(KeyError):
             hd[option][color].remove(selection)

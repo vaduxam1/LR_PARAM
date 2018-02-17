@@ -9,7 +9,6 @@ import lr_lib.core.action.transac as lr_transac
 import lr_lib.core.var.vars as lr_vars
 import lr_lib.core.action.web_ as lr_web_
 import lr_lib.core.wrsp.param as lr_param
-import lr_lib.gui.etc.action_lib as lr_action_lib
 
 
 is_ascii = set(string.printable).__contains__
@@ -47,7 +46,7 @@ class WebReport:
         wrsp_all = tuple(self.parent_AWAL.get_web_reg_save_param_all())
 
         for wr in wrsp_all:
-            self.web_add_highlight(wr)
+            self.parent_AWAL.action.tk_text.web_add_highlight(wr)
 
             self.wrsp_and_param_names[wr.name] = wr.param
             self._wrsp[wr.name] = wr
@@ -64,7 +63,7 @@ class WebReport:
             }
 
         for web in self.parent_AWAL.get_web_all():
-            self.web_add_highlight(web)
+            self.parent_AWAL.action.tk_text.web_add_highlight(web)
 
             snapshot = web.snapshot
             transaction = web.transaction
@@ -151,33 +150,6 @@ class WebReport:
             msgs = dt[lvl]
             if msgs:
                 getattr(lr_vars.Logger, lvl)('\n'.join(msgs))
-
-        # highlight
-        t = self.parent_AWAL.action.tk_text
-        for wr in wrsp_all:
-            if not all(self.param_statistic[wr.name].values()):
-                lr_action_lib.highlight_mode(t, wr.name, option='background', color='yellow')
-
-        for n in self.parent_AWAL.transactions.names:
-            lr_action_lib.highlight_mode(t, n, option='foreground', color='darkslategrey')
-
-    def web_add_highlight(self, web_) -> None:
-        '''подсветить web_'''
-        t = self.parent_AWAL.action.tk_text
-        lr_action_lib.highlight_mode(t, web_.type)
-
-        for line in web_.comments.split('\n'):
-            lr_action_lib.highlight_mode(t, line.strip())
-
-        if isinstance(web_, lr_web_.WebRegSaveParam):
-            m = lr_vars.web_reg_highlight_len
-            lr_action_lib.highlight_mode(t, '{}'.format(web_.name[:m]), option='background', color=lr_vars.wrsp_color1)
-            lr_action_lib.highlight_mode(t, web_.name[m:], option='foreground', color=lr_vars.wrsp_color2)
-            lr_action_lib.highlight_mode(t, web_.param, option='foreground', color=lr_vars.wrsp_color2)
-            for line in web_.lines_list[1:]:
-                lr_action_lib.highlight_mode(t, line.strip())
-        else:
-            lr_action_lib.highlight_mode(t, web_.name)
 
     def stats_in_web(self, snapshot: int) -> str:
         ''''статистика по web_reg_save_param, используемых в теле web.snapshot'''
