@@ -99,6 +99,7 @@ class WrspSettingWindow(tk.Toplevel):
         apply_btn = tk.Button(self, font='Arial 7', text='применить',
                               command=lambda: self.parent.save_action_file(file_name=False))
         wrsp_rename_btn = tk.Button(self, font='Arial 7', text='wrsp_rename', command=self.all_wrsp_rename)
+        wrsp_auto_rename_btn = tk.Button(self, font='Arial 7', text='wrsp_auto_rename', command=self.all_wrsp_auto_rename)
 
         lr_tooltip.createToolTip(apply_btn, 'применить изменения')
         lr_tooltip.createToolTip(VarWebStatsTransac, tt_stat)
@@ -135,6 +136,10 @@ class WrspSettingWindow(tk.Toplevel):
 
         lr_tooltip.createToolTip(wrsp_rename_btn, 'скопом переименовать, все уже созданные web_reg_save_param\n'
                                                   'имена слева, не трогать\nимена справа, переименовать, либо не трогать')
+        lr_tooltip.createToolTip(wrsp_auto_rename_btn, 'автоматически перетменовать , все уже созданные web_reg_save_param\n'
+                                                       'с учетом всех настроек имени,\n'
+                                                       'и изменения имен транзакций, после его создания\n\n'
+                                                       'имена слева, не трогать\nимена справа, переименовать, либо не трогать')
 
         laf.grid(row=1, column=1, sticky=tk.W, columnspan=3)
 
@@ -158,6 +163,7 @@ class WrspSettingWindow(tk.Toplevel):
 
         apply_btn.grid(row=10, column=1)
         wrsp_rename_btn.grid(row=10, column=2)
+        wrsp_auto_rename_btn.grid(row=10, column=3)
 
         _lab.grid(row=5, column=1, columnspan=3)
         _lab8.grid(row=5, column=1)
@@ -173,12 +179,52 @@ class WrspSettingWindow(tk.Toplevel):
 
     @lr_vars.T_POOL_decorator
     def all_wrsp_rename(self, *args) -> None:
-        '''переименавать все wrsp'''
+        '''переименавать все wrsp, вручную'''
         _wrsps = tuple(self.parent.web_action.get_web_reg_save_param_all())
         wrsps = tuple(w.name for w in _wrsps)
         mx = max(map(len, wrsps or ['']))
         m = '"{:<%s}" -> "{}"' % mx
         all_wrsps = '\n'.join(m.format(old, new) for (old, new) in zip(wrsps, wrsps))
+        y = lr_dialog.YesNoCancel(['Переименовать', 'Отмена'], 'Переименовать wrsp слева',
+                                  'в wrsp справа', 'wrsp',
+                                  parent=self, is_text=all_wrsps)
+
+        if y.ask() == 'Переименовать':
+            new_wrsps = [t.split('-> "', 1)[1].split('"', 1)[0].strip() for t in y.text.strip().split('\n')]
+            assert len(wrsps) == len(new_wrsps)
+            with self.parent.block():
+                self.parent.backup()
+                text = self.parent.tk_text.get('1.0', tk.END)
+
+                for (old, new) in zip(wrsps, new_wrsps):
+                    text = text.replace(lr_param.param_bounds_setter(old), lr_param.param_bounds_setter(new))
+                    text = text.replace(lr_param.param_bounds_setter(old, start='"', end='"'),
+                                        lr_param.param_bounds_setter(new, start='"', end='"'))
+
+                self.parent.web_action.set_text_list(text, websReport=True)
+                self.parent.web_action_to_tk_text(websReport=False)
+
+    @lr_vars.T_POOL_decorator
+    def all_wrsp_auto_rename(self, *a, _l=' "LB=', _r=' "RB=') -> None:
+        '''переименавать все wrsp, автоматически, с учетом всех настроек'''
+        _wrsps = tuple(self.parent.web_action.get_web_reg_save_param_all())
+        wrsps = tuple(w.name for w in _wrsps)
+
+        wrsps_new = []
+        lb = rb = ''
+        for w in _wrsps:
+            for line in w.lines_list:
+                line = line.strip()
+                if line.startswith(_l):
+                    lb = line.split(_l, 1)[1].rsplit('"', 1)[0]
+                elif line.startswith(_r):
+                    rb = line.split(_r, 1)[1].rsplit('"', 1)[0]
+            new_name = lr_param.wrsp_name_creator(w.param, lb, rb, w.snapshot)
+            wrsps_new.append(new_name)
+
+        mx = max(map(len, wrsps or ['']))
+        m = '"{:<%s}" -> "{}"' % mx
+        all_wrsps = '\n'.join(m.format(old, new) for (old, new) in zip(wrsps, wrsps_new))
         y = lr_dialog.YesNoCancel(['Переименовать', 'Отмена'], 'Переименовать wrsp слева',
                                   'в wrsp справа', 'wrsp',
                                   parent=self, is_text=all_wrsps)

@@ -128,7 +128,8 @@ def wrsp_dict_creator(is_param=True) -> dict:
     else:
         param_ord, param_index = -1, -1
 
-    wrsp_name = wrsp_name_creator(param, Lb, Rb, file)
+    snapshots = file['Snapshot']['Nums']
+    wrsp_name = wrsp_name_creator(param, Lb, Rb, snapshots[0])
 
     search_key = 'All'
     # if file['Snapshot']['inf_key'] == 'ResponseHeaderFile':
@@ -146,7 +147,7 @@ def wrsp_dict_creator(is_param=True) -> dict:
         files_all=len(lr_vars.AllFiles),
         param_all=sum(f['Param']['Count'] for f in lr_vars.FilesWithParam),
         create_time=time.strftime('%H:%M:%S-%d/%m/%y'),
-        inf_nums=file['Snapshot']['Nums'],
+        inf_nums=snapshots,
         Lb_len=len(Lb),
         Rb_len=len(Rb),
         lb_len=len(lb),
@@ -174,13 +175,11 @@ def wrsp_dict_creator(is_param=True) -> dict:
     return web_reg_save_param_dict
 
 
-def wrsp_name_creator(param: str, Lb: str, Rb: str, file: dict) -> str:
+def wrsp_name_creator(param: str, Lb: str, Rb: str, snapshot: int) -> str:
     '''сформировать имя для web_reg_save_param(6)'''
-    snapshots = file['Snapshot']['Nums']
-    assert snapshots, 'не определен snapshot, в для которого создан web_reg_save_param\n{}'.format(file)
-    snaps = ('_'.join(map(str, snapshots)) if lr_vars.SnapshotInName.get() else '')
     MaxLbWrspName = lr_vars.MaxLbWrspName.get()
     MaxRbWrspName = lr_vars.MaxRbWrspName.get()
+    snapshot = (snapshot if lr_vars.SnapshotInName.get() else '')
 
     if MaxLbWrspName and (len(Lb) > 2):
         lbn = ['']
@@ -220,7 +219,7 @@ def wrsp_name_creator(param: str, Lb: str, Rb: str, file: dict) -> str:
     if TransactionInNameMax and lr_vars.Window:
         action = lr_vars.Window.get_main_action()
         web_action = action.web_action
-        w = next(web_action.get_web_by(web_action.get_web_snapshot_all(), snapshot=snapshots[0]))
+        w = next(web_action.get_web_by(web_action.get_web_snapshot_all(), snapshot=snapshot))
 
         if w and w.transaction and (not w.transaction.startswith(web_action.transactions._no_transaction_name)):
             transaction = '_'.join(''.join(filter(str.isalnum, t)).translate(lr_help.TRANSLIT_DT)
@@ -232,7 +231,7 @@ def wrsp_name_creator(param: str, Lb: str, Rb: str, file: dict) -> str:
         transaction = ''
 
     wrsp_name = WEB_REG_NUM.format(wrsp_rnd_num=wrsp_rnd_num, wrsp_name=wrsp_param_name, lb_name=lb_name, rb_name=rb_name,
-                                   infs=snaps, letter=lr_vars.WrspNameFirst.get(), transaction=transaction)
+                                   infs=snapshot, letter=lr_vars.WrspNameFirst.get(), transaction=transaction)
 
     wrsp_name = str.translate(wrsp_name, wrsp_deny_punctuation).rstrip('_')
     while '___' in wrsp_name:

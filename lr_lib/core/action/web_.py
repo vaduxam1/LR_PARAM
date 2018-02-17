@@ -278,11 +278,6 @@ class WebRegSaveParam(WebAny):
             self.snapshot = self.parent_snapshot.snapshot
 
         self.param = self._read_param()
-        self.LB = ''
-        self.RB = ''
-        self.Ord = ''
-        self.Search = ''
-
         # print('\tparam:{}'.format(self.param))
 
     def _read_param(self, param='') -> str:
