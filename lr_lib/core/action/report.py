@@ -21,7 +21,7 @@ class WebReport:
 
         self.wrsp_and_param_names = {}  # {'P_6046_1__z_k62_0': 'z_k620', ...}
         self.param_statistic = {}  # {'P_3396_4_Menupopup__a_FFXc_0__id_mainMenu': {'param_count': 2, 'snapshots': [874, 875], 'snapshots_count': 2, 'minmax_snapshots': '[t874:t875]=2', 'transaction_names': {'logout'}, 'transaction_count': 1}}
-        self.web_snapshot_param_in_count = {}  # {1: {'P_6046_1__z_k62_0': 3}, 2: ...}
+        self.web_snapshot_param_in_count = {}  # {1: {'P_6046_1__z_k62_0': 3, }, 2: ...}
         self.web_transaction = {}  # {'close_document': {'snapshots': [847, 848, ...], 'minmax_snapshots': '[t847:t857]=11'}, 'logout': {'snapshots': [872, 873, 874, 875], 'minmax_snapshots': '[t872:t875]=4'}}
         self.web_transaction_sorted = []  # ['close_document', 'logout', ]
         self.rus_webs = {}  # web с не ASCII символами {snap: symb_count} {103: 17, 250: 14, 644: 22}
