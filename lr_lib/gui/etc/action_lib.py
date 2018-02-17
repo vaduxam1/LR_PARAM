@@ -90,7 +90,7 @@ def all_wrsp_dict_web_reg_save_param(event) -> None:
     m = event.widget.action.max_inf_cbx_var.get()
     event.widget.action.max_inf_cbx_var.set(0)
 
-    with event.widget.action.block(no_highlight=True):
+    with event.widget.action.block():
         try:
             wrsp_web_ = _all_wrsp_dict_web_reg_save_param(event)
         finally:
