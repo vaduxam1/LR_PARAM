@@ -78,11 +78,8 @@ def grid_widj(self):
     self.help3.grid(row=3, column=201, sticky=tk.NSEW)
 
     self.tk_text.grid(row=0, column=0, sticky=tk.NSEW, columnspan=201)
-    try:
-        self.tk_text.linenumbers.grid(row=0, column=300, sticky=tk.NS)
-        self.tk_text.linenumbers.config(width=30)
-    except AttributeError:
-        pass  # lr_vars.Window
+    self.tk_text.linenumbers.grid(row=0, column=300, sticky=tk.NS)
+    self.tk_text.linenumbers.config(width=30)
 
     self.max_inf_cbx.grid(row=7, column=1, sticky=tk.NSEW, rowspan=2)
     self.add_inf_cbx.grid(row=7, column=2, sticky=tk.NSEW, rowspan=2)
