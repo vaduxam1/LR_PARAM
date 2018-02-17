@@ -311,16 +311,6 @@ def encoder(event, action=None) -> None:
             widget.action.search_in_action(word=new_name)
 
 
-# def highlight_mode(widget, word: str, option='foreground', color=lr_vars.DefaultColor) -> None:
-#     '''залить цветом все word в tk.Text widget'''
-#     colors = widget.highlight_dict.setdefault(option, {})
-#
-#     try:
-#         colors[color].add(word)
-#     except (KeyError, AttributeError):
-#         colors[color] = {word}
-
-
 def add_highlight_words_to_file(event) -> None:
     '''сохранить слово для подсветки в файл - "навсегда" '''
     selection = event.widget.selection_get()

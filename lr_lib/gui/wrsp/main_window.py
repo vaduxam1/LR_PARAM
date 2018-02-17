@@ -68,8 +68,8 @@ class Window(ttk.Frame):
                                      font=lr_vars.DefaultFont + ' italic', style="BW.TButton")
 
         # text
-        self.tk_text = lr_highlight_text.HighlightText(
-            self, foreground='grey', background=lr_vars.Background, wrap=tk.NONE, height=10, padx=0, pady=0, undo=True, )
+        self.tk_text = tk.Text(
+            self, foreground='grey', background=lr_vars.Background, wrap=tk.NONE, height=10, padx=0, pady=0, undo=True)
         self.text_scrolly = ttk.Scrollbar(self, orient=tk.VERTICAL, command=self.tk_text.yview)
         self.text_scrollx = ttk.Scrollbar(self, orient=tk.HORIZONTAL, command=self.tk_text.xview)
         self.tk_text.configure(yscrollcommand=self.text_scrolly.set, xscrollcommand=self.text_scrollx.set, bd=0, padx=0, pady=0)

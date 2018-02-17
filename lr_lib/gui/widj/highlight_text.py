@@ -16,15 +16,14 @@ import lr_lib.core.action.web_ as lr_web_
 class HighlightText(tk.Text):
     '''tk.Text'''
     def __init__(self, *args, **kwargs):
-        bind = kwargs.pop('bind', None)
         super().__init__(*args, **kwargs)
+
         self.action = args[0]  # parent
 
+        self.bind_all("<Control-z>", self.undo)
+        self.bind_all("<Control-y>", self.redo)
+
         self.highlight_dict = copy.deepcopy(lr_vars.VarDefaultColorTeg)
-        try:
-            self.highlight_lines = lr_highlight.HighlightLines(self, self.get_tegs_names())
-        except AttributeError:
-            self.highlight_lines = lr_highlight.HighlightLines(self, {})
 
         self.font_var = tk.StringVar(value=kwargs.get('font_var', lr_vars.DefaultActionNoHighlightFont))
         self.size_var = tk.IntVar(value=kwargs.get('size_var', lr_vars.DefaultActionNoHighlightFontSize))
@@ -33,43 +32,40 @@ class HighlightText(tk.Text):
         self.slant_var = tk.BooleanVar(value=lr_vars.DefaultActionNoHighlightFontSlant)
         self.overstrike_var = tk.BooleanVar(value=lr_vars.DefaultActionNoHighlightFontOverstrike)
 
-        self.set_tegs()
         self.highlight_var = tk.BooleanVar(value=lr_vars.HighlightOn)
 
         self.tk.eval('''
-                    proc widget_proxy {widget widget_command args} {
+                            proc widget_proxy {widget widget_command args} {
 
-                        # call the real tk widget command with the real args
-                        set result [uplevel [linsert $args 0 $widget_command]]
+                                # call the real tk widget command with the real args
+                                set result [uplevel [linsert $args 0 $widget_command]]
 
-                        # generate the event for certain types of commands
-                        if {([lindex $args 0] in {insert replace delete}) ||
-                            ([lrange $args 0 2] == {mark set insert}) || 
-                            ([lrange $args 0 1] == {xview moveto}) ||
-                            ([lrange $args 0 1] == {xview scroll}) ||
-                            ([lrange $args 0 1] == {yview moveto}) ||
-                            ([lrange $args 0 1] == {yview scroll})} {
+                                # generate the event for certain types of commands
+                                if {([lindex $args 0] in {insert replace delete}) ||
+                                    ([lrange $args 0 2] == {mark set insert}) || 
+                                    ([lrange $args 0 1] == {xview moveto}) ||
+                                    ([lrange $args 0 1] == {xview scroll}) ||
+                                    ([lrange $args 0 1] == {yview moveto}) ||
+                                    ([lrange $args 0 1] == {yview scroll})} {
 
-                            event generate  $widget <<Change>> -when tail
-                        }
+                                    event generate  $widget <<Change>> -when tail
+                                }
 
-                        # return the result from the real widget command
-                        return $result
-                    }
-                    ''')
+                                # return the result from the real widget command
+                                return $result
+                            }
+                            ''')
         self.tk.eval('''
-                    rename {widget} _{widget}
-                    interp alias {{}} ::{widget} {{}} widget_proxy {widget} _{widget}
-                '''.format(widget=str(self)))
-
-        if bind:
-            self.bind("<<Change>>", self._on_change)
-            self.bind("<Configure>", self._on_change)
+                            rename {widget} _{widget}
+                            interp alias {{}} ::{widget} {{}} widget_proxy {widget} _{widget}
+                        '''.format(widget=str(self)))
 
         self.linenumbers = TextLineNumbers(self)
+        self.bind("<<Change>>", self._on_change)
+        self.bind("<Configure>", self._on_change)
 
-        self.bind_all("<Control-z>", self.undo)
-        self.bind_all("<Control-y>", self.redo)
+        self.highlight_lines = lr_highlight.HighlightLines(self, self.get_tegs_names())
+        self.set_tegs()
 
     def undo(self, event):
         return self.edit_undo()
