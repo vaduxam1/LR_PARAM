@@ -87,8 +87,15 @@ def remove_web_reg_save_param_from_action(event, selection=None, find=True) -> N
 @lr_vars.T_POOL_decorator
 def all_wrsp_dict_web_reg_save_param(event) -> None:
     '''все варианты создания web_reg_save_param, искать не ограничивая верхний номер Snapshot'''
+    m = event.widget.action.max_inf_cbx_var.get()
+    event.widget.action.max_inf_cbx_var.set(0)
+
     with event.widget.action.block(no_highlight=True):
-        wrsp_web_ = _all_wrsp_dict_web_reg_save_param(event)
+        try:
+            wrsp_web_ = _all_wrsp_dict_web_reg_save_param(event)
+        finally:
+            event.widget.action.max_inf_cbx_var.set(m)
+
         if wrsp_web_:
             event.widget.action.search_in_action(word=wrsp_web_.to_str())
 
