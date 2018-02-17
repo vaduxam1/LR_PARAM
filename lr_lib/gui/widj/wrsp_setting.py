@@ -18,34 +18,40 @@ class WrspSettingWindow(tk.Toplevel):
         self.resizable(width=False, height=False)
         self.title('настройка каментов и имени wrsp')
 
-        t1 = '''
-        //lr: IN(1)<-[1]: z_k620(P:1/874|S:874=[1:875]|T:41)
-        //lr: OUT(2)-> aFFX9(P:3|S:2=[2:4]|T:2), z_k620(P:874|S:874=[1:875]|T:41)
-        //lr: (login: 3=[1:3]) -> Param:3 | Snapshots:2=[2:4] | Transactions=2:['login', 'logout']
-        '''
+        t1 = '''//lr: IN(1)<-[1]: aFFX9(P:1/874|S:874=[1:875]|T:41)
+        //lr: OUT(2)-> aFFX9(P:3|S:2=[2:4]|T:2), aFFX9(P:874|S:874=[1:875]|T:41)
+        //lr: (login: 3=[1:3]) -> Param:3 | Snapshots:2=[2:4] | Transactions=2:['login', 'logout']'''
         t2 = '''
-        z_k620(P:1/874|S:874=[1:875]|T:41)
-            z_k620 - исходный param, для WRSP {P_2092_2__login__Button__z_k620__auth}
-            P:1/874 - сколько раз использован данный param: текущий Snapshot / все Snapshot's
-            S:874=[1:875] - Snapshot's, использующие данный param: кол-во = [ мин номер : макс номер ]
-            T:41 - кол-во транзакций, использующих данный param
-        '''
-        t3 = '{p}\n{w}\n'.format(p='{P_2092_2__login__Button__z_k620__auth}', w=lr_param.WEB_REG_NUM)
-        laf = tk.LabelFrame(self, text='{t1}\n{t2}\n{t3}\n'.format(t1=t1, t2=t2, t3=t3), font='Arial 7', labelanchor=tk.NW)
+        aFFX9(P:1/874|S:874=[1:875]|T:41) :
+            "aFFX9" - исходный param, для WRSP {P_2092_2__login__Button__aFFX9__auth}
+            "P:1/874" - сколько раз использован данный param: текущий Snapshot / все Snapshot's
+            "S:874=[1:875]" - Snapshot's, использующие данный param: кол-во = [ мин номер : макс номер ]
+            "T:41" - кол-во транзакций, использующих данный param'''
+        laf = tk.LabelFrame(self, text='{t1}\n{t2}\n'.format(t1=t1, t2=t2), font='Arial 7', labelanchor=tk.NW, bd=3)
+        t3 = '{p}\n{w}\n'.format(p='{P_2092_2__login__Button__a_FFX_9__auth}', w=lr_param.WEB_REG_NUM)
+        _lab = tk.LabelFrame(self, text=t3, bd=3)
+        _lab1 = tk.LabelFrame(_lab, text='{letter}')
+        _lab2 = tk.LabelFrame(_lab, text='{wrsp_rnd_num}')
+        _lab3 = tk.LabelFrame(_lab, text='{infs}')
+        _lab4 = tk.LabelFrame(_lab, text='{transaction}')
+        _lab5 = tk.LabelFrame(_lab, text='{lb_name}')
+        _lab6 = tk.LabelFrame(_lab, text='{wrsp_name}')
+        _lab7 = tk.LabelFrame(_lab, text='{rb_name}')
+        _lab8 = tk.LabelFrame(_lab, text='"aFFX9" -> "a_FFX_9"')
 
         tt_stat = 'коментарии с именем транзакции\n//lr: "login"(1/3=[1:3])'
         VarWebStatsTransac = tk.Checkbutton(laf, text=tt_stat, font='Arial 7',
                                             variable=lr_vars.VarWebStatsTransac, justify='left')
-        tt_in = 'IN коментарии\n//lr: IN(1)<-[1]: z_k620(P:1 ...'
+        tt_in = 'IN коментарии\n//lr: IN(1)<-[1]: aFFX9(P:1 ...'
         VarWebStatsIn = tk.Checkbutton(laf, text=tt_in, font='Arial 7', justify='left',
                                        variable=lr_vars.VarWebStatsIn)
         tt_out = 'OUT коментарии\n//lr: OUT(2)-> aFFX9(P:3 ...'
         VarWebStatsOut = tk.Checkbutton(laf, text=tt_out, font='Arial 7', justify='left',
                                         variable=lr_vars.VarWebStatsOut)
-        tt_warn = "WARNING коментарии\n//lr: WARNING: WrspInAndOutUsage: 1=['z_k620']"
+        tt_warn = "WARNING коментарии\n//lr: WARNING: WrspInAndOutUsage: 1=['aFFX9']"
         VarWebStatsWarn = tk.Checkbutton(laf, text=tt_warn, font='Arial 7', justify='left',
                                          variable=lr_vars.VarWebStatsWarn)
-        tt_wrsp_transac = 'WRSP, статистика использования param\n' \
+        tt_wrsp_transac = 'статистика использования WRSP\n' \
                           '//lr: (login: 3=[1:3]) -> Param:3 ...'
         VarWRSPStatsTransac = tk.Checkbutton(laf, text=tt_wrsp_transac, font='Arial 7', justify='left',
                                              variable=lr_vars.VarWRSPStatsTransac)
@@ -54,26 +60,25 @@ class WrspSettingWindow(tk.Toplevel):
         VarWRSPStatsTransacNames = tk.Checkbutton(laf, text=tt_wrsp_trn, font='Arial 7', justify='left',
                                                   variable=lr_vars.VarWRSPStatsTransacNames)
         tt_wrsp_st = 'WRSP, подробные/короткие коментарии\n' \
-                     'Изменится только при пересоздании param\nкороткие(off): // PARAM["aFFX5"] // Snap[1]'
+                     'Изменится при пересоздании param\nкороткие(off): // PARAM["aFFX5"] // Snap[1]'
         VarWRSPStats = tk.Checkbutton(laf, text=tt_wrsp_st, font='Arial 7', justify='left',
                                       variable=lr_vars.VarWRSPStats)
-        tt_SnapshotInName = '{infs}\nномер Snapshot-родителя в имени WRSP\n' \
-                            'Изменится только при пересоздании param\n' \
-                            'P_6637_1__zk620 -> P_6637__zk620'
-        SnapshotInName = tk.Checkbutton(laf, text=tt_SnapshotInName, font='Arial 7', justify='left',
+        tt_SnapshotInName = 'Snapshot-родителя в имени WRSP\nИзменится при пересоздании param\n' \
+                            'P_6637__aFFX9 -> P_6637_1__aFFX9'
+        SnapshotInName = tk.Checkbutton(_lab3, text=tt_SnapshotInName, font='Arial 7', justify='left',
                                         variable=lr_vars.SnapshotInName)
-        TransactionInNameMax = tk.Spinbox(laf, font='Arial 7', from_=0, to=1000,
+        TransactionInNameMax = tk.Spinbox(_lab4, font='Arial 7', from_=0, to=1000,
                                           textvariable=lr_vars.TransactionInNameMax)
 
-        MaxLbWrspName = tk.Spinbox(laf, textvariable=lr_vars.MaxLbWrspName, font='Arial 7', from_=0, to=1000)
-        MaxRbWrspName = tk.Spinbox(laf, textvariable=lr_vars.MaxRbWrspName, font='Arial 7', from_=0, to=1000)
-        MaxParamWrspName = tk.Spinbox(laf, textvariable=lr_vars.MaxParamWrspName, font='Arial 7', from_=0, to=1000)
-        MinWrspRnum = tk.Spinbox(laf, textvariable=lr_vars.MinWrspRnum, font='Arial 7', from_=0, to=1000)
-        MaxWrspRnum = tk.Spinbox(laf, textvariable=lr_vars.MaxWrspRnum, font='Arial 7', from_=0, to=10**5)
-        wrsp_name_splitter = tk.Entry(laf, textvariable=lr_vars.wrsp_name_splitter, font='Arial 7')
-        WrspNameFirst = tk.Entry(laf, textvariable=lr_vars.WrspNameFirst, font='Arial 7')
+        MaxLbWrspName = tk.Spinbox(_lab5, textvariable=lr_vars.MaxLbWrspName, font='Arial 7', from_=0, to=1000)
+        MaxRbWrspName = tk.Spinbox(_lab7, textvariable=lr_vars.MaxRbWrspName, font='Arial 7', from_=0, to=1000)
+        MaxParamWrspName = tk.Spinbox(_lab6, textvariable=lr_vars.MaxParamWrspName, font='Arial 7', from_=0, to=1000)
+        MinWrspRnum = tk.Spinbox(_lab2, textvariable=lr_vars.MinWrspRnum, font='Arial 7', from_=0, to=1000)
+        MaxWrspRnum = tk.Spinbox(_lab2, textvariable=lr_vars.MaxWrspRnum, font='Arial 7', from_=0, to=10**5)
+        wrsp_name_splitter = tk.Entry(_lab8, textvariable=lr_vars.wrsp_name_splitter, font='Arial 7')
+        WrspNameFirst = tk.Entry(_lab1, textvariable=lr_vars.WrspNameFirst, font='Arial 7')
 
-        apply_btn = tk.Button(laf, font='Arial 7', text='применить',
+        apply_btn = tk.Button(self, font='Arial 7', text='применить',
                               command=lambda: self.parent.save_action_file(file_name=False))
 
         lr_tooltip.createToolTip(apply_btn, 'применить изменения')
@@ -103,10 +108,10 @@ class WrspSettingWindow(tk.Toplevel):
         lr_tooltip.createToolTip(MaxWrspRnum, '{wrsp_rnd_num}\nмакс число, для случайного номера, в WRSP имени\n'
                                               'Изменится только при пересоздании param\n'
                                               '0 - откл')
-        lr_tooltip.createToolTip(wrsp_name_splitter, 'символ разделения в имени WRSP(для "_"): "aFFX9" -> "a_FFX_9"\n'
+        lr_tooltip.createToolTip(wrsp_name_splitter, 'символ разделения в имени WRSP\nдля "_" : "aFFX9" -> "a_FFX_9"\n'
                                                      'Изменится только при пересоздании param\nничего - откл')
-        lr_tooltip.createToolTip(WrspNameFirst, '{letter}\nначало(P) WRSP имени: {P_11_zkau_22}\n'
-                                                'Изменится только при пересоздании param\n'
+        lr_tooltip.createToolTip(WrspNameFirst, '{letter}\nначало(P) WRSP имени: {P_1252_1_aFFX9}\n'
+                                                'Изменится при пересоздании param\n'
                                                 'ничего - откл')
 
         laf.grid(row=1, column=1, sticky=tk.W)
@@ -117,7 +122,7 @@ class WrspSettingWindow(tk.Toplevel):
         VarWebStatsWarn.grid(row=2, column=2, sticky=tk.W)
         VarWRSPStatsTransac.grid(row=3, column=1, sticky=tk.W)
         VarWRSPStatsTransacNames.grid(row=3, column=2, sticky=tk.W)
-        VarWRSPStats.grid(row=4, column=1, sticky=tk.W)
+        VarWRSPStats.grid(row=4, column=1, sticky=tk.W, columnspan=3)
         SnapshotInName.grid(row=4, column=2, sticky=tk.W)
 
         MaxLbWrspName.grid(row=5, column=1)
@@ -130,5 +135,15 @@ class WrspSettingWindow(tk.Toplevel):
         TransactionInNameMax.grid(row=7, column=1)
 
         apply_btn.grid(row=10, column=1, columnspan=3)
+
+        _lab.grid(row=5, column=1, columnspan=3)
+        _lab8.grid(row=5, column=1)
+        _lab1.grid(row=5, column=2)
+        _lab2.grid(row=6, column=1)
+        _lab3.grid(row=6, column=2)
+        _lab4.grid(row=6, column=3)
+        _lab5.grid(row=7, column=1)
+        _lab6.grid(row=7, column=2)
+        _lab7.grid(row=7, column=3)
 
         lr_gui_other.center_widget(self)

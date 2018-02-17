@@ -71,7 +71,7 @@ class WebAny:
         self.name = self._read_name()
         self.snapshot = self._read_snapshot()
 
-        self.comments = comments.lstrip('\n')
+        self.comments = comments.lstrip('\n').rstrip()
         if self.comments:
             self.comments = '\n{}'.format(self.comments)
 
@@ -101,8 +101,8 @@ class WebAny:
             if (len(self.lines_list) > 2) and (not self.snapshot):
                 comments += '\n\t{} WARNING: no "Snapshot=t.inf" (del?)'.format(lr_param.LR_COMENT)
 
-        text = '{coment}\n{snap_text}'.format(coment=comments, snap_text='\n'.join(self.lines_list)).strip('\n')
-        return text
+        text = '{coment}\n{snap_text}'.format(coment=comments, snap_text='\n'.join(self.lines_list))
+        return text.strip('\n')
 
     def _read_name(self, name='') -> str:
         try:
@@ -119,7 +119,7 @@ class WebAny:
             for line in self.lines_list:
                 sline = line.strip().split(s, 1)
                 if len(sline) == 2:
-                    name = sline[1].split('"')[0]
+                    name = sline[1].split('"', 1)[0]
                     break
 
         return name
@@ -257,8 +257,8 @@ class WebSnapshot(WebAny):
                     t=text, c=lr_param.LR_COMENT, p=bad_wrsp, lp=len(bad_wrsp))
 
         wrsps = ''.join(map(WebRegSaveParam.to_str, self.web_reg_save_param_list))
-        txt = '{wrsp}{stat_string}\n{text}'.format(stat_string=stat_string, text=text, wrsp=wrsps).strip('\n')
-        return txt
+        txt = '{wrsp}{stat_string}\n{text}'.format(stat_string=stat_string, text=text, wrsp=wrsps)
+        return txt.strip('\n')
 
     def get_body(self, a=1, b=-1) -> str:
         '''тело web_ - поиск и замену делать тут'''

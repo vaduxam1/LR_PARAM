@@ -477,9 +477,10 @@ class ActionWindow(tk.Toplevel):
             self.search_entry.set(word)
 
         if hist:
-            vals = self.search_entry['values']
+            vals = list(self.search_entry['values'])
+            vals.reverse()
             if word not in vals:
-                self.search_entry['values'] = list(reversed(list(vals) + [word]))
+                self.search_entry['values'] = (vals + [word])
                 self.search_entry.current(0)
 
         self.search_res_combo['values'] = self._search_text(word=word)

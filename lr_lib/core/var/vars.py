@@ -37,13 +37,13 @@ VarWrspDictList = []  # все возможные web_reg_save_param слова�
 #####################################
 # статистика в каментах
 
-VarWebStatsTransac = tk.BooleanVar(value=True)  # коментарии с именем транзакции
-VarWebStatsIn = tk.BooleanVar(value=True)  # In коментарии
-VarWebStatsOut = tk.BooleanVar(value=True)  # Out коментарии
-VarWebStatsWarn = tk.BooleanVar(value=True)  # Warning коментарии
-VarWRSPStatsTransac = tk.BooleanVar(value=True)  # для wrsp, статистика использования param
-VarWRSPStatsTransacNames = tk.BooleanVar(value=True)  # для wrsp, имена транзакций в которых используется param
-VarWRSPStats = tk.BooleanVar(value=True)  # для wrsp, создавать подробные/короткие коментарии
+VarWebStatsTransac = tk.BooleanVar(value=False)  # коментарии с именем транзакции
+VarWebStatsIn = tk.BooleanVar(value=False)  # In коментарии
+VarWebStatsOut = tk.BooleanVar(value=False)  # Out коментарии
+VarWebStatsWarn = tk.BooleanVar(value=False)  # Warning коментарии
+VarWRSPStatsTransac = tk.BooleanVar(value=False)  # для wrsp, статистика использования param
+VarWRSPStatsTransacNames = tk.BooleanVar(value=False)  # для wrsp, имена транзакций в которых используется param
+VarWRSPStats = tk.BooleanVar(value=False)  # для wrsp, создавать подробные/короткие коментарии
 
 DENY_WEB_ = {
     'google.com', 'yandex.ru', 'mail.ru',
