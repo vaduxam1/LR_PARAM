@@ -205,7 +205,7 @@ class WrspSettingWindow(tk.Toplevel):
                 self.parent.web_action_to_tk_text(websReport=False)
 
     @lr_vars.T_POOL_decorator
-    def all_wrsp_auto_rename(self, *a, _l=' "LB=', _r=' "RB=') -> None:
+    def all_wrsp_auto_rename(self, *a, _l='"LB=', _r='"RB=') -> None:
         '''переименавать все wrsp, автоматически, с учетом всех настроек'''
         _wrsps = tuple(self.parent.web_action.get_web_reg_save_param_all())
         wrsps = tuple(w.name for w in _wrsps)
@@ -216,9 +216,10 @@ class WrspSettingWindow(tk.Toplevel):
             for line in w.lines_list:
                 line = line.strip()
                 if line.startswith(_l):
-                    lb = line.split(_l, 1)[1].rsplit('"', 1)[0]
+                    lb = line.split(_l, 1)[1].rsplit('",', 1)[0]
                 elif line.startswith(_r):
-                    rb = line.split(_r, 1)[1].rsplit('"', 1)[0]
+                    rb = line.split(_r, 1)[1].rsplit('",', 1)[0]
+            assert lb, rb
             new_name = lr_param.wrsp_name_creator(w.param, lb, rb, w.snapshot)
             wrsps_new.append(new_name)
 
