@@ -5,6 +5,7 @@ import tkinter as tk
 
 import lr_lib.gui.etc.gui_other as lr_gui_other
 import lr_lib.gui.widj.tooltip as lr_tooltip
+import lr_lib.gui.widj.dialog as lr_dialog
 import lr_lib.core.var.vars as lr_vars
 import lr_lib.core.wrsp.param as lr_param
 
@@ -97,6 +98,7 @@ class WrspSettingWindow(tk.Toplevel):
 
         apply_btn = tk.Button(self, font='Arial 7', text='применить',
                               command=lambda: self.parent.save_action_file(file_name=False))
+        wrsp_rename_btn = tk.Button(self, font='Arial 7', text='wrsp_rename', command=self.all_wrsp_rename)
 
         lr_tooltip.createToolTip(apply_btn, 'применить изменения')
         lr_tooltip.createToolTip(VarWebStatsTransac, tt_stat)
@@ -131,7 +133,10 @@ class WrspSettingWindow(tk.Toplevel):
                                                 'Изменится при пересоздании param\n'
                                                 'ничего - откл')
 
-        laf.grid(row=1, column=1, sticky=tk.W)
+        lr_tooltip.createToolTip(wrsp_rename_btn, 'скопом переименовать, все уже созданные web_reg_save_param\n'
+                                                  'имена слева, не трогать\nимена справа, переименовать, либо не трогать')
+
+        laf.grid(row=1, column=1, sticky=tk.W, columnspan=3)
 
         VarWebStatsTransac.grid(row=2, column=1, sticky=tk.W)
         VarWebStatsIn.grid(row=1, column=1, sticky=tk.W)
@@ -151,7 +156,8 @@ class WrspSettingWindow(tk.Toplevel):
         WrspNameFirst.grid(row=8, column=1)
         TransactionInNameMax.grid(row=7, column=1)
 
-        apply_btn.grid(row=10, column=1, columnspan=3)
+        apply_btn.grid(row=10, column=1)
+        wrsp_rename_btn.grid(row=10, column=2)
 
         _lab.grid(row=5, column=1, columnspan=3)
         _lab8.grid(row=5, column=1)
@@ -164,3 +170,30 @@ class WrspSettingWindow(tk.Toplevel):
         _lab7.grid(row=7, column=3)
 
         lr_gui_other.center_widget(self)
+
+    @lr_vars.T_POOL_decorator
+    def all_wrsp_rename(self, *args) -> None:
+        '''переименавать все wrsp'''
+        _wrsps = tuple(self.parent.web_action.get_web_reg_save_param_all())
+        wrsps = tuple(w.name for w in _wrsps)
+        mx = max(map(len, wrsps or ['']))
+        m = '"{:<%s}" -> "{}"' % mx
+        all_wrsps = '\n'.join(m.format(old, new) for (old, new) in zip(wrsps, wrsps))
+        y = lr_dialog.YesNoCancel(['Переименовать', 'Отмена'], 'Переименовать wrsp слева',
+                                  'в wrsp справа', 'wrsp',
+                                  parent=self, is_text=all_wrsps)
+
+        if y.ask() == 'Переименовать':
+            new_wrsps = [t.split('-> "', 1)[1].split('"', 1)[0].strip() for t in y.text.strip().split('\n')]
+            assert len(wrsps) == len(new_wrsps)
+            with self.parent.block():
+                self.parent.backup()
+                text = self.parent.tk_text.get('1.0', tk.END)
+
+                for (old, new) in zip(wrsps, new_wrsps):
+                    text = text.replace(lr_param.param_bounds_setter(old), lr_param.param_bounds_setter(new))
+                    text = text.replace(lr_param.param_bounds_setter(old, start='"', end='"'),
+                                        lr_param.param_bounds_setter(new, start='"', end='"'))
+
+                self.parent.web_action.set_text_list(text, websReport=True)
+                self.parent.web_action_to_tk_text(websReport=False)
