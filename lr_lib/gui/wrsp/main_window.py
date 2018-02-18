@@ -612,14 +612,14 @@ class Window(ttk.Frame):
             return
 
         tpl = lr_vars.T_POOL
-        if hasattr(tpl.pool, '_q_size'):
-            pt = 'T(qi)\n{t}({q_in})'.format(t=tpl._size, q_in=tpl.pool._q_size)
+        if hasattr(tpl.pool, '_qsize'):
+            pt = 'T(qi)\n{t}({q_in})'.format(t=tpl._size, q_in=tpl.pool._qsize)
         else:
             pt = 'T={t}'.format(t=tpl._size)
 
         mpl = lr_vars.M_POOL
-        if hasattr(mpl.pool, '_q_size'):
-            pm = 'M(qi)\n{mp}({q_in})'.format(mp=mpl._size, q_in=mpl.pool._q_size)
+        if hasattr(mpl.pool, '_qsize'):
+            pm = 'M(qi)\n{mp}({q_in})'.format(mp=mpl._size, q_in=mpl.pool._qsize)
         else:
             pm = 'M={mp}'.format(mp=mpl._size)
 
