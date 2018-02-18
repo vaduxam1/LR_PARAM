@@ -205,8 +205,11 @@ class ActionWindow(tk.Toplevel):
         self.SearchReplace_replaceCombo['values'] = [__b]
         self.search_entry['values'] = [__a]
 
-        self.auto_param_creator_button = tk.Button(self.toolbar, text='Найти\n*param*', font=lr_vars.DefaultFont + ' bold',
+        self.auto_param_creator_button = tk.Button(self.toolbar, text='Найти param LB=', font=lr_vars.DefaultFont + ' bold',
                                                    command=self.auto_param_creator, background='orange')
+
+        self.re_auto_param_creator_button = tk.Button(self.toolbar, text='Найти param RegExp', font=lr_vars.DefaultFont + ' bold',
+                                                   command=self.re_auto_param_creator, background='orange')
 
         self.final_wnd_cbx = tk.Checkbutton(self.toolbar, text='final', font=lr_vars.DefaultFont, variable=self.final_wnd_var)
         self.wrsp_setting = tk.Button(self.toolbar, text='wrsp_setting', font=lr_vars.DefaultFont,
@@ -701,6 +704,17 @@ class ActionWindow(tk.Toplevel):
         self.set_title()
         self.set_combo_len()
 
+    def group_param_search_quotes(self, r=r'=(.+?)\"') -> iter((str,)):
+        '''поиск param, внутри кавычек'''
+        def get_params() -> iter((str,)):
+            for web_ in self.web_action.get_web_snapshot_all():
+                params = re.findall(r, web_.get_body())
+                yield from filter(bool, map(str.strip, params))
+
+        for param in get_params():
+            if all(map(lr_param.wrsp_allow_symb.__contains__, param)):  # не содержит неподходящих символов
+                yield param
+
     @lr_vars.T_POOL_decorator
     def auto_param_creator(self, *a) -> None:
         '''group params по кнопке PARAM'''
@@ -710,16 +724,61 @@ class ActionWindow(tk.Toplevel):
         ans = y.ask()
         if ans == 'Найти':
             param_parts = list(filter(bool, map(str.strip, y.text.split('\n'))))
-            params = [self.session_params()]
-            params.extend(map(self.group_param_search, param_parts))
+
+            params = [self.session_params()]  # поиск по LB=
+            params.extend(map(self.group_param_search, param_parts))  # поиск по началу имени
+
             params = set(p for ps in params for p in ps)
             params = [p for p in params if ((p not in lr_vars.DENY_PARAMS) and (not (len(p) > 2 and p.startswith('on') and p[2].isupper())))]
             params.sort(key=lambda param: len(param), reverse=True)
+
             y = lr_dialog.YesNoCancel(['Создать', 'Отменить'], is_text='\n'.join(params), parent=self,
                                       text_before='создание + автозамена. %s шт' % len(params), title='Имена param',
                                       text_after='При необходимости - добавить/удалить')
             ans = y.ask()
             if ans == 'Создать':
+                params = list(filter(bool, map(str.strip, y.text.split('\n'))))
+                lr_group_param.group_param(None, widget=self.tk_text, params=params, ask=False)
+
+    @lr_vars.T_POOL_decorator
+    def re_auto_param_creator(self, *a) -> None:
+        '''group params поиск, с помощью re'''
+        rs = ('\"(.+?)\"', '\'(.+?)\'', '=(.+?)\"', '=(.+?)\'')
+        y = lr_dialog.YesNoCancel(['Найти', 'Отменить'], is_text='\n'.join(rs), parent=self,
+                                  text_before='Будет произведен поиск param',
+                                  title='regexp {} шт.'.format(len(rs)),
+                                  text_after='При необходимости - добавить/удалить')
+        ans = y.ask()
+        if ans != 'Найти':
+            return
+
+        def deny_params(lst: list) -> [str, ]:
+            '''удалить не param-слова'''
+            for p in lst:
+                check = ((p not in lr_vars.DENY_PARAMS) and (
+                    not (len(p) > 2 and p.startswith('on') and p[2].isupper()))) and (len(p) > 2)
+                if check:
+                    for a in lr_vars.DENY_Startswitch_PARAMS:
+                        if p.startswith(a):
+                            check = not all(map(str.isnumeric, (p.split(a, 1)[1])))
+                            break
+                    if check:
+                        yield p
+
+        params = []
+        for r in rs:
+            prs = list(set(self.group_param_search_quotes(r=r)))
+            prs = list(deny_params(prs))
+            params.extend(prs)
+
+        params = list(set(params))
+        if params:
+            params.sort(key=lambda param: len(param), reverse=True)
+            y = lr_dialog.YesNoCancel(['создать', 'Отменить'], is_text='\n'.join(params), parent=self,
+                                      text_before='Будет произведено создание param',
+                                      title='param {} шт.'.format(len(params)), text_after='При необходимости - добавить/удалить')
+            ans = y.ask()
+            if ans == 'создать':
                 params = list(filter(bool, map(str.strip, y.text.split('\n'))))
                 lr_group_param.group_param(None, widget=self.tk_text, params=params, ask=False)
 
@@ -889,7 +948,7 @@ class ActionWindow(tk.Toplevel):
         lr_vars.Logger.debug('{} = {} byte'.format(b_name, os.path.getsize(b_name)))
 
     def session_params(self, lb_list=None, ask=True) -> list:
-        '''поиск param в action? по LB='''
+        '''поиск param в action, по LB='''
         if lb_list is None:
             lb_list = lr_vars.LB_PARAM_FIND_LIST
 

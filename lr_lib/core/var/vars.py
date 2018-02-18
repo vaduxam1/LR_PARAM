@@ -17,7 +17,7 @@ from lr_lib.etc.help import (COLORS, HEX, )
 #####################################
 # главные переменные
 
-VERSION = 'v10.2.9'
+VERSION = 'v10.3.0'
 lib_folder = 'lr_lib'
 Tk = tk.Tk()  # tkinter
 
@@ -95,8 +95,13 @@ LB_PARAM_FIND_LIST = [
     'PSI=',
 ]  # использовать для поиска param(1) по LB=
 
+DENY_Startswitch_PARAMS = [
+    'opt_', 'cmd_', 'data_', 'uuid_',
+    ]  # не использовать в качестве параметров, если начинаются так
+
 DENY_PARAMS = [
     'UTF-8', 'boot', 'true', 'false', 'i', 'xonLoadUseIndustrialCalendar', 'dummy', 'CPAGE', 'null', 'pt1', 'cb1', 'f1',
+    'POST', 'HTML', 'Yes', 'dtid', 'compId',
 ]  # не использовать в качестве параметров
 
 FindParamPOOLEnable = True  # использовать M_POOL, для поиска param, в файлах ответов
@@ -196,9 +201,13 @@ VarSplitListRB = tk.BooleanVar(value=True)  # обрезать RB до SplitList
 VarSplitListNumLB = tk.IntVar(value=3)  # Не учитывать n символов LB(последние), при SplitList обрезке
 VarSplitListNumRB = tk.IntVar(value=2)  # Не учитывать n символов RB(первые), при SplitList обрезке
 
+
+# символы, которые могут входить в имя param, кроме букв и цифр
+AddAllowParamSymb = '_!-'
+
 # символы обрезки автозамены
 allow_symbols = string.punctuation + string.whitespace
-for s in '_!-':
+for s in AddAllowParamSymb:
     allow_symbols = allow_symbols.replace(s, '')
 allow_symbols = set(allow_symbols)
 

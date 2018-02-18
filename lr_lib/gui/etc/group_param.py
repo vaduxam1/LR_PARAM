@@ -19,9 +19,9 @@ def group_param(event, widget=None, params=None, ask=True) -> None:
         widget = event.widget
 
     # найти params
-    if params is None:
+    if params is None:  # поиск по началу имени
         params = widget.action.group_param_search(widget.selection_get())
-    elif params is False:
+    elif params is False:  # поиск по LB=
         params = widget.action.session_params(lb_list=[widget.selection_get()], ask=False)
     if not params:
         return lr_vars.Logger.warning('param не найдены! %s' % params, parent=widget.action)

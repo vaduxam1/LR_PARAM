@@ -75,6 +75,10 @@ def set_all_action_window_tooltip(self) -> None:
                                                              'для param, имя которых начинается на ...\n'
                                                              'аналог нескольких меню_мыши/web_reg_save_param/группа\n\t'
                                                              '# auto_param_creator_button')
+    lr_tooltip.createToolTip(self.re_auto_param_creator_button, 'автоматичейский поиск и создание web_reg_save_param\n '
+                                                             'поиск param, на основе регулярных выражений.\n'
+                                                             'аналог нескольких меню_мыши/web_reg_save_param/группа\n\t'
+                                                             '# re_auto_param_creator_button')
     lr_tooltip.createToolTip(self.help1, lr_help.ACTION1)
     lr_tooltip.createToolTip(self.help2, lr_help.ACTION2)
     lr_tooltip.createToolTip(self.help3, lr_help.ACTION3)
