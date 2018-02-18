@@ -64,13 +64,14 @@ class SThread(threading.Thread, SThreadIOQueue):
         '''поток'''
         done = self.queue_in.task_done
         pool = self.pool
+        task_get = self.queue_in.get
         _timeout = lr_vars.SThreadExitTimeout.get()
         _size_min = lr_vars.SThreadPoolSizeMin.get()
 
         try:
             while pool.working:
                 try:
-                    _, self.task = self.queue_in.get(timeout=_timeout)  # получить задачу
+                    _, self.task = task_get(timeout=_timeout)  # получить задачу
                     try:
                         self.task()  # выполнить задачу
                     except Exception:
