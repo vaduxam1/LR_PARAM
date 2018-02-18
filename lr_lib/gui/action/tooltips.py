@@ -13,6 +13,8 @@ def set_all_action_window_tooltip(self) -> None:
                                                  '# editor_button')
     lr_tooltip.createToolTip(self.wrsp_setting, 'настройки каментов и имени wrsp\n\t'
                                                 '# wrsp_setting')
+    lr_tooltip.createToolTip(self.resp_btn, 'файлы ответов при записи и воспроизведении\n\t'
+                                                '# resp_btn')
     lr_tooltip.createToolTip(self.backup_entry, 'макс кол-во backup файлов(запись по кругу)\n'
                                                 'перед автозаменой, в директорию {}, делается action бэкап\n\t'
                                                 '# backup_entry'.format(os.path.join(os.getcwd(), lr_vars.BackupFolder)))

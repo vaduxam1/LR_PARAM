@@ -23,7 +23,7 @@ def rClicker(event) -> str:
 
         nclst = [
             ('web_reg_save_param - все варианты', lambda e=event: lr_action_lib.all_wrsp_dict_web_reg_save_param(e)),
-            ('файлы snapshot(из цифр веделения)', lambda e=event: lr_action_lib.snapshot_files(e)),
+            ('файлы snapshot(из цифр веделения)', lambda e=event: lr_action_lib.snapshot_files(e.widget)),
             ('Encoding: "РџРµСЂРІ" -> "Перв"', lambda e=event: lr_action_lib.encoder(e)),
             ('Поиск выделеного текста', lambda e=event: lr_action_lib.rClick_Search(e)),
             ('    Копировать', lambda e=event: e.widget.event_generate('<Control-c>')),

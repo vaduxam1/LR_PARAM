@@ -349,15 +349,15 @@ def rClick_add_highlight(event, option: str, color: str, val: str, find=False) -
         event.widget.action.tk_text_see()
 
 
-def snapshot_files(event, folder_record='', i_num=0) -> None:
+def snapshot_files(widget, folder_record='', i_num=0, selection='') -> None:
     '''показать окно файлов snapshot'''
-    selection = event.widget.selection_get()
-
     if not folder_record:
         folder_record = lr_vars.VarFilesFolder.get()
-    folder_response = event.widget.action.get_result_folder()
+    folder_response = widget.action.get_result_folder()
 
     if not i_num:
+        if not selection:
+            selection = widget.selection_get()
         i_num = ''.join(filter(str.isnumeric, selection))
 
-    lr_responce_files.RespFiles(event.widget, i_num, folder_record, folder_response)
+    lr_responce_files.RespFiles(widget, i_num, folder_record, folder_response)

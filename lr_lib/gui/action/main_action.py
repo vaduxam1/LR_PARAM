@@ -19,6 +19,7 @@ import lr_lib.gui.widj.wrsp_setting as lr_wrsp_setting
 import lr_lib.gui.widj.tooltip as lr_tooltip
 import lr_lib.gui.widj.highlight_text as lr_highlight_text
 import lr_lib.gui.widj.dialog as lr_dialog
+import lr_lib.gui.etc.action_lib as lr_action_lib
 import lr_lib.gui.etc.gui_other as lr_gui_other
 import lr_lib.gui.etc.group_param as lr_group_param
 import lr_lib.gui.etc.sub_menu as lr_sub_menu
@@ -214,6 +215,9 @@ class ActionWindow(tk.Toplevel):
         self.final_wnd_cbx = tk.Checkbutton(self.toolbar, text='final', font=lr_vars.DefaultFont, variable=self.final_wnd_var)
         self.wrsp_setting = tk.Button(self.toolbar, text='wrsp_setting', font=lr_vars.DefaultFont,
                                       command=lambda *a: lr_wrsp_setting.WrspSettingWindow(parent=self))
+
+        self.resp_btn = tk.Button(self.toolbar, text='файлы ответов', font=lr_vars.DefaultFont,
+                                  command=lambda *a: lr_action_lib.snapshot_files(self.tk_text, i_num=1))
 
         def force_ask_cmd(*a) -> None:
             if self.force_ask_var.get():

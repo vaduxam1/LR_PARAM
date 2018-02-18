@@ -32,7 +32,8 @@ def grid_widj(self):
     self.force_ask_cbx.grid(row=8, column=10, sticky=tk.W)
     self.unblock.grid(row=9, column=17, sticky=tk.NSEW)
     self.final_wnd_cbx.grid(row=8, column=12, sticky=tk.W)
-    self.wrsp_setting.grid(row=7, column=9, sticky=tk.NSEW, rowspan=2)
+    self.wrsp_setting.grid(row=7, column=9, sticky=tk.NSEW)
+    self.resp_btn.grid(row=8, column=9, sticky=tk.NSEW)
 
     self.font_size_entry.grid(row=12, column=4, sticky=tk.NSEW)
     self.font_combo.grid(row=10, column=0, columnspan=10, sticky=tk.NSEW)
