@@ -3,11 +3,14 @@
 
 import string
 import itertools
+import threading
 
 import tkinter as tk
 
 import lr_lib.core.var.vars as lr_vars
 import lr_lib.core.etc.other as lr_other
+
+Lock = threading.Lock()
 
 
 class HighlightLines:
@@ -23,41 +26,63 @@ class HighlightLines:
         self._max_line = len(lines)  # номер последней линии
         self._max_line_proc = (self._max_line / 100)
 
+        if lr_vars.LineTagAddThread.get():
+            self.tags_highlight = lr_vars.T_POOL_decorator(self.tegs_add)
+        else:
+            self.tags_highlight = self.tegs_add
+
+        tag_add = self.tk_text.tag_add
+        acquire = Lock.acquire
+        release = Lock.release
+
+        def tag_add_threadsafe(*a, **kw) -> None:
+            '''подсветка одного слова, безопасная для потока'''
+            acquire()
+            try:
+                tag_add(*a, **kw)
+            finally:
+                release()
+
+        if lr_vars.TagAddThread.get():
+            self.highlight_cmd = lr_vars.T_POOL_decorator(tag_add_threadsafe)
+        else:
+            self.highlight_cmd = tag_add_threadsafe
+
+        if lr_vars.HighlightThread.get():
+            self.highlight_line_nums = lr_vars.T_POOL_decorator(self._highlight_line_nums)
+        else:
+            self.highlight_line_nums = self._highlight_line_nums
+
+        self.execute = lr_vars.M_POOL.imap_unordered if lr_vars.HighlightMPool.get() else map
+        self.PortionSize = lr_vars.HighlightLinesPortionSize.get()
+
     def is_on_screen_lines_change(self, top: int, bottom: int) -> bool:
         '''изменились ли self.top_line_num и self.bottom_line_num'''
         return (self.top_line_num != top) or (self.bottom_line_num != bottom)
 
-    def highlight_line_nums(self, top: int, bottom: int, highlight_cmd=None) -> None:
+    def _highlight_line_nums(self, top: int, bottom: int, highlight_cmd: callable, exit: callable,
+                             tags_highlight: callable, lines: dict, chunks=lr_other.chunks) -> None:
         '''получать индексы и подсвечивать on-screen линии текста, пока top и bottom не изменились'''
-        if self.is_on_screen_lines_change(top, bottom):
+        if exit(top, bottom):
             return
 
-        line_nums = (range(top, bottom + 1) & self.on_screen_lines.keys())
+        line_nums = (range(top, bottom + 1) & lines.keys())
         if not line_nums:
             return
 
-        if lr_vars.LineTagAddThread.get():
-            tags_highlight = lr_vars.T_POOL_decorator(self.tegs_add)
-        else:
-            tags_highlight = self.tegs_add
-        if lr_vars.TagAddThread.get():
-            highlight_cmd = lr_vars.T_POOL_decorator(self.tk_text.tag_add)
-        else:
-            highlight_cmd = self.tk_text.tag_add
-
-        execute = lr_vars.M_POOL.imap_unordered if lr_vars.HighlightMPool.get() else map
-        args = ((num, self.on_screen_lines.get(num), self.tegs_names) for num in line_nums)
-        if self.is_on_screen_lines_change(top, bottom):
+        if exit(top, bottom):
             return
 
-        for results in execute(search_lines_teg_indxs, lr_other.chunks(args, lr_vars.HighlightLinesPortionSize.get())):
+        for results in self.execute(search_lines_teg_indxs, chunks(
+                ((num, lines.get(num), self.tegs_names) for num in line_nums), self.PortionSize)):
             for line_num, tag_indxs in results:
-                if self.is_on_screen_lines_change(top, bottom):
+                if exit(top, bottom):
                     return
 
                 tags_highlight(tag_indxs, highlight_cmd)  # подсветить
-                self.on_screen_lines.pop(line_num, None)  # больше не подсвечивать
-            if self.is_on_screen_lines_change(top, bottom):
+                lines.pop(line_num, None)  # больше не подсвечивать
+
+            if exit(top, bottom):
                 return
 
     def tegs_add(self, teg_indxs: {str: {(str, str), }, }, highlight_cmd: callable) -> None:
@@ -71,12 +96,8 @@ class HighlightLines:
         self.top_line_num = top
         self.bottom_line_num = bottom
 
-        if lr_vars.HighlightThread.get():
-            highlight_line_nums = lr_vars.T_POOL_decorator(self.highlight_line_nums)
-        else:
-            highlight_line_nums = self.highlight_line_nums
-
-        highlight_line_nums(top, bottom)
+        self.highlight_line_nums(top, bottom, self.highlight_cmd, self.is_on_screen_lines_change, self.tags_highlight,
+                                 self.on_screen_lines)
 
 
 def search_lines_teg_indxs(lines_portion: [(int, str, {str, (str,), }), ]) -> [(int, {str: {(str, str), }}), ]:
