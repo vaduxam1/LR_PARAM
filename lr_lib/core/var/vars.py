@@ -17,7 +17,7 @@ from lr_lib.etc.help import (COLORS, HEX, )
 #####################################
 # главные переменные
 
-VERSION = 'v10.3.1'
+VERSION = 'v10.3.2'
 lib_folder = 'lr_lib'
 Tk = tk.Tk()  # tkinter
 
@@ -258,9 +258,9 @@ DefaultActionNoHighlightFontSlant = True  #
 # подсветка
 
 HighlightOn = True  # включить подсветку
-HighlightThread = tk.BooleanVar(value=True)  # выполнять в фоне, весь код подсветки
+HighlightThread = tk.BooleanVar(value=False)  # выполнять в фоне, весь код подсветки
 LineTagAddThread = tk.BooleanVar(value=True)  # выполнять в фоне, код подсветки для одной линии
-TagAddThread = tk.BooleanVar(value=True)  # выполнять в фоне, код подсветки для одного тега
+TagAddThread = tk.BooleanVar(value=False)  # выполнять в фоне, код подсветки для одного тега
 HighlightMPool = tk.BooleanVar(value=True)  # искать индексы для подсветки линий, в M_POOL
 HighlightLinesPortionSize = tk.IntVar(value=2)  # для скольки линий, искать индексы, за один проход/поток
 Background = 'khaki'

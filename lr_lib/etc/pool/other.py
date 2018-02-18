@@ -17,7 +17,7 @@ class MainThreadUpdater:
 
     def __enter__(self):
         self.working = True
-        lr_vars.Tk.after(0, self.queue_listener)
+        lr_vars.Tk.after(0, self.queue_listener, self.queue_in.get, self.queue_in.qsize)
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
@@ -30,18 +30,18 @@ class MainThreadUpdater:
         '''выполнить callback, из main потока'''
         self.queue_in.put_nowait(callback)
 
-    def queue_listener(self) -> None:
+    def queue_listener(self, get_callback: callable, check: callable,
+                       restart=lr_vars.Tk.after, timeout=lr_vars.MainThreadUpdateTime.get) -> None:
         '''выполнять из очереди, пока есть, затем перезапустить'''
-        while not self.queue_in.empty():
-            try:  # выполнить
-                callback = self.queue_in.get()
-                callback()
+        while check():
+            try:
+                get_callback()()  # получить и выполнить callback
             except Exception:
                 lr_excepthook.excepthook(*sys.exc_info())
                 continue
 
         if self.working:  # перезапуск
-            lr_vars.Tk.after(lr_vars.MainThreadUpdateTime.get(), self.queue_listener)
+            restart(timeout(), self.queue_listener, get_callback, check)
 
 
 class NoPool:
