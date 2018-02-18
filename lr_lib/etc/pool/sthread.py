@@ -26,7 +26,9 @@ class Task:
 
 
 class SThreadIOQueue:
-    '''priority_DeQueue_in -> queue_out'''
+    '''priority_DeQueue_in'''
+    __slots__ = ('qsize', 'count', 'task_add', 'task_get', 'task_done', 'queue_in', )
+
     def __init__(self, queue_in: PriorityQueue):
         self.count = 0  # count -= 1 для de-queue для sort в PriorityQueue
 
@@ -50,13 +52,13 @@ class SThread(threading.Thread, SThreadIOQueue):
         SThreadIOQueue.__init__(self, queue_in)
 
         self.pool = pool
-        self.task = None  # текущая задача
+        self.task = None  # свободен/занят
 
         self.setDaemon(True)
         self.start()
 
     def run(self, is_work=True) -> None:
-        '''поток'''
+        '''worker-поток, выполнять task из queue_in, при простое выйти'''
         pool = self.pool  # SThreadPool
         threads = pool.threads  # потоки
         task_get = self.task_get  # получить задачу
@@ -67,12 +69,12 @@ class SThread(threading.Thread, SThreadIOQueue):
         try:
             while pool.working:
                 try:
-                    _, task_execute = task_get(timeout=timeout)
+                    (_, execute_task) = task_get(timeout=timeout)
                     self.task = is_work
                     try:
-                        task_execute()  # выполнить задачу
+                        execute_task()  # выполнить задачу
                     except Exception:
-                        return '' if (task_execute is None) else lr_excepthook.excepthook(*sys.exc_info())  # выход
+                        return '' if (execute_task is None) else lr_excepthook.excepthook(*sys.exc_info())  # выход
                     finally:
                         self.task = task_done()
                 except Empty:  # таймаут
@@ -87,7 +89,7 @@ class SThread(threading.Thread, SThreadIOQueue):
 
 class SThreadPool(SThreadIOQueue):
     '''threading.Thread пул'''
-    # __slots__ = ('_qsize', 'threads', 'parent', 'working', 'size', )
+    __slots__ = ('_qsize', 'threads', 'parent', 'working', 'size', )
 
     def __init__(self, size=lr_vars.cpu_count, parent=None):
         SThreadIOQueue.__init__(self, queue_in=PriorityQueue())
@@ -103,7 +105,8 @@ class SThreadPool(SThreadIOQueue):
             self.add_thread()
 
         auto_size_SThreadPool(self, lr_vars.Tk.after, lr_vars.SThreadAutoSizeTimeOut.get(), lr_vars.SThreadPoolSizeMax.get(),
-                              lr_vars.SThreadPooMaxAddThread.get(), lr_vars.SThreadPoolAddMinQSize.get())
+                              lr_vars.SThreadPooMaxAddThread.get(), lr_vars.SThreadPoolAddMinQSize.get(), self.set_qsize,
+                              self.threads, self.add_thread)
 
     def new_thread(self) -> SThread:
         '''создать новый поток'''
@@ -131,10 +134,11 @@ class SThreadPool(SThreadIOQueue):
         return qsize
 
 
-def auto_size_SThreadPool(pool: SThreadPool, restart: callable, timeout: int, pmax: int, pmin: int, qmin: int) -> None:
+def auto_size_SThreadPool(pool: SThreadPool, restart: callable, timeout: int, pmax: int, pmin: int, qmin: int,
+                          set_qsize: callable, threads: [SThread, ], add_thread: callable) -> None:
     '''создать новый поток, если есть очередь, недостигнут maxsize, и все потоки заняты'''
-    qs = pool.set_qsize()
-    if qs and (pool.size <= pmax) and all(pool.threads):
+    qs = set_qsize()
+    if qs and (pool.size <= pmax) and all(threads):
         th_count = divmod(qs, qmin)[0]  # 1 поток на каждый MinQSize
         if th_count:
             max_th = pmin
@@ -144,7 +148,7 @@ def auto_size_SThreadPool(pool: SThreadPool, restart: callable, timeout: int, pm
             th_count = 1
 
         for _ in range(th_count):
-            pool.add_thread()  # создать
+            add_thread()  # создать
 
     if pool.working:  # перезапуск auto_size_SThreadPool
-        restart(timeout, auto_size_SThreadPool, pool, restart, timeout, pmax, pmin, qmin)
+        restart(timeout, auto_size_SThreadPool, pool, restart, timeout, pmax, pmin, qmin, set_qsize, threads, add_thread)

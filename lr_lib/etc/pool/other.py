@@ -11,37 +11,40 @@ import lr_lib.core.var.vars as lr_vars
 
 class MainThreadUpdater:
     '''выполнить из main потока(например если что-то нельзя(RuntimeError) выполнять в потоке)'''
+    __slots__ = ('working', 'submit', 'queue_in', )
+
     def __init__(self):
-        self.queue_in = queue.Queue()
         self.working = None
+        self.queue_in = queue.Queue()
+        self.submit = self.queue_in.put_nowait
 
     def __enter__(self):
         self.working = True
-        lr_vars.Tk.after(0, self.queue_listener, self.queue_in.get, self.queue_in.qsize)
+
+        mainThread_queue_listener(updater=self, get_callback=self.queue_in.get, check=self.queue_in.qsize,
+                                  timeout=lr_vars.MainThreadUpdateTime.get())
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         self.working = False
+
         if exc_type:
             lr_excepthook.excepthook(exc_type, exc_val, exc_tb)
         return exc_type, exc_val, exc_tb
 
-    def submit(self, callback: callable) -> None:
-        '''выполнить callback, из main потока'''
-        self.queue_in.put_nowait(callback)
 
-    def queue_listener(self, get_callback: callable, check: callable,
-                       restart=lr_vars.Tk.after, timeout=lr_vars.MainThreadUpdateTime.get) -> None:
-        '''выполнять из очереди, пока есть, затем перезапустить'''
-        while check():
-            try:
-                get_callback()()  # получить и выполнить callback
-            except Exception:
-                lr_excepthook.excepthook(*sys.exc_info())
-                continue
+def mainThread_queue_listener(updater: MainThreadUpdater, get_callback: callable, check: callable, timeout: int,
+                              restart=lr_vars.Tk.after) -> None:
+    '''выполнять из очереди, пока есть, затем перезапустить'''
+    while check():
+        try:
+            get_callback()()  # получить и выполнить callback
+        except Exception as ex:
+            lr_excepthook.excepthook(ex)
+            continue
 
-        if self.working:  # перезапуск
-            restart(timeout(), self.queue_listener, get_callback, check)
+    if updater.working:  # перезапуск
+        restart(timeout, mainThread_queue_listener, updater, get_callback, check, timeout)
 
 
 class NoPool:
