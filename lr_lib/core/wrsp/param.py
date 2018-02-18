@@ -179,7 +179,7 @@ def wrsp_name_creator(param: str, Lb: str, Rb: str, snapshot: int) -> str:
     '''сформировать имя для web_reg_save_param(6)'''
     MaxLbWrspName = lr_vars.MaxLbWrspName.get()
     MaxRbWrspName = lr_vars.MaxRbWrspName.get()
-    snapshot = (snapshot if lr_vars.SnapshotInName.get() else '')
+    infs = (snapshot if lr_vars.SnapshotInName.get() else '')
 
     if MaxLbWrspName and (len(Lb) > 2):
         lbn = ['']
@@ -231,7 +231,7 @@ def wrsp_name_creator(param: str, Lb: str, Rb: str, snapshot: int) -> str:
         transaction = ''
 
     wrsp_name = WEB_REG_NUM.format(wrsp_rnd_num=wrsp_rnd_num, wrsp_name=wrsp_param_name, lb_name=lb_name, rb_name=rb_name,
-                                   infs=snapshot, letter=lr_vars.WrspNameFirst.get(), transaction=transaction)
+                                   infs=infs, letter=lr_vars.WrspNameFirst.get(), transaction=transaction)
 
     wrsp_name = str.translate(wrsp_name, wrsp_deny_punctuation).rstrip('_')
     while '___' in wrsp_name:
