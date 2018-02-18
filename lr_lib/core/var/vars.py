@@ -104,6 +104,15 @@ DENY_PARAMS = [
     'POST', 'HTML', 'Yes', 'dtid', 'compId',
 ]  # не использовать в качестве параметров
 
+REGEXP_PARAMS = [
+    '\"(.+?)\"',
+    '\"(.+?)\\\\"',
+    # '\\\\"(.+?)\\\\"',
+    '\'(.+?)\'',
+    '=(.+?)\"',
+    '=(.+?)\'',
+]  # поиск param, на основе регулярных выражений re.findall(regexp, text)
+
 FindParamPOOLEnable = True  # использовать M_POOL, для поиска param, в файлах ответов
 VarStrongSearchInFile = tk.IntVar(value=True)  # принудительно использовать контроль LB/RB(на недопустимые символы), при поиске param, в файлах ответов
 ReplaceParamDialogWindow = True  # вкл диалог окна(автозамены), для одиночной замены param в action.c

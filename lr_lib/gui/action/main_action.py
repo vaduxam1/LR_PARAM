@@ -742,14 +742,15 @@ class ActionWindow(tk.Toplevel):
 
     @lr_vars.T_POOL_decorator
     def re_auto_param_creator(self, *a) -> None:
-        '''group params поиск, с помощью re'''
-        rs = ('\"(.+?)\"', '\'(.+?)\'', '=(.+?)\"', '=(.+?)\'')
-        y = lr_dialog.YesNoCancel(['Найти', 'Отменить'], is_text='\n'.join(rs), parent=self,
+        '''group params поиск, на основе регулярных выражений'''
+        y = lr_dialog.YesNoCancel(['Найти', 'Отменить'], is_text='\n'.join(lr_vars.REGEXP_PARAMS), parent=self,
                                   text_before='Будет произведен поиск param: re.findall(regexp, action_text)',
-                                  title='regexp {} шт.'.format(len(rs)),
+                                  title='regexp {} шт.'.format(len(lr_vars.REGEXP_PARAMS)),
                                   text_after='При необходимости - добавить/удалить')
         ans = y.ask()
-        if ans != 'Найти':
+        if ans == 'Найти':
+            regexps = list(filter(bool, map(str.strip, y.text.split('\n'))))
+        else:
             return
 
         def deny_params(lst: list) -> [str, ]:
@@ -766,7 +767,7 @@ class ActionWindow(tk.Toplevel):
                         yield p
 
         params = []
-        for r in rs:
+        for r in regexps:
             prs = list(set(self.group_param_search_quotes(r=r)))
             prs = list(deny_params(prs))
             params.extend(prs)
