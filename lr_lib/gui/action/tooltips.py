@@ -11,6 +11,10 @@ def set_all_action_window_tooltip(self) -> None:
     '''создать все tooltip action окна'''
     lr_tooltip.createToolTip(self.editor_button, 'открыть текст action в блокноте\n\t'
                                                  '# editor_button')
+    lr_tooltip.createToolTip(self.btn_all_files, 'список всех файлов\n\t'
+                                                 '# btn_all_files')
+    lr_tooltip.createToolTip(self.lr_legend, 'окно web_ леленды\n\t'
+                                                 '# lr_legend')
     lr_tooltip.createToolTip(self.wrsp_setting, 'настройки каментов и имени wrsp\n\t'
                                                 '# wrsp_setting')
     lr_tooltip.createToolTip(self.resp_btn, 'файлы ответов при записи и воспроизведении\n\t'

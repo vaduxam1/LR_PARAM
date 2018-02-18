@@ -14,6 +14,7 @@ from tkinter import messagebox
 
 import lr_lib.gui.action.tooltips as lr_a_tooltips
 import lr_lib.gui.action.grid as lr_a_grid
+import lr_lib.gui.wrsp.top_wind as lr_top_wind
 import lr_lib.gui.widj.legend as lr_legend
 import lr_lib.gui.widj.wrsp_setting as lr_wrsp_setting
 import lr_lib.gui.widj.tooltip as lr_tooltip
@@ -213,7 +214,7 @@ class ActionWindow(tk.Toplevel):
                                                    command=self.re_auto_param_creator, background='orange')
 
         self.final_wnd_cbx = tk.Checkbutton(self.toolbar, text='final', font=lr_vars.DefaultFont, variable=self.final_wnd_var)
-        self.wrsp_setting = tk.Button(self.toolbar, text='wrsp_setting', font=lr_vars.DefaultFont,
+        self.wrsp_setting = tk.Button(self.toolbar, text='wrsp_setting', font=lr_vars.DefaultFont + ' bold',
                                       command=lambda *a: lr_wrsp_setting.WrspSettingWindow(parent=self))
 
         self.resp_btn = tk.Button(self.toolbar, text='файлы ответов', font=lr_vars.DefaultFont,
@@ -251,7 +252,9 @@ class ActionWindow(tk.Toplevel):
         self.add_inf_cbx = tk.Checkbutton(self.toolbar, anchor=tk.E, text='max\nmode', font=lr_vars.DefaultFont,
                                           variable=self.add_inf_cbx_var)
 
-        self.lr_legend = tk.Button(self.toolbar, text='web_legend', font=lr_vars.DefaultFont + ' bold', command=self.legend)
+        self.lr_legend = tk.Button(self.toolbar, text='web_legend', font=lr_vars.DefaultFont, command=self.legend)
+        self.btn_all_files = tk.Button(self.toolbar, text='все файлы', font=lr_vars.DefaultFont,
+                                       command=lambda *a: lr_top_wind.folder_wind(self))
         self.lr_think_time = tk.Button(self.toolbar, text='lr_think_time', font=lr_vars.DefaultFont + ' bold',
                                        command=self.thinktime_remove)
         self.lr_report_B = tk.Button(self.toolbar, text='reportB', font=lr_vars.DefaultFont + ' bold',

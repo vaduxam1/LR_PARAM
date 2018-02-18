@@ -13,7 +13,6 @@ import tkinter.ttk as ttk
 
 from tkinter import filedialog
 
-import lr_lib.gui.widj.highlight_text as lr_highlight_text
 import lr_lib.gui.widj.lbrb5 as lr_lbrb5
 import lr_lib.gui.widj.tooltip as lr_tooltip
 import lr_lib.gui.wrsp.top_wind as lr_top_wind

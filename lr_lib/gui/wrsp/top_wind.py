@@ -10,11 +10,12 @@ import tkinter.ttk as ttk
 import lr_lib.core.var.vars as lr_vars
 import lr_lib.core.wrsp.files as lr_files
 import lr_lib.core.etc.other as lr_other
+import lr_lib.gui.etc.gui_other as lr_gui_other
 import lr_lib.gui.widj.tooltip as lr_tooltip
 import lr_lib.gui.widj.dialog as lr_dialog
 
 
-def folder_wind(self, mx=150) -> None:
+def folder_wind(self, *a, mx=150) -> None:
     '''окно списка всех файлов'''
     top = tk.Toplevel()
     top.transient(self)
@@ -38,6 +39,7 @@ def folder_wind(self, mx=150) -> None:
         comboAllFilesFolder.configure(width=mx)
     buttonAllFilesFolder.pack()
     comboAllFilesFolder.pack()
+    lr_gui_other.center_widget(top)
 
 
 def enc_wind(self) -> None:
@@ -53,6 +55,7 @@ def enc_wind(self) -> None:
     encodeEntry.bind("<<ComboboxSelected>>", lambda *a: self.comboFiles_change())
     lr_tooltip.createToolTip(encodeEntry, tt)
     encodeEntry.pack()
+    lr_gui_other.center_widget(top)
 
 
 def pool_wind(self) -> None:
@@ -135,6 +138,8 @@ def pool_wind(self) -> None:
 
     if lr_vars.T_POOL_NAME == 'SThreadPool(threading.Thread)':
         pool_state_updater(self)
+
+    lr_gui_other.center_widget(top)
 
 
 @lr_vars.T_POOL_decorator
