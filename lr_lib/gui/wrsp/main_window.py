@@ -604,28 +604,3 @@ class Window(ttk.Frame):
         '''если открыто несколько action онон, какое вернуть'''
         for action in self.action_windows:
             return self.action_windows[action]
-
-    def auto_update_action_pool_lab(self, id_: int) -> None:
-        '''обновление action.label с процентами и пулом'''
-        act = self.action_windows.get(id_)
-        if not act:
-            return
-
-        tpl = lr_vars.T_POOL
-        if hasattr(tpl.pool, '_qsize'):
-            pt = 'T(qi)\n{t}({q_in})'.format(t=tpl._size, q_in=tpl.pool._qsize)
-        else:
-            pt = 'T={t}'.format(t=tpl._size)
-
-        mpl = lr_vars.M_POOL
-        if hasattr(mpl.pool, '_qsize'):
-            pm = 'M(qi)\n{mp}({q_in})'.format(mp=mpl._size, q_in=mpl.pool._qsize)
-        else:
-            pm = 'M={mp}'.format(mp=mpl._size)
-
-        t = act.tk_text
-        act.scroll_lab2.config(text='{p:>3}%\n\npool:\n\n{pt}\n\n{pm}'.format(
-            p=round(int(t.linenumbers.linenum) / (t.highlight_lines._max_line_proc)), pt=pt, pm=pm))
-
-        # перезапуск
-        self.after(lr_vars.InfoLabelUpdateTime.get(), self.auto_update_action_pool_lab, id_)

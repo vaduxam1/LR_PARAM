@@ -276,7 +276,10 @@ class ActionWindow(tk.Toplevel):
         lr_a_tooltips.set_all_action_window_tooltip(self)  # создать все tooltip окна
         lr_a_grid.grid_widj(self)  # grid виджетов action.с окна
 
-        lr_vars.Window.auto_update_action_pool_lab(self.id_)
+        auto_update_action_info_lab(
+            self.scroll_lab2.config, self.tk_text, self.id_,
+            lr_vars.InfoLabelUpdateTime.get(), lr_vars.Window.action_windows.__contains__)
+
         self.open_action()  # action текст
 
     def legend(self) -> None:
@@ -442,9 +445,15 @@ class ActionWindow(tk.Toplevel):
     def on_closing(self) -> None:
         '''спросить, при закрытии окна'''
         if messagebox.askokcancel("Закрыть action.c", "Закрыть action.c ?", parent=self):
-            self.backup()
-            del lr_vars.Window.action_windows[self.id_]
             self.destroy()
+
+    def destroy(self):
+        '''выход'''
+        self.backup()
+        with contextlib.suppress(KeyError):
+            del lr_vars.Window.action_windows[self.id_]
+
+        return super().destroy()
 
     def search_down(self, *a) -> None:
         '''поиск вниз, по тексту action.c'''
@@ -1135,3 +1144,34 @@ def get_action_file(file='action.c') -> str:
             return action_file
         else:
             return ''
+
+
+tta = '{p:>3}%\n\npool:\n\n{pt}\n\n{pm}'.format
+ttt1 = 'T(qi)\n{t}({q_in})'.format
+ttt2 = 'T={t}'.format
+ttm1 = 'M(qi)\n{mp}({q_in})'.format
+ttm2 = 'M={mp}'.format
+
+
+def auto_update_action_info_lab(config, tk_kext, id_: int, timeout: int, check_run: callable,
+                                restart=lr_vars.Tk.after) -> None:
+    '''обновление action.label с процентами и пулом'''
+    if not check_run(id_):
+        return
+
+    tpl = lr_vars.T_POOL
+    try:
+        pt = ttt1(q_in=tpl.pool._qsize, t=tpl._size)
+    except AttributeError:  # tpl.pool._qsize
+        pt = ttt2(t=tpl._size)
+
+    mpl = lr_vars.M_POOL
+    try:
+        pm = ttm1(q_in=mpl.pool._qsize, mp=mpl._size)
+    except AttributeError:  # mpl.pool._qsize
+        pm = ttm2(mp=mpl._size)
+
+    config(text=tta(p=round(int(tk_kext.linenumbers.linenum) // tk_kext.highlight_lines._max_line_proc), pt=pt, pm=pm))
+
+    # перезапуск
+    restart(timeout, auto_update_action_info_lab, config, tk_kext, id_, timeout, check_run)

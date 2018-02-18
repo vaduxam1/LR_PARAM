@@ -46,6 +46,8 @@ class SThreadIOQueue:
 
 class SThread(threading.Thread, SThreadIOQueue):
     '''worker поток Thread пула'''
+    __slots__ = ('task', 'pool', )
+
     def __init__(self, queue_in: PriorityQueue, pool=None):
         threading.Thread.__init__(self)
         SThreadIOQueue.__init__(self, queue_in)
@@ -60,25 +62,36 @@ class SThread(threading.Thread, SThreadIOQueue):
         '''worker-поток, выполнять task из queue_in, при простое выйти'''
         pool = self.pool  # SThreadPool
         threads = pool.threads  # потоки
-        task_get = self.task_get  # получить задачу
-        task_done = self.task_done  # поток незанят
+        task_get = self.task_get
+        task_done = self.task_done
         timeout = lr_vars.SThreadExitTimeout.get()
         size_min = lr_vars.SThreadPoolSizeMin.get()
 
         try:
             while pool.working:
                 try:
-                    (_, execute_task) = task_get(timeout=timeout)
-                    self.task = is_work
+                    (count, execute_task) = task_get(timeout=timeout)  # получить задачу
+
+                except Empty:  # таймаут бездействия
+                    if len(threads) > size_min:
+                        return
+                    else:
+                        continue
+                except Exception as ex:
+                    return lr_excepthook.excepthook(ex)
+
+                else:
+                    self.task = is_work  # поток занят
                     try:
                         execute_task()  # выполнить задачу
+                        continue
                     except Exception as ex:
-                        return '' if (execute_task is None) else lr_excepthook.excepthook(ex)  # выход
+                        if execute_task is not None:  # ошибка/выход
+                            lr_excepthook.excepthook(ex)
+                        return
                     finally:
-                        self.task = task_done()
-                except Empty:  # таймаут
-                    if len(threads) > size_min:
-                        return None
+                        self.task = task_done()  # поток свободен
+
         finally:  # выход потока
             self.task = pool.remove_thread(self)
 

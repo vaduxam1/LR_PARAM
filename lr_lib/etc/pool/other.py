@@ -1,7 +1,6 @@
 # -*- coding: UTF-8 -*-
 # примеры разных пулов потоков
 
-import sys
 import asyncio
 import queue
 
