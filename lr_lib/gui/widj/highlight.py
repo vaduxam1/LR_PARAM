@@ -11,6 +11,8 @@ import lr_lib.core.var.vars as lr_vars
 import lr_lib.core.etc.other as lr_other
 
 Lock = threading.Lock()
+Acquire = Lock.acquire
+Release = Lock.release
 
 
 class HighlightLines:
@@ -27,21 +29,19 @@ class HighlightLines:
         self._max_line_proc = (self._max_line / 100)
 
         if lr_vars.LineTagAddThread.get():
-            self.tags_highlight = lr_vars.T_POOL_decorator(self.tegs_add)
+            self.tags_highlight = lr_vars.T_POOL_decorator(tegs_add)
         else:
-            self.tags_highlight = self.tegs_add
+            self.tags_highlight = tegs_add
 
-        tag_add = self.tk_text.tag_add
-        acquire = Lock.acquire
-        release = Lock.release
+        TagAdd = self.tk_text.tag_add  # команда подсветки
 
         def tag_add_threadsafe(*a, **kw) -> None:
             '''подсветка одного слова, безопасная для потока'''
-            acquire()
+            Acquire()
             try:
-                tag_add(*a, **kw)
+                TagAdd(*a, **kw)
             finally:
-                release()
+                Release()
 
         if lr_vars.TagAddThread.get():
             self.highlight_cmd = lr_vars.T_POOL_decorator(tag_add_threadsafe)
@@ -49,9 +49,9 @@ class HighlightLines:
             self.highlight_cmd = tag_add_threadsafe
 
         if lr_vars.HighlightThread.get():
-            self.highlight_line_nums = lr_vars.T_POOL_decorator(self._highlight_line_nums)
+            self.highlight_line_nums = lr_vars.T_POOL_decorator(_highlight_line_nums)
         else:
-            self.highlight_line_nums = self._highlight_line_nums
+            self.highlight_line_nums = _highlight_line_nums
 
         self.execute = lr_vars.M_POOL.imap_unordered if lr_vars.HighlightMPool.get() else map
         self.PortionSize = lr_vars.HighlightLinesPortionSize.get()
@@ -60,47 +60,52 @@ class HighlightLines:
         '''изменились ли self.top_line_num и self.bottom_line_num'''
         return (self.top_line_num != top) or (self.bottom_line_num != bottom)
 
-    def _highlight_line_nums(self, top: int, bottom: int, highlight_cmd: callable, exit: callable,
-                             tags_highlight: callable, lines: dict, chunks=lr_other.chunks) -> None:
-        '''получать индексы и подсвечивать on-screen линии текста, пока top и bottom не изменились'''
-        if exit(top, bottom):
-            return
-
-        line_nums = (range(top, bottom + 1) & lines.keys())
-        if not line_nums:
-            return
-
-        if exit(top, bottom):
-            return
-
-        for results in self.execute(search_lines_teg_indxs, chunks(
-                ((num, lines.get(num), self.tegs_names) for num in line_nums), self.PortionSize)):
-            for line_num, tag_indxs in results:
-                if exit(top, bottom):
-                    return
-
-                tags_highlight(tag_indxs, highlight_cmd)  # подсветить
-                lines.pop(line_num, None)  # больше не подсвечивать
-
-            if exit(top, bottom):
-                return
-
-    def tegs_add(self, teg_indxs: {str: {(str, str), }, }, highlight_cmd: callable) -> None:
-        '''подсветить одну линию, всеми тегами'''
-        for teg in teg_indxs:
-            for index_start, index_end in teg_indxs[teg]:
-                highlight_cmd(teg, index_start, index_end)
-
     def set_top_bottom(self, top: int, bottom: int) -> None:
         '''новые границы показанных линий'''
         self.top_line_num = top
         self.bottom_line_num = bottom
 
-        self.highlight_line_nums(top, bottom, self.highlight_cmd, self.is_on_screen_lines_change, self.tags_highlight,
-                                 self.on_screen_lines)
+        lines = self.on_screen_lines
+        self.highlight_line_nums(
+            top=top, bottom=bottom, highlight_cmd=self.highlight_cmd, exit=self.is_on_screen_lines_change,
+            tags_highlight=self.tags_highlight, tegs_names=self.tegs_names, PortionSize=self.PortionSize,
+            execute=self.execute, line_get=lines.get, line_delete=lines.pop, line_nums=lines.keys())
 
 
-def search_lines_teg_indxs(lines_portion: [(int, str, {str, (str,), }), ]) -> [(int, {str: {(str, str), }}), ]:
+def _highlight_line_nums(top: int, bottom: int, highlight_cmd: callable, exit: callable,
+                         tags_highlight: callable, tegs_names: dict, PortionSize: int, execute: callable,
+                         line_get: callable, line_delete: callable, line_nums: set, chunks=lr_other.chunks) -> None:
+    '''получать индексы и подсвечивать on-screen линии текста, пока top и bottom не изменились'''
+    if exit(top, bottom):
+        return
+
+    line_nums = (range(top, (bottom + 1)) & line_nums)
+    if not line_nums:
+        return
+
+    if exit(top, bottom):
+        return
+
+    for ln_ti in execute(lines_teg_indxs, chunks(((num, line_get(num), tegs_names) for num in line_nums), PortionSize)):
+        for (line_num, tag_indxs) in ln_ti:
+            if exit(top, bottom):
+                return
+
+            tags_highlight(tag_indxs, highlight_cmd)  # подсветить
+            line_delete(line_num, None)  # больше не подсвечивать
+
+        if exit(top, bottom):
+            return
+
+
+def tegs_add(teg_indxs: {str: {(str, str), }, }, highlight_cmd: callable) -> None:
+    '''подсветить одну линию, всеми тегами'''
+    for teg in teg_indxs:
+        for (index_start, index_end) in teg_indxs[teg]:
+            highlight_cmd(teg, index_start, index_end)
+
+
+def lines_teg_indxs(lines_portion: [(int, str, {str, (str,), }), ]) -> [(int, {str: {(str, str), }}), ]:
     '''вычислить координаты подсветки линии, для порции линий'''
     return tuple(find_tag_indxs(*arg) for arg in lines_portion)
 
@@ -124,28 +129,34 @@ def join_indxs(indxs: {int, }) -> iter((int, int),):
         yield i_start, i_end
 
 
+ColorMainTegStartswith = lr_vars.ColorMainTegStartswith
+OliveChildTeg = lr_vars.OliveChildTeg
+
+
 def find_tag_indxs(line_num: int, line: str, tag_names: {str: {(str, int), }, }) -> (int, {str: [(str, str), ], }):
     '''вычислить координаты подсветки линии'''
     line_indxs = {}
 
     if line:
-        genetate_line_tags_names_indxs(line, line_indxs, tag_names)
-        genetate_line_tags_purct_etc_indxs(line, line_indxs)
+        setdefault = line_indxs.setdefault
+        genetate_line_tags_names_indxs(line, setdefault, tag_names)
+        genetate_line_tags_purct_etc_indxs(line, setdefault)
 
         bg_indxs = set()
+        bg_update = bg_indxs.update
         for teg in line_indxs:
             indxs = set(line_indxs[teg])
             line_indxs[teg] = indxs
-            if teg.startswith(lr_vars.ColorMainTegStartswith):
-                bg_indxs.update(indxs)
+            if teg.startswith(ColorMainTegStartswith):
+                bg_update(indxs)
 
         for teg in line_indxs:
-            if not teg.startswith(lr_vars.ColorMainTegStartswith):
+            if not teg.startswith(ColorMainTegStartswith):
                 line_indxs[teg] -= bg_indxs
 
-        if lr_vars.OliveChildTeg in line_indxs:
+        if OliveChildTeg in line_indxs:
             other_tegs = (line_indxs.keys() - lr_vars.minus_teg)
-            line_indxs[lr_vars.OliveChildTeg] -= set(itertools.chain(*map(line_indxs.__getitem__, other_tegs)))
+            line_indxs[OliveChildTeg] -= set(itertools.chain(*map(line_indxs.__getitem__, other_tegs)))
 
         line_indxs = {k: [set_tk_indxs(line_num, i_start, i_end) for (i_start, i_end) in join_indxs(indxs)]
                       for (k, indxs) in line_indxs.items() if indxs}
@@ -153,40 +164,46 @@ def find_tag_indxs(line_num: int, line: str, tag_names: {str: {(str, int), }, })
     return line_num, line_indxs
 
 
-def genetate_line_tags_names_indxs(line: str, line_indxs: dict, teg_names: {str: {(str,int)}}) -> None:
+ForceOlive = lr_vars.ForceOlive
+
+
+def genetate_line_tags_names_indxs(line: str, setdefault: callable, teg_names: {str: {(str,int)}}) -> None:
     '''индексы tags для подсветки, для линии - слова из словаря'''
-    olive_callback = line_indxs.setdefault(lr_vars.OliveChildTeg, []).extend
+    olive_callback = setdefault(OliveChildTeg, []).extend
+    find = line.find
 
     for tag in teg_names:
-        teg_callback = line_indxs.setdefault(tag, []).extend
-        for name, len_name in teg_names[tag]:
+        teg_callback = setdefault(tag, []).extend
+        for (name, len_name) in teg_names[tag]:
             index = -1
 
             while True:
-                index = line.find(name, index + 1)  # найти
+                index = find(name, (index + 1))  # найти
                 if index == -1:
                     break
 
                 i = range(index, (index + len_name))
-                if any(map(line[index:].startswith, lr_vars.ForceOlive)):
+                if any(map(line[index:].startswith, ForceOlive)):
                     olive_callback(i)
                 else:
                     teg_callback(i)
 
 
-punctuation_digits = set(string.punctuation + string.digits).__contains__
-whitespace_letters = set(string.whitespace + string.ascii_letters).__contains__
+punctuation_digits = set(string.punctuation + string.digits)
+whitespace_letters = set(string.whitespace + string.ascii_letters)
+RusTag = lr_vars.RusTag
+PunctDigitTag = lr_vars.PunctDigitTag
 
 
-def genetate_line_tags_purct_etc_indxs(line: str, line_indxs: dict) -> None:
+def genetate_line_tags_purct_etc_indxs(line: str, setdefault: callable) -> None:
     '''индексы подсветки для линии - пунктуация, цифры и не ASCII'''
-    punct_digit_callback = line_indxs.setdefault(lr_vars.PunctDigitTag, []).append
-    rus_callback = line_indxs.setdefault(lr_vars.RusTag, []).append
+    punct_digit_callback = setdefault(PunctDigitTag, []).append
+    rus_callback = setdefault(RusTag, []).append
 
-    for index, symbol in enumerate(line):
-        if whitespace_letters(symbol):
+    for (index, symbol) in enumerate(line):
+        if symbol in whitespace_letters:
             continue
-        elif punctuation_digits(symbol):
+        elif symbol in punctuation_digits:
             punct_digit_callback(index)
         else:
             rus_callback(index)
