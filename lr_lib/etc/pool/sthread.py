@@ -1,7 +1,6 @@
 # -*- coding: UTF-8 -*-
 # SThread - пул потоков с авторазмером
 
-import sys
 import contextlib
 import threading
 
@@ -73,8 +72,8 @@ class SThread(threading.Thread, SThreadIOQueue):
                     self.task = is_work
                     try:
                         execute_task()  # выполнить задачу
-                    except Exception:
-                        return '' if (execute_task is None) else lr_excepthook.excepthook(*sys.exc_info())  # выход
+                    except Exception as ex:
+                        return '' if (execute_task is None) else lr_excepthook.excepthook(ex)  # выход
                     finally:
                         self.task = task_done()
                 except Empty:  # таймаут
@@ -84,6 +83,7 @@ class SThread(threading.Thread, SThreadIOQueue):
             self.task = pool.remove_thread(self)
 
     def __bool__(self) -> bool:
+        '''поток свободен/занят'''
         return bool(self.task)
 
 
