@@ -745,7 +745,7 @@ class ActionWindow(tk.Toplevel):
         '''group params поиск, с помощью re'''
         rs = ('\"(.+?)\"', '\'(.+?)\'', '=(.+?)\"', '=(.+?)\'')
         y = lr_dialog.YesNoCancel(['Найти', 'Отменить'], is_text='\n'.join(rs), parent=self,
-                                  text_before='Будет произведен поиск param',
+                                  text_before='Будет произведен поиск param: re.findall(regexp, action_text)',
                                   title='regexp {} шт.'.format(len(rs)),
                                   text_after='При необходимости - добавить/удалить')
         ans = y.ask()
