@@ -426,7 +426,7 @@ ENCODE_LIST = list(sorted(ENCODE_LIST))
 # пулы
 
 MainThreadUpdater = None  # выполнять callback из main потока # lr_lib.etc.pool.other.MainThreadUpdater
-MainThreadUpdateTime = tk.IntVar(value=500)  # интервал(мс) проверки очереди, callback(из потоков)
+MainThreadUpdateTime = tk.IntVar(value=1000)  # интервал(мс) проверки очереди, callback(из потоков)
 
 M_POOL = None  # пул процессов  # lr_lib.etc.pool.main_pool.POOL
 M_POOL_NAME = 'multiprocessing.Pool'  # тип основной пул
@@ -437,8 +437,8 @@ T_POOL = None  # пул потоков # lr_lib.etc.pool.main_pool.POOL
 T_POOL_NAME = 'SThreadPool(threading.Thread)'  # тип фоновый пул
 T_POOL_Size = 4  # фоновый T пул(int>2 / None), кроме SThreadPool
 # 'threading.Thread': SThreadPool - auto size
-SThreadAutoSizeTimeOut = tk.IntVar(value=750)  # отзывчивость(мсек) SThreadPool - период опроса, для изменения размера пула
-SThreadPoolSizeMin = tk.IntVar(value=1)  # SThreadPool min size
+SThreadAutoSizeTimeOut = tk.IntVar(value=1000)  # отзывчивость(мсек) SThreadPool - период опроса, для изменения размера пула
+SThreadPoolSizeMin = tk.IntVar(value=2)  # SThreadPool min size
 SThreadPoolSizeMax = tk.IntVar(value=T_POOL_Size*2)  # SThreadPool max size (int>2)
 SThreadPoolAddMinQSize = tk.IntVar(value=100)  # SThreadPool - минимальная длина очереди, для добавления, более чем одного потока, за раз
 SThreadPooMaxAddThread = tk.IntVar(value=2)  # SThreadPool - max число потоков, для добавления за один раз(до SThreadPoolSizeMax)
