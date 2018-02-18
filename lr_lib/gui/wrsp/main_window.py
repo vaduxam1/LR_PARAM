@@ -287,6 +287,8 @@ class Window(ttk.Frame):
         lr_w_tooltips.set_all_main_window_tooltip(self)  # создать все tooltip окна
         lr_w_grid.grid_widj(self)  # grid всех виджетов окна
 
+        self.auto_update_action_pool_lab()
+
     def spl_cbx_cmd_lb(self, *a) -> None:
         '''lb SplitList widj'''
         if lr_vars.VarSplitListLB.get():
@@ -629,3 +631,5 @@ class Window(ttk.Frame):
                 act.scroll_lab2.config(text='{p:>3}%\n\npool:\n\n{pt}\n\n{pm}'.format(
                     p=round(int(act.tk_text.linenumbers.linenum) / (act.tk_text.highlight_lines._max_line / 100)),
                     pt=pt, pm=pm))
+        # перезапуск
+        self.after(lr_vars.InfoLabelUpdateTime.get(), self.auto_update_action_pool_lab)

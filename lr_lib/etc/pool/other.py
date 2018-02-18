@@ -40,9 +40,6 @@ class MainThreadUpdater:
                 lr_excepthook.excepthook(*sys.exc_info())
                 continue
 
-        if lr_vars.Window:  # отображение всякого инфо
-            lr_vars.Window.auto_update_action_pool_lab()
-
         if self.working:  # перезапуск
             lr_vars.Tk.after(lr_vars.MainThreadUpdateTime.get(), self.queue_listener)
 
