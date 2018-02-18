@@ -78,8 +78,9 @@ class SThreadPool(SThreadIOQueue):
         self.parent = parent
         self.working = True
 
-        self.threads = []
-        self.size = size
+        self.threads = []  # workers
+        self.size = size  # размер пула
+        self._q_size = 0  # размер очереди
 
         for _ in range(self.size):
             self.add_thread()
@@ -109,9 +110,10 @@ class SThreadPool(SThreadIOQueue):
 
 def auto_size_SThreadPool(pool: SThreadPool, th_count=0) -> None:
     '''создать новый поток, если есть очередь, недостигнут maxsize, и все потоки заняты'''
-    qsize = pool.queue_in.qsize()
-    if qsize and (pool.size <= lr_vars.SThreadPoolSizeMax.get()) and all(th.task for th in pool.threads):
-        th_count = divmod(qsize, lr_vars.SThreadPoolAddMinQSize.get())[0]  # 1 поток на каждый MinQSize
+    pool._q_size = pool.queue_in.qsize()
+
+    if pool._q_size and (pool.size <= lr_vars.SThreadPoolSizeMax.get()) and all(th.task for th in pool.threads):
+        th_count = divmod(pool._q_size, lr_vars.SThreadPoolAddMinQSize.get())[0]  # 1 поток на каждый MinQSize
         if not th_count:
             th_count = 1
         else:

@@ -275,6 +275,8 @@ class ActionWindow(tk.Toplevel):
 
         lr_a_tooltips.set_all_action_window_tooltip(self)  # создать все tooltip окна
         lr_a_grid.grid_widj(self)  # grid виджетов action.с окна
+
+        lr_vars.Window.auto_update_action_pool_lab(self.id_)
         self.open_action()  # action текст
 
     def legend(self) -> None:

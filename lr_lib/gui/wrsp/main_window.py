@@ -287,8 +287,6 @@ class Window(ttk.Frame):
         lr_w_tooltips.set_all_main_window_tooltip(self)  # создать все tooltip окна
         lr_w_grid.grid_widj(self)  # grid всех виджетов окна
 
-        self.auto_update_action_pool_lab()
-
     def spl_cbx_cmd_lb(self, *a) -> None:
         '''lb SplitList widj'''
         if lr_vars.VarSplitListLB.get():
@@ -604,32 +602,30 @@ class Window(ttk.Frame):
 
     def get_main_action(self) -> lr_action.ActionWindow:
         '''если открыто несколько action онон, какое вернуть'''
-        try:
-            action = self.action_windows[next(iter(self.action_windows))]
-        except StopIteration:
-            pass  # нет action онон
-        else:
-            return action
+        for action in self.action_windows:
+            return self.action_windows[action]
 
-    def auto_update_action_pool_lab(self) -> None:
+    def auto_update_action_pool_lab(self, id_: int) -> None:
         '''обновление action.label с процентами и пулом'''
-        if self.action_windows:
-            for act in self.action_windows.values():
-                if not hasattr(act, 'scroll_lab2'):
-                    return
+        act = self.action_windows.get(id_)
+        if not act:
+            return
 
-                if hasattr(lr_vars.T_POOL.pool, 'queue_in'):
-                    pt = 'T:q_in\n{t} : {q_in}'.format(t=lr_vars.T_POOL._size, q_in=lr_vars.T_POOL.pool.queue_in.qsize())
-                else:
-                    pt = '  T\n  {t}'.format(t=lr_vars.T_POOL._size)
+        tpl = lr_vars.T_POOL
+        if hasattr(tpl.pool, '_q_size'):
+            pt = 'T(qi)\n{t}({q_in})'.format(t=tpl._size, q_in=tpl.pool._q_size)
+        else:
+            pt = 'T={t}'.format(t=tpl._size)
 
-                if hasattr(lr_vars.M_POOL.pool, 'queue_in'):
-                    pm = 'M:q_in\n{mp} : {q_in}'.format(mp=lr_vars.M_POOL._size, q_in=lr_vars.M_POOL.pool.queue_in.qsize())
-                else:
-                    pm = '  M {mp}'.format(mp=lr_vars.M_POOL._size)
+        mpl = lr_vars.M_POOL
+        if hasattr(mpl.pool, '_q_size'):
+            pm = 'M(qi)\n{mp}({q_in})'.format(mp=mpl._size, q_in=mpl.pool._q_size)
+        else:
+            pm = 'M={mp}'.format(mp=mpl._size)
 
-                act.scroll_lab2.config(text='{p:>3}%\n\npool:\n\n{pt}\n\n{pm}'.format(
-                    p=round(int(act.tk_text.linenumbers.linenum) / (act.tk_text.highlight_lines._max_line / 100)),
-                    pt=pt, pm=pm))
+        t = act.tk_text
+        act.scroll_lab2.config(text='{p:>3}%\n\npool:\n\n{pt}\n\n{pm}'.format(
+            p=round(int(t.linenumbers.linenum) / (t.highlight_lines._max_line_proc)), pt=pt, pm=pm))
+
         # перезапуск
-        self.after(lr_vars.InfoLabelUpdateTime.get(), self.auto_update_action_pool_lab)
+        self.after(lr_vars.InfoLabelUpdateTime.get(), self.auto_update_action_pool_lab, id_)

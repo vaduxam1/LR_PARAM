@@ -21,6 +21,7 @@ class HighlightLines:
         # неподсвеченные линии текста
         self.on_screen_lines = {num: line.rstrip() for (num, line) in enumerate(lines, start=1) if line.strip()}
         self._max_line = len(lines)  # номер последней линии
+        self._max_line_proc = (self._max_line / 100)
 
     def is_on_screen_lines_change(self, top: int, bottom: int) -> bool:
         '''изменились ли self.top_line_num и self.bottom_line_num'''
