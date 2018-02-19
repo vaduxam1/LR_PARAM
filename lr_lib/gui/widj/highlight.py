@@ -45,9 +45,9 @@ class HighlightLines:
             self.highlight_cmd = tag_add_threadsafe
 
         if lr_vars.HighlightThread.get():
-            self.highlight_line_nums = lr_vars.T_POOL_decorator(_highlight_line_nums)
+            self.highlight_lines = lr_vars.T_POOL_decorator(self._highlight_top_bottom_lines)
         else:
-            self.highlight_line_nums = _highlight_line_nums
+            self.highlight_lines = self._highlight_top_bottom_lines
 
         self.execute = lr_vars.M_POOL.imap_unordered if lr_vars.HighlightMPool.get() else map
         self.PortionSize = lr_vars.HighlightLinesPortionSize.get()
@@ -60,30 +60,34 @@ class HighlightLines:
         '''новые границы показанных линий'''
         self.top_line_num = top
         self.bottom_line_num = bottom
+        self._highlight_top_bottom_lines(top, bottom)
+
+    def _highlight_top_bottom_lines(self, top: int, bottom: int) -> None:
+        '''подсветить линии на экране'''
+        exit = self.is_on_screen_lines_change
+        if exit(top, bottom):
+            return
 
         lines = self.on_screen_lines
         with LockLine:
-            line_nums = lines.keys()
+            nums = lines.keys()
 
-        self.highlight_line_nums(
-            top=top, bottom=bottom, highlight_cmd=self.highlight_cmd, exit=self.is_on_screen_lines_change,
-            tags_highlight=self.tags_highlight, tegs_names=self.tegs_names, PortionSize=self.PortionSize,
-            execute=self.execute, line_get=lines.get, line_delete=lines.pop, line_nums=line_nums)
+        line_nums = (range(top, (bottom + 1)) & nums)
+        if not line_nums:
+            return
+        if exit(top, bottom):
+            return
+
+        _highlight_line_nums(
+            top=top, bottom=bottom, highlight_cmd=self.highlight_cmd, exit=exit, tags_highlight=self.tags_highlight,
+            tegs_names=self.tegs_names, PortionSize=self.PortionSize, execute=self.execute, line_get=lines.get,
+            line_delete=lines.pop, line_nums=line_nums)
 
 
 def _highlight_line_nums(top: int, bottom: int, highlight_cmd: callable, exit: callable,
                          tags_highlight: callable, tegs_names: dict, PortionSize: int, execute: callable,
                          line_get: callable, line_delete: callable, line_nums: set, chunks=lr_other.chunks) -> None:
     '''получать индексы и подсвечивать on-screen линии текста, пока top и bottom не изменились'''
-    if exit(top, bottom):
-        return
-
-    line_nums = (range(top, (bottom + 1)) & line_nums)
-    if not line_nums:
-        return
-    if exit(top, bottom):
-        return
-
     for ln_ti in execute(lines_teg_indxs, chunks(((num, line_get(num), tegs_names) for num in line_nums), PortionSize)):
         for (line_num, tag_indxs) in ln_ti:
             if exit(top, bottom):

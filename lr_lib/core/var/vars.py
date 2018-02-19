@@ -258,8 +258,8 @@ DefaultActionNoHighlightFontSlant = True  #
 # подсветка
 
 HighlightOn = True  # включить подсветку
-HighlightThread = tk.BooleanVar(value=False)  # выполнять в фоне, весь код подсветки
-LineTagAddThread = tk.BooleanVar(value=True)  # выполнять в фоне, код подсветки для одной линии
+HighlightThread = tk.BooleanVar(value=True)  # выполнять в фоне, весь код подсветки
+LineTagAddThread = tk.BooleanVar(value=False)  # выполнять в фоне, код подсветки для одной линии
 TagAddThread = tk.BooleanVar(value=False)  # выполнять в фоне, код подсветки для одного тега
 HighlightMPool = tk.BooleanVar(value=False)  # искать индексы для подсветки линий, в M_POOL
 HighlightLinesPortionSize = tk.IntVar(value=1)  # для скольки линий, искать индексы, за один проход/поток
