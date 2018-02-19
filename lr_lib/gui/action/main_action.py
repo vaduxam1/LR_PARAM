@@ -1147,9 +1147,9 @@ def get_action_file(file='action.c') -> str:
 
 
 tta = '{p:>3}%\n\npool:\n\n{pt}\n\n{pm}'.format
-ttt1 = 'T(qi)\n{t}({q_in})'.format
+ttt1 = 'T/qi\n{t}\n{q_in}'.format
 ttt2 = 'T={t}'.format
-ttm1 = 'M(qi)\n{mp}({q_in})'.format
+ttm1 = 'M/qi\n{mp}\n{q_in}'.format
 ttm2 = 'M={mp}'.format
 
 

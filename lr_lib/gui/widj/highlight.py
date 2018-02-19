@@ -3,16 +3,11 @@
 
 import string
 import itertools
-import threading
 
 import tkinter as tk
 
 import lr_lib.core.var.vars as lr_vars
 import lr_lib.core.etc.other as lr_other
-
-Lock = threading.Lock()
-Acquire = Lock.acquire
-Release = Lock.release
 
 
 class HighlightLines:
@@ -37,11 +32,7 @@ class HighlightLines:
 
         def tag_add_threadsafe(*a, **kw) -> None:
             '''подсветка одного слова, безопасная для потока'''
-            Acquire()
-            try:
-                TagAdd(*a, **kw)
-            finally:
-                Release()
+            TagAdd(*a, **kw)
 
         if lr_vars.TagAddThread.get():
             self.highlight_cmd = lr_vars.T_POOL_decorator(tag_add_threadsafe)
@@ -66,10 +57,12 @@ class HighlightLines:
         self.bottom_line_num = bottom
 
         lines = self.on_screen_lines
+        line_nums = lines.keys()
+
         self.highlight_line_nums(
             top=top, bottom=bottom, highlight_cmd=self.highlight_cmd, exit=self.is_on_screen_lines_change,
             tags_highlight=self.tags_highlight, tegs_names=self.tegs_names, PortionSize=self.PortionSize,
-            execute=self.execute, line_get=lines.get, line_delete=lines.pop, line_nums=lines.keys())
+            execute=self.execute, line_get=lines.get, line_delete=lines.pop, line_nums=line_nums)
 
 
 def _highlight_line_nums(top: int, bottom: int, highlight_cmd: callable, exit: callable,
@@ -83,10 +76,11 @@ def _highlight_line_nums(top: int, bottom: int, highlight_cmd: callable, exit: c
     if not line_nums:
         return
 
+    lines = tuple(chunks(((num, line_get(num), tegs_names) for num in line_nums), PortionSize))
     if exit(top, bottom):
         return
 
-    for ln_ti in execute(lines_teg_indxs, chunks(((num, line_get(num), tegs_names) for num in line_nums), PortionSize)):
+    for ln_ti in execute(lines_teg_indxs, lines):
         for (line_num, tag_indxs) in ln_ti:
             if exit(top, bottom):
                 return
@@ -131,6 +125,7 @@ def join_indxs(indxs: {int, }) -> iter((int, int),):
 
 ColorMainTegStartswith = lr_vars.ColorMainTegStartswith
 OliveChildTeg = lr_vars.OliveChildTeg
+minus_teg = lr_vars.minus_teg
 
 
 def find_tag_indxs(line_num: int, line: str, tag_names: {str: {(str, int), }, }) -> (int, {str: [(str, str), ], }):
@@ -155,7 +150,7 @@ def find_tag_indxs(line_num: int, line: str, tag_names: {str: {(str, int), }, })
                 line_indxs[teg] -= bg_indxs
 
         if OliveChildTeg in line_indxs:
-            other_tegs = (line_indxs.keys() - lr_vars.minus_teg)
+            other_tegs = (line_indxs.keys() - minus_teg)
             line_indxs[OliveChildTeg] -= set(itertools.chain(*map(line_indxs.__getitem__, other_tegs)))
 
         line_indxs = {k: [set_tk_indxs(line_num, i_start, i_end) for (i_start, i_end) in join_indxs(indxs)]
