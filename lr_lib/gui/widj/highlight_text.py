@@ -130,7 +130,10 @@ class HighlightText(tk.Text):
             self.set_tegs(remove=False, parent=self)
             self.set_tegs(remove=False, parent=self.action)
             self.highlight_lines = lr_highlight.HighlightLines(self, self.get_tegs_names())
+            self.action.HIGHLIGHT_ENABLE = True
             self.action.report_position()  # показать
+        else:
+            self.action.HIGHLIGHT_ENABLE = False
 
     def get_tegs_names(self) -> {str: {str,}}:
         '''_tegs_names + \\xCE\\xE1'''

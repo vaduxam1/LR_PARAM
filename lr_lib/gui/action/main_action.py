@@ -226,6 +226,7 @@ class ActionWindow(tk.Toplevel):
 
         self.force_ask_cbx = tk.Checkbutton(self.toolbar, text='Ask', font=lr_vars.DefaultFont, variable=self.force_ask_var,
                                             command=force_ask_cmd)
+
         self.highlight_cbx = tk.Checkbutton(self.cbx_bar, text='highlight', font=lr_vars.DefaultFont, background=lr_vars.Background,
                                             variable=self.tk_text.highlight_var, command=self.tk_text.set_highlight)
 
@@ -277,8 +278,9 @@ class ActionWindow(tk.Toplevel):
         lr_a_grid.grid_widj(self)  # grid виджетов action.с окна
 
         auto_update_action_info_lab(
-            self.scroll_lab2.config, self.tk_text, self.id_,
-            lr_vars.InfoLabelUpdateTime.get(), lr_vars.Window.action_windows.__contains__)
+            self=self, config=self.scroll_lab2.config, tk_kext=self.tk_text, id_=self.id_,
+            timeout=lr_vars.InfoLabelUpdateTime.get(), check_run=lr_vars.Window.action_windows.__contains__,
+            title=self.title, _set_title=self._set_title)
 
         self.open_action()  # action текст
 
@@ -391,13 +393,9 @@ class ActionWindow(tk.Toplevel):
 
     def report_position(self) -> None:
         '''при скролле tk.Text, вывести номера линий'''
-        top = int(self.tk_text.index("@0,0").split('.', 1)[0])
-        bottom = int(self.tk_text.index("@0,%d" % self.tk_text.winfo_height()).split('.', 1)[0])
-
-        self.title('{txt} lines[{top}:{bottom}] | {v} | undo(ctrl-z)/redo(ctrl-y)'.format(
-            txt=self._set_title(), top=top, bottom=bottom, v=lr_vars.VERSION))
-        if self.tk_text.highlight_var.get():  # подсветить линии
-            self.tk_text.highlight_lines.set_top_bottom(top, bottom)
+        top_bottom = (int(self.tk_text.index("@0,0").split('.', 1)[0]),
+                      int(self.tk_text.index("@0,%d" % self.tk_text.winfo_height()).split('.', 1)[0]))
+        self.tk_text.highlight_lines.set_top_bottom(top_bottom)
 
     def report_position_X(self, *argv) -> None:
         '''get (beginning of) first visible line'''
@@ -457,65 +455,74 @@ class ActionWindow(tk.Toplevel):
 
     def search_down(self, *a) -> None:
         '''поиск вниз, по тексту action.c'''
-        bhl = self.backgr_butt()
-        next(bhl)
-        i = len(list(self.search_res_combo['values']))
-        if i:
-            self._search_index += 1
-            if self._search_index >= i:
-                self._search_index = 0
-            self.search_res_combo.current(self._search_index)
-            self.tk_text_see()
-            self.tk_text._on_change()
-        next(bhl, None)
+        def func() -> None:
+            bhl = self.backgr_butt()
+            next(bhl)
+            i = len(list(self.search_res_combo['values']))
+            if i:
+                self._search_index += 1
+                if self._search_index >= i:
+                    self._search_index = 0
+                self.search_res_combo.current(self._search_index)
+                self.tk_text_see()
+                self.tk_text._on_change()
+            next(bhl, None)
+
+        lr_vars.MainThreadUpdater.submit(func)
 
     def search_up(self, *a) -> None:
         '''поиск вверх, по тексту action.c'''
-        bhl = self.backgr_butt()
-        next(bhl)
-        i = len(list(self.search_res_combo['values']))
-        if i:
-            self._search_index -= 1
-            if self._search_index < 0:
-                self._search_index = i - 1
-            self.search_res_combo.current(self._search_index)
-            self.tk_text_see()
-        next(bhl, None)
+        def func() -> None:
+            bhl = self.backgr_butt()
+            next(bhl)
+            i = len(list(self.search_res_combo['values']))
+            if i:
+                self._search_index -= 1
+                if self._search_index < 0:
+                    self._search_index = i - 1
+                self.search_res_combo.current(self._search_index)
+                self.tk_text_see()
+            next(bhl, None)
+
+        lr_vars.MainThreadUpdater.submit(func)
 
     def search_in_action(self, *a, word=None, hist=True) -> None:
         '''поиск в tk_text'''
-        if lr_vars.Window._block_:
-            return
+        def func(word=word, hist=hist) -> None:
+            if lr_vars.Window._block_:
+                return
 
-        bhl = self.backgr_butt()
-        next(bhl)
-        self._search_index = -1
-        self.search_res_combo.set('')
+            bhl = self.backgr_butt()
+            next(bhl)
+            self._search_index = -1
+            self.search_res_combo.set('')
 
-        if word is None:
-            word = self.search_entry.get()
-        else:
-            self.search_entry.set(word)
+            if word is None:
+                word = self.search_entry.get()
+            else:
+                self.search_entry.set(word)
 
-        if hist:
-            vals = list(self.search_entry['values'])
-            vals.reverse()
-            if word not in vals:
-                self.search_entry['values'] = (vals + [word])
-                self.search_entry.current(0)
+            if hist:
+                vals = list(self.search_entry['values'])
+                vals.reverse()
+                if word not in vals:
+                    self.search_entry['values'] = (vals + [word])
+                    self.search_entry.current(0)
 
-        self.search_res_combo['values'] = self._search_text(word=word)
-        _, a, b = lr_tooltip.widget_values_counter(self.search_res_combo)
-        self.up_search_button['text'] = self._uptext % '{0}/{1}'.format(a, b)
+            self.search_res_combo['values'] = self._search_text(word=word)
+            _, a, b = lr_tooltip.widget_values_counter(self.search_res_combo)
+            self.up_search_button['text'] = self._uptext % '{0}/{1}'.format(a, b)
 
-        if not self.search_res_combo['values']:
-            return lr_vars.Logger.warning('в action.c тексте не найдено:\nword="{w}"\ntype={t}\nlen={ln}'.format(
-                w=word, t=type(word), ln=(len(word) if hasattr(word, '__len__') else None)), parent=self)
-        else:
-            self.search_res_combo.current(0)
-            self.tk_text_see()
+            if not self.search_res_combo['values']:
+                return lr_vars.Logger.warning('в action.c тексте не найдено:\nword="{w}"\ntype={t}\nlen={ln}'.format(
+                    w=word, t=type(word), ln=(len(word) if hasattr(word, '__len__') else None)), parent=self)
+            else:
+                self.search_res_combo.current(0)
+                self.tk_text_see()
 
-        next(bhl, None)
+            next(bhl, None)
+
+        lr_vars.MainThreadUpdater.submit(func)
 
     def backgr_butt(self) -> iter:
         '''менять/вернуть цвет кнопок'''
@@ -1151,13 +1158,18 @@ ttt1 = 'T/qi\n{t}\n{q_in}'.format
 ttt2 = 'T={t}'.format
 ttm1 = 'M/qi\n{mp}\n{q_in}'.format
 ttm2 = 'M={mp}'.format
+ttl = '{txt} lines[{top}:{bottom}] | {v} | undo(ctrl-z)/redo(ctrl-y)'.format
 
 
-def auto_update_action_info_lab(config, tk_kext, id_: int, timeout: int, check_run: callable,
-                                restart=lr_vars.Tk.after) -> None:
+def auto_update_action_info_lab(self, config, tk_kext, id_: int, timeout: int, check_run: callable, title: callable,
+                                _set_title: callable, restart=lr_vars.Tk.after, ver=lr_vars.VERSION) -> None:
     '''обновление action.label с процентами и пулом'''
     if not check_run(id_):
         return
+
+    highlight_lines = tk_kext.highlight_lines
+    (top, bottom) = highlight_lines.on_srean_line_nums
+    title(ttl(txt=_set_title(), top=top, bottom=bottom, v=ver))
 
     tpl = lr_vars.T_POOL
     try:
@@ -1171,7 +1183,7 @@ def auto_update_action_info_lab(config, tk_kext, id_: int, timeout: int, check_r
     except AttributeError:  # mpl.pool._qsize
         pm = ttm2(mp=mpl._size)
 
-    config(text=tta(p=round(int(tk_kext.linenumbers.linenum) // tk_kext.highlight_lines._max_line_proc), pt=pt, pm=pm))
+    config(text=tta(p=round(int(tk_kext.linenumbers.linenum) // highlight_lines._max_line_proc), pt=pt, pm=pm))
 
     # перезапуск
-    restart(timeout, auto_update_action_info_lab, config, tk_kext, id_, timeout, check_run)
+    restart(timeout, auto_update_action_info_lab, self, config, tk_kext, id_, timeout, check_run, title, _set_title)

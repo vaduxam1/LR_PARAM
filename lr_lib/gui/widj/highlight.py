@@ -19,8 +19,7 @@ class HighlightLines:
     def __init__(self, tk_text, tegs_names: {str, (str, ), }):
         self.tk_text = tk_text
         self.tegs_names = tegs_names
-        self.top_line_num = 1  # on screen line num
-        self.bottom_line_num = 1  # on screen line num
+        self.on_srean_line_nums = (0, 0)  # on screen line nums
         lines = self.tk_text.get(1.0, tk.END).lower().split('\n')
         # неподсвеченные линии текста
         self.on_screen_lines = {num: line.rstrip() for (num, line) in enumerate(lines, start=1) if line.strip()}
@@ -52,52 +51,54 @@ class HighlightLines:
         self.execute = lr_vars.M_POOL.imap_unordered if lr_vars.HighlightMPool.get() else map
         self.PortionSize = lr_vars.HighlightLinesPortionSize.get()
 
-    def is_on_screen_lines_change(self, top: int, bottom: int) -> bool:
-        '''изменились ли self.top_line_num и self.bottom_line_num'''
-        return (self.top_line_num != top) or (self.bottom_line_num != bottom)
+        # выполнять подсветку
+        self.HIGHLIGHT_ENABLE = self.tk_text.highlight_var.get()
 
-    def set_top_bottom(self, top: int, bottom: int) -> None:
+    def is_on_screen_lines_change(self, on_srean_line_nums: (int, int)) -> bool:
+        '''изменились ли self.on_srean_line_nums'''
+        return self.on_srean_line_nums != on_srean_line_nums
+
+    def set_top_bottom(self, on_srean_line_nums: (int, int)) -> None:
         '''новые границы показанных линий'''
-        self.top_line_num = top
-        self.bottom_line_num = bottom
-        self._highlight_top_bottom_lines(top, bottom)
+        self.on_srean_line_nums = on_srean_line_nums
+        if self.HIGHLIGHT_ENABLE:  # подсветить(в потоке)
+            self._highlight_top_bottom_lines(on_srean_line_nums)
 
-    def _highlight_top_bottom_lines(self, top: int, bottom: int) -> None:
+    def _highlight_top_bottom_lines(self, on_srean_line_nums: (int, int)) -> None:
         '''подсветить линии на экране'''
         exit = self.is_on_screen_lines_change
-        if exit(top, bottom):
+        if exit(on_srean_line_nums):
             return
 
         lines = self.on_screen_lines
         with LockLine:
             nums = lines.keys()
 
+        top, bottom = on_srean_line_nums
         line_nums = (range(top, (bottom + 1)) & nums)
-        if not line_nums:
-            return
-        if exit(top, bottom):
+        if (not line_nums) or exit(on_srean_line_nums):
             return
 
         _highlight_line_nums(
-            top=top, bottom=bottom, highlight_cmd=self.highlight_cmd, exit=exit, tags_highlight=self.tags_highlight,
-            tegs_names=self.tegs_names, PortionSize=self.PortionSize, execute=self.execute, line_get=lines.get,
-            line_delete=lines.pop, line_nums=line_nums)
+            on_srean_line_nums=on_srean_line_nums, highlight_cmd=self.highlight_cmd, exit=exit,
+            tags_highlight=self.tags_highlight, tegs_names=self.tegs_names, PortionSize=self.PortionSize,
+            execute=self.execute, line_get=lines.get, line_delete=lines.pop, line_nums=line_nums)
 
 
-def _highlight_line_nums(top: int, bottom: int, highlight_cmd: callable, exit: callable,
+def _highlight_line_nums(on_srean_line_nums: (int, int), highlight_cmd: callable, exit: callable,
                          tags_highlight: callable, tegs_names: dict, PortionSize: int, execute: callable,
                          line_get: callable, line_delete: callable, line_nums: set, chunks=lr_other.chunks) -> None:
     '''получать индексы и подсвечивать on-screen линии текста, пока top и bottom не изменились'''
     for ln_ti in execute(lines_teg_indxs, chunks(((num, line_get(num), tegs_names) for num in line_nums), PortionSize)):
         for (line_num, tag_indxs) in ln_ti:
-            if exit(top, bottom):
+            if exit(on_srean_line_nums):
                 return
 
             tags_highlight(tag_indxs, highlight_cmd)  # подсветить
             with LockLine:
                 line_delete(line_num, None)  # больше не подсвечивать
 
-        if exit(top, bottom):
+        if exit(on_srean_line_nums):
             return
 
 
