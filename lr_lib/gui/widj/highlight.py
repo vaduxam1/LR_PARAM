@@ -3,11 +3,15 @@
 
 import string
 import itertools
+import threading
 
 import tkinter as tk
 
 import lr_lib.core.var.vars as lr_vars
 import lr_lib.core.etc.other as lr_other
+
+LockTagAdd = threading.Lock()
+LockLine = threading.Lock()
 
 
 class HighlightLines:
@@ -32,7 +36,8 @@ class HighlightLines:
 
         def tag_add_threadsafe(*a, **kw) -> None:
             '''подсветка одного слова, безопасная для потока'''
-            TagAdd(*a, **kw)
+            with LockTagAdd:
+                TagAdd(*a, **kw)
 
         if lr_vars.TagAddThread.get():
             self.highlight_cmd = lr_vars.T_POOL_decorator(tag_add_threadsafe)
@@ -57,7 +62,8 @@ class HighlightLines:
         self.bottom_line_num = bottom
 
         lines = self.on_screen_lines
-        line_nums = lines.keys()
+        with LockLine:
+            line_nums = lines.keys()
 
         self.highlight_line_nums(
             top=top, bottom=bottom, highlight_cmd=self.highlight_cmd, exit=self.is_on_screen_lines_change,
@@ -75,18 +81,17 @@ def _highlight_line_nums(top: int, bottom: int, highlight_cmd: callable, exit: c
     line_nums = (range(top, (bottom + 1)) & line_nums)
     if not line_nums:
         return
-
-    lines = tuple(chunks(((num, line_get(num), tegs_names) for num in line_nums), PortionSize))
     if exit(top, bottom):
         return
 
-    for ln_ti in execute(lines_teg_indxs, lines):
+    for ln_ti in execute(lines_teg_indxs, chunks(((num, line_get(num), tegs_names) for num in line_nums), PortionSize)):
         for (line_num, tag_indxs) in ln_ti:
             if exit(top, bottom):
                 return
 
             tags_highlight(tag_indxs, highlight_cmd)  # подсветить
-            line_delete(line_num, None)  # больше не подсвечивать
+            with LockLine:
+                line_delete(line_num, None)  # больше не подсвечивать
 
         if exit(top, bottom):
             return
