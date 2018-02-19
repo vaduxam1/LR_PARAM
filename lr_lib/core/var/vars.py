@@ -17,7 +17,7 @@ from lr_lib.etc.help import (COLORS, HEX, )
 #####################################
 # главные переменные
 
-VERSION = 'v10.3.3'
+VERSION = 'v10.3.4'
 lib_folder = 'lr_lib'
 Tk = tk.Tk()  # tkinter
 
@@ -438,7 +438,7 @@ T_POOL_NAME = 'SThreadPool(threading.Thread)'  # тип фоновый пул
 T_POOL_Size = 4  # фоновый T пул(int>2 / None), кроме SThreadPool
 # 'threading.Thread': SThreadPool - auto size
 SThreadAutoSizeTimeOut = tk.IntVar(value=1000)  # отзывчивость(мсек) SThreadPool - период опроса, для изменения размера пула
-SThreadPoolSizeMin = tk.IntVar(value=3)  # SThreadPool min size
+SThreadPoolSizeMin = tk.IntVar(value=2)  # SThreadPool min size
 SThreadPoolSizeMax = tk.IntVar(value=(T_POOL_Size * 2))  # SThreadPool max size (int>2)
 SThreadPoolAddMinQSize = tk.IntVar(value=100)  # SThreadPool - минимальная длина очереди, для добавления, более чем одного потока, за раз
 SThreadPooMaxAddThread = tk.IntVar(value=2)  # SThreadPool - max число потоков, для добавления за один раз(до SThreadPoolSizeMax)
