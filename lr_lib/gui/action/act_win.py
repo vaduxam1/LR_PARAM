@@ -13,12 +13,10 @@ from tkinter import messagebox
 import lr_lib.gui.action.act_other as lr_act_other
 import lr_lib.gui.widj.legend as lr_legend
 import lr_lib.gui.widj.dialog as lr_dialog
-import lr_lib.gui.etc.group_param as lr_group_param
 import lr_lib.core.var.vars as lr_vars
 import lr_lib.core.wrsp.param as lr_param
 import lr_lib.core.action.main_awal as lr_main_awal
 import lr_lib.core.etc.other as lr_other
-import lr_lib.core.etc.lbrb_checker as lr_lbrb_checker
 import lr_lib.etc.template as lr_template
 
 
@@ -292,88 +290,6 @@ class ActWin(ActToplevel,
                 t_name = line.rsplit('"', 1)[0]
                 yield t_name[3:]
 
-    def group_param_search_quotes(self, r=r'=(.+?)\"') -> iter((str,)):
-        '''поиск param, внутри кавычек'''
-
-        def get_params() -> iter((str,)):
-            for web_ in self.web_action.get_web_snapshot_all():
-                params = re.findall(r, web_.get_body())
-                yield from filter(bool, map(str.strip, params))
-
-        for param in get_params():
-            if all(map(lr_param.wrsp_allow_symb.__contains__, param)):  # не содержит неподходящих символов
-                yield param
-
-    @lr_vars.T_POOL_decorator
-    def auto_param_creator(self, *a) -> None:
-        '''group params по кнопке PARAM'''
-        y = lr_dialog.YesNoCancel(['Найти', 'Отменить'], is_text='\n'.join(lr_vars.Params_names), parent=self,
-                                  text_before='Будет произведен поиск param, имя которых начинается на указанные имена.',
-                                  title='начало param-имен', text_after='При необходимости - добавить/удалить')
-        ans = y.ask()
-        if ans == 'Найти':
-            param_parts = list(filter(bool, map(str.strip, y.text.split('\n'))))
-
-            params = [self.session_params()]  # поиск по LB=
-            params.extend(map(self.group_param_search, param_parts))  # поиск по началу имени
-
-            params = set(p for ps in params for p in ps)
-            params = [p for p in params if ((p not in lr_vars.DENY_PARAMS) and (
-                not (len(p) > 2 and p.startswith('on') and p[2].isupper())))]
-            params.sort(key=lambda param: len(param), reverse=True)
-
-            y = lr_dialog.YesNoCancel(['Создать', 'Отменить'], is_text='\n'.join(params), parent=self,
-                                      text_before='создание + автозамена. %s шт' % len(params), title='Имена param',
-                                      text_after='При необходимости - добавить/удалить')
-            ans = y.ask()
-            if ans == 'Создать':
-                params = list(filter(bool, map(str.strip, y.text.split('\n'))))
-                lr_group_param.group_param(None, widget=self.tk_text, params=params, ask=False)
-
-    @lr_vars.T_POOL_decorator
-    def re_auto_param_creator(self, *a) -> None:
-        '''group params поиск, на основе регулярных выражений'''
-        y = lr_dialog.YesNoCancel(['Найти', 'Отменить'], is_text='\n'.join(lr_vars.REGEXP_PARAMS), parent=self,
-                                  text_before='Будет произведен поиск param: re.findall(regexp, action_text)',
-                                  title='regexp {} шт.'.format(len(lr_vars.REGEXP_PARAMS)),
-                                  text_after='При необходимости - добавить/удалить')
-        ans = y.ask()
-        if ans == 'Найти':
-            regexps = list(filter(bool, map(str.strip, y.text.split('\n'))))
-        else:
-            return
-
-        def deny_params(lst: list) -> [str, ]:
-            '''удалить не param-слова'''
-            for p in lst:
-                check = ((p not in lr_vars.DENY_PARAMS) and (
-                    not (len(p) > 2 and p.startswith('on') and p[2].isupper()))) and (len(p) > 2)
-                if check:
-                    for a in lr_vars.DENY_Startswitch_PARAMS:
-                        if p.startswith(a):
-                            check = not all(map(str.isnumeric, (p.split(a, 1)[1])))
-                            break
-                    if check:
-                        yield p
-
-        params = []
-        for r in regexps:
-            prs = list(set(self.group_param_search_quotes(r=r)))
-            prs = list(deny_params(prs))
-            params.extend(prs)
-
-        params = list(set(params))
-        if params:
-            params.sort(key=lambda param: len(param), reverse=True)
-            y = lr_dialog.YesNoCancel(['создать', 'Отменить'], is_text='\n'.join(params), parent=self,
-                                      text_before='Будет произведено создание param',
-                                      title='param {} шт.'.format(len(params)),
-                                      text_after='При необходимости - добавить/удалить')
-            ans = y.ask()
-            if ans == 'создать':
-                params = list(filter(bool, map(str.strip, y.text.split('\n'))))
-                lr_group_param.group_param(None, widget=self.tk_text, params=params, ask=False)
-
     def param_counter(self, all_param_info=False) -> str:
         '''подсчитать кол-во созданных web_reg_save_param'''
         self.wrsp_combo_set()
@@ -498,61 +414,6 @@ class ActWin(ActToplevel,
         if self.drop_infs or self.drop_files:
             lr_vars.Logger.debug('Отсутствует в action.c: inf: {il}, файлов : {fl} | Найдено: {ai} inf'.format(
                 il=len(self.drop_infs), fl=len(self.drop_files), ai=li), parent=self)
-
-    def session_params(self, lb_list=None, ask=True) -> list:
-        '''поиск param в action, по LB='''
-        if lb_list is None:
-            lb_list = lr_vars.LB_PARAM_FIND_LIST
-
-        if ask:
-            text = self.tk_text.get(1.0, tk.END)
-            lb_uuid = re.findall(r'uuid_\d=', text)
-            lb_col_count = re.findall(r'p_p_col_count=\d&', text)
-
-            text = '\n'.join(set(lb_list + lb_uuid + lb_col_count))
-            y = lr_dialog.YesNoCancel(buttons=['Найти', 'Пропуск'], text_before='найти param по LB=',
-                                      text_after='указать LB, с новой строки', is_text=text,
-                                      title='автозамена по LB=',
-                                      parent=self, default_key='Найти')
-            if y.ask() == 'Найти':
-                lb_list = y.text.split('\n')
-            else:
-                return []
-
-        params = []
-        for p in filter(bool, lb_list):
-            params.extend(self._group_param_search(p, part_mode=False))
-        return list(reversed(sorted(p for p in set(params) if p not in lr_vars.DENY_PARAMS)))
-
-    def group_param_search(self, param_part: "zkau_") -> ["zkau_5650", "zkau_5680", ]:
-        '''поиск в action.c, всех уникальных param, в имени которых есть param_part'''
-        params = list(set(self._group_param_search(param_part)))  # уникальных
-        params.sort(key=lambda param: len(param), reverse=True)
-        return params
-
-    def _group_param_search(self, param_part: "zkau_", part_mode=True) -> iter(("zkau_5650", "zkau_5680",)):
-        '''поиск в action.c, всех param, в имени которых есть param_part / или по LB'''
-        for web_ in self.web_action.get_web_snapshot_all():
-            split_text = web_.get_body().split(param_part)
-
-            for index in range(len(split_text) - 1):
-                left = split_text[index].rsplit('\n', 1)[-1].lstrip()
-                right = split_text[index + 1].split('\n', 1)[0].rstrip()
-
-                if lr_lbrb_checker.check_bound_lb(left) if part_mode else (right[0] in lr_param.wrsp_allow_symb):
-                    param = []  # "5680"
-
-                    for s in right:
-                        if s in lr_param.wrsp_allow_symb:
-                            param.append(s)
-                        else:
-                            break
-
-                    if param:
-                        param = ''.join(param)
-                        if part_mode:  # param_part или по LB
-                            param = param_part + param
-                        yield param  # "zkau_5680"
 
     def tk_text_dummy_remove(self, force=False, mode='') -> bool:
         '''удалить все dummy web_submit_data'''

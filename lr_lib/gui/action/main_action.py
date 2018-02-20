@@ -16,6 +16,7 @@ import lr_lib.gui.wrsp.top_wind as lr_top_wind
 import lr_lib.gui.widj.wrsp_setting as lr_wrsp_setting
 import lr_lib.gui.etc.action_lib as lr_action_lib
 import lr_lib.gui.etc.gui_other as lr_gui_other
+import lr_lib.gui.etc.group_param as lr_group_param
 import lr_lib.gui.etc.sub_menu as lr_sub_menu
 import lr_lib.core.var.vars as lr_vars
 import lr_lib.core.wrsp.param as lr_param
@@ -142,13 +143,13 @@ class ActionWindow(lr_act_win.ActWin):
         self.SearchReplace_searchCombo['values'] = ['']
         self.SearchReplace_replaceCombo['values'] = ['']
 
-        self.auto_param_creator_button = tk.Button(self.toolbar, text='Найти param LB=',
+        self.auto_param_creator_button = tk.Button(self.toolbar, text='Найти param LB=', background='orange',
                                                    font=lr_vars.DefaultFont + ' bold',
-                                                   command=self.auto_param_creator, background='orange')
+                                                   command=lambda: lr_group_param.auto_param_creator(self))
 
         self.re_auto_param_creator_button = tk.Button(self.toolbar, text='Найти param RegExp',
                                                       font=lr_vars.DefaultFont + ' bold',
-                                                      command=self.re_auto_param_creator, background='orange')
+                                                      command=lambda: lr_group_param.re_auto_param_creator(self))
 
         self.final_wnd_cbx = tk.Checkbutton(self.toolbar, text='final', font=lr_vars.DefaultFont,
                                             variable=self.final_wnd_var)

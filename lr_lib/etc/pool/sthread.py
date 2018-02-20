@@ -1,6 +1,7 @@
 # -*- coding: UTF-8 -*-
 # SThread - пул потоков с авторазмером
 
+import sys
 import contextlib
 import threading
 
@@ -23,10 +24,6 @@ class Task:
         self.args = args
         self.kwargs = kwargs
 
-    def execute(self) -> None:
-        '''выполнить задачу'''
-        self.target(*self.args, **self.kwargs)
-
 
 class SThreadIOQueue:
     '''priority_DeQueue_in'''
@@ -46,7 +43,7 @@ class SThreadIOQueue:
         '''выполнить target, последняя зашедшая, выполнится первой'''
         with LockC:
             self.count -= 1  # отрицательные - как dequeue при sort PriorityQueue
-        self.task_add((self.count, Task(target, args, kwargs).execute))
+        self.task_add((self.count, Task(target, args, kwargs)))
 
 
 class SThread(threading.Thread, SThreadIOQueue):
@@ -77,7 +74,7 @@ class SThread(threading.Thread, SThreadIOQueue):
         try:
             while pool.working:
                 try:
-                    (count, execute_task) = task_get(timeout=timeout)  # получить задачу
+                    (count, task) = task_get(timeout=timeout)  # получить задачу
 
                 except Empty:  # таймаут бездействия
                     with LockT:
@@ -91,11 +88,11 @@ class SThread(threading.Thread, SThreadIOQueue):
                 else:
                     self.task = is_work  # поток занят
                     try:
-                        execute_task()  # выполнить задачу
+                        task.target(*task.args, **task.kwargs)  # выполнить задачу
                         continue
-                    except Exception as ex:
-                        if execute_task is not None:  # ошибка/выход
-                            lr_excepthook.excepthook(ex)
+                    except Exception:
+                        if task is not None:  # ошибка
+                            lr_excepthook.excepthook(*sys.exc_info())
                         return
                     finally:
                         self.task = task_done()  # поток свободен
