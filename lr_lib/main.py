@@ -29,7 +29,7 @@ def _start(console_args=sys.argv):
         lr_core.console_start(echo=True)
     else:  # gui использование
         with lr_keyb.keyboard_listener():  # hotkey(param from clipboard)
-            lr_gui.init(mainloop_lock=True, action=True, auto_param_creator=False)  # lock=True
+            lr_gui.init(mainloop_lock=True, action=True)  # lock=True
 
     yield sys.exc_info()  # выход
     lr_vars.Logger.trace('Exit | console_args: {}'.format(console_args))

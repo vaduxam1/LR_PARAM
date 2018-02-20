@@ -84,6 +84,7 @@ class HighlightText(tk.Text):
     def _text_checkbox(self) -> (str, str, int, int):
         '''text checkbox's get,
         + дополнительно используется как self.__class__._text_checkbox(parent) - color/nocolor?'''
+
         w = ('bold' if self.weight_var.get() else 'normal')
         s = ('italic' if self.slant_var.get() else 'roman')
         u = (1 if self.underline_var.get() else 0)

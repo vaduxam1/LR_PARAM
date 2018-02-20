@@ -22,7 +22,7 @@ def excepthook(*args) -> None:
 
     ern = exc_type.__name__
     if lr_vars.Window:
-        lr_vars.Window.err_to_widgts(exc_type, exc_val, exc_tb, ern)
+        lr_vars.MainThreadUpdater.submit(lambda: lr_vars.Window.err_to_widgts(exc_type, exc_val, exc_tb, ern))
     lr_vars.Logger.critical(get_tb(exc_type, exc_val, exc_tb, ern))
 
 
