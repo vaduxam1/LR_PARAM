@@ -1,240 +1,341 @@
 # -*- coding: UTF-8 -*-
-# action.с окно
+# action.с окно - главный
 
 import os
-import contextlib
 
 import tkinter as tk
-import tkinter.ttk as ttk
 
-from tkinter import messagebox
-
-import lr_lib.gui.action.tooltips as lr_a_tooltips
 import lr_lib.gui.action.act_win as lr_act_win
-import lr_lib.gui.action.act_other as lr_act_other
-import lr_lib.gui.wrsp.top_wind as lr_top_wind
-import lr_lib.gui.widj.wrsp_setting as lr_wrsp_setting
-import lr_lib.gui.etc.action_lib as lr_action_lib
-import lr_lib.gui.etc.gui_other as lr_gui_other
-import lr_lib.gui.etc.group_param as lr_group_param
-import lr_lib.gui.etc.sub_menu as lr_sub_menu
-import lr_lib.core.var.vars as lr_vars
-import lr_lib.core.wrsp.param as lr_param
-import lr_lib.core.etc.other as lr_other
+import lr_lib.gui.widj.tooltip as lr_tooltip
 import lr_lib.etc.help as lr_help
+import lr_lib.core.var.vars as lr_vars
 
 
 class ActionWindow(lr_act_win.ActWin):
-    '''окно action.c'''
+    """окно action.c"""
 
     def __init__(self):
         lr_act_win.ActWin.__init__(self)
 
-        self.scroll_lab2 = ttk.Label(self, text='0 %', background=lr_vars.Background)
+        self.set_grid()  # расположить виджеты
+        self.set_tooltip()  # создать tooltip виджетов
 
-        self.help1 = tk.Label(self, text='?', foreground='grey')
-        self.help2 = tk.Label(self, text='?', foreground='grey')
-        self.help3 = tk.Label(self, text='?', foreground='grey')
+        self.open_action()  # открыть action текст
 
-        #
-        self.inf_combo = ttk.Combobox(self.inf_bar, justify='center', font=lr_vars.DefaultFont)
-        self.inf_combo.bind("<KeyRelease-Return>", self.goto_inf)
-        self.inf_combo.bind("<<ComboboxSelected>>", self.goto_inf)
+    def set_tooltip(self) -> None:
+        """создать все tooltip action окна"""
+        lr_tooltip.createToolTip(self.help1, lr_help.ACTION1)
+        lr_tooltip.createToolTip(self.help2, lr_help.ACTION2)
+        lr_tooltip.createToolTip(self.help3, lr_help.ACTION3)
 
-        #
-        self.wrsp_combo = ttk.Combobox(self.wrsp_bar, justify='center', font=lr_vars.DefaultFont)
+        lr_tooltip.createToolTip(
+            self.editor_button,
+            'открыть текст action в блокноте\n\t'
+            '# editor_button'
+        )
+        lr_tooltip.createToolTip(
+            self.btn_all_files,
+            'список всех файлов\n\t'
+            '# btn_all_files'
+        )
+        lr_tooltip.createToolTip(
+            self.lr_legend,
+            'окно web_ леленды\n\t'
+            '# lr_legend'
+        )
+        lr_tooltip.createToolTip(
+            self.wrsp_setting,
+            'настройки каментов и имени wrsp\n\t'
+            '# wrsp_setting'
+        )
+        lr_tooltip.createToolTip(
+            self.resp_btn,
+            'файлы ответов при записи и воспроизведении\n\t'
+            '# resp_btn'
+        )
+        lr_tooltip.createToolTip(
+            self.backup_entry,
+            'макс кол-во backup файлов(запись по кругу)\n'
+            'перед автозаменой, в директорию {}, делается action бэкап\n\t'
+            '# backup_entry'.format(os.path.join(os.getcwd(), lr_vars.BackupFolder))
+        )
+        lr_tooltip.createToolTip(
+            self.buttonColorReset,
+            'сбросить цвет текста\n\t'
+            '# buttonColorReset'
+        )
+        lr_tooltip.createToolTip(
+            self.highlight_Thread,
+            'выполнять в фоне, весь код подсветки\n\t'
+            '# highlight_Thread'
+        )
+        lr_tooltip.createToolTip(
+            self.highlight_LineThread,
+            'выполнять в фоне, код подсветки для одной линии\n\t'
+            '# highlight_LineThread'
+        )
+        lr_tooltip.createToolTip(
+            self.highlight_TagThread,
+            'выполнять в фоне, код подсветки для одного тега\n\t'
+            '# highlight_TagThread'
+        )
+        lr_tooltip.createToolTip(
+            self.highlight_MThread,
+            'искать индексы для подсветки линий, в M_POOL\n\t'
+            '# highlight_MThread'
+        )
+        lr_tooltip.createToolTip(
+            self.highlight_LinesPortionSize,
+            'для скольки линий, искать индексы, за один проход/поток\n\t'
+            '# highlight_LinesPortionSize'
+        )
+        lr_tooltip.createToolTip(
+            self.open_button,
+            'открыть action.c файл\n\t'
+            '# open_button'
+        )
+        lr_tooltip.createToolTip(
+            self.highlight_cbx,
+            'On - применить подсветку\n'
+            'Off - убрать подсветку\n'
+            'Чтобы применмть новую подсветку, необходимо снять/установить повторно\n\t'
+            '# highlight_cbx'
+        )
+        lr_tooltip.createToolTip(
+            self.search_res_combo,
+            'результаты(координаты) поиска слова в тексте action.c:\n'
+            '"201.33+2c" - [Строка].[Столбец]+[ДлинаСлова]c\nпри выборе - '
+            'переход в область,колесом мыши - переход между областями\n'
+            'учной ввод координат по <<Enter>>\n\t# search_res_combo'
+        )
+        lr_tooltip.createToolTip(
+            self.search_button,
+            'Поиск слова из search_entry в тексте action\n'
+            'результат - заполняет комбобокс координат search_res_combo\n\t'
+            '# search_button'
+        )
+        lr_tooltip.createToolTip(
+            self.search_entry,
+            'слово для поиска в тексте action\n\t'
+            '# search_entry'
+        )
+        lr_tooltip.createToolTip(
+            self.SearchReplace_searchCombo,
+            'слово, для замены\n\t'
+            '# SearchReplace_searchCombo'
+        )
+        lr_tooltip.createToolTip(
+            self.SearchReplace_replaceCombo,
+            'слово, на которое заменить\n\t'
+            '# SearchReplace_replaceCombo'
+        )
+        lr_tooltip.createToolTip(
+            self.SearchReplace_button,
+            'Найти и Заменить, для SearchReplace_комбобоксов\n'
+            'Обычная(как в блокноте) автозамена\n\t'
+            '# SearchReplace_button'
+        )
+        lr_tooltip.createToolTip(
+            self.up_search_button,
+            'перейти вверх, по результатам поиска\n\t'
+            '# up_search_button'
+        )
+        lr_tooltip.createToolTip(
+            self.down_search_button,
+            'перейти вниз, по результатам поиска\n\t'
+            '# down_search_button'
+        )
+        lr_tooltip.createToolTip(
+            self.backup_open_button,
+            'открыть бэкап файл, для текущего окна\n\t'
+            '# backup_open_button'
+        )
+        lr_tooltip.createToolTip(
+            self.force_ask_cbx,
+            'Автозамена - подтверждать любую замену.\n'
+            'Те показывать окно диалога подтверждения, для каждой замены.\n\t'
+            '# force_ask_cbx'
+        )
+        lr_tooltip.createToolTip(
+            self.no_cbx,
+            'Автозамена - Принудительно отвечать "Нет, для Всех" в вопросе замены,\n'
+            'В обычной ситуации, от пользователя, требуетcя подтверждение,\n'
+            'если заменяемое слово, является частью другого, более длинного слова\n'
+            'Например при замене "zkau_2", для "zkau_201", "zkau_20", "Azkau_2",...\n'
+            'В результате - не показывать окно диалога подтверждения.\n\t'
+            '# no_cbx'
+        )
+        lr_tooltip.createToolTip(
+            self.final_wnd_cbx,
+            'окно результата создания param\n'
+            'перед показом окна, будет сделан переход на web_reg_save_param\n'
+            'и пока не нажата кнопка OK, можно визуально проконтролировать LR/RB.\n'
+            'после закрытия окна, будет сделан переход на первый замененный param\n\t'
+            '# final_wnd_cbx'
+        )
+        lr_tooltip.createToolTip(
+            self.auto_param_creator_button,
+            'автоматичейский поиск и создание web_reg_save_param\n '
+            'для param, имя которых начинается на ...\n'
+            'аналог нескольких меню_мыши/web_reg_save_param/группа\n\t'
+            '# auto_param_creator_button'
+        )
+        lr_tooltip.createToolTip(
+            self.re_auto_param_creator_button,
+            'автоматичейский поиск и создание web_reg_save_param\n '
+            'поиск param, на основе регулярных выражений.\n'
+            'аналог нескольких меню_мыши/web_reg_save_param/группа\n\t'
+            '# re_auto_param_creator_button'
+        )
+        lr_tooltip.createToolTip(
+            self.save_action_button,
+            'сохранить текст action окна\n'
+            '+ обновить "служебную" инфу об удаленных "inf-блоках", если чтото удаляли вручную\n\t'
+            '# save_action_button'
+        )
+        lr_tooltip.createToolTip(
+            self.selection_font_combo,
+            'шрифт, для выделения\n\t'
+            '# selection_font_combo'
+        )
+        lr_tooltip.createToolTip(
+            self.selection_font_size_entry,
+            'размер шрифта, для выделения\n\t'
+            '# selection_font_size_entry'
+        )
+        lr_tooltip.createToolTip(
+            self.selection_bold_cbx,
+            'жирный шрифт, для выделения\n\t'
+            '# selection_bold_cbx'
+        )
+        lr_tooltip.createToolTip(
+            self.selection_underline_cbx,
+            'подчеркнутый шрифт, для выделения\n\t'
+            '# selection_underline_cbx'
+        )
+        lr_tooltip.createToolTip(
+            self.selection_overstrike_cbx,
+            'зачеркнутый шрифт, для выделения\n\t'
+            '# selection_overstrike_cbx'
+        )
+        lr_tooltip.createToolTip(
+            self.selection_slant_cbx,
+            'курсив шрифт, для выделения\n\t'
+            '# selection_slant_cbx'
+        )
+        lr_tooltip.createToolTip(
+            self.wrsp_combo,
+            'имя web_reg_save_param\n'
+            'переход в область action.c текста\n\t'
+            '# wrsp_combo'
+        )
+        lr_tooltip.createToolTip(
+            self.param_combo,
+            'имя param\n'
+            'переход в область action.c текста\n\t'
+            '# param_combo'
+        )
+        lr_tooltip.createToolTip(
+            self.inf_combo,
+            'номер inf блока\n'
+            'переход в область action.c текста\n\t'
+            '# inf_combo'
+        )
+        lr_tooltip.createToolTip(
+            self.transaction_combo,
+            'имя транцакции\n'
+            'переход в область action.c текста\n\t'
+            '# transaction_combo'
+        )
+        lr_tooltip.createToolTip(
+            self.font_combo, 'шрифт\n\t'
+            '# font_combo'
+        )
+        lr_tooltip.createToolTip(
+            self.font_size_entry,
+            'размер шрифта\n\t'
+            '# font_size_entry'
+        )
+        lr_tooltip.createToolTip(
+            self.bold_cbx,
+            'жирный шрифт\n\t'
+            '# bold_cbx'
+        )
+        lr_tooltip.createToolTip(
+            self.underline_cbx,
+            'подчеркнутый шрифт\n\t'
+            '# underline_cbx'
+        )
+        lr_tooltip.createToolTip(
+            self.overstrike_cbx,
+            'зачеркнутый шрифт\n\t'
+            '# overstrike_cbx'
+        )
+        lr_tooltip.createToolTip(
+            self.slant_cbx,
+            'курсив шрифт\n\t'
+            '# slant_cbx'
+        )
+        lr_tooltip.createToolTip(
+            self.dummy_button,
+            'удалить все dummy web_submit_data из action.c текста\n\t'
+            '# dummy_button'
+        )
+        lr_tooltip.createToolTip(
+            self.background_color_combo,
+            'цвет фона tk.Text\n\t'
+            '# background_color_combo'
+        )
+        lr_tooltip.createToolTip(
+            self.force_yes_inf_checker_cbx,
+            'принудительно отвечать "Да", при вопросе о создании param\n'
+            'если inf-номер запроса <= inf-номер web_reg_save_param\n\t'
+            '# force_yes_inf_checker_cbx'
+        )
+        lr_tooltip.createToolTip(
+            self.unblock,
+            'разблокировать виджеты, во время работы\n\t'
+            '# unblock'
+        )
+        lr_tooltip.createToolTip(
+            self.lr_think_time,
+            'удалить все lr_think_time\n\t'
+            '# lr_think_time'
+        )
+        lr_tooltip.createToolTip(
+            self.lr_report_A,
+            'краткий отчет об action.c, с учетом вложенности транзакций\n\t'
+            '# lr_report_A'
+        )
+        lr_tooltip.createToolTip(
+            self.lr_report_B,
+            'полный отчет об action.c\n\t'
+            '# lr_report_B'
+        )
+        lr_tooltip.createToolTip(
+            self.transaction_rename,
+            'переименовать имена транзакций\n\t'
+            '# transaction_rename'
+        )
+        lr_tooltip.createToolTip(
+            self.max_inf_cbx,
+            'ограничить диапазон поиска param - максимальный номер inf\n'
+            'Это номер inf, в action.c, где первый раз встречается pram\n\t'
+            '# max_inf_cbx'
+        )
+        lr_tooltip.createToolTip(
+            self.add_inf_cbx,
+            'макс номер inf, для поиска param, в LoadRunner файлах ответов\n '
+            'On - inf, где первый раз встречается pram, в action.c\n\t'
+            'что неправильно но необходимо, тк LoadRunner так записывает\n'
+            'Off - inf, предшествующий, номеру inf, где первый раз встречается pram, в action.c\n\t'
+            'используется, совместно с чекбоксом last, для поиска inf-ответа,\n\t'
+            'максимально близкого, к param-inf, те поиску с конца\n\t'
+            '# add_inf_cbx'
+        )
 
-        self.wrsp_combo.bind("<KeyRelease-Return>", self.goto_wrsp)
-        self.wrsp_combo.bind("<<ComboboxSelected>>", self.goto_wrsp)
-
-        self.param_combo = ttk.Combobox(self.wrsp_bar, justify='center', font=lr_vars.DefaultFont)
-
-        self.param_combo.bind("<KeyRelease-Return>", self.goto_param)
-        self.param_combo.bind("<<ComboboxSelected>>", self.goto_param)
-
-        #
-        self.transaction_combo = ttk.Combobox(self.transaction_bar, justify='center', font=lr_vars.DefaultFont)
-
-        self.transaction_combo.bind("<KeyRelease-Return>", self.goto_transaction)
-        self.transaction_combo.bind("<<ComboboxSelected>>", self.goto_transaction)
-
-        self.font_size_entry = tk.Spinbox(self.font_toolbar, width=2, justify='center', from_=0, to=99,
-                                          command=self.tk_text.set_font,
-                                          textvariable=self.tk_text.size_var, font=lr_vars.DefaultFont)
-
-        self.font_size_entry.bind("<KeyRelease-Return>", self.tk_text.set_font)
-
-        self.selection_font_size_entry = tk.Spinbox(self.font_toolbar, width=2, justify='center', from_=0, to=99,
-                                                    textvariable=self.size_var,
-                                                    font=lr_vars.DefaultFont,
-                                                    command=lambda *a: self.tk_text.set_tegs(parent=self, remove=False))
-
-        self.selection_font_size_entry.bind("<KeyRelease-Return>",
-                                            lambda *a: self.tk_text.set_tegs(parent=self, remove=False))
-
-        self.bold_cbx = tk.Checkbutton(self.font_toolbar, text='', font=lr_vars.DefaultFont + ' bold',
-                                       variable=self.tk_text.weight_var, command=self.tk_text.set_font)
-        self.slant_cbx = tk.Checkbutton(self.font_toolbar, text='', font=lr_vars.DefaultFont + ' italic',
-                                        variable=self.tk_text.slant_var, command=self.tk_text.set_font)
-        self.underline_cbx = tk.Checkbutton(self.font_toolbar, text='', font=lr_vars.DefaultFont + ' underline',
-                                            variable=self.tk_text.underline_var, command=self.tk_text.set_font)
-        self.overstrike_cbx = tk.Checkbutton(self.font_toolbar, text='', font=lr_vars.DefaultFont + ' overstrike',
-                                             variable=self.tk_text.overstrike_var, command=self.tk_text.set_font)
-
-        self.selection_bold_cbx = tk.Checkbutton(self.font_toolbar, text='', font=lr_vars.DefaultFont + ' bold',
-                                                 variable=self.weight_var, command=self.bold_selection_set)
-        self.selection_slant_cbx = tk.Checkbutton(self.font_toolbar, text='', font=lr_vars.DefaultFont + ' italic',
-                                                  variable=self.slant_var, command=self.bold_selection_set)
-        self.selection_underline_cbx = tk.Checkbutton(self.font_toolbar, text='',
-                                                      font=lr_vars.DefaultFont + ' underline',
-                                                      variable=self.underline_var, command=self.bold_selection_set)
-        self.selection_overstrike_cbx = tk.Checkbutton(self.font_toolbar, text='',
-                                                       font=lr_vars.DefaultFont + ' overstrike',
-                                                       variable=self.overstrike_var, command=self.bold_selection_set)
-
-        self.font_combo = ttk.Combobox(self.font_toolbar, textvariable=self.tk_text.font_var, justify='center',
-                                       font=lr_vars.DefaultFont)
-        self.font_combo['values'] = list(sorted(tk.font.families()))
-
-        self.font_combo.bind("<KeyRelease-Return>", self.tk_text.set_font)
-        self.font_combo.bind("<<ComboboxSelected>>", self.tk_text.set_font)
-
-        self.selection_font_combo = ttk.Combobox(self.font_toolbar, textvariable=self.font_var, justify='center',
-                                                 font=lr_vars.DefaultFont)
-        self.selection_font_combo['values'] = list(sorted(tk.font.families()))
-
-        self.selection_font_combo.bind("<KeyRelease-Return>", self.bold_selection_set)
-        self.selection_font_combo.bind("<<ComboboxSelected>>", self.bold_selection_set)
-
-        self.tk_text.set_font()
-        self.bold_selection_set()
-
-        self.background_color_combo = ttk.Combobox(self.cbx_bar, textvariable=self.background_var, justify='center',
-                                                   font=lr_vars.DefaultFont)
-        self.background_color_combo['values'] = list(sorted(lr_help.COLORS.keys()))
-
-        self.background_color_combo.bind("<KeyRelease-Return>", self.background_color_set)
-        self.background_color_combo.bind("<<ComboboxSelected>>", self.background_color_set)
-        self.config(background=self.background_color_combo.get())
-
-        self.search_button = tk.Button(self.toolbar, text='> Поиск >', command=self.search_in_action,
-                                       font=lr_vars.DefaultFont)
-
-        self.unblock = tk.Button(self.file_bar, text='unblock', font=lr_vars.DefaultFont + ' bold',
-                                 command=lambda *a: self._block(False))
-        self.backup_open_button = tk.Button(self.file_bar, text='backup_open', background='orange',
-                                            font=lr_vars.DefaultFont + ' bold',
-                                            command=lambda *a: self.open_action_dialog(title=True,
-                                                                                       folder=lr_vars.BackupFolder))
-        self.save_action_button = tk.Button(self.file_bar, text='save', font=lr_vars.DefaultFont + ' bold',
-                                            command=self.save_action_file)
-        self.open_button = tk.Button(self.file_bar, text='open', font=lr_vars.DefaultFont,
-                                     command=self.open_action_dialog)
-        self.editor_button = tk.Button(self.file_bar, text='editor', font=lr_vars.DefaultFont + ' bold',
-                                       command=lambda: lr_other.openTextInEditor(self.tk_text.get(1.0, tk.END)))
-
-        self.scroll_lab = ttk.Label(self, text='0')
-
-        self.SearchReplace_searchCombo = ttk.Combobox(self.toolbar, textvariable=self.SearchReplace_searchVar,
-                                                      justify='center', font=lr_vars.DefaultFont + ' italic',
-                                                      foreground="purple")
-        self.SearchReplace_replaceCombo = ttk.Combobox(self.toolbar, textvariable=self.SearchReplace_replaceVar,
-                                                       justify='center', font=lr_vars.DefaultFont, foreground="maroon")
-        self.SearchReplace_searchCombo['values'] = ['']
-        self.SearchReplace_replaceCombo['values'] = ['']
-
-        self.auto_param_creator_button = tk.Button(self.toolbar, text='Найти param LB=', background='orange',
-                                                   font=lr_vars.DefaultFont + ' bold',
-                                                   command=lambda: lr_group_param.auto_param_creator(self))
-
-        self.re_auto_param_creator_button = tk.Button(self.toolbar, text='Найти param RegExp',
-                                                      font=lr_vars.DefaultFont + ' bold',
-                                                      command=lambda: lr_group_param.re_auto_param_creator(self))
-
-        self.final_wnd_cbx = tk.Checkbutton(self.toolbar, text='final', font=lr_vars.DefaultFont,
-                                            variable=self.final_wnd_var)
-        self.wrsp_setting = tk.Button(self.toolbar, text='wrsp_setting', font=lr_vars.DefaultFont + ' bold',
-                                      command=lambda *a: lr_wrsp_setting.WrspSettingWindow(parent=self))
-
-        self.resp_btn = tk.Button(self.toolbar, text='файлы ответов', font=lr_vars.DefaultFont,
-                                  command=lambda *a: lr_action_lib.snapshot_files(self.tk_text, i_num=1))
-
-        def force_ask_cmd(*a) -> None:
-            if self.force_ask_var.get():
-                self.no_var.set(0)
-
-        self.force_ask_cbx = tk.Checkbutton(self.toolbar, text='Ask', font=lr_vars.DefaultFont,
-                                            variable=self.force_ask_var,
-                                            command=force_ask_cmd)
-
-        self.highlight_cbx = tk.Checkbutton(self.cbx_bar, text='highlight', font=lr_vars.DefaultFont,
-                                            background=lr_vars.Background,
-                                            variable=self.tk_text.highlight_var, command=self.tk_text.set_highlight)
-
-        def no_var_cmd(*a) -> None:
-            if self.no_var.get():
-                self.force_ask_var.set(0)
-
-        self.no_cbx = tk.Checkbutton(self.toolbar, text='NoAsk', font=lr_vars.DefaultFont, variable=self.no_var,
-                                     command=no_var_cmd)
-
-        self.SearchReplace_button = tk.Button(self.toolbar, text='> замена >', font=lr_vars.DefaultFont,
-                                              command=self._replace_button_set)
-        self.buttonColorReset = tk.Button(self.cbx_bar, text='reset', font=lr_vars.DefaultFont, command=self.resColor)
-        self.highlight_Thread = tk.Checkbutton(self.cbx_bar, text='', variable=lr_vars.HighlightThread,
-                                               font=lr_vars.DefaultFont)
-        self.highlight_LineThread = tk.Checkbutton(self.cbx_bar, text='', variable=lr_vars.LineTagAddThread,
-                                                   font=lr_vars.DefaultFont)
-        self.highlight_TagThread = tk.Checkbutton(self.cbx_bar, text='', variable=lr_vars.TagAddThread,
-                                                  font=lr_vars.DefaultFont)
-        self.highlight_MThread = tk.Checkbutton(self.cbx_bar, text='', variable=lr_vars.HighlightMPool,
-                                                font=lr_vars.DefaultFont)
-        self.highlight_LinesPortionSize = tk.Spinbox(self.cbx_bar, from_=0, to=100, width=2, font=lr_vars.DefaultFont,
-                                                     textvariable=lr_vars.HighlightLinesPortionSize)
-
-        self.max_inf_cbx = tk.Checkbutton(self.toolbar, text='ограничить\nmax inf', font=lr_vars.DefaultFont + ' bold',
-                                          variable=self.max_inf_cbx_var, command=self.max_inf_set)
-        self.add_inf_cbx = tk.Checkbutton(self.toolbar, anchor=tk.E, text='max\nmode', font=lr_vars.DefaultFont,
-                                          variable=self.add_inf_cbx_var)
-
-        self.lr_legend = tk.Button(self.toolbar, text='web_legend', font=lr_vars.DefaultFont, command=self.legend)
-        self.btn_all_files = tk.Button(self.toolbar, text='все файлы', font=lr_vars.DefaultFont,
-                                       command=lambda *a: lr_top_wind.folder_wind(self))
-        self.lr_think_time = tk.Button(self.toolbar, text='lr_think_time', font=lr_vars.DefaultFont + ' bold',
-                                       command=self.thinktime_remove)
-        self.lr_report_B = tk.Button(self.toolbar, text='reportB', font=lr_vars.DefaultFont + ' bold',
-                                     command=lambda *a: lr_gui_other.repB(self.tk_text))
-        self.lr_report_A = tk.Button(self.toolbar, text='reportA', font=lr_vars.DefaultFont + ' bold',
-                                     command=lambda *a: lr_gui_other.repA(self.tk_text))
-
-        self.transaction_rename = tk.Button(self.toolbar, text='rename\ntransaction',
-                                            font=lr_vars.DefaultFont + ' bold',
-                                            background='orange', command=self.all_transaction_rename)
-        self.dummy_button = tk.Button(self.toolbar, text="Snapshot remove", font=lr_vars.DefaultFont + ' bold',
-                                      background='orange', command=self.dummy_btn_cmd)
-        self.force_yes_inf_checker_cbx = tk.Checkbutton(self.toolbar, text='fYes', font=lr_vars.DefaultFont,
-                                                        variable=self.force_yes_inf)
-
-        self.post_init()
-
-
-    def post_init(self):
-        self.grid_widj()
-        lr_a_tooltips.set_all_action_window_tooltip(self)  # создать все tooltip окна
-
-        for widj in (self.search_res_combo, self.SearchReplace_searchCombo, self.SearchReplace_replaceCombo,
-                     self.search_entry,):
-            with contextlib.suppress(Exception):  # виджетам доступно меню мыши
-                self.bind_class(widj, sequence='<Button-3>', func=lr_sub_menu.rClicker, add='')
-
-        lr_act_other.auto_update_action_info_lab(
-            self=self, config=self.scroll_lab2.config, tk_kext=self.tk_text, id_=self.id_,
-            timeout=lr_vars.InfoLabelUpdateTime.get(), check_run=lr_vars.Window.action_windows.__contains__,
-            title=self.title, _set_title=self._set_title)
-
-
-    def grid_widj(self):
-        '''grid всех виджетов action.с окна'''
+    def set_grid(self):
+        """grid всех виджетов action.с окна"""
         self.search_entry.grid(row=5, column=0, columnspan=8, sticky=tk.NSEW)
         self.search_button.grid(row=5, column=8, sticky=tk.NSEW)
         self.down_search_button.grid(row=5, column=9, sticky=tk.NSEW)
@@ -322,124 +423,3 @@ class ActionWindow(lr_act_win.ActWin):
         self.lr_report_B.grid(row=8, column=4, sticky=tk.NSEW)
         self.lr_report_A.grid(row=7, column=4, sticky=tk.NSEW)
         self.transaction_rename.grid(row=7, column=5, sticky=tk.NSEW, rowspan=2)
-
-
-    def widj_reset(self) -> None:
-        '''обновить виджеты'''
-        self.transaction.clear()
-        self.transaction.extend(self.get_transaction(self.tk_text.get(1.0, tk.END)))
-        self.transaction_combo_set()
-        self.drop_file_none_inf_num_in_action()
-        self.inf_combo_set()
-        self.toolbar['text'] = self.param_counter(all_param_info=False)
-        self.set_title()
-        self.set_combo_len()
-
-
-    @lr_vars.T_POOL_decorator
-    def goto_inf(self, *a) -> None:
-        with contextlib.suppress(tk.TclError):
-            self.search_in_action(word=lr_param.Snap.format(num=self.inf_combo.get().strip()), hist=False)
-
-
-    @lr_vars.T_POOL_decorator
-    def goto_transaction(self, *args) -> None:
-        with contextlib.suppress(tk.TclError):
-            self.search_in_action(word=self.transaction_combo.get(), hist=False)
-
-
-    @lr_vars.T_POOL_decorator
-    def goto_param(self, *args) -> None:
-        with contextlib.suppress(tk.TclError):
-            self.search_in_action(word=self.param_combo.get(), hist=False)
-
-
-    @lr_vars.T_POOL_decorator
-    def goto_wrsp(self, *args) -> None:
-        with contextlib.suppress(tk.TclError):
-            self.search_in_action(word=self.wrsp_combo.get(), hist=False)
-
-
-    @lr_vars.T_POOL_decorator
-    def bold_selection_set(self, *a) -> None:
-        self.tk_text.set_tegs(parent=self)
-
-
-    def background_color_set(self, *args, color='') -> None:
-        '''установить цвет фона'''
-        if color is None:  # смена по кругу
-            color = next(lr_vars.ColorIterator)
-        if not color:  # выбранный
-            color = self.background_color_combo.get()
-
-        self.config(background=color)
-        self.scroll_lab2.config(background=color)
-        self.tk_text.config(background=color)
-        self.tk_text.linenumbers.config(background=color)
-
-    def clear_text(self) -> None:
-        '''очистить tk_text'''
-        if messagebox.askquestion('очистить', 'очистить окно?', parent=self) == 'yes':
-            self.backup()
-            self.tk_text.delete(1.0, tk.END)
-
-
-    def resColor(self) -> None:
-        '''сбросить self.tk_text.highlight_dict настройки цветов'''
-        if messagebox.askquestion('сброс', 'сбросить текст настройки цветов?', parent=self) == 'yes':
-            self.tk_text.reset_highlight()
-
-
-    @lr_vars.T_POOL_decorator
-    def open_action_dialog(self, *a, title=False, folder=os.getcwd()) -> None:
-        '''открыть файл'''
-        if title:
-            af = tk.filedialog.askopenfilename(initialdir=folder, parent=self, filetypes=(
-                ("%s_backup_*.c" % self.id_, "%s_backup_*.c" % self.id_), ("all", "*.*")),
-                                               title='backup({})'.format(self.id_))
-        else:
-            af = tk.filedialog.askopenfilename(initialdir=folder, parent=self, filetypes=(
-                ("action.c", "*.c"), ("all", "*.*")))
-        if af:
-            self.open_action(file=af)
-
-
-    def inf_combo_set(self) -> None:
-        self.inf_combo['values'] = list(self.action_infs)
-        if self.inf_combo['values']:
-            self.inf_combo.current(0)
-
-
-    def wrsp_combo_set(self) -> None:
-        self.wrsp_combo['values'] = list(self.web_action.websReport.wrsp_and_param_names.keys())
-
-
-    def param_combo_set(self) -> None:
-        with contextlib.suppress(Exception):
-            self.param_combo['values'] = list(self.web_action.websReport.wrsp_and_param_names.values())
-
-
-    def transaction_combo_set(self) -> None:
-        self.transaction_combo['values'] = self.transaction
-
-
-    def set_combo_len(self):
-        if lr_vars.Window._block_:
-            return
-        min_len = lr_vars.VarActComboLenMin.get()
-        max_len = lr_vars.VarActComboLenMax.get()
-        for w in dir(self):
-            attr = getattr(self, w)
-            if isinstance(attr, ttk.Combobox):
-                m = max([len(str(f)) for f in attr['values']] or [min_len])
-                attr.configure(width=m if min_len <= m <= max_len else min_len if m < min_len else max_len)
-        self.selection_font_combo.configure(width=20)
-        self.font_combo.configure(width=20)
-
-
-    def set_title(self) -> None:
-        self.title('{} {} undo: ctrl-z / redo: ctrl-y)'.format(self._set_title(), lr_vars.VERSION))
-
-
-    def _set_title(self) -> str:
-        return '{a} | {i} | backup={b} |'.format(a=self.action_file, b=self._backup_index, i=self.id_)

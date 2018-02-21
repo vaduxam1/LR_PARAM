@@ -46,7 +46,7 @@ def mouse_web_reg_save_param(widget, param, mode=('SearchAndReplace', 'highlight
 
         elif 'highlight' in mode:
             widget.action.tk_text.highlight_mode(param)
-            widget.action.tk_text.set_highlight()
+            widget.action.tk_text.highlight_apply()
 
 
 @lr_vars.T_POOL_decorator

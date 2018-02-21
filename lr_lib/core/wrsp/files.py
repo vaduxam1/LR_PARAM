@@ -98,25 +98,10 @@ def create_files_from_infs(folder: str, enc: str, allow_deny: bool, statistic: b
     chunks = [(arg, files) for files in lr_other.chunks(get_folder_infs(folder), lr_vars.FilesCreatePortionSize)]
     executer = (lr_vars.M_POOL.imap_unordered if lr_vars.SetFilesPOOLEnable else map)
 
-    # progress
-    len_chunks = len(chunks) or -1
-    len_files = chunk_num = 0
-    _1_proc = (100 / len_chunks)
-
-    def progress(t='{proc}% : поиск файлов ответов {files} шт.| {v}') -> None:
-        '''прогресс создания файлов'''
-        lr_vars.Tk.title(t.format(proc=round(_1_proc * chunk_num), v=lr_vars.VERSION, files=len_files))
-        if chunk_num < len_chunks:  # перезапуск
-            lr_vars.MainThreadUpdater.submit(progress)
-
-    lr_vars.MainThreadUpdater.submit(progress)
-
     # создать файлы ответов
-    for (chunk_num, chunk_files) in enumerate(executer(get_files_portions, chunks), start=1):
-        len_files += len(chunk_files)
+    for chunk_files in executer(get_files_portions, chunks):
         yield from filter(bool, chunk_files)
 
-    lr_vars.Tk.title(lr_vars.VERSION)
 
 def get_files_portions(args: [(str, str, bool, bool), ((str, int), )]) -> [dict, ]:
     '''создать файлы, для порции inf-файлов'''
@@ -205,9 +190,6 @@ def init() -> None:
     except TypeError:  # если VarFileSortKey2 предназначен только для FilesWithParam
         lr_vars.AllFiles = sorted(lr_vars.AllFiles, key=lambda file: file['Snapshot']['Nums'])
 
-    if lr_vars.Window:
-        lr_vars.Window.setSortKeys()
-        lr_vars.Window.set_maxmin_inf(lr_vars.AllFiles)
     lr_vars.Logger.info(lr_other.all_files_info())
 
 

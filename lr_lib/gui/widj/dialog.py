@@ -10,14 +10,18 @@ import tkinter.ttk as ttk
 
 class YesNoCancel(tk.Toplevel):
     '''диалог окно, тк велосипед, работает только в потоке'''
-    def __init__(self, buttons: [str, ], text_before: str, text_after: str, title: str, parent=None, default_key='', is_text=None, focus=None, combo_dict=None):
+    def __init__(self, buttons: [str, ], text_before: str, text_after: str, title: str, parent=None, default_key='',
+                 is_text=None, focus=None, combo_dict=None):
         super().__init__(master=parent, padx=0, pady=0)
+
         self._wind_attributes()
         self.alive_ = True
 
         self.parent = parent
         self.buttons = {}
+
         self.queue = queue.Queue()
+
         self.title(str(title))
         self.default_key = default_key
         self.combo_dict = combo_dict
@@ -38,7 +42,8 @@ class YesNoCancel(tk.Toplevel):
         self.label2.grid(row=100, column=0, sticky=tk.NSEW, columnspan=2, padx=0, pady=0)
 
         width = max(map(len, buttons))
-        if width > 20: width = 20
+        if width > 20:
+            width = 20
         i = 10
 
         for name in buttons:
@@ -56,9 +61,11 @@ class YesNoCancel(tk.Toplevel):
         if is_text is not None:
             with contextlib.suppress(Exception):
                 height = len(is_text.split('\n'))
-                if height > 25: height = 25
-                elif height < 5: height = 5
-                self.tk_text.configure(height=height)
+                if height > 25:
+                    height = 25
+                elif height < 5:
+                    height = 5
+                self.tk_text.configure(height=height, width=100)
 
             self.tk_text.insert(1.0, is_text)
             self.text_scrolly = ttk.Scrollbar(self, orient=tk.VERTICAL, command=self.tk_text.yview)
@@ -69,10 +76,16 @@ class YesNoCancel(tk.Toplevel):
             self.text_scrolly.grid(row=0, column=1, sticky=tk.NSEW, padx=0, pady=0)
 
         if self.buttons:
-            if self.default_key not in self.buttons: self.default_key = list(self.buttons.keys())[0]
-            if not focus: self.buttons[self.default_key].focus_set()
+            if self.default_key not in self.buttons:
+                self.default_key = list(self.buttons.keys())[0]
+
+            if not focus:
+                self.buttons[self.default_key].focus_set()
             self.buttons[self.default_key].configure(height=2, background='orange')
-        if focus: focus.focus_set()
+
+        self.center_widget()
+        if focus:
+            focus.focus_set()
 
     def new_text(self, text: str) -> None:
         '''стереть = новый текст в self.tk_text'''
@@ -85,7 +98,6 @@ class YesNoCancel(tk.Toplevel):
         self.attributes('-topmost', True)  # свсегда сверху
         # self.attributes("-toolwindow", 1)  # remove maximize/minimize
         self.protocol('WM_DELETE_WINDOW', self.close)  # remove close_threads
-        self.center_widget()
         self.grid_rowconfigure(0, weight=1)
         self.grid_columnconfigure(0, weight=1)
 

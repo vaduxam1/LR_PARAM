@@ -4,6 +4,7 @@
 import re
 import sys
 import queue
+import threading
 import contextlib
 
 import tkinter as tk
@@ -16,9 +17,13 @@ import lr_lib.core.etc.lbrb_checker as lr_lbrb_checker
 import lr_lib.etc.excepthook as lr_excepthook
 
 
+progress_str = '{proc}% : {counter}/{len_params} | fail={fail}\n{wrsp}'
+final_str = '{state}: {fail} param не созданы {unsuc}\nсозданы {param} param\n{param_counter}'
+
+
 @lr_vars.T_POOL_decorator
 def group_param(event, widget=None, params=None, ask=True) -> None:
-    '''gui - нахождение и замена для группы web_reg_save_param's'''
+    """gui - нахождение и замена для группы web_reg_save_param's"""
     if widget is None:
         widget = event.widget
 
@@ -51,32 +56,31 @@ def group_param(event, widget=None, params=None, ask=True) -> None:
 
     # --- progressbar ---
     p1 = ((len_params / 100) or 1)
-    update_time = lr_vars.MainThreadUpdateTime.get()
-    restart = widget.action.after
-    set_next_color = widget.action.background_color_set
+    
+    def threadsafe_progress(lock=threading.Lock()):
+        """threadsafe progressbar в потоке, тк одновременное warning popup-окно и прогрессбар блочат main поток"""
+        with lock:
+            __progressbar()
 
-    progress_str = '{proc}% : {counter}/{len_params} | fail={fail}\n{wrsp}'.format
-    final_str = '{state}: {fail} param не созданы {unsuc}\nсозданы {param} param\n{param_counter}'.format
-
-    def progressbar() -> None:
-        '''progressbar выполнения, из local vars'''
+    def __progressbar() -> None:
+        """progressbar выполнения, из local vars"""
         fail = len(unsuccess)
 
         if wrsp_dict:  # прогресс работы
-            widget.action.toolbar['text'] = progress_str(
+            widget.action.toolbar['text'] = progress_str.format(
                 counter=counter,
                 len_params=len_params,
                 fail=fail,
                 proc=round(counter / p1),
                 wrsp=wrsp,
             )
-            set_next_color(color=None)  # action цвет по кругу
-            restart(update_time, progressbar)  # перезапуск
+            widget.action.background_color_set(color=None)  # action цвет по кругу
+            lr_vars.MainThreadUpdater.submit(lambda: lr_vars.T_POOL.submit(threadsafe_progress))  # перезапуск с задержкой
 
         else:  # выход - результаты работы
             param_counter = widget.action.param_counter(all_param_info=False)
             if unsuccess:
-                widget.action.toolbar['text'] = final_str(
+                widget.action.toolbar['text'] = final_str.format(
                     state=str(not fail).upper(),
                     param_counter=param_counter,
                     fail=fail,
@@ -100,7 +104,7 @@ def group_param(event, widget=None, params=None, ask=True) -> None:
     with lr_vars.Window.block(force=True), widget.action.block(no_highlight=True):
         (counter, wrsp_dict, wrsp, unsuccess) = (0, {'param': ''}, '', [])  # начальные vars для progressbar
 
-        widget.action.after(update_time, progressbar)  # progressbar
+        lr_vars.T_POOL.submit(threadsafe_progress)
         for (counter, wrsp_dict, wrsp, unsuccess) in _group_param_iter(params, widget.action):  # заменить
             continue  # vars для progressbar
 
@@ -108,12 +112,13 @@ def group_param(event, widget=None, params=None, ask=True) -> None:
 
 
 def _group_param_iter(params: [str, ], action) -> iter((int, dict, str, [str, ]),):
-    '''ядро - найти и заменить группу web_reg_save_param'''
+    """ядро - найти и заменить группу web_reg_save_param"""
     unsuccess = []  # params, обработанные с ошибкой
     wrsp_dict_queue = queue.Queue()
     _thread_wrsp_dict_creator(wrsp_dict_queue, params, unsuccess, action)  # для param's, в фоне, создавать wrsp_dict's
 
-    replace = action.web_action.replace_bodys_iter()  # сопрограмма-заменить
+    web_actions = tuple(action.web_action.get_web_snapshot_all())
+    replace = action.web_action.replace_bodys_iter(web_actions)  # сопрограмма-заменить
     next(replace)
     try:
         for (counter, wrsp_dict) in enumerate(iter(wrsp_dict_queue.get, None), start=1):
@@ -133,7 +138,7 @@ def _group_param_iter(params: [str, ], action) -> iter((int, dict, str, [str, ])
 
 @lr_vars.T_POOL_decorator
 def _thread_wrsp_dict_creator(wrsp_dicts: queue.Queue, params: [str, ], unsuccess: [], action) -> None:
-    '''ядро - создать wrsp_dicts в фоне, чтобы не терять время, при показе popup окон'''
+    """ядро - создать wrsp_dicts в фоне, чтобы не терять время, при показе popup окон"""
     for param in params:
         try:
             lr_vars.VarParam.set(param, action=action, set_file=True)  # найти param, создать wrsp_dict
@@ -147,7 +152,7 @@ def _thread_wrsp_dict_creator(wrsp_dicts: queue.Queue, params: [str, ], unsucces
 
 @lr_vars.T_POOL_decorator
 def auto_param_creator(action) -> None:
-    '''group params по кнопке PARAM - по LB + по началу имени'''
+    """group params по кнопке PARAM - по LB + по началу имени"""
     y = lr_dialog.YesNoCancel(['Найти', 'Отменить'], is_text='\n'.join(lr_vars.Params_names), parent=action,
                               text_before='Будет произведен поиск param, имя которых начинается на указанные имена.',
                               title='начало param-имен', text_after='При необходимости - добавить/удалить')
@@ -174,7 +179,7 @@ def auto_param_creator(action) -> None:
 
 
 def session_params(action, lb_list=None, ask=True) -> list:
-    '''поиск param в action, по LB='''
+    """поиск param в action, по LB="""
     if lb_list is None:
         lb_list = lr_vars.LB_PARAM_FIND_LIST
 
@@ -199,15 +204,16 @@ def session_params(action, lb_list=None, ask=True) -> list:
 
     return list(reversed(sorted(p for p in set(params) if p not in lr_vars.DENY_PARAMS)))
 
+
 def group_param_search(action, param_part: "zkau_") -> ["zkau_5650", "zkau_5680", ]:
-    '''поиск в action.c, всех уникальных param, в имени которых есть param_part'''
+    """поиск в action.c, всех уникальных param, в имени которых есть param_part"""
     params = list(set(_group_param_search(action, param_part)))  # уникальных
     params.sort(key=lambda param: len(param), reverse=True)
     return params
 
 
 def _group_param_search(action, param_part: "zkau_", part_mode=True) -> iter(("zkau_5650", "zkau_5680",)):
-    '''поиск в action.c, всех param, в имени которых есть param_part / или по LB'''
+    """поиск в action.c, всех param, в имени которых есть param_part / или по LB"""
     for web_ in action.web_action.get_web_snapshot_all():
         split_text = web_.get_body().split(param_part)
 
@@ -233,7 +239,7 @@ def _group_param_search(action, param_part: "zkau_", part_mode=True) -> iter(("z
 
 @lr_vars.T_POOL_decorator
 def re_auto_param_creator(action) -> None:
-    '''group params поиск, на основе регулярных выражений'''
+    """group params поиск, на основе регулярных выражений"""
     y = lr_dialog.YesNoCancel(['Найти', 'Отменить'], is_text='\n'.join(lr_vars.REGEXP_PARAMS), parent=action,
                               text_before='Будет произведен поиск param: re.findall(regexp, action_text)',
                               title='regexp {} шт.'.format(len(lr_vars.REGEXP_PARAMS)),
@@ -245,7 +251,7 @@ def re_auto_param_creator(action) -> None:
         return
 
     def deny_params(lst: list) -> [str, ]:
-        '''удалить не param-слова'''
+        """удалить не param-слова"""
         for p in lst:
             check = ((p not in lr_vars.DENY_PARAMS) and (
                 not (len(p) > 2 and p.startswith('on') and p[2].isupper()))) and (len(p) > 2)
@@ -277,7 +283,7 @@ def re_auto_param_creator(action) -> None:
 
 
 def group_param_search_quotes(action, r=r'=(.+?)\"') -> iter((str,)):
-    '''поиск param, внутри кавычек'''
+    """поиск param, внутри кавычек"""
 
     def get_params() -> iter((str,)):
         for web_ in action.web_action.get_web_snapshot_all():

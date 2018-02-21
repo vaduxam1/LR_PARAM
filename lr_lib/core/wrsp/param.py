@@ -294,7 +294,7 @@ def create_files_with_search_data(files: (dict, ), search_data: dict, action=Non
 
     if action:
         d['action_id'] = action.id_
-        action_infs = action.action_infs
+        action_infs = action.web_action.action_infs
 
         inf_min = d['inf_min'] = min(action_infs or [-1])
         inf_max = d['inf_max'] = max(action_infs or [-1])

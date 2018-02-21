@@ -14,7 +14,7 @@ import lr_lib.core.action.web_ as lr_web_
 
 
 class HighlightText(tk.Text):
-    '''tk.Text'''
+    '''Colored tk.Text + line_numbers'''
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
@@ -115,7 +115,7 @@ class HighlightText(tk.Text):
         self.highlight_dict.clear()
         self.highlight_dict.update(copy.deepcopy(lr_vars.VarDefaultColorTeg))
         if highlight:
-            self.set_highlight()
+            self.highlight_apply()
 
     def set_font(self, *a, size=None) -> None:
         if size is None:
@@ -123,18 +123,16 @@ class HighlightText(tk.Text):
         w, s, u, o = self._text_checkbox()
         self.configure(font=Font(family=self.font_var.get(), size=size, weight=w, slant=s, underline=u, overstrike=o))
 
-    def set_highlight(self, *a) -> None:
+    def highlight_apply(self, *a) -> None:
         '''tk.Text tag_add/remove, сформировать on_screen_lines "карту" подсветки'''
         self.set_tegs(remove=True)
 
         if self.highlight_var.get():
             self.set_tegs(remove=False, parent=self)
             self.set_tegs(remove=False, parent=self.action)
+
             self.highlight_lines = lr_highlight.HighlightLines(self, self.get_tegs_names())
-            self.action.HIGHLIGHT_ENABLE = True
             self.action.report_position()  # показать
-        else:
-            self.action.HIGHLIGHT_ENABLE = False
 
     def get_tegs_names(self) -> {str: {str,}}:
         '''_tegs_names + \\xCE\\xE1'''
@@ -195,25 +193,26 @@ class HighlightText(tk.Text):
 
 class TextLineNumbers(tk.Canvas):
     '''номера линий tk.Text'''
-    def __init__(self, parent_: HighlightText):
-        super().__init__(parent_.action, background=lr_vars.Background)
-        self.textwidget = parent_
+    def __init__(self, tk_text: HighlightText):
+        super().__init__(tk_text.action, background=lr_vars.Background)
         self.linenum = -1
+
+        self.tk_text = tk_text
 
     def redraw(self, *args, __restart=False) -> None:
         '''redraw line numbers'''
         self.delete("all")
-        i = self.textwidget.index("@0,0")
         self.linenum = 0
 
+        i = self.tk_text.index("@0,0")
         while True:
-            dline = self.textwidget.dlineinfo(i)
+            dline = self.tk_text.dlineinfo(i)
             if dline is None:
                 break
 
             y = dline[1]
             self.linenum = str(i).split(".", 1)[0]
             self.create_text(2, y, anchor="nw", text=self.linenum)
-            i = self.textwidget.index("%s+1line" % i)
+            i = self.tk_text.index("%s+1line" % i)
 
-        self.textwidget.action.scroll_lab.config(text=self.textwidget.highlight_lines._max_line)
+        self.tk_text.action.scroll_lab.config(text=self.tk_text.highlight_lines._max_line)
