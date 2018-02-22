@@ -15,35 +15,32 @@ class MainThreadUpdater:
     def __init__(self):
         self.working = None
         self.queue_in = queue.Queue()
-        self.submit = self.queue_in.put_nowait
+        self.submit = self.queue_in.put  # выполнить
 
     def __enter__(self):
         self.working = True
-
-        mainThread_queue_listener(updater=self, get_callback=self.queue_in.get, check=self.queue_in.qsize,
-                                  timeout=lr_vars.MainThreadUpdateTime.get())
+        self.queue_listener()
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         self.working = False
-
         if exc_type:
             lr_excepthook.excepthook(exc_type, exc_val, exc_tb)
+
         return exc_type, exc_val, exc_tb
 
+    def queue_listener(self, timeout=lr_vars.MainThreadUpdateTime.get()) -> None:
+        '''выполнять из очереди, пока есть, затем перезапустить'''
+        while self.queue_in.qsize():
+            try:  # получить и выполнить callback
+                callback = self.queue_in.get()
+                callback()
+            except Exception as ex:
+                lr_excepthook.excepthook(ex)
+                continue
 
-def mainThread_queue_listener(updater: MainThreadUpdater, get_callback: callable, check: callable, timeout: int,
-                              restart=lr_vars.Tk.after) -> None:
-    '''выполнять из очереди, пока есть, затем перезапустить'''
-    while check():
-        try:
-            get_callback()()  # получить и выполнить callback
-        except Exception as ex:
-            lr_excepthook.excepthook(ex)
-            continue
-
-    if updater.working:  # перезапуск
-        restart(timeout, mainThread_queue_listener, updater, get_callback, check, timeout)
+        if self.working:  # перезапуск
+            lr_vars.Tk.after(timeout, self.queue_listener)
 
 
 class NoPool:

@@ -48,16 +48,16 @@ class Task:
 
 class SThreadIOQueue:
     """priority_DeQueue_in"""
-    __slots__ = ('count', 'queue_in', )
+    __slots__ = ('priority', 'queue_in',)
 
     def __init__(self, queue_in: PriorityQueue):
-        self.count = 0  # count -= 1 для de-queue для sort в PriorityQueue
         self.queue_in = queue_in
+        self.priority = 0  # -= 1 для поведения как de-queue
 
     def submit(self, target: callable, *args, **kwargs) -> None:
         """выполнить target, последняя зашедшая, выполнится первой"""
-        self.count -= 1  # отрицательные - как dequeue при sort PriorityQueue
-        self.queue_in.put_nowait((self.count, Task(target, args, kwargs)))
+        self.priority -= 1  # отрицательные - для поведения как dequeue
+        self.queue_in.put_nowait((self.priority, Task(target, args, kwargs)))
 
 
 class _NoPool:
@@ -87,28 +87,27 @@ class SThread(threading.Thread, SThreadIOQueue):
         try:
             while self.pool.working:
                 try:  # получить задачу / поток занят
-                    (count, self.task) = self.queue_in.get(timeout=self.timeout)
+                    (_priority, self.task) = self.queue_in.get(timeout=self.timeout)
 
                 except Empty:  # таймаут бездействия
                     if len(self.pool.threads) > self.size_min:
                         return
                     continue
-                except Exception as ex:
-                    return lr_excepthook.excepthook(ex)
+                except Exception:
+                    return lr_excepthook.excepthook(*sys.exc_info())
 
                 else:
                     try:  # выполнить задачу
                         self.task.target(*self.task.args, **self.task.kwargs)
-
-                    except Exception:
-                        if self.task is not None:  # ошибка
-                            lr_excepthook.excepthook(*sys.exc_info())
-                        return
-                    else:
                         continue
+
+                    except Exception:  # выход/ошибка
+                        if self.task is None:
+                            return
+                        return lr_excepthook.excepthook(*sys.exc_info())
+
                     finally:  # поток свободен
                         self.task = self.queue_in.task_done()
-
         finally:  # выход потока
             self.task = self.pool._remove_thread(th=self)
 
