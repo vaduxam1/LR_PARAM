@@ -107,7 +107,7 @@ def set_tk_indxs(line_num: int, i_start: int, i_end: int, get_xy='{}.{}'.format)
 
 def join_indxs(indxs: {int, }) -> iter((int, int),):
     """объединить идущие подряд индексы: {3, 4, 10, 7, 9, 2} -> (2, 4), (7, 7), (9, 10)"""
-    index, *indexs = sorted(indxs)
+    (index, *indexs) = sorted(indxs)
     i_end = i_start = index
 
     for index in indexs:
@@ -130,12 +130,11 @@ def find_tag_indxs(line_num: int, line: str, tag_names: {str: {(str, int), }, })
         genetate_line_tags_purct_etc_indxs(line, setdefault)
 
         bg_indxs = set()
-        bg_update = bg_indxs.update
         for teg in line_indxs:
             indxs = set(line_indxs[teg])
             line_indxs[teg] = indxs
             if teg.startswith(lr_vars.ColorMainTegStartswith):
-                bg_update(indxs)
+                bg_indxs.update(indxs)
 
         for teg in line_indxs:
             if not teg.startswith(lr_vars.ColorMainTegStartswith):
@@ -155,7 +154,6 @@ def genetate_line_tags_names_indxs(line: str, setdefault: callable, teg_names: {
     """индексы tags для подсветки, для линии - слова из словаря
     teg_names={'backgroundorange': {('warning', 7),..."""
     olive_callback = setdefault(lr_vars.OliveChildTeg, []).extend
-    find = line.find
 
     for tag in teg_names:
         teg_callback = setdefault(tag, []).extend
@@ -163,7 +161,7 @@ def genetate_line_tags_names_indxs(line: str, setdefault: callable, teg_names: {
             index = -1
 
             while True:
-                index = find(name, (index + 1))  # найти
+                index = line.find(name, (index + 1))  # найти
                 if index == -1:
                     break
 
