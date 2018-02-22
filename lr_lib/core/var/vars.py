@@ -8,9 +8,10 @@ import itertools
 import functools
 import multiprocessing
 import encodings.aliases
+
 import tkinter as tk
 
-from lr_lib.core.var.var import Var
+from lr_lib.core.var.var import (Var, )
 from lr_lib.etc.help import (COLORS, HEX, )
 
 
@@ -21,7 +22,7 @@ VERSION = 'v10.4.1'
 lib_folder = 'lr_lib'
 Tk = tk.Tk()  # tkinter
 
-Window = None  # класс gui окна # lr_lib.gui.main_wind.Window
+Window = None  # класс gui окна # lr_lib.gui.wrsp.main_window.Window
 AllFiles = []  # все файлы ответов
 FilesWithParam = []  # файлы ответов, с param
 VarParam = Var(value='')  # {param} для поиска
@@ -436,15 +437,15 @@ M_POOL_Size = cpu_count if (cpu_count < 5) else 4  # основной MP пул(
 T_POOL = None  # пул потоков # lr_lib.etc.pool.main_pool.POOL
 T_POOL_NAME = 'SThreadPool(threading.Thread)'  # тип фоновый пул
 # T_POOL_NAME = 'concurrent.futures.ThreadPoolExecutor'  # тип фоновый пул
-T_POOL_Size = None  # фоновый T пул(int>2 / None(concurrent.futures))
-# 'threading.Thread': SThreadPool - auto size
-SThreadAutoSizeTimeOut = tk.IntVar(value=1000)  # отзывчивость(мсек) SThreadPool - период опроса, для изменения размера пула
-SThreadPoolSizeMin = tk.IntVar(value=0)  # SThreadPool min size
-SThreadPoolSizeMax = tk.IntVar(value=10)  # SThreadPool max size (int>2)
-SThreadPoolAddMinQSize = tk.IntVar(value=100)  # SThreadPool - минимальная длина очереди, для добавления, более чем одного потока, за раз
-SThreadPooMaxAddThread = tk.IntVar(value=2)  # SThreadPool - max число потоков, для добавления за один раз(до SThreadPoolSizeMax)
-SThreadExitTimeout = tk.IntVar(value=10)  # SThreadPool таймаут(сек) выхода, бездействующих потоков(до SThreadPoolSizeMin)
-_SThreadMonitorUpdate = tk.IntVar(value=1000)  # SThreadPool (мс) время обновления popup окна Window.pool_wind для текста состояния пула
+T_POOL_Size = None  # фоновый T пул - любой(int>=2), concurrent.futures(int/None - авто)
+# 'threading.Thread': SThreadPool - авто size
+SThreadPoolSizeMin = tk.IntVar(value=0)  # SThreadPool min size(int)
+SThreadPoolSizeMax = tk.IntVar(value=10)  # SThreadPool max size (int>=2)
+SThreadExitTimeout = tk.IntVar(value=10)  # таймаут(сек) выхода, бездействующих потоков(до SThreadPoolSizeMin)
+SThreadPoolAddMinQSize = tk.IntVar(value=100)  # мин длина очереди, для добавления, более чем одного потока, за раз
+SThreadPooMaxAddThread = tk.IntVar(value=2)  # max число потоков, для добавления за один раз(до SThreadPoolSizeMax
+SThreadAutoSizeTimeOut = tk.IntVar(value=1000)  # отзывчивость(мсек) - период опроса, для изменения размера пула
+_SThreadMonitorUpdate = tk.IntVar(value=1000)  # мс, время обновления окна Window.pool_wind для текста состояния пула
 
 #####################################
 # etc
@@ -466,7 +467,8 @@ def T_POOL_decorator(func: callable):
         elif hasattr(T_POOL, 'apply_async'):
             return T_POOL.apply_async(func, args, kwargs)
         else:
-            raise AttributeError('у пула нет атрибута submit или apply_async')
+            raise AttributeError('у пула({p}) нет атрибута submit или apply_async\n{f}\n{a}\n{k}'.format(
+                f=func, a=args, k=kwargs, p=T_POOL.pool))
     return wrap
 
 
