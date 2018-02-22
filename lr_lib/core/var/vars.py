@@ -435,11 +435,12 @@ M_POOL_Size = cpu_count if (cpu_count < 5) else 4  # основной MP пул(
 
 T_POOL = None  # пул потоков # lr_lib.etc.pool.main_pool.POOL
 T_POOL_NAME = 'SThreadPool(threading.Thread)'  # тип фоновый пул
-T_POOL_Size = 4  # фоновый T пул(int>2 / None), кроме SThreadPool
+# T_POOL_NAME = 'concurrent.futures.ThreadPoolExecutor'  # тип фоновый пул
+T_POOL_Size = None  # фоновый T пул(int>2 / None(concurrent.futures))
 # 'threading.Thread': SThreadPool - auto size
-SThreadAutoSizeTimeOut = tk.IntVar(value=1000)  # отзывчивость(мсек) SThreadPool - период опроса, для изменения размера пула
+SThreadAutoSizeTimeOut = tk.IntVar(value=500)  # отзывчивость(мсек) SThreadPool - период опроса, для изменения размера пула
 SThreadPoolSizeMin = tk.IntVar(value=0)  # SThreadPool min size
-SThreadPoolSizeMax = tk.IntVar(value=(T_POOL_Size * 2))  # SThreadPool max size (int>2)
+SThreadPoolSizeMax = tk.IntVar(value=10)  # SThreadPool max size (int>2)
 SThreadPoolAddMinQSize = tk.IntVar(value=100)  # SThreadPool - минимальная длина очереди, для добавления, более чем одного потока, за раз
 SThreadPooMaxAddThread = tk.IntVar(value=2)  # SThreadPool - max число потоков, для добавления за один раз(до SThreadPoolSizeMax)
 SThreadExitTimeout = tk.IntVar(value=10)  # SThreadPool таймаут(сек) выхода, бездействующих потоков(до SThreadPoolSizeMin)

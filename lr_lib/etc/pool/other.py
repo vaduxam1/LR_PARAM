@@ -10,16 +10,19 @@ import lr_lib.core.var.vars as lr_vars
 
 class MainThreadUpdater:
     """выполнить из main потока(например если что-то нельзя(RuntimeError) выполнять в потоке)"""
-    __slots__ = ('working', 'submit', 'queue_in', )
+    __slots__ = ('working', 'queue_in', )
 
     def __init__(self):
         self.working = None
-        self.queue_in = queue.Queue()
-        self.submit = self.queue_in.put  # выполнить
+        self.queue_in = queue.Queue()  # очередь выполнения callback
+
+    def submit(self, callback: callable) -> None:
+        """добавить в очередь выполнения"""
+        self.queue_in.put(callback)
 
     def __enter__(self):
         self.working = True
-        self.queue_listener()
+        self._queue_listener()
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
@@ -29,7 +32,7 @@ class MainThreadUpdater:
 
         return exc_type, exc_val, exc_tb
 
-    def queue_listener(self, timeout=lr_vars.MainThreadUpdateTime.get()) -> None:
+    def _queue_listener(self, timeout=lr_vars.MainThreadUpdateTime.get()) -> None:
         """выполнять из очереди, пока есть, затем перезапустить"""
         while self.queue_in.qsize():
             try:  # получить и выполнить callback
@@ -40,7 +43,7 @@ class MainThreadUpdater:
                 continue
 
         if self.working:  # перезапуск
-            lr_vars.Tk.after(timeout, self.queue_listener)
+            lr_vars.Tk.after(timeout, self._queue_listener)
 
 
 class NoPool:
@@ -66,6 +69,10 @@ class AsyncPool:
 
     def map(self, fn: callable, args: list):
         return self.loop.run_until_complete(self.async_map(fn, args))
+
+    def submit(self, fn: callable, *args, **kwargs) -> None:
+        callback = lambda *_, a=args, kw=kwargs: fn(*a, **kw)
+        return self.loop.run_until_complete(self.async_map(callback, [None]))
 
     @asyncio.coroutine
     def async_map(self, fn: callable, args: list):

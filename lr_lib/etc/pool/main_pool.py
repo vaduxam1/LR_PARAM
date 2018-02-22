@@ -31,7 +31,7 @@ class POOL:
         if size is False:
             size = lr_vars.cpu_count
 
-        self.size = tkinter.IntVar(value=size)  # новое кол-во потоков пула
+        self.size = tkinter.IntVar(value=size or 0)  # новое кол-во потоков пула
         self.name = tkinter.StringVar(value=name)  # новое имя пула
         self._name = ''  # текущее имя пула
         self._size = 0  # текущее кол-во потоков пула
@@ -57,7 +57,7 @@ class POOL:
             self._name, self._size = n, s
 
             if 'concurrent.futures.' in n:
-                self.set_pool(n, max_workers=s)
+                self.set_pool(n, max_workers=(s or None))
             elif n in ['NoPool', 'AsyncPool']:
                 self.set_pool(n)
             elif n == 'SThreadPool(threading.Thread)':
