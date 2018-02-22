@@ -57,7 +57,7 @@ class SThreadIOQueue:
     def submit(self, target: callable, *args, **kwargs) -> None:
         """выполнить target, последняя зашедшая, выполнится первой"""
         self.priority -= 1  # отрицательные - для поведения как dequeue
-        self.queue_in.put_nowait((self.priority, Task(target, args, kwargs)))
+        self.queue_in.put((self.priority, Task(target, args, kwargs)))
 
 
 class _NoPool:
@@ -163,7 +163,7 @@ class SThreadPool(SThreadIOQueue):
     def close(self) -> None:
         self.working = False
         for _ in range(lr_vars.SThreadPoolSizeMax.get()):
-            self.queue_in.put_nowait((0, None))
+            self.queue_in.put((0, None))
 
     def _auto_size(self, timeout: int, pmax: int, max_th: int, qmin: int) -> None:
         """создать новый поток, если есть очередь, недостигнут maxsize, и все потоки заняты"""

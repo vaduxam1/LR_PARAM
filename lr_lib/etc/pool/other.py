@@ -9,7 +9,7 @@ import lr_lib.core.var.vars as lr_vars
 
 
 class MainThreadUpdater:
-    '''выполнить из main потока(например если что-то нельзя(RuntimeError) выполнять в потоке)'''
+    """выполнить из main потока(например если что-то нельзя(RuntimeError) выполнять в потоке)"""
     __slots__ = ('working', 'submit', 'queue_in', )
 
     def __init__(self):
@@ -30,7 +30,7 @@ class MainThreadUpdater:
         return exc_type, exc_val, exc_tb
 
     def queue_listener(self, timeout=lr_vars.MainThreadUpdateTime.get()) -> None:
-        '''выполнять из очереди, пока есть, затем перезапустить'''
+        """выполнять из очереди, пока есть, затем перезапустить"""
         while self.queue_in.qsize():
             try:  # получить и выполнить callback
                 callback = self.queue_in.get()
@@ -44,7 +44,7 @@ class MainThreadUpdater:
 
 
 class NoPool:
-    '''заглушка пула для однопоточного выполнения, для POOL_'''
+    """заглушка пула для однопоточного выполнения, для POOL_"""
     @staticmethod
     def map(fn: callable, args: tuple) -> iter:
         yield from map(fn, args)
@@ -60,7 +60,7 @@ def async_worker(executor: callable, fn: callable, args: tuple, e=None):
 
 
 class AsyncPool:
-    '''acync пул, для POOL_'''
+    """acync пул, для POOL_"""
     def __init__(self):
         self.loop = asyncio.get_event_loop()
 
