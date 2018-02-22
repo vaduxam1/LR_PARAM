@@ -438,7 +438,7 @@ T_POOL_NAME = 'SThreadPool(threading.Thread)'  # тип фоновый пул
 # T_POOL_NAME = 'concurrent.futures.ThreadPoolExecutor'  # тип фоновый пул
 T_POOL_Size = None  # фоновый T пул(int>2 / None(concurrent.futures))
 # 'threading.Thread': SThreadPool - auto size
-SThreadAutoSizeTimeOut = tk.IntVar(value=500)  # отзывчивость(мсек) SThreadPool - период опроса, для изменения размера пула
+SThreadAutoSizeTimeOut = tk.IntVar(value=1000)  # отзывчивость(мсек) SThreadPool - период опроса, для изменения размера пула
 SThreadPoolSizeMin = tk.IntVar(value=0)  # SThreadPool min size
 SThreadPoolSizeMax = tk.IntVar(value=10)  # SThreadPool max size (int>2)
 SThreadPoolAddMinQSize = tk.IntVar(value=100)  # SThreadPool - минимальная длина очереди, для добавления, более чем одного потока, за раз
