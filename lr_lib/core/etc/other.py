@@ -56,7 +56,7 @@ def _snapshot_file_name(name: str) -> str:
     return name
 
 
-def sort_by_file_keys(file: dict):
+def sort_files(file: dict):
     '''сортировка файлов, по ключам'''
     val = file.get(lr_vars.VarFileSortKey1.get())
     if val:

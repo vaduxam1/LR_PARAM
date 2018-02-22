@@ -10,38 +10,38 @@ import tkinter as tk
 import lr_lib.core.var.vars as lr_vars
 import lr_lib.core.etc.other as lr_other
 
-LockTagAdd = threading.Lock()
-LockLine = threading.Lock()
+# thread safe
+HighlightThreadBarrier = threading.Barrier(1)
 
 
 class HighlightLines:
-    '''подсветка линий текста'''
+    """подсветка линий текста"""
     def __init__(self, tk_text, tegs_names: {str, (str, ), }):
         self.tk_text = tk_text
+
         self.tegs_names = tegs_names
         self.on_srean_line_nums = (0, 0)  # on screen line nums
+
         lines = self.tk_text.get(1.0, tk.END).lower().split('\n')
         # неподсвеченные линии текста
         self.on_screen_lines = {num: line.rstrip() for (num, line) in enumerate(lines, start=1) if line.strip()}
         self._max_line = len(lines)  # номер последней линии
         self._max_line_proc = (self._max_line / 100)
 
+        def tag_apply(*a, **kw) -> None:
+            """команда подсветки"""
+            HighlightThreadBarrier.wait()
+            self.tk_text.tag_add(*a, **kw)
+
+        if lr_vars.TagAddThread.get():
+            self.highlight_cmd = lr_vars.T_POOL_decorator(tag_apply)
+        else:
+            self.highlight_cmd = tag_apply
+
         if lr_vars.LineTagAddThread.get():
             self.tags_highlight = lr_vars.T_POOL_decorator(tegs_add)
         else:
             self.tags_highlight = tegs_add
-
-        TagAdd = self.tk_text.tag_add  # команда подсветки
-
-        def tag_add_threadsafe(*a, **kw) -> None:
-            '''подсветка одного слова, безопасная для потока'''
-            with LockTagAdd:
-                TagAdd(*a, **kw)
-
-        if lr_vars.TagAddThread.get():
-            self.highlight_cmd = lr_vars.T_POOL_decorator(tag_add_threadsafe)
-        else:
-            self.highlight_cmd = tag_add_threadsafe
 
         if lr_vars.HighlightThread.get():
             self.highlight_lines = lr_vars.T_POOL_decorator(self._highlight_top_bottom_lines)
@@ -49,78 +49,64 @@ class HighlightLines:
             self.highlight_lines = self._highlight_top_bottom_lines
 
         self.execute = lr_vars.M_POOL.imap_unordered if lr_vars.HighlightMPool.get() else map
-        self.PortionSize = lr_vars.HighlightLinesPortionSize.get()
-
-        # выполнять подсветку
-        self.HIGHLIGHT_ENABLE = self.tk_text.highlight_var.get()
+        self.psize = lr_vars.HighlightLinesPortionSize.get()
 
     def is_on_screen_lines_change(self, on_srean_line_nums: (int, int)) -> bool:
-        '''изменились ли self.on_srean_line_nums'''
+        """изменились ли self.on_srean_line_nums"""
         return self.on_srean_line_nums != on_srean_line_nums
 
     def set_top_bottom(self, on_srean_line_nums: (int, int)) -> None:
-        '''новые границы показанных линий'''
+        """новые границы показанных линий"""
         self.on_srean_line_nums = on_srean_line_nums
-        if self.HIGHLIGHT_ENABLE:  # подсветить(в потоке)
+
+        if self.tk_text.highlight_var.get():  # подсветить
             self._highlight_top_bottom_lines(on_srean_line_nums)
 
     def _highlight_top_bottom_lines(self, on_srean_line_nums: (int, int)) -> None:
-        '''подсветить линии на экране'''
-        exit = self.is_on_screen_lines_change
-        if exit(on_srean_line_nums):
+        """подсветить линии на экране"""
+        if self.is_on_screen_lines_change(on_srean_line_nums):
             return
+        self._highlight_line_nums(on_srean_line_nums)
 
-        lines = self.on_screen_lines
-        with LockLine:
-            nums = lines.keys()
-
+    def _highlight_line_nums(self, on_srean_line_nums: (int, int)) -> None:
+        """получать индексы и подсвечивать on-screen линии текста, пока top и bottom не изменились"""
         top, bottom = on_srean_line_nums
-        line_nums = (range(top, (bottom + 1)) & nums)
-        if (not line_nums) or exit(on_srean_line_nums):
+        line_nums = (range(top, (bottom + 1)) & self.on_screen_lines.keys())
+        if (not line_nums) or self.is_on_screen_lines_change(on_srean_line_nums):
             return
 
-        _highlight_line_nums(
-            on_srean_line_nums=on_srean_line_nums, highlight_cmd=self.highlight_cmd, exit=exit,
-            tags_highlight=self.tags_highlight, tegs_names=self.tegs_names, PortionSize=self.PortionSize,
-            execute=self.execute, line_get=lines.get, line_delete=lines.pop, line_nums=line_nums)
+        args = lr_other.chunks(((num, self.on_screen_lines.get(num), self.tegs_names) for num in line_nums), self.psize)
+        for ln_ti in self.execute(lines_teg_indxs, args):
+            for (line_num, tag_indxs) in ln_ti:
+                if self.is_on_screen_lines_change(on_srean_line_nums):
+                    return
 
-
-def _highlight_line_nums(on_srean_line_nums: (int, int), highlight_cmd: callable, exit: callable,
-                         tags_highlight: callable, tegs_names: dict, PortionSize: int, execute: callable,
-                         line_get: callable, line_delete: callable, line_nums: set, chunks=lr_other.chunks) -> None:
-    '''получать индексы и подсвечивать on-screen линии текста, пока top и bottom не изменились'''
-    for ln_ti in execute(lines_teg_indxs, chunks(((num, line_get(num), tegs_names) for num in line_nums), PortionSize)):
-        for (line_num, tag_indxs) in ln_ti:
-            if exit(on_srean_line_nums):
+                self.tags_highlight(tag_indxs, self.highlight_cmd)  # подсветить
+                self.on_screen_lines.pop(line_num, None)  # больше не подсвечивать
+        
+            if self.is_on_screen_lines_change(on_srean_line_nums):
                 return
-
-            tags_highlight(tag_indxs, highlight_cmd)  # подсветить
-            with LockLine:
-                line_delete(line_num, None)  # больше не подсвечивать
-
-        if exit(on_srean_line_nums):
-            return
 
 
 def tegs_add(teg_indxs: {str: {(str, str), }, }, highlight_cmd: callable) -> None:
-    '''подсветить одну линию, всеми тегами'''
+    """подсветить одну линию, всеми тегами"""
     for teg in teg_indxs:
         for (index_start, index_end) in teg_indxs[teg]:
             highlight_cmd(teg, index_start, index_end)
 
 
 def lines_teg_indxs(lines_portion: [(int, str, {str, (str,), }), ]) -> [(int, {str: {(str, str), }}), ]:
-    '''вычислить координаты подсветки линии, для порции линий'''
+    """вычислить координаты подсветки линии, для порции линий"""
     return tuple(find_tag_indxs(*arg) for arg in lines_portion)
 
 
 def set_tk_indxs(line_num: int, i_start: int, i_end: int, get_xy='{}.{}'.format) -> (str, str):
-    '''индкесы в формате tk.Text'''
+    """индкесы в формате tk.Text"""
     return get_xy(line_num, i_start), get_xy(line_num, i_end + 1)
 
 
 def join_indxs(indxs: {int, }) -> iter((int, int),):
-    '''объединить идущие подряд индексы: {3, 4, 10, 7, 9, 2} -> (2, 4), (7, 7), (9, 10)'''
+    """объединить идущие подряд индексы: {3, 4, 10, 7, 9, 2} -> (2, 4), (7, 7), (9, 10)"""
     index, *indexs = sorted(indxs)
     i_end = i_start = index
 
@@ -139,7 +125,7 @@ minus_teg = lr_vars.minus_teg
 
 
 def find_tag_indxs(line_num: int, line: str, tag_names: {str: {(str, int), }, }) -> (int, {str: [(str, str), ], }):
-    '''вычислить координаты подсветки линии'''
+    """вычислить координаты подсветки линии"""
     line_indxs = {}
 
     if line:
@@ -173,7 +159,7 @@ ForceOlive = lr_vars.ForceOlive
 
 
 def genetate_line_tags_names_indxs(line: str, setdefault: callable, teg_names: {str: {(str,int)}}) -> None:
-    '''индексы tags для подсветки, для линии - слова из словаря'''
+    """индексы tags для подсветки, для линии - слова из словаря"""
     olive_callback = setdefault(OliveChildTeg, []).extend
     find = line.find
 
@@ -201,7 +187,7 @@ PunctDigitTag = lr_vars.PunctDigitTag
 
 
 def genetate_line_tags_purct_etc_indxs(line: str, setdefault: callable) -> None:
-    '''индексы подсветки для линии - пунктуация, цифры и не ASCII'''
+    """индексы подсветки для линии - пунктуация, цифры и не ASCII"""
     punct_digit_callback = setdefault(PunctDigitTag, []).append
     rus_callback = setdefault(RusTag, []).append
 

@@ -8,8 +8,8 @@ import lr_lib.core.var.vars as lr_vars
 Err = '''
 ImportError keyboard [{}] не работает !
 Необходимо установить библиотеку keyboard из cmd.exe:
-cd c:\Python36\Scripts\
-pip install keyboard
+cd c:\Python36\Scripts\n
+ pip install keyboard
 '''.format(lr_vars.FIND_PARAM_HOTKEY)
 
 

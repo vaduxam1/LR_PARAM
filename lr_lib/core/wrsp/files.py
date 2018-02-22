@@ -186,7 +186,7 @@ def init() -> None:
     lr_vars.VarSearchMinSnapshot.set(min(all_files_inf or [-1]))
 
     try:  # сортировка файлов
-        lr_vars.AllFiles = sorted(lr_vars.AllFiles, key=lr_other.sort_by_file_keys)
+        lr_vars.AllFiles = sorted(lr_vars.AllFiles, key=lr_other.sort_files)
     except TypeError:  # если VarFileSortKey2 предназначен только для FilesWithParam
         lr_vars.AllFiles = sorted(lr_vars.AllFiles, key=lambda file: file['Snapshot']['Nums'])
 

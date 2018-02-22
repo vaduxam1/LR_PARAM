@@ -104,6 +104,9 @@ class WebLegend(tk.Toplevel):
                 self.web_canavs[i]['enable'] = not self.web_canavs[i]['enable']
                 self.print(transac_show=False)
 
+            def onObjectClick3(event, i=i) -> None:
+                self.parent.search_in_action(word='Snapshot=t{i}.inf'.format(i=i), hist=False)
+
             def onObjectClick2(event, i=i) -> None:
                 '''показать/удалить линии in'''
                 self.canvas.delete("all")
@@ -114,10 +117,12 @@ class WebLegend(tk.Toplevel):
                 shape_1 = self.canvas.create_rectangle(*xy1[1:], fill=color, width=2)
                 lr_tooltip_canvas.CanvasTooltip(self.canvas, shape_1, text=r_out)
                 self.canvas.tag_bind(shape_1, '<ButtonPress-1>', onObjectClick1)
+                self.canvas.tag_bind(shape_1, '<Button-3>', onObjectClick3)
             self.web_canavs[i][1] = list(xy1)
 
             t1 = self.canvas.create_text(sep + w_, 35, text=st)
             self.canvas.tag_bind(t1, '<ButtonPress-1>', onObjectClick1)
+            self.canvas.tag_bind(t1, '<Button-3>', onObjectClick3)
             if transaction != _transaction:
                 self.canvas.create_text((sep + w_), (H + 45), text='transac({})'.format(lt if transaction else "''"))
                 _transaction = transaction
@@ -149,11 +154,13 @@ class WebLegend(tk.Toplevel):
                             in_count = {k: in_count[k] for k in in_count if k in wn}
 
                             xy2 = self.web_canavs[i][2]
-                            line = self.canvas.create_line(xy1[2]-x, xy1[3], xy2[0]+x, xy2[1], fill=color, arrow=tk.LAST, width=2)
+                            line = self.canvas.create_line(
+                                xy1[2]-x, xy1[3], xy2[0]+x, xy2[1], fill=color, arrow=tk.LAST, width=2)
 
                             r = 'Snapshot=t{i}.inf\n{r}'.format(r='\n'.join(in_count), i=i)
                             lr_tooltip_canvas.CanvasTooltip(self.canvas, line, text=r)
-                            self.canvas.tag_bind(line, '<ButtonPress-1>', lambda *a, r=r.replace('\n', ', '): self.title(r))
+                            self.canvas.tag_bind(line, '<ButtonPress-1>',
+                                                 lambda *a, r=r.replace('\n', ', '): self.title(r))
 
         if transac_show:
             t = [(a, b) for (a, b) in tr if b]

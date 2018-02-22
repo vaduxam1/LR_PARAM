@@ -11,10 +11,6 @@ import lr_lib.etc.excepthook as lr_excepthook
 import lr_lib.core.var.vars as lr_vars
 
 
-LockC = threading.Lock()
-LockT = threading.Lock()
-
-
 class Task:
     """задача для пула"""
     __slots__ = ('target', 'args', 'kwargs', )
@@ -28,96 +24,93 @@ class Task:
         """инфо о задаче"""
         try:
             la = len(self.args)
-        except:
+        except TypeError:
             la = None
+
         try:
             lk = len(self.kwargs)
-        except:
+        except TypeError:
             lk = None
 
-        return '''
+        task_text = '''
     target = {target}
+       type_target = {lt} : {t_target}
     args = {args}
+      type_args = {la} : {t_args}
     kwargs = {kwargs}
-    type_args = {la} : {t_args}
-    type_kwargs = {lk} : {t_kwargs}
+      type_kwargs = {lk} : {t_kwargs}
         '''.format(target=self.target, args=self.args, kwargs=self.kwargs, t_args=str(list(map(type, self.args))),
-                   t_kwargs=str(list(map(type, self.kwargs))), la=la, lk=lk)
+                   t_kwargs=str(list(map(type, self.kwargs.values()))), la=la, lk=lk,
+                   t_target=type(self.target), lt=(len(self.target) if hasattr(self.target, '__len__') else None))
+
+        return task_text
 
 
 class SThreadIOQueue:
     """priority_DeQueue_in"""
-    __slots__ = ('qsize', 'count', 'task_add', 'task_get', 'task_done', 'queue_in', )
+    __slots__ = ('count', 'queue_in', )
 
     def __init__(self, queue_in: PriorityQueue):
         self.count = 0  # count -= 1 для de-queue для sort в PriorityQueue
-
         self.queue_in = queue_in
-        self.qsize = queue_in.qsize
-
-        self.task_add = queue_in.put_nowait
-        self.task_get = queue_in.get
-        self.task_done = queue_in.task_done
 
     def submit(self, target: callable, *args, **kwargs) -> None:
         """выполнить target, последняя зашедшая, выполнится первой"""
-        with LockC:
-            self.count -= 1  # отрицательные - как dequeue при sort PriorityQueue
-        self.task_add((self.count, Task(target, args, kwargs)))
+        self.count -= 1  # отрицательные - как dequeue при sort PriorityQueue
+        self.queue_in.put_nowait((self.count, Task(target, args, kwargs)))
+
+
+class _NoPool:
+    """заглущка пула для SThread"""
+    def __getattr__(self, item):
+        """self.pool.working -> True"""
+        return [True]
 
 
 class SThread(threading.Thread, SThreadIOQueue):
     """worker поток Thread пула"""
-    __slots__ = ('task', 'pool', )
+    __slots__ = ('task', 'pool', 'timeout', 'size_min',)
 
     def __init__(self, queue_in: PriorityQueue, pool=None):
         self.timeout = lr_vars.SThreadExitTimeout.get()
         self.size_min = lr_vars.SThreadPoolSizeMin.get()
 
         SThreadIOQueue.__init__(self, queue_in)
-        self.pool = pool
+        self.pool = pool or _NoPool()
         self.task = None  # свободен/занят
 
         threading.Thread.__init__(self)
         self.setDaemon(True)
-        self.start()
 
     def run(self) -> None:
         """worker-поток, выполнять task из queue_in, при простое выйти"""
-        pool = self.pool  # SThreadPool
-        threads = pool.threads  # потоки
-        task_get = self.task_get
-        task_done = self.task_done
-        timeout = self.timeout
-        size_min = self.size_min
-
         try:
-            while pool.working:
-                try:
-                    (count, task) = task_get(timeout=timeout)  # получить задачу
+            while self.pool.working:
+                try:  # получить задачу / поток занят
+                    (count, self.task) = self.queue_in.get(timeout=self.timeout)
 
                 except Empty:  # таймаут бездействия
-                    with LockT:
-                        lt = len(threads)
-                    if lt > size_min:
+                    if len(self.pool.threads) > self.size_min:
                         return
                     continue
                 except Exception as ex:
                     return lr_excepthook.excepthook(ex)
+
                 else:
-                    self.task = task  # поток занят
-                    try:
-                        task.target(*task.args, **task.kwargs)  # выполнить задачу
-                        continue
+                    try:  # выполнить задачу
+                        self.task.target(*self.task.args, **self.task.kwargs)
+
                     except Exception:
-                        if task is not None:  # ошибка
+                        if self.task is not None:  # ошибка
                             lr_excepthook.excepthook(*sys.exc_info())
                         return
-                    finally:
-                        self.task = task_done()  # поток свободен
+                    else:
+                        continue
+                    finally:  # поток свободен
+                        self.task = self.queue_in.task_done()
 
         finally:  # выход потока
-            self.task = pool.remove_thread(self)
+            self.task = self.pool._remove_thread(th=self)
 
     def __bool__(self) -> bool:
         """поток свободен/занят"""
@@ -129,66 +122,66 @@ class SThreadPool(SThreadIOQueue):
     __slots__ = ('_qsize', 'threads', 'parent', 'working', 'size', )
 
     def __init__(self, size=lr_vars.cpu_count, parent=None):
-        SThreadIOQueue.__init__(self, queue_in=PriorityQueue())
         self.parent = parent
-        self.working = True
 
-        self.threads = []  # workers
+        SThreadIOQueue.__init__(self, queue_in=PriorityQueue())
+        self._qsize = self.queue_in.qsize()  # размер очереди
+
         self.size = size  # размер пула
+        self.threads = []  # workers
 
-        self._qsize = 0  # размер очереди
+        self.working = True
+        self.thread_create(th_count=self.size)
 
-        for _ in range(self.size):
-            self.add_thread()
+        self._auto_size(timeout=lr_vars.SThreadAutoSizeTimeOut.get(), pmax=lr_vars.SThreadPoolSizeMax.get(),
+                        max_th=lr_vars.SThreadPooMaxAddThread.get(), qmin=lr_vars.SThreadPoolAddMinQSize.get())
 
-        auto_size_SThreadPool(pool=self, timeout=lr_vars.SThreadAutoSizeTimeOut.get(), pmax=lr_vars.SThreadPoolSizeMax.get(),
-                              max_th=lr_vars.SThreadPooMaxAddThread.get(), qmin=lr_vars.SThreadPoolAddMinQSize.get(),
-                              set_qsize=self.set_qsize, threads=self.threads, add_thread=self.add_thread)
+    def thread_create(self, th_count=1) -> None:
+        """создать, сохранить и запустить worker-поток"""
+        for _ in range(th_count):
+            th = self._create_thread()
+            self.threads.append(th)
 
-    def new_thread(self) -> SThread:
-        """создать новый поток"""
-        return SThread(self.queue_in, pool=self)
+            self._set_pool_size()
+            th.start()
 
-    def add_thread(self) -> None:
-        """сохранить поток"""
-        self.threads.append(self.new_thread())
-        self.parent._size = self.size = len(self.threads)
+    def _create_thread(self) -> SThread:
+        """создать worker-поток"""
+        th = SThread(self.queue_in, pool=self)
+        return th
 
-    def remove_thread(self, th: SThread) -> None:
+    def _remove_thread(self, th: SThread) -> None:
         """удалить поток"""
-        with contextlib.suppress(ValueError), LockT:
+        with contextlib.suppress(ValueError):
             self.threads.remove(th)
-            self.parent._size = self.size = len(self.threads)
+
+        self._set_pool_size()
+
+    def _set_pool_size(self) -> None:
+        """сохранить размер пула"""
+        self.parent._size = self.size = len(self.threads)
 
     def close(self) -> None:
         self.working = False
         for _ in range(lr_vars.SThreadPoolSizeMax.get()):
             self.queue_in.put_nowait((0, None))
 
-    def set_qsize(self) -> int:
-        """размер queue_in"""
-        self._qsize = qsize = self.qsize()
-        return qsize
+    def _auto_size(self, timeout: int, pmax: int, max_th: int, qmin: int) -> None:
+        """создать новый поток, если есть очередь, недостигнут maxsize, и все потоки заняты"""
+        self._qsize = self.queue_in.qsize()
 
+        if self._qsize and (self.size < pmax) and all(self.threads):
+            th_count = divmod(self._qsize, qmin)[0]  # 1 поток на каждый MinQSize
 
-def auto_size_SThreadPool(pool: SThreadPool, timeout: int, pmax: int, max_th: int, qmin: int, set_qsize: callable,
-                          threads: [SThread, ], add_thread: callable, restart=lr_vars.Tk.after) -> None:
-    """создать новый поток, если есть очередь, недостигнут maxsize, и все потоки заняты"""
-    with LockT:
-        qs = set_qsize()
-
-        if qs and (pool.size < pmax) and all(threads):
-            th_count = divmod(qs, qmin)[0]  # 1 поток на каждый MinQSize
             if th_count:
                 if th_count > max_th:
                     th_count = max_th
-                if pmax < (th_count + qs):
-                    th_count = (pmax - qs)
+                if pmax < (th_count + self._qsize):
+                    th_count = (pmax - self._qsize)
             else:
                 th_count = 1
 
-            for _ in range(th_count):
-                add_thread()  # создать
+            self.thread_create(th_count=th_count)  # создать
 
-    if pool.working:  # перезапуск auto_size_SThreadPool
-        restart(timeout, auto_size_SThreadPool, pool, timeout, pmax, max_th, qmin, set_qsize, threads, add_thread)
+        if self.working:  # перезапуск auto_size_SThreadPool
+            lr_vars.Tk.after(timeout, self._auto_size, timeout, pmax, max_th, qmin)

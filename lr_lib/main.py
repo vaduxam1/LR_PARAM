@@ -39,7 +39,7 @@ def init(excepthook=True):
 @contextlib.contextmanager
 def _start(console_args=sys.argv):
     '''запуск core/gui'''
-    as_console = bool(console_args[1:])  # консольное использование
+    as_console = bool(console_args[1:])
     c_args = lr_core.init(as_console=as_console)
 
     if as_console:  # консольное использование
