@@ -61,7 +61,7 @@ class SThreadIOQueue:
 
 
 class _NoPool:
-    """заглущка пула для SThread"""
+    """заглушка пула для SThread"""
     def __getattr__(self, item):
         """self.pool.working -> True"""
         return [True]
