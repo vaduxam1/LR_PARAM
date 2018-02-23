@@ -36,3 +36,5 @@ class WinAct(lr_win_frame.WinFrame):
             action = lr_action.ActionWindow()
             self.action_windows[action.id_] = action  # сохранить
             action._start_auto_update_action_info_lab()  # автообновление label состояния пула
+            self.after(1000, self.focus_set)
+            self.after(1100, action.focus_set)

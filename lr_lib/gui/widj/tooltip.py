@@ -40,6 +40,7 @@ class ToolTip(object):
             self.tip = tk.Toplevel(self.widget)
             self.tip.wm_overrideredirect(1)
             self.tip.wm_geometry("+%d+%d" % (x, y))
+            self.tip.attributes('-topmost', True)
             tk.Label(self.tip, text=text, justify=tk.LEFT, background=lr_vars.Background, relief=tk.SOLID, borderwidth=1,
                      font=lr_vars.ToolTipFont).pack(ipadx=0, ipady=0)
 

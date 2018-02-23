@@ -54,12 +54,8 @@ class CanvasTooltip:
             self.canvas.after_cancel(id_)
 
     def show(self, event=None):
-        def tip_pos_calculator(canvas, label,
-                               *,
-                               tip_delta=(10, 5), pad=(5, 3, 5, 3)):
-
+        def tip_pos_calculator(canvas, label, *, tip_delta=(10, 5), pad=(5, 3, 5, 3)):
             c = canvas
-
             s_width, s_height = c.winfo_screenwidth(), c.winfo_screenheight()
 
             width, height = (pad[0] + label.winfo_reqwidth() + pad[2],
@@ -109,6 +105,7 @@ class CanvasTooltip:
 
         # Leaves only the label and removes the app window
         self.tw.wm_overrideredirect(True)
+        self.tw.attributes('-topmost', True)
 
         win = tk.Frame(self.tw,
                        background=bg,

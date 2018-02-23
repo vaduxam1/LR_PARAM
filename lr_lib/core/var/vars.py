@@ -229,7 +229,7 @@ _Tk_ActionWIND_SIZE = [1300, 800]  # размер action окна
 
 _Tk_LegendWIND_SIZE = [1200, 600]  # размер legend окна
 LegendHight = 500  # расстояние между верхом и низом легенды
-Legend_minimal_canvas_size = (25000, 1000)  # перврначальная длина скроллов
+Legend_minimal_canvas_size = (25000, 2500)  # перврначальная длина скроллов
 Legend_scroll_len_modificator = 75  # модификатор длины скроллов (увеличить, если canvas не умещается в окно)
 
 VarShowPopupWindow = tk.BooleanVar(value=True)  # показ popup - ошибок, финальных и др окон
