@@ -28,24 +28,27 @@ class TkTextWebSerialization(lr_act_backup.ActBackup):
         self.open_button = tk.Button(
             self.file_bar, text='open', font=lr_vars.DefaultFont, command=self.open_action_dialog)
 
-    def web_action_to_tk_text(self, websReport=False) -> None:
+    def web_action_to_tk_text(self, websReport=False, highlight_apply=True, gui_reset=True) -> None:
         """from self.web_action to self.tk_text"""
         text = self.web_action.to_str(websReport=websReport)
         self.tk_text.new_text_set(text)
 
-        self.show_info()
-        self.widj_reset()
-        lr_vars.Window.setSortKeys()
-        lr_vars.Window.set_maxmin_inf(lr_vars.AllFiles)
-        self.tk_text.highlight_apply()  # подсветка текста, при изменении
+        if gui_reset:
+            self.show_info()
+            self.widj_reset()
+            lr_vars.Window.setSortKeys()
+            lr_vars.Window.set_maxmin_inf(lr_vars.AllFiles)
 
-    def tk_text_to_web_action(self, text=None, websReport=True) -> None:
+        if highlight_apply:  # подсветка текста, при изменении
+            self.tk_text.highlight_apply()
+
+    def tk_text_to_web_action(self, text=None, websReport=True, highlight_apply=True, gui_reset=True) -> None:
         """from self.web_action to self.tk_text"""
         if text is None:
             text = self.tk_text.get(1.0, tk.END)
 
         self.web_action.set_text_list(text, websReport=websReport)
-        self.web_action_to_tk_text(websReport=False)
+        self.web_action_to_tk_text(websReport=False, highlight_apply=highlight_apply, gui_reset=gui_reset)
 
     def open_action(self, file=None, errors='replace', callback=None) -> None:
         """сформировать action.c"""

@@ -73,15 +73,14 @@ def rClick_Param(event, *args, **kwargs) -> None:
 
 def remove_web_reg_save_param_from_action(event, selection=None, find=True) -> None:
     '''удалить web_reg_save_param с w.param или w.name == selection'''
-    with event.widget.action.block():
-        if selection is None:
-            selection = event.widget.selection_get()
+    if selection is None:
+        selection = event.widget.selection_get()
 
-        param = event.widget.action.web_action.web_reg_save_param_remove(selection)
-        event.widget.action.web_action_to_tk_text(websReport=True)  # вставить в action.c
+    param = event.widget.action.web_action.web_reg_save_param_remove(selection)
+    event.widget.action.web_action_to_tk_text(websReport=True)  # вставить в action.c
 
-        if find and param:
-            event.widget.action.search_in_action(word=param)
+    if find and param:
+        event.widget.action.search_in_action(word=param)
 
 
 @lr_vars.T_POOL_decorator
@@ -134,17 +133,15 @@ def _all_wrsp_dict_web_reg_save_param(event) -> lr_web_.WebRegSaveParam:
             continue
 
     len_dl = len(lr_vars.VarWrspDictList)
-    y = lr_dialog.YesNoCancel(buttons=['Заменить/Создать', 'Выйти'],
-                              text_before='отображены все найденные варианты, которыми можно создать web_reg_save_param\n'
-                                          'необходимо оставить только один вариант, удалив остальные.',
-                              text_after=('итого %s вариантов.' % len_dl), is_text='\n\n'.join(w[1] for w in lr_vars.VarWrspDictList),
-                              title='{} : {} шт.'.format(selection, len_dl), parent=event.widget.action, default_key='Заменить/Создать')
+    y = lr_dialog.YesNoCancel(
+        buttons=['Заменить/Создать', 'Выйти'],
+        text_before='отображены все найденные варианты, которыми можно создать web_reg_save_param\n'
+                    'необходимо оставить только один вариант, удалив остальные.',
+        text_after=('итого %s вариантов.' % len_dl), is_text='\n\n'.join(w[1] for w in lr_vars.VarWrspDictList),
+        title='{} : {} шт.'.format(selection, len_dl), parent=event.widget.action, default_key='Заменить/Создать')
     ask = y.ask()
 
     if ask == 'Заменить/Создать':
-        event.widget.action.backup()
-        remove_web_reg_save_param_from_action(event, selection=selection, find=False)
-
         wrsp = y.text.strip('\n')
         # брать snapshot из камента
         s = wrsp.split(lr_param.SnapInComentS, 1)[1]
@@ -152,7 +149,9 @@ def _all_wrsp_dict_web_reg_save_param(event) -> lr_web_.WebRegSaveParam:
         s = s.split(',', 1)[0]  # может быть несколько?
         snap = int(s)
 
-        wrsp_web_ = event.widget.action.web_action.web_reg_save_param_insert(snap, wrsp)  # сохр web_reg_save_param в web
+        event.widget.action.backup()
+        event.widget.action.web_action.web_reg_save_param_remove(selection)  # удалить старый wrsp
+        wrsp_web_ = event.widget.action.web_action.web_reg_save_param_insert(snap, wrsp)  # сохр wrsp в web
         event.widget.action.web_action.replace_bodys([(param, wrsp_web_.name)])  # заменить в телах web's
         event.widget.action.web_action_to_tk_text(websReport=True)  # вставить в action.c
 
@@ -209,7 +208,7 @@ def rClick_web_reg_save_param_regenerate(event, new_lb_rb=True, selection=None, 
             event.widget.insert(1.0, txt)  # вставить
         else:
             action.backup()
-            remove_web_reg_save_param_from_action(event, selection=param, find=False)  # удалить(при замене)
+            action.web_action.web_reg_save_param_remove(param)  # удалить(при замене)
             with contextlib.suppress(Exception):
                 action.param_inf_checker(wrsp_dict, web_reg_save_param)
 

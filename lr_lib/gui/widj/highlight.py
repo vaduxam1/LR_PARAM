@@ -84,7 +84,7 @@ class HighlightLines:
 
                 self.line_tegs_add(tag_indxs)  # подсветить
                 self.on_screen_lines.pop(line_num, None)  # больше не подсвечивать
-        
+
             if self.is_on_screen_lines_change(on_srean_line_nums):
                 return
 
@@ -96,7 +96,7 @@ class HighlightLines:
                 self.highlight_cmd(teg, index_start, index_end)
 
     def _highlight_cmd(self, *teg_and_indxs, lock=HTLock) -> None:
-        """подсветка одного тега, потокобезопасная - Barrier(1)
+        """подсветка одного тега, потокобезопасная
         teg_and_indxs=('foregroundolive', '33.3', '33.7')"""
         lock.acquire()
         self.tk_text.tag_add(*teg_and_indxs)
@@ -148,9 +148,9 @@ def filter_tag_indxs(line_num: int, line_indxs: dict) -> dict:
     return line_indxs
 
 
-def set_tk_indxs(line_num: int, i_start: int, i_end: int, get_xy='{}.{}'.format) -> (str, str):
+def set_tk_indxs(line_num: int, i_start: int, i_end: int, xy='{}.{}'.format) -> (str, str):
     """индкесы в формате tk.Text"""
-    return get_xy(line_num, i_start), get_xy(line_num, i_end)
+    return xy(line_num, i_start), xy(line_num, i_end)
 
 
 def join_indxs(indxs: {int, }) -> iter((int, int),):
