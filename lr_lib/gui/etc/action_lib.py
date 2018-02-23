@@ -19,7 +19,7 @@ import lr_lib.core.var.vars_func as lr_vars_func
 
 @lr_vars.T_POOL_decorator
 def mouse_web_reg_save_param(widget, param, mode=('SearchAndReplace', 'highlight', ), wrsp=None, wrsp_dict=None, set_param=True) -> None:
-    '''в окне action.c, для param, автозамена, залить цветом, установить виджеты'''
+    """в окне action.c, для param, автозамена, залить цветом, установить виджеты"""
     with widget.action.block():
         if 'SearchAndReplace' in mode:
             if not wrsp_dict:
@@ -57,7 +57,7 @@ def mouse_web_reg_save_param(widget, param, mode=('SearchAndReplace', 'highlight
 
 @lr_vars.T_POOL_decorator
 def rClick_Param(event, *args, **kwargs) -> None:
-    '''web_reg_save_param из выделения, меню правой кнопки мыши, с отображением в виджетах lr_vars.Window окна'''
+    """web_reg_save_param из выделения, меню правой кнопки мыши, с отображением в виджетах lr_vars.Window окна"""
     widget = event.widget
 
     try:
@@ -78,7 +78,7 @@ def rClick_Param(event, *args, **kwargs) -> None:
 
 
 def remove_web_reg_save_param_from_action(event, selection=None, find=True) -> None:
-    '''удалить web_reg_save_param с w.param или w.name == selection'''
+    """удалить web_reg_save_param с w.param или w.name == selection"""
     if selection is None:
         selection = event.widget.selection_get()
 
@@ -91,30 +91,34 @@ def remove_web_reg_save_param_from_action(event, selection=None, find=True) -> N
 
 @lr_vars.T_POOL_decorator
 def all_wrsp_dict_web_reg_save_param(event) -> None:
-    '''все варианты создания web_reg_save_param, искать не ограничивая верхний номер Snapshot'''
-    m = event.widget.action.max_inf_cbx_var.get()
-    event.widget.action.max_inf_cbx_var.set(0)
+    """все варианты создания web_reg_save_param, искать не ограничивая верхний номер Snapshot"""
+    try:
+        action = event.widget.action
+    except AttributeError:
+        action = lr_vars.Window.get_main_action()
 
-    with event.widget.action.block():
-        try:
-            wrsp_web_ = _all_wrsp_dict_web_reg_save_param(event)
-        finally:
-            event.widget.action.max_inf_cbx_var.set(m)
-
-        if wrsp_web_:
-            event.widget.action.search_in_action(word=wrsp_web_.to_str())
-
-
-def _all_wrsp_dict_web_reg_save_param(event) -> lr_web_.WebRegSaveParam:
-    '''все варианты создания web_reg_save_param'''
+    m = action.max_inf_cbx_var.get()
+    action.max_inf_cbx_var.set(0)
     selection = event.widget.selection_get()
 
+    with action.block():
+        try:
+            wrsp_web_ = _all_wrsp_dict_web_reg_save_param(action, selection)
+        finally:
+            action.max_inf_cbx_var.set(m)
+
+        if wrsp_web_:
+            action.search_in_action(word=wrsp_web_.to_str())
+
+
+def _all_wrsp_dict_web_reg_save_param(action, selection: str) -> lr_web_.WebRegSaveParam:
+    """все варианты создания web_reg_save_param"""
     with contextlib.suppress(AttributeError):
-        wrsp_and_param = event.widget.action.web_action.websReport.wrsp_and_param_names
+        wrsp_and_param = action.web_action.websReport.wrsp_and_param_names
         if selection in wrsp_and_param:  # сменить wrsp-имя в ориг. имя param
             selection = wrsp_and_param[selection]
 
-    lr_vars.VarParam.set(selection, action=event.widget.action, set_file=True)
+    lr_vars.VarParam.set(selection, action=action, set_file=True)
     lr_vars.VarWrspDictList.clear()
 
     wrsp_dict = lr_param.wrsp_dict_creator()
@@ -144,7 +148,7 @@ def _all_wrsp_dict_web_reg_save_param(event) -> lr_web_.WebRegSaveParam:
         text_before='отображены все найденные варианты, которыми можно создать web_reg_save_param\n'
                     'необходимо оставить только один вариант, удалив остальные.',
         text_after=('итого %s вариантов.' % len_dl), is_text='\n\n'.join(w[1] for w in lr_vars.VarWrspDictList),
-        title='{} : {} шт.'.format(selection, len_dl), parent=event.widget.action, default_key='Заменить/Создать')
+        title='{} : {} шт.'.format(selection, len_dl), parent=action, default_key='Заменить/Создать')
     ask = y.ask()
 
     if ask == 'Заменить/Создать':
@@ -155,18 +159,18 @@ def _all_wrsp_dict_web_reg_save_param(event) -> lr_web_.WebRegSaveParam:
         s = s.split(',', 1)[0]  # может быть несколько?
         snap = int(s)
 
-        event.widget.action.backup()
-        event.widget.action.web_action.web_reg_save_param_remove(selection)  # удалить старый wrsp
-        wrsp_web_ = event.widget.action.web_action.web_reg_save_param_insert(snap, wrsp)  # сохр wrsp в web
-        event.widget.action.web_action.replace_bodys([(param, wrsp_web_.name)])  # заменить в телах web's
-        event.widget.action.web_action_to_tk_text(websReport=True)  # вставить в action.c
+        action.backup()
+        action.web_action.web_reg_save_param_remove(selection)  # удалить старый wrsp
+        wrsp_web_ = action.web_action.web_reg_save_param_insert(snap, wrsp)  # сохр wrsp в web
+        action.web_action.replace_bodys([(param, wrsp_web_.name)])  # заменить в телах web's
+        action.web_action_to_tk_text(websReport=True)  # вставить в action.c
 
         return wrsp_web_
 
 
 @lr_vars.T_POOL_decorator
 def rClick_web_reg_save_param_regenerate(event, new_lb_rb=True, selection=None, replace=True) -> (dict, str):
-    '''из выделения, переформатировать LB/RB в уже созданном web_reg_save_param, меню правой кнопки мыши'''
+    """из выделения, переформатировать LB/RB в уже созданном web_reg_save_param, меню правой кнопки мыши"""
     if selection is None:
         selection = event.widget.selection_get()
     try:
@@ -229,21 +233,21 @@ def rClick_web_reg_save_param_regenerate(event, new_lb_rb=True, selection=None, 
 
 
 def rClick_max_inf(event) -> None:
-    '''max inf widget из выделения, меню правой кнопки мыши'''
+    """max inf widget из выделения, меню правой кнопки мыши"""
     selection = event.widget.selection_get()
     m = re.sub("\D", "", selection)
     lr_vars.VarSearchMaxSnapshot.set(int(m))
 
 
 def rClick_min_inf(event) -> None:
-    '''min inf widget из выделения, меню правой кнопки мыши'''
+    """min inf widget из выделения, меню правой кнопки мыши"""
     selection = event.widget.selection_get()
     m = re.sub("\D", "", selection)
     lr_vars.VarSearchMinSnapshot.set(int(m))
 
 
 def rClick_Search(event) -> None:
-    '''поиск выделения в тексте, меню правой кнопки мыши'''
+    """поиск выделения в тексте, меню правой кнопки мыши"""
     selection = event.widget.selection_get()
     with contextlib.suppress(AttributeError):
         event.widget.action.search_in_action(word=selection)
@@ -251,7 +255,7 @@ def rClick_Search(event) -> None:
 
 @lr_vars.T_POOL_decorator
 def rename_transaction(event, parent=None, s='lr_start_transaction("', e='lr_end_transaction("') -> None:
-    '''переименование транзакции - необходимо выделять всю линию с транзакцией'''
+    """переименование транзакции - необходимо выделять всю линию с транзакцией"""
     selection = event.widget.selection_get().strip()
     try:
         old_name = selection.split(s, 1)[1].split('"', 1)[0]
@@ -283,7 +287,7 @@ def rename_transaction(event, parent=None, s='lr_start_transaction("', e='lr_end
 
 @lr_vars.T_POOL_decorator
 def encoder(event, action=None) -> None:
-    '''декодирование выделения'''
+    """декодирование выделения"""
     try:
         widget = event.widget
     except AttributeError:
@@ -324,7 +328,7 @@ def encoder(event, action=None) -> None:
 
 
 def add_highlight_words_to_file(event) -> None:
-    '''сохранить слово для подсветки в файл - "навсегда" '''
+    """сохранить слово для подсветки в файл - "навсегда" """
     selection = event.widget.selection_get()
 
     with open(lr_vars.highlight_words_main_file, 'a') as f:
@@ -334,7 +338,7 @@ def add_highlight_words_to_file(event) -> None:
 
 
 def rClick_add_highlight(event, option: str, color: str, val: str, find=False) -> None:
-    '''для выделения, добавление color в highlight_dict, меню правой кнопки мыши'''
+    """для выделения, добавление color в highlight_dict, меню правой кнопки мыши"""
     try:
         hd = event.widget.highlight_dict
     except AttributeError:
@@ -355,7 +359,7 @@ def rClick_add_highlight(event, option: str, color: str, val: str, find=False) -
 
 
 def snapshot_files(widget, folder_record='', i_num=0, selection='') -> None:
-    '''показать окно файлов snapshot'''
+    """показать окно файлов snapshot"""
     if not folder_record:
         folder_record = lr_vars.VarFilesFolder.get()
     folder_response = widget.action.get_result_folder()

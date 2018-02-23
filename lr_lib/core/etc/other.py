@@ -118,7 +118,7 @@ def all_files_info() -> str:
 
 def param_files_info() -> str:
     '''инфо о param файлах'''
-    res = [(str(f['Param']['Count']), f['File']['Name'], str(f['Snapshot']['Nums'])) for f in lr_vars.FilesWithParam]
+    res = [(str(f['Snapshot']['Nums']), f['File']['Name'], str(f['Param']['Count'])) for f in lr_vars.FilesWithParam]
     m = max(len(n) for r in res for n in r)
     if m > 25:
         m = 25
@@ -127,9 +127,9 @@ def param_files_info() -> str:
     s = '{:<%s} | {:<%s} | {:<%s}' % (m, m, m)
 
     i = '\n'.join(map(str, chunks(tuple(get_files_infs(lr_vars.FilesWithParam)), 15)))
-    r = '\n\tparam -> "{p}" :\n{sep}\n{t}\n{res}\n{sep}\nSnapshots\n{i}\n{sep}'.format(
-        sep=lr_vars.PRINT_SEPARATOR, t=s.format('ParamCount', 'FileName', 'Snapshots'), p=lr_vars.VarParam.get(),
-        res='\n'.join(s.format(*r) for r in res), i=i)
+    r = '"{p}" Snapshots{i}:\n{sep}\n{t}\n{res}\n{sep}'.format(
+        sep=lr_vars.PRINT_SEPARATOR, t=s.format('Snapshot', 'FileName', 'Кол-во вариантов WRSP'),
+        p=lr_vars.VarParam.get(), res='\n'.join(s.format(*r) for r in res), i=i)
     return r
 
 
