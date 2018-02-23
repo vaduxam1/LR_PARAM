@@ -88,6 +88,8 @@ class ActWin(lr_act_any.ActAny):
             with contextlib.suppress(Exception):  # виджетам доступно меню мыши
                 self.bind_class(w, sequence='<Button-3>', func=lr_sub_menu.rClicker, add='')
 
+        self.widj_reset()
+
     def open_action(self, file=None, errors='replace', callback=None) -> None:
         """сформировать action.c"""
         super().open_action(file=file, errors=errors, callback=self._open_action_final)
