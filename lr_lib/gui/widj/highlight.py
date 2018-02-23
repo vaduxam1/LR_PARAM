@@ -11,8 +11,8 @@ import lr_lib.core.var.vars as lr_vars
 import lr_lib.core.etc.other as lr_other
 
 
-# потокобезопасная подсветка одного тега - Barrier(1)
-HighlightThreadBarrier = threading.Barrier(1)
+# потокобезопасная подсветка одного тега
+HTLock = threading.Lock()
 
 
 class HighlightLines:
@@ -37,8 +37,9 @@ class HighlightLines:
         def _highlight_cmd(*a, **kw) -> None:
             """подсветка одного тега, потокобезопасная - Barrier(1)
             a=('foregroundolive', '33.3', '33.7')"""
-            HighlightThreadBarrier.wait()
+            HTLock.acquire()
             self.tk_text.tag_add(*a, **kw)
+            HTLock.release()
 
         # подсветить один тег, в фоне/main-потоке
         self.highlight_cmd = (lr_vars.T_POOL_decorator(_highlight_cmd) if lr_vars.TagAddThread.get() else _highlight_cmd)
@@ -69,7 +70,7 @@ class HighlightLines:
 
     def _highlight_line_nums(self, on_srean_line_nums: (int, int)) -> None:
         """получать индексы и подсвечивать on-screen линии текста, пока top и bottom не изменились"""
-        top, bottom = on_srean_line_nums
+        (top, bottom) = on_srean_line_nums
         line_nums = (range(top, (bottom + 1)) & self.on_screen_lines.keys())
         if (not line_nums) or self.is_on_screen_lines_change(on_srean_line_nums):
             return
@@ -126,7 +127,7 @@ def find_tag_indxs(line_num: int, line: str, tag_names: {str: {(str, int), }, })
 
     if line:
         setdefault = line_indxs.setdefault
-        genetate_line_tags_names_indxs(line, setdefault, tag_names)
+        generate_line_tags_names_indxs(line, setdefault, tag_names)
         genetate_line_tags_purct_etc_indxs(line, setdefault)
 
         bg_indxs = set()
@@ -150,7 +151,7 @@ def find_tag_indxs(line_num: int, line: str, tag_names: {str: {(str, int), }, })
     return line_num, line_indxs
 
 
-def genetate_line_tags_names_indxs(line: str, setdefault: callable, teg_names: {str: {(str, int)}}) -> None:
+def generate_line_tags_names_indxs(line: str, setdefault: callable, teg_names: {str: {(str, int)}}) -> None:
     """индексы tags для подсветки, для линии - слова из словаря
     teg_names={'backgroundorange': {('warning', 7),..."""
     olive_callback = setdefault(lr_vars.OliveChildTeg, []).extend
