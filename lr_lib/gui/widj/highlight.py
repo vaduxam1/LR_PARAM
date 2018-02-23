@@ -34,22 +34,23 @@ class HighlightLines:
         # искать индексы в process-пуле или main-потоке
         self.execute = (lr_vars.M_POOL.imap_unordered if lr_vars.HighlightMPool.get() else map)
 
-        def _highlight_cmd(*teg_and_indxs, lock=HTLock) -> None:
-            """подсветка одного тега, потокобезопасная - Barrier(1)
-            teg_and_indxs=('foregroundolive', '33.3', '33.7')"""
-            lock.acquire()
-            self.tk_text.tag_add(*teg_and_indxs)
-            lock.release()
+        self.highlight_cmd = self._highlight_cmd  # подсветить один тег
+        self.line_tegs_add = self._line_tegs_add  # подсветить одну линию
+        self.highlight_top_bottom_lines = self._highlight_top_bottom_lines  # подсветить все линии
+        self.set_thread_attrs()  # подсвечивать в фоне/главном потоке
 
-        # подсветить один тег, в фоне/main-потоке
-        self.highlight_cmd = (lr_vars.T_POOL_decorator(_highlight_cmd) if lr_vars.TagAddThread.get() else _highlight_cmd)
-        # подсветить одну линию, в фоне/main-потоке
+    def set_thread_attrs(self):
+        """подсвечивать в фоне/главном потоке"""
+        self.highlight_cmd = (
+            lr_vars.T_POOL_decorator(self._highlight_cmd) if lr_vars.TagAddThread.get() else self._highlight_cmd
+        )  # подсветить один тег, в фоне/main-потоке
         self.line_tegs_add = (
-            lr_vars.T_POOL_decorator(self._line_tegs_add) if lr_vars.LineTagAddThread.get() else self._line_tegs_add)
-        # подсветить все линии, в фоне/main-потоке
+            lr_vars.T_POOL_decorator(self._line_tegs_add) if lr_vars.LineTagAddThread.get() else self._line_tegs_add
+        )  # подсветить одну линию, в фоне/main-потоке
         self.highlight_top_bottom_lines = (
             lr_vars.T_POOL_decorator(self._highlight_top_bottom_lines) if lr_vars.HighlightThread.get()
-            else self._highlight_top_bottom_lines)
+            else self._highlight_top_bottom_lines
+        )  # подсветить все линии, в фоне/main-потоке
 
     def is_on_screen_lines_change(self, on_srean_line_nums: (int, int)) -> bool:
         """изменились ли self.on_srean_line_nums"""
@@ -94,11 +95,57 @@ class HighlightLines:
             for (index_start, index_end) in teg_indxs[teg]:
                 self.highlight_cmd(teg, index_start, index_end)
 
+    def _highlight_cmd(self, *teg_and_indxs, lock=HTLock) -> None:
+        """подсветка одного тега, потокобезопасная - Barrier(1)
+        teg_and_indxs=('foregroundolive', '33.3', '33.7')"""
+        lock.acquire()
+        self.tk_text.tag_add(*teg_and_indxs)
+        lock.release()
+
 
 def lines_teg_indxs(lines_portion: [(int, str, {str, (str,), }), ]) -> [(int, {str: {(str, str), }}), ]:
     """вычислить координаты подсветки линии, для порции линий
     lines_portion=((247, '\t\t"mode=html",', {'backgroundorange': {('*/', 2), ..."""
-    return tuple(find_tag_indxs(*arg) for arg in lines_portion)
+    return tuple(map(find_tag_indxs, lines_portion))
+
+
+def find_tag_indxs(arg: (int, str, {str, (str,), })) -> (int, {str: [(str, str), ], }):
+    """вычислить координаты подсветки линии
+    arg=(19, '\t\t"url=zkau/delete.png", enditem,', {'backgroundorange': {('yandex.ru',..."""
+    (line_num, line, tag_names) = arg
+
+    line_indxs = {}
+    if line:
+        setdefault = line_indxs.setdefault
+        generate_line_tags_names_indxs(line, setdefault, tag_names)
+        genetate_line_tags_purct_etc_indxs(line, setdefault)
+        line_indxs = filter_tag_indxs(line_num, line_indxs)
+
+    return line_num, line_indxs
+
+
+def filter_tag_indxs(line_num: int, line_indxs: dict) -> dict:
+    """привести, вычисленные индексы текста, в нужный формат"""
+    bg_indxs = set()  # все background
+    for teg in line_indxs:
+        indxs = set(line_indxs[teg])
+        line_indxs[teg] = indxs  # удалить индексы-дубли
+
+        if teg.startswith(lr_vars.ColorMainTegStartswith):
+            bg_indxs.update(indxs)
+
+    for teg in line_indxs:  # удалить все background индексы, из не-background тегов
+        if not teg.startswith(lr_vars.ColorMainTegStartswith):
+            line_indxs[teg] -= bg_indxs
+
+    if lr_vars.OliveChildTeg in line_indxs:  # удалить из Olive тега все индексы, принадлежищие любому другому тегу
+        other_tegs = (line_indxs.keys() - lr_vars.minus_teg)
+        line_indxs[lr_vars.OliveChildTeg] -= set(itertools.chain(*map(line_indxs.__getitem__, other_tegs)))
+
+    line_indxs = {k: [set_tk_indxs(line_num, i_start, i_end) for (i_start, i_end) in join_indxs(indxs)]
+                  for (k, indxs) in line_indxs.items() if indxs}
+
+    return line_indxs
 
 
 def set_tk_indxs(line_num: int, i_start: int, i_end: int, get_xy='{}.{}'.format) -> (str, str):
@@ -107,7 +154,7 @@ def set_tk_indxs(line_num: int, i_start: int, i_end: int, get_xy='{}.{}'.format)
 
 
 def join_indxs(indxs: {int, }) -> iter((int, int),):
-    """объединить идущие подряд индексы: {3, 4, 10, 7, 9, 2} -> (2, 4), (7, 7), (9, 10)"""
+    """объединить идущие подряд индексы: {3, 10, 4, 7, 9, 2, 1, 11} -> (1, 4), (7, 7), (9, 11)"""
     (index, *indexs) = sorted(indxs)
     i_end = i_start = index
 
@@ -118,37 +165,6 @@ def join_indxs(indxs: {int, }) -> iter((int, int),):
         i_end = index
     else:
         yield i_start, i_end
-
-
-def find_tag_indxs(line_num: int, line: str, tag_names: {str: {(str, int), }, }) -> (int, {str: [(str, str), ], }):
-    """вычислить координаты подсветки линии
-    teg_names={'backgroundorange': {('warning', 7),..."""
-    line_indxs = {}
-
-    if line:
-        setdefault = line_indxs.setdefault
-        generate_line_tags_names_indxs(line, setdefault, tag_names)
-        genetate_line_tags_purct_etc_indxs(line, setdefault)
-
-        bg_indxs = set()
-        for teg in line_indxs:
-            indxs = set(line_indxs[teg])
-            line_indxs[teg] = indxs
-            if teg.startswith(lr_vars.ColorMainTegStartswith):
-                bg_indxs.update(indxs)
-
-        for teg in line_indxs:
-            if not teg.startswith(lr_vars.ColorMainTegStartswith):
-                line_indxs[teg] -= bg_indxs
-
-        if lr_vars.OliveChildTeg in line_indxs:
-            other_tegs = (line_indxs.keys() - lr_vars.minus_teg)
-            line_indxs[lr_vars.OliveChildTeg] -= set(itertools.chain(*map(line_indxs.__getitem__, other_tegs)))
-
-        line_indxs = {k: [set_tk_indxs(line_num, i_start, i_end) for (i_start, i_end) in join_indxs(indxs)]
-                      for (k, indxs) in line_indxs.items() if indxs}
-
-    return line_num, line_indxs
 
 
 def generate_line_tags_names_indxs(line: str, setdefault: callable, teg_names: {str: {(str, int)}}) -> None:
