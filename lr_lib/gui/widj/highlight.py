@@ -150,21 +150,24 @@ def filter_tag_indxs(line_num: int, line_indxs: dict) -> dict:
 
 def set_tk_indxs(line_num: int, i_start: int, i_end: int, get_xy='{}.{}'.format) -> (str, str):
     """индкесы в формате tk.Text"""
-    return get_xy(line_num, i_start), get_xy(line_num, i_end + 1)
+    return get_xy(line_num, i_start), get_xy(line_num, i_end)
 
 
 def join_indxs(indxs: {int, }) -> iter((int, int),):
     """объединить идущие подряд индексы: {3, 10, 4, 7, 9, 2, 1, 11} -> (1, 4), (7, 7), (9, 11)"""
-    (index, *indexs) = sorted(indxs)
+    (index, *_indxs) = sorted(indxs)
     i_end = i_start = index
 
-    for index in indexs:
-        if index != (i_end + 1):
+    for index in _indxs:
+        i_end += 1
+
+        if index != i_end:
             yield i_start, i_end
             i_start = index
+
         i_end = index
     else:
-        yield i_start, i_end
+        yield i_start, (i_end + 1)
 
 
 def generate_line_tags_names_indxs(line: str, setdefault: callable, teg_names: {str: {(str, int)}}) -> None:
