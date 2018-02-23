@@ -117,7 +117,7 @@ class ActSearch(lr_act_serializ.TkTextWebSerialization):
                 vals = list(self.search_entry['values'])
                 vals.reverse()
                 if word not in vals:
-                    self.search_entry['values'] = (vals + [word])
+                    self.search_entry['values'] = ([word] + vals)
                     self.search_entry.current(0)
 
             self.search_res_combo['values'] = self._search_text(word=word)

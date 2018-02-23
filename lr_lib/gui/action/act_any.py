@@ -11,7 +11,6 @@ import lr_lib.core.var.vars as lr_vars
 import lr_lib.gui.action.act_goto as lr_act_goto
 
 
-
 class ActAny(lr_act_goto.ActGoto):
     """разное"""
 
@@ -22,6 +21,7 @@ class ActAny(lr_act_goto.ActGoto):
         """обновить виджеты"""
         super().widj_reset()
         self.transaction_combo_set()
+
         self.inf_combo_set()
         self.toolbar['text'] = self.param_counter(all_param_info=False)
         self.set_title()
