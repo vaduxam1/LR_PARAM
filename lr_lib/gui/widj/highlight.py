@@ -34,12 +34,12 @@ class HighlightLines:
         # искать индексы в process-пуле или main-потоке
         self.execute = (lr_vars.M_POOL.imap_unordered if lr_vars.HighlightMPool.get() else map)
 
-        def _highlight_cmd(*a, **kw) -> None:
+        def _highlight_cmd(*teg_and_indxs, lock=HTLock) -> None:
             """подсветка одного тега, потокобезопасная - Barrier(1)
-            a=('foregroundolive', '33.3', '33.7')"""
-            HTLock.acquire()
-            self.tk_text.tag_add(*a, **kw)
-            HTLock.release()
+            teg_and_indxs=('foregroundolive', '33.3', '33.7')"""
+            lock.acquire()
+            self.tk_text.tag_add(*teg_and_indxs)
+            lock.release()
 
         # подсветить один тег, в фоне/main-потоке
         self.highlight_cmd = (lr_vars.T_POOL_decorator(_highlight_cmd) if lr_vars.TagAddThread.get() else _highlight_cmd)
@@ -60,7 +60,7 @@ class HighlightLines:
         self.on_srean_line_nums = on_srean_line_nums
 
         if self.tk_text.highlight_var.get():  # подсветить
-            self._highlight_top_bottom_lines(on_srean_line_nums)
+            self.highlight_top_bottom_lines(on_srean_line_nums)
 
     def _highlight_top_bottom_lines(self, on_srean_line_nums: (int, int)) -> None:
         """подсветить все линии на экране"""
