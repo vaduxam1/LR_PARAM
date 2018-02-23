@@ -35,6 +35,7 @@ class WinAct(lr_win_frame.WinFrame):
         if lr_act_other.get_action_file(folder=folder, file=file):
             action = lr_action.ActionWindow()
             self.action_windows[action.id_] = action  # сохранить
+
             action._start_auto_update_action_info_lab()  # автообновление label состояния пула
-            self.after(1000, self.focus_set)
-            self.after(1100, action.focus_set)
+            self.after(100, self.focus_set)  # тк гдето само активируется
+            self.after(500, action.focus_set)  # открыть поверх главного окна

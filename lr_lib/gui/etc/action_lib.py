@@ -38,11 +38,17 @@ def mouse_web_reg_save_param(widget, param, mode=('SearchAndReplace', 'highlight
                 s = '{wr}\n\n{wd}'.format(wr=widget.action.web_action.websReport.param_statistic[w], wd=wrsp_dict)
                 lr_vars.Logger.debug(s)
                 tk.messagebox.showinfo(wrsp_dict['param'], s, parent=widget.action)
-                try:
-                    widget.action.search_res_combo.current(1)
-                except tk.TclError:
-                    widget.action.search_res_combo.current(0)
-                widget.action.tk_text_see()
+
+                def callback() -> None:
+                    """callback - тк search_in_action почемуто асинхронно вызывается.
+                    переход на первый созданный [param}"""
+                    try:
+                        widget.action.search_res_combo.current(1)
+                    except tk.TclError:
+                        widget.action.search_res_combo.current(0)
+                    widget.action.tk_text_see()
+
+                lr_vars.MainThreadUpdater.submit(callback)
 
         elif 'highlight' in mode:
             widget.action.tk_text.highlight_mode(param)

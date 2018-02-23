@@ -17,7 +17,7 @@ LR_COMENT = '//lr:'
 WEB_REG_NUM = '{letter}_{wrsp_rnd_num}_{infs}__{transaction}__{lb_name}__{wrsp_name}__{rb_name}'
 
 _web_reg_save_param = """
-// PARAM["{param}"] // Snap{inf_nums}
+// PARAM["{param}"] // Snap{inf_nums} // FILE["{Name}"]
 web_reg_save_param("{web_reg_name}",
     "LB={lb}",
     "RB={rb}",
@@ -38,8 +38,8 @@ web_reg_save_param("{web_reg_name}",
 """
 
 # !!! при редактировании web_reg_save_param, учесть что придется изменить wrsp_start/end, чтобы при автозамене, не заменялся param в коментарии // PARAM[{param}], и тд
-wrsp_file_start = '| FILE["'
-wrsp_file_end = '"],'
+wrsp_file_start = 'FILE["'
+wrsp_file_end = '"]'
 
 wrsp_LB_start = '"LB='
 wrsp_LB_end = '",\n'

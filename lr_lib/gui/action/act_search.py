@@ -61,8 +61,8 @@ class ActSearch(lr_act_serializ.TkTextWebSerialization):
         """поиск вниз, по тексту action.c"""
 
         def func() -> None:
-            bhl = self.backgr_butt()
-            next(bhl)
+            # bhl = self.backgr_butt()
+            # next(bhl)
 
             i = len(list(self.search_res_combo['values']))
             if i:
@@ -72,9 +72,8 @@ class ActSearch(lr_act_serializ.TkTextWebSerialization):
 
                 self.search_res_combo.current(self._search_index)
                 self.tk_text_see()
-                self.tk_text._on_change()
 
-            next(bhl, None)
+            # next(bhl, None)
 
         lr_vars.MainThreadUpdater.submit(func)
 
@@ -82,8 +81,8 @@ class ActSearch(lr_act_serializ.TkTextWebSerialization):
         """поиск вверх, по тексту action.c"""
 
         def func() -> None:
-            bhl = self.backgr_butt()
-            next(bhl)
+            # bhl = self.backgr_butt()
+            # next(bhl)
 
             i = len(list(self.search_res_combo['values']))
             if i:
@@ -93,7 +92,7 @@ class ActSearch(lr_act_serializ.TkTextWebSerialization):
                 self.search_res_combo.current(self._search_index)
                 self.tk_text_see()
 
-            next(bhl, None)
+            # next(bhl, None)
 
         lr_vars.MainThreadUpdater.submit(func)
 
@@ -104,8 +103,8 @@ class ActSearch(lr_act_serializ.TkTextWebSerialization):
             if lr_vars.Window._block_:
                 return
 
-            bhl = self.backgr_butt()
-            next(bhl)
+            # bhl = self.backgr_butt()
+            # next(bhl)
             self._search_index = -1
             self.search_res_combo.set('')
 
@@ -132,7 +131,7 @@ class ActSearch(lr_act_serializ.TkTextWebSerialization):
                 self.search_res_combo.current(0)
                 self.tk_text_see()
 
-            next(bhl, None)
+            # next(bhl, None)
 
         lr_vars.MainThreadUpdater.submit(func)
 
