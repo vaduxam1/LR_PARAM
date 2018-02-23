@@ -18,7 +18,7 @@ import lr_lib.etc.excepthook as lr_excepthook
 
 
 progress_str = '{proc}% : {counter}/{len_params} | fail={fail}\n{wrsp}'
-final_str = '{state}: {fail} param не созданы {unsuc}\nсозданы {param} param\n{param_counter}'
+final_str = '{state} | создано сейчас = {param} / fail={fail} : {unsuc} | всего {param_counter}'
 
 
 @lr_vars.T_POOL_decorator
@@ -29,9 +29,9 @@ def group_param(event, widget=None, params=None, ask=True) -> None:
 
     # определить params
     if params is None:  # поиск только по началу имени
-        params = widget.action.group_param_search(widget.selection_get())
+        params = group_param_search(widget.action, widget.selection_get())
     elif params is False:  # поиск только по LB=
-        params = widget.action.session_params(lb_list=[widget.selection_get()], ask=False)
+        params = session_params(widget.action, lb_list=[widget.selection_get()], ask=False)
     if not params:
         return lr_vars.Logger.warning('param не найдены! %s' % params, parent=widget.action)
 
@@ -79,14 +79,14 @@ def group_param(event, widget=None, params=None, ask=True) -> None:
 
         else:  # выход - результаты работы
             param_counter = widget.action.param_counter(all_param_info=False)
+            widget.action.toolbar['text'] = final_str.format(
+                state=str(not fail).upper(),
+                param_counter=param_counter,
+                fail=fail,
+                unsuc=(', '.join(unsuccess) if fail else ''),
+                param=(len_params - fail),
+            )
             if unsuccess:
-                widget.action.toolbar['text'] = final_str.format(
-                    state=str(not fail).upper(),
-                    param_counter=param_counter,
-                    fail=fail,
-                    unsuc=(', '.join(unsuccess) if fail else ''),
-                    param=(len_params - fail),
-                )
                 lr_vars.Logger.error('{} param не были обработаны:\n\t{}'.format(
                     fail, '\n\t'.join(unsuccess)), parent=widget.action)
 
