@@ -3,7 +3,6 @@
 
 import re
 import copy
-import threading
 
 import tkinter as tk
 
@@ -15,7 +14,7 @@ import lr_lib.core.action.web_ as lr_web_
 
 
 class HighlightText(tk.Text):
-    '''Colored tk.Text + line_numbers'''
+    """Colored tk.Text + line_numbers"""
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
@@ -35,7 +34,7 @@ class HighlightText(tk.Text):
 
         self.highlight_var = tk.BooleanVar(value=lr_vars.HighlightOn)
 
-        self.tk.eval('''
+        self.tk.eval("""
                             proc widget_proxy {widget widget_command args} {
 
                                 # call the real tk widget command with the real args
@@ -55,18 +54,25 @@ class HighlightText(tk.Text):
                                 # return the result from the real widget command
                                 return $result
                             }
-                            ''')
-        self.tk.eval('''
+                            """)
+        self.tk.eval("""
                             rename {widget} _{widget}
                             interp alias {{}} ::{widget} {{}} widget_proxy {widget} _{widget}
-                        '''.format(widget=str(self)))
+                        """.format(widget=str(self)))
 
+        # номера линий
         self.linenumbers = TextLineNumbers(self)
-        self.bind("<<Change>>", self._on_change)
-        self.bind("<Configure>", self._on_change)
 
+        self.bind("<<Change>>", self.linenumbers.redraw)
+        self.bind("<Configure>", self.linenumbers.redraw)
+
+        # кдасс подсветки текста
         self.highlight_lines = lr_highlight.HighlightLines(self, self.get_tegs_names())
         self.set_tegs()
+
+    def init(self):
+        """пересоздать self.highlight_lines"""
+        self.highlight_lines = lr_highlight.HighlightLines(self, self.get_tegs_names())
 
     def undo(self, event):
         return self.edit_undo()
@@ -74,17 +80,14 @@ class HighlightText(tk.Text):
     def redo(self, event):
         return self.edit_redo()
 
-    def _on_change(self, event=None):
-        self.linenumbers.redraw()
-
     def new_text_set(self, text: str) -> None:
-        '''заменить весь текст на новый'''
+        """заменить весь текст на новый"""
         self.delete(1.0, tk.END)
         self.insert(1.0, text)
 
     def _text_checkbox(self) -> (str, str, int, int):
-        '''text checkbox's get,
-        + дополнительно используется как self.__class__._text_checkbox(parent) - color/nocolor?'''
+        """text checkbox's get,
+        + дополнительно используется как self.__class__._text_checkbox(parent) - color/nocolor?"""
 
         w = ('bold' if self.weight_var.get() else 'normal')
         s = ('italic' if self.slant_var.get() else 'roman')
@@ -93,7 +96,7 @@ class HighlightText(tk.Text):
         return w, s, u, o,
 
     def set_tegs(self, *a, remove=False, parent=None, ground=('background', 'foreground',)) -> None:
-        '''создать/удалить теги, для parent/self'''
+        """создать/удалить теги, для parent/self"""
         if remove:
             for tag in self.tag_names():
                 if any(tag.startswith(g) for g in ground):
@@ -112,7 +115,7 @@ class HighlightText(tk.Text):
                 self.tag_config(g + color, **{g: color, 'font': f, })
 
     def reset_highlight(self, highlight=True) -> None:
-        '''сбросить текст настройки цветов'''
+        """сбросить текст настройки цветов"""
         self.highlight_dict.clear()
         self.highlight_dict.update(copy.deepcopy(lr_vars.VarDefaultColorTeg))
         if highlight:
@@ -125,18 +128,18 @@ class HighlightText(tk.Text):
         self.configure(font=Font(family=self.font_var.get(), size=size, weight=w, slant=s, underline=u, overstrike=o))
 
     def highlight_apply(self, *a) -> None:
-        '''tk.Text tag_add/remove, сформировать on_screen_lines "карту" подсветки'''
+        """tk.Text tag_add/remove, сформировать on_screen_lines "карту" подсветки"""
         self.set_tegs(remove=True)
 
         if self.highlight_var.get():
             self.set_tegs(remove=False, parent=self)
             self.set_tegs(remove=False, parent=self.action)
 
-            self.highlight_lines = lr_highlight.HighlightLines(self, self.get_tegs_names())
+            self.init()
             self.action.report_position()  # показать
 
     def get_tegs_names(self) -> {str: {str,}}:
-        '''_tegs_names + \\xCE\\xE1'''
+        """_tegs_names + \\xCE\\xE1"""
         tegs_names = {}
         hex_unicode_words = re.compile('\\\\x\w\w').findall(self.get(1.0, tk.END))  # \\xCE\\xE1
         self.highlight_dict.setdefault(
@@ -167,7 +170,7 @@ class HighlightText(tk.Text):
         return tegs_names
 
     def web_add_highlight(self, web_) -> None:
-        '''подсветить web_'''
+        """подсветить web_"""
         self.highlight_mode(web_.type)
 
         for line in web_.comments.split('\n'):
@@ -184,7 +187,7 @@ class HighlightText(tk.Text):
             self.highlight_mode(web_.name)
 
     def highlight_mode(self, word: str, option='foreground', color=lr_vars.DefaultColor) -> None:
-        '''залить цветом все word в tk.Text widget'''
+        """залить цветом все word в tk.Text widget"""
         colors = self.highlight_dict.setdefault(option, {})
         try:
             colors[color].add(word)
@@ -193,7 +196,7 @@ class HighlightText(tk.Text):
 
 
 class TextLineNumbers(tk.Canvas):
-    '''номера линий tk.Text'''
+    """номера линий tk.Text"""
     def __init__(self, tk_text: HighlightText):
         super().__init__(tk_text.action, background=lr_vars.Background)
         self.linenum = -1
@@ -201,7 +204,7 @@ class TextLineNumbers(tk.Canvas):
         self.tk_text = tk_text
 
     def redraw(self, *args, __restart=False) -> None:
-        '''redraw line numbers'''
+        """redraw line numbers"""
         self.delete("all")
         self.linenum = 0
 
