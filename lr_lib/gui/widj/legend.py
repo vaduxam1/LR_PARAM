@@ -4,9 +4,13 @@
 import itertools
 
 import tkinter as tk
+import tkinter.ttk as ttk
 
 import lr_lib.core.var.vars as lr_vars
 import lr_lib.gui.widj.tooltip_canvas as lr_tooltip_canvas
+
+
+Colors = iter(itertools.cycle(lr_vars.VarColorTeg.get() - {'white', 'black', 'navy', }))
 
 
 class WebLegend(tk.Toplevel):
@@ -59,7 +63,8 @@ class WebLegend(tk.Toplevel):
         for web_ in self.parent.web_action.get_web_snapshot_all():
             self.web_canavs[web_.snapshot] = {1: {}, 2: {}, 'enable': True, 'enable_in': True}
 
-    def print(self, transac_show=True, colors=iter(itertools.cycle(lr_vars.VarColorTeg.get() - {'white', 'black', 'navy', }))) -> None:
+    # @lr_vars.T_POOL_decorator
+    def print(self, transac_show=True, colors=Colors) -> None:
         self.canvas.delete("all")
         web_actions = tuple(self.parent.web_action.get_web_snapshot_all())
         sep = 25
@@ -169,16 +174,26 @@ class WebLegend(tk.Toplevel):
         if transac_show:
             self.show_transac()
 
-    def show_transac(self, *args):
-        t = [(a, b) for (a, b) in self.tr if b]
-        if t:
+    def show_transac(self, *args) -> None:
+        """показать соответствие номеров(из окна легенды) и имен транзакций"""
+        transacts = [(a, b) for (a, b) in self.tr if b]
+        if transacts:
             tw = tk.Toplevel(self)
             tw.attributes('-topmost', True)
-            tw.title('transactions')
-            l = tk.Label(tw)
-            l.pack()
-            t = [(a, b) for (a, b) in self.tr if b]
-            m = str(max([len(b) for (_, b) in t]) if t else 1)
-            s = 't({}):"{:>%s}"' % m
-            tl = [s.format(a, b) for (a, b) in t]
-            l.configure(text='\n'.join(tl))
+            tw.title('{} транзакций - соответствие номеров и имен'.format(len(transacts)))
+            tw.grid_columnconfigure(0, weight=1)
+            tw.grid_rowconfigure(0, weight=1)
+
+            tk_text = tk.Text(
+                tw, foreground='grey', background=lr_vars.Background, wrap=tk.NONE, padx=0, pady=0, undo=True,)
+
+            text_scrolly = ttk.Scrollbar(tw, orient=tk.VERTICAL, command=tk_text.yview)
+            text_scrollx = ttk.Scrollbar(tw, orient=tk.HORIZONTAL, command=tk_text.xview)
+            tk_text.configure(
+                yscrollcommand=text_scrolly.set, xscrollcommand=text_scrollx.set, bd=0, padx=0, pady=0)
+
+            tk_text.insert(tk.END, '\n'.join('({}): {}'.format(a, b) for (a, b) in transacts))
+
+            tk_text.grid(row=0, column=0, sticky=tk.NSEW)
+            text_scrolly.grid(row=0, column=1, sticky=tk.NSEW)
+            text_scrollx.grid(row=1, column=0, sticky=tk.NSEW)

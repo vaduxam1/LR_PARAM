@@ -54,10 +54,12 @@ class YesNoCancel(tk.Toplevel):
             self.buttons[name].grid(row=i, column=0, sticky=tk.NSEW, columnspan=2, padx=0, pady=0)
             i += 1
 
-        if self.combo_dict: self.combo.grid(row=(i + 1), column=0, padx=0, pady=0)
+        if self.combo_dict:
+            self.combo.grid(row=(i + 1), column=0, padx=0, pady=0)
 
         self.text = ''
         self.tk_text = tk.Text(self, wrap="none", padx=0, pady=0)
+
         if is_text is not None:
             with contextlib.suppress(Exception):
                 height = len(is_text.split('\n'))
@@ -103,7 +105,8 @@ class YesNoCancel(tk.Toplevel):
 
     def ask(self) -> str:
         '''приостановить поток, до получения ответа'''
-        try: return self.queue.get()
+        try:
+            return self.queue.get()
         finally:
             self.alive_ = False
             self.text = self.tk_text.get(1.0, tk.END) + '\n'
