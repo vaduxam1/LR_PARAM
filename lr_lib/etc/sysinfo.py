@@ -25,7 +25,7 @@ def _system_info() -> (str, ):
 
     def create_obj_attrs_message(obj: object, attrs: str):
         """формирование сообщения для всех атрибутов объекта"""
-        yield '\n{}'.format(obj)
+        # yield '\n{}'.format(obj)
         n = obj.__name__
         for atr in sorted(filter(bool, attrs.replace(' ', '').split(','))):
             result = getattr(obj, atr)
@@ -55,7 +55,7 @@ def _separator(msg: (str, ), max_len: int) -> (str, ):
             yield msg[i]
 
 
-def str_separator(message: str, s_width='#', s_height='#', t='\t', max_=65, n=18) -> str:
+def str_separator(message: str, s_width='#', s_height='#', t='\t', max_=65, n=10) -> str:
     '''сообщение в рамке'''
     def len_split(_m: [str, ]):  # макс длина строки по '\n'
         for st in _m:

@@ -104,16 +104,27 @@ def all_files_info() -> str:
     sa = sum(f['File'].get('Size', 0) for f in lr_vars.AllFiles)
     mn = min([f['File'].get('Size', 0) for f in lr_vars.AllFiles] or [0])
     mx = max([f['File'].get('Size', 0) for f in lr_vars.AllFiles] or [0])
-    s = 'в {i} inf, найдено {f} файлов.\n symbols_count  : '.format(f=lf, i=len(list(get_files_infs(lr_vars.AllFiles))))
-    sum_keys = ['Size', 'len', 'NotPrintable', 'Lines', 'ascii_letters', 'digits', 'whitespace', 'punctuation']
+
+    st_ = 'в {i} inf, найдено {f} файлов ответов.\n Посимвольная статистика файлов ответов: '.format(
+        f=lf, i=len(list(get_files_infs(lr_vars.AllFiles))))
+
+    sum_keys = ['len', 'NotPrintable', 'Lines', 'ascii_letters', 'digits', 'whitespace', 'punctuation']
     _r = [(k, sum(f['File'].get(k, 0) for f in lr_vars.AllFiles)) for k in sum_keys]
     try:
-        sl = _r[-1][1] / lf
+        sl = (_r[-1][1] / lf)
     except ZeroDivisionError:
         sl = 0
-    r = ' '.join('{}({})'.format(*a) for a in sorted(_r, key=lambda b: b[1], reverse=True))
-    return '{s}{r}\n file_size byte : all({sa}) min({mn}) several({sl}) max({mx})\n{sep}'.format(
-        s=s, r=r, mn=mn, mx=mx, sl=sl, sa=sa, sep=lr_vars.PRINT_SEPARATOR)
+
+    r = '\n\t' + '\n\t'.join('{} = {} шт.'.format(*a) for a in sorted(_r, key=lambda b: b[1], reverse=True))
+    txt = '{s}{r}\n ' \
+          ' Размер файлов ответов:\n\t' \
+          'всего = {sa} byte\n\t' \
+          'минимальный = {mn} byte\n\t' \
+          'среднее = {sl} byte\n\t' \
+          'максимальный = {mx} byte\n' \
+          '{sep}'.format(s=st_, r=r, mn=mn, mx=mx, sl=sl, sa=sa, sep=lr_vars.PRINT_SEPARATOR)
+
+    return txt
 
 
 def param_files_info() -> str:
