@@ -43,6 +43,10 @@ class WebLegend(tk.Toplevel):
                                   command=lambda *a: self.print(transac_show=False), textvariable=self.H)
         self.h_entry.pack()
 
+        self.tr = []  # [(0, 'NoTransaction_1'), (1, 'login'),...
+        self.tr_but = tk.Button(self, text='show_transac', command=self.show_transac)
+        self.tr_but.pack()
+
     def _configure_interior(self, *args) -> None:
         '''update the scrollbars to match the size of the inner frame'''
         size = (max(self.interior.winfo_reqwidth(), self.minimal_canvas_size[0]),
@@ -66,7 +70,7 @@ class WebLegend(tk.Toplevel):
         self.minimal_canvas_size[0] = lr_vars.Legend_scroll_len_modificator * len(wdt)
         self._configure_interior()
         _transaction = None
-        tr = []
+        self.tr.clear()
         lt = 0
         H = self.H.get()
         lcolor = 'black'
@@ -77,14 +81,14 @@ class WebLegend(tk.Toplevel):
 
             if transaction != _transaction:
                 if transaction:
-                    lt = len(tr)
+                    lt = len(self.tr)
                     lcolor = color = next(colors)
                 else:
                     lt = None
                     lcolor = color = 'white'
                 t = (lt, transaction)
                 text = '({})->'.format(lt)
-                tr.append(t)
+                self.tr.append(t)
             else:
                 text = '<-{}'.format(lt)
 
@@ -163,15 +167,18 @@ class WebLegend(tk.Toplevel):
                                                  lambda *a, r=r.replace('\n', ', '): self.title(r))
 
         if transac_show:
-            t = [(a, b) for (a, b) in tr if b]
-            if t:
-                tw = tk.Toplevel(self)
-                tw.attributes('-topmost', True)
-                tw.title('transactions')
-                l = tk.Label(tw)
-                l.pack()
-                t = [(a, b) for (a, b) in tr if b]
-                m = str(max([len(b) for (_, b) in t]) if t else 1)
-                s = 't({})\t{:>%s}' % m
-                tl = [s.format(a, b) for (a, b) in t]
-                l.configure(text='\n'.join(tl))
+            self.show_transac()
+
+    def show_transac(self, *args):
+        t = [(a, b) for (a, b) in self.tr if b]
+        if t:
+            tw = tk.Toplevel(self)
+            tw.attributes('-topmost', True)
+            tw.title('transactions')
+            l = tk.Label(tw)
+            l.pack()
+            t = [(a, b) for (a, b) in self.tr if b]
+            m = str(max([len(b) for (_, b) in t]) if t else 1)
+            s = 't({}):"{:>%s}"' % m
+            tl = [s.format(a, b) for (a, b) in t]
+            l.configure(text='\n'.join(tl))
