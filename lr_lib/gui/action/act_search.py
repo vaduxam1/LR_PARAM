@@ -135,18 +135,23 @@ class ActSearch(lr_act_serializ.TkTextWebSerialization):
 
         lr_vars.MainThreadUpdater.submit(func)
 
-    def tk_text_see(self, *a) -> None:
+    def tk_text_see(self, *args) -> None:
         """перейти на позицию в тексте"""
         if lr_vars.Window._block_:
             return
-        pos = self.searchPosVar.get()
-        if a:  # при ручном выборе из комбобокса поиска, продолжать выбирать кнопками с этого места
-            self._search_index = list(self.search_res_combo['values']).index(pos)
-        self.tk_text.mark_set("insert", pos)
-        self.tk_text.focus_set()
-        self.tk_text.see("insert")
-        _, a, b = lr_tooltip.widget_values_counter(self.search_res_combo)
-        self.up_search_button.config(text=self._uptext % '{0}/{1}'.format(a, b))
+
+        def callback(args=args) -> None:
+            """тут потом надо убрать асинхронность"""
+            pos = self.searchPosVar.get()
+            if args:  # при ручном выборе из комбобокса поиска, продолжать выбирать кнопками с этого места
+                self._search_index = list(self.search_res_combo['values']).index(pos)
+            self.tk_text.mark_set("insert", pos)
+            self.tk_text.focus_set()
+            self.tk_text.see("insert")
+            _, a, b = lr_tooltip.widget_values_counter(self.search_res_combo)
+            self.up_search_button.config(text=self._uptext % '{0}/{1}'.format(a, b))
+
+        lr_vars.MainThreadUpdater.submit(callback)
 
     def _search_text(self, *a, word=None, pos='1.0', coord='{i}+{w}c') -> [str, ]:
         """поиск в tk_text"""

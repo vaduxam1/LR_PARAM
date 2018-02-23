@@ -1,4 +1,4 @@
-# -*- coding: UTF-8 -*-
+﻿# -*- coding: UTF-8 -*-
 # action.с окно - всякое
 
 import os
@@ -81,7 +81,7 @@ class ActAny(lr_act_goto.ActGoto):
 
         if self.web_action.websReport.google_webs:
             info.append('Возможно следующие номера inf лишние, тк содержат слова {s}\nих можно удалить('
-                        '+"commit/backup/обновить action.c" из меню мыши)\n{w}'.format(
+                        '+"сохр пользоват. измения в тексте" из меню мыши)\n{w}'.format(
                 w=self.web_action.websReport.google_webs, s=lr_vars.DENY_WEB_))
 
         if info:

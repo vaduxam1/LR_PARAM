@@ -55,8 +55,10 @@ def _LoggerLevelCreator(level_num: int, level: str) -> None:
         if self.isEnabledFor(level_num):
             notepad = kwargs.pop('notepad', None)
             parent = kwargs.pop('parent', None)
+            log = kwargs.pop('log', True)
 
-            self._log(level_num, message, args, **kwargs)  # оригинальный logging метод
+            if log:
+                self._log(level_num, message, args, **kwargs)  # оригинальный logging метод
 
             if notepad:
                 lr_other.openTextInEditor(message)

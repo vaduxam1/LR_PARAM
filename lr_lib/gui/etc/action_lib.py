@@ -1,6 +1,7 @@
 # -*- coding: UTF-8 -*-
 # команды из меню мыши
 
+import os
 import re
 import html
 import codecs
@@ -15,6 +16,7 @@ import lr_lib.core.action.web_ as lr_web_
 import lr_lib.core.wrsp.param as lr_param
 import lr_lib.core.var.vars as lr_vars
 import lr_lib.core.var.vars_func as lr_vars_func
+import lr_lib.core.etc.other as lr_other
 
 
 @lr_vars.T_POOL_decorator
@@ -89,14 +91,20 @@ def remove_web_reg_save_param_from_action(event, selection=None, find=True) -> N
         event.widget.action.search_in_action(word=param)
 
 
-@lr_vars.T_POOL_decorator
-def all_wrsp_dict_web_reg_save_param(event) -> None:
-    """все варианты создания web_reg_save_param, искать не ограничивая верхний номер Snapshot"""
+def event_action_getter(event):
+    """если передали не event.widget.'action', то найти action"""
     try:
         action = event.widget.action
     except AttributeError:
         action = lr_vars.Window.get_main_action()
 
+    return action
+
+
+@lr_vars.T_POOL_decorator
+def all_wrsp_dict_web_reg_save_param(event) -> None:
+    """все варианты создания web_reg_save_param, искать не ограничивая верхний номер Snapshot"""
+    action = event_action_getter(event)
     m = action.max_inf_cbx_var.get()
     action.max_inf_cbx_var.set(0)
     selection = event.widget.selection_get()
@@ -370,3 +378,34 @@ def snapshot_files(widget, folder_record='', i_num=0, selection='') -> None:
         i_num = ''.join(filter(str.isnumeric, selection))
 
     lr_responce_files.RespFiles(widget, i_num, folder_record, folder_response)
+
+
+def file_from_selection(event) -> str:
+    """открыть файл из выделения"""
+    selection = event.widget.selection_get()
+    folder = lr_vars.VarFilesFolder.get()
+    full_name = os.path.join(folder, selection)
+
+    if os.path.isfile(full_name):
+        lr_other._openTextInEditor(full_name)
+    else:
+        lr_vars.Logger.warning(
+            'файл не найден :\n"{}" : len={}\n{}'.format(selection, len(selection), full_name), log=False)
+
+    return full_name
+
+
+def snapshot_text_from_selection(event) -> str:
+    """открыть файл из выделения"""
+    action = event_action_getter(event)
+    selection = event.widget.selection_get()
+    inf = int(''.join(filter(str.isnumeric, selection)))
+    web_ = next(action.web_action.get_web_snapshot_by(snapshot=inf), None)
+
+    if web_ is None:
+        lr_vars.Logger.warning(
+            'web_.snapshot не найден :\n"{}" : len={}\n{}'.format(selection, len(selection), inf), log=False)
+    else:
+        lr_other.openTextInEditor(web_.to_str(_all_stat=True))
+
+    return inf

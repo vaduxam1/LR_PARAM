@@ -223,19 +223,19 @@ class WebSnapshot(WebAny):
                 wrsp.snapshot = self.snapshot
             # print('\tweb_reg_save_param={} шт'.format(len(self.web_reg_save_param_list)))
 
-    def to_str(self) -> str:
+    def to_str(self, _all_stat=False) -> str:
         '''весь текст web_'''
-        if lr_vars.VarWebStatsTransac.get():
+        if lr_vars.VarWebStatsTransac.get() or _all_stat:
             _tr = self.parent_AWAL.websReport.stats_transaction_web(self)
         else:
             _tr = ''
 
-        if lr_vars.VarWebStatsOut.get():
+        if lr_vars.VarWebStatsOut.get() or _all_stat:
             _out = self.parent_AWAL.websReport.stats_out_web(self.snapshot)
         else:
             _out = ''
 
-        if lr_vars.VarWebStatsIn.get():
+        if lr_vars.VarWebStatsIn.get() or _all_stat:
             _in = self.parent_AWAL.websReport.stats_in_web(self.snapshot)
         else:
             _in = ''

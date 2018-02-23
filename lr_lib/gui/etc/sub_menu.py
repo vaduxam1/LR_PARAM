@@ -23,14 +23,16 @@ def rClicker(event) -> str:
 
         nclst = [
             ('web_reg_save_param - все варианты', lambda e=event: lr_action_lib.all_wrsp_dict_web_reg_save_param(e)),
-            ('файлы snapshot(из цифр веделения)', lambda e=event: lr_action_lib.snapshot_files(e.widget)),
-            ('Encoding: "РџРµСЂРІ" -> "Перв"', lambda e=event: lr_action_lib.encoder(e)),
-            ('Поиск выделеного текста', lambda e=event: lr_action_lib.rClick_Search(e)),
-            ('    Копировать', lambda e=event: e.widget.event_generate('<Control-c>')),
-            ('    Вырезать', lambda e=event: e.widget.event_generate('<Control-x>')),
-            ('    Вставить', lambda e=event: e.widget.event_generate('<Control-v>')),
-            ('Сommit/backup/обновить action.c', lambda e=event: e.widget.action.save_action_file(file_name=False)),
-            ('transaction rename(выделять всю линию)', lambda e=event: lr_action_lib.rename_transaction(e)),
+            ('файлы snapshot(цифры выделения)', lambda e=event: lr_action_lib.snapshot_files(e.widget)),
+            ('ENCODING: "РџРµСЂРІ" -> "Перв"', lambda e=event: lr_action_lib.encoder(e)),
+            ('Поиск текста(выделения)', lambda e=event: lr_action_lib.rClick_Search(e)),
+            ('  Копировать', lambda e=event: e.widget.event_generate('<Control-c>')),
+            ('  Вырезать', lambda e=event: e.widget.event_generate('<Control-x>')),
+            ('  Вставить', lambda e=event: e.widget.event_generate('<Control-v>')),
+            ('сохр пользоват. измения в тексте', lambda e=event: e.widget.action.save_action_file(file_name=False)),
+            ('transaction rename(выделять линию)', lambda e=event: lr_action_lib.rename_transaction(e)),
+            ('откр файл(выделять имя)', lambda e=event: lr_action_lib.file_from_selection(e)),
+            ('откр текст snapshot(выделять цифры)', lambda e=event: lr_action_lib.snapshot_text_from_selection(e)),
         ]
         for (txt, cmd) in nclst:
             rmenu.add_command(label=txt, command=cmd)
