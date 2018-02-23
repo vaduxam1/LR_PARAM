@@ -63,7 +63,6 @@ class WebLegend(tk.Toplevel):
         for web_ in self.parent.web_action.get_web_snapshot_all():
             self.web_canavs[web_.snapshot] = {1: {}, 2: {}, 'enable': True, 'enable_in': True}
 
-    # @lr_vars.T_POOL_decorator
     def print(self, transac_show=True, colors=Colors) -> None:
         self.canvas.delete("all")
         web_actions = tuple(self.parent.web_action.get_web_snapshot_all())
@@ -138,12 +137,14 @@ class WebLegend(tk.Toplevel):
 
             xy2 = sep, H, (width + sep + w_), (H + height)
             shape_2 = self.canvas.create_rectangle(*xy2, fill=color, width=2)
+            self.canvas.tag_bind(shape_2, '<Button-3>', onObjectClick3)
             lr_tooltip_canvas.CanvasTooltip(self.canvas, shape_2, text=r_in)
             self.canvas.tag_bind(shape_2, '<ButtonPress-1>', onObjectClick2)
             self.web_canavs[i][2] = list(xy2)
 
             li = len(self.parent.web_action.websReport.web_snapshot_param_in_count[i])
             t2 = self.canvas.create_text((sep + w_), (H + 15), text='in: {li}\nSnap: {i}'.format(i=i, li=li))
+            self.canvas.tag_bind(t2, '<Button-3>', onObjectClick3)
             self.canvas.tag_bind(t2, '<ButtonPress-1>', onObjectClick2)
 
             sep += 70
