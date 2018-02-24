@@ -1,6 +1,7 @@
 # -*- coding: UTF-8 -*-
 # примеры разных пулов потоков
 
+import contextlib
 import asyncio
 import queue
 import sys
@@ -21,17 +22,15 @@ class MainThreadUpdater:
         """добавить в очередь выполнения"""
         self.queue_in.put(callback)
 
-    def __enter__(self):
-        self.working = True
-        self._queue_listener()
-        return self
-
-    def __exit__(self, exc_type, exc_val, exc_tb):
-        self.working = False
-        if exc_type:
-            lr_excepthook.excepthook(exc_type, exc_val, exc_tb)
-
-        return exc_type, exc_val, exc_tb
+    @contextlib.contextmanager
+    def init(self) -> iter:
+        """вызов _queue_listener"""
+        self.working = True  # разрешить перезапуск _queue_listener
+        try:
+            self._queue_listener()
+            yield self
+        finally:  # запретить перезапуск _queue_listener
+            self.working = False
 
     def _queue_listener(self, timeout=lr_vars.MainThreadUpdateTime.get()) -> None:
         """выполнять из очереди, пока есть, затем перезапустить"""

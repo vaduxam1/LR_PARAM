@@ -20,25 +20,24 @@ import lr_lib.etc.pool.other as lr_other_pool
 
 
 def init(excepthook=True):
-    '''инит дополнительных классов и запуск скрипта'''
-    with lr_logger.init(name='__main__', encoding='cp1251', levels=lr_vars.loggingLevels) as Logger:
-        lr_vars.Logger = Logger
+    """инит дополнительных классов, сохр. их в lr_vars, запуск core/gui"""
+    # lr_vars.Logger
+    with lr_logger.init(name='__main__', encoding='cp1251', levels=lr_vars.loggingLevels) as lr_vars.Logger:
         lr_vars.Logger.info('version={v}, defaults.VarEncode={ce}\n{si}'.format(
             v=lr_vars.VERSION, ce=lr_vars.VarEncode.get(), si=lr_sysinfo.system_info()))
-
-        with lr_other_pool.MainThreadUpdater() as mtu, lr_main_pool.POOL_Creator() as mp_tp:
-            lr_vars.MainThreadUpdater = mtu
-            (lr_vars.M_POOL, lr_vars.T_POOL) = mp_tp
-
-            # вся работа в _start(), в теле with - работа уже окончена
-            with (_excepthook() if excepthook else _start()) as ex:  # core/gui инит
-                if any(ex):
-                    lr_excepthook.full_tb_write(*ex)
+        # lr_vars.MainThreadUpdater
+        with lr_other_pool.MainThreadUpdater().init() as lr_vars.MainThreadUpdater:
+            # lr_vars.M_POOL, lr_vars.T_POOL
+            with lr_main_pool.init() as (lr_vars.M_POOL, lr_vars.T_POOL):
+                # работа скрипта - внутри _start(core/gui)
+                with (_with_except(_start)() if excepthook else _start()) as ex:
+                    if any(ex):  # выход - в теле with работа уже окончена
+                        lr_excepthook.full_tb_write(*ex)
 
 
 @contextlib.contextmanager
-def _start(console_args=sys.argv):
-    '''запуск core/gui'''
+def _start(console_args=sys.argv) -> iter(((None, None, None), )):
+    """запуск core/gui"""
     as_console = bool(console_args[1:])
     c_args = lr_core.init(as_console=as_console)
 
@@ -54,12 +53,16 @@ def _start(console_args=sys.argv):
         c=as_console, cas=console_args, ca=c_args))
 
 
-@contextlib.contextmanager
-def _excepthook() -> iter((None, )):
-    '''запуск в обертке excepthook(перехват raise)'''
-    lr_vars.Tk.report_callback_exception = lr_excepthook.excepthook
-    try:
-        with _start() as e:
-            yield e
-    finally:
-        lr_vars.Tk.report_callback_exception = sys.excepthook
+def _with_except(func_start: callable) -> callable:
+    """декоратор запуска в обертке excepthook(перехват raise -> lr_vars.Logger.error)
+    """
+    @contextlib.contextmanager
+    def start(*args, **kwargs):
+        lr_vars.Tk.report_callback_exception = lr_excepthook.excepthook
+        try:
+            with func_start(*args, **kwargs) as exc_info:
+                yield exc_info
+        finally:
+            lr_vars.Tk.report_callback_exception = sys.excepthook
+
+    return start

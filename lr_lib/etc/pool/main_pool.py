@@ -81,7 +81,7 @@ class POOL:
 
 
 @contextlib.contextmanager
-def POOL_Creator() -> iter((POOL, POOL),):
+def init() -> iter((POOL, POOL), ):
     '''создание пулов'''
     try:
         M_POOL = POOL(lr_vars.M_POOL_NAME, lr_vars.M_POOL_Size)

@@ -115,7 +115,7 @@ def all_files_info() -> str:
     except ZeroDivisionError:
         sl = 0
 
-    r = '\n\t' + '\n\t'.join('{} = {} шт.'.format(*a) for a in sorted(_r, key=lambda b: b[1], reverse=True))
+    r = '\n\t' + '\n\t'.join('{} = {} симв.'.format(*a) for a in sorted(_r, key=lambda b: b[1], reverse=True))
     txt = '{s}{r}\n ' \
           ' Размер файлов ответов:\n\t' \
           'всего = {sa} byte\n\t' \
