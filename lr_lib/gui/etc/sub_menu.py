@@ -21,23 +21,41 @@ def rClicker(event) -> str:
             selection = None
         rmenu = tk.Menu(None, tearoff=False)
 
-        nclst = [
-            ('web_reg_save_param - все варианты', lambda e=event: lr_action_lib.all_wrsp_dict_web_reg_save_param(e)),
-            ('файлы snapshot(цифры выделения)', lambda e=event: lr_action_lib.snapshot_files(e.widget)),
-            ('ENCODING: "РџРµСЂРІ" -> "Перв"', lambda e=event: lr_action_lib.encoder(e)),
-            ('Поиск текста(выделения)', lambda e=event: lr_action_lib.rClick_Search(e)),
-            ('  Копировать', lambda e=event: e.widget.event_generate('<Control-c>')),
-            ('  Вырезать', lambda e=event: e.widget.event_generate('<Control-x>')),
-            ('  Вставить', lambda e=event: e.widget.event_generate('<Control-v>')),
-            ('сохр пользоват. измения в тексте', lambda e=event: e.widget.action.save_action_file(file_name=False)),
-            ('transaction rename(выделять линию)', lambda e=event: lr_action_lib.rename_transaction(e)),
-            ('откр файл(выделять имя)', lambda e=event: lr_action_lib.file_from_selection(e)),
-            ('откр текст snapshot(выделять цифры)', lambda e=event: lr_action_lib.snapshot_text_from_selection(e)),
-        ]
-        for (txt, cmd) in nclst:
-            rmenu.add_command(label=txt, command=cmd)
-
         if selection:
+            rmenu.add_cascade(
+                label='Web_Reg_Save_Param - все варианты', underline=0,
+                command=lambda e=event: lr_action_lib.all_wrsp_dict_web_reg_save_param(e))
+            rmenu.add_cascade(
+                label='Encoding : "РџРµСЂРІ" -> "Перв"', underline=0,
+                command=lambda e=event: lr_action_lib.encoder(e))
+            rmenu.add_cascade(
+                label='Копировать', underline=0,
+                command=lambda e=event: e.widget.event_generate('<Control-c>'))
+            rmenu.add_cascade(
+                label='Вырезать', underline=0,
+                command=lambda e=event: e.widget.event_generate('<Control-x>'))
+            rmenu.add_cascade(
+                label='Вставить', underline=0,
+                command=lambda e=event: e.widget.event_generate('<Control-v>'))
+            rmenu.add_cascade(
+                label='Поиск выделения в тексте', underline=0,
+                command=lambda e=event: lr_action_lib.rClick_Search(e))
+
+            # open
+            submenu_open = tk.Menu(rmenu, tearoff=False)
+            rmenu.add_cascade(label='Открыть как текст', menu=submenu_open, underline=0)
+
+            submenu_open.add_cascade(
+                label='файл-ответа (выделить имя файла)', underline=0,
+                command=lambda e=event: lr_action_lib.file_from_selection(e))
+            submenu_open.add_cascade(
+                label='web_.Snapshot (номер из любых цифр выделения)', underline=0,
+                command=lambda e=event: lr_action_lib.snapshot_text_from_selection(e))
+            submenu_open.add_cascade(
+                label='WRSP (выделить имя wrsp/param)', underline=0,
+                command=lambda e=event: lr_action_lib.wrsp_text_from_selection(e))
+
+            # param
             submenu_param = tk.Menu(rmenu, tearoff=False)
             rmenu.add_cascade(label='web_reg_save_param', menu=submenu_param, underline=0)
 
@@ -73,6 +91,12 @@ def rClicker(event) -> str:
                 label='* одиночный -> удалить по wrsp или param имени', underline=0,
                 command=lambda e=event: lr_action_lib.remove_web_reg_save_param_from_action(e))
 
+        nclst = [
+            ('Сохр. пользоват. изменения в тексте', lambda e=event: e.widget.action.save_action_file(file_name=False)),
+        ]
+        for (txt, cmd) in nclst:
+            rmenu.add_command(label=txt, command=cmd)
+
         dt = lr_vars.VarWrspDict.get()
         web_reg_name = dt.get('web_reg_name')
         param = dt.get('param')
@@ -98,12 +122,23 @@ def rClicker(event) -> str:
                 submenu_goto.add_cascade(label=p_wrsp, underline=0, command=lambda e=event, n=p_wrsp: action_goto(e, n))
 
         if selection:
-            submenu_maxmin = tk.Menu(rmenu, tearoff=False)
+            # other
+            submenu_other = tk.Menu(rmenu, tearoff=False)
+            rmenu.add_cascade(label='Разное', menu=submenu_other, underline=0)
+            submenu_other.add_cascade(
+                label='Переименовать транзакцию (выделить линию целиком)', underline=0,
+                command=lambda e=event: lr_action_lib.rename_transaction(e))
+            submenu_other.add_cascade(
+                label='Файлы-ответов Snapshot (номер из любых цифр выделения)', underline=0,
+                command=lambda e=event: lr_action_lib.snapshot_files(e))
+
+            # maxmin
+            submenu_maxmin = tk.Menu(submenu_other, tearoff=False)
             submenu_maxmin.add_cascade(label='min', underline=0, command=lambda e=event: lr_action_lib.rClick_min_inf(e))
             submenu_maxmin.add_cascade(label='max', underline=0, command=lambda e=event: lr_action_lib.rClick_max_inf(e))
-            rmenu.add_cascade(label=' Snapshot-min/max', menu=submenu_maxmin, underline=0)
+            submenu_other.add_cascade(label=' Snapshot-min/max (номер из любых цифр выделения)', menu=submenu_maxmin, underline=0)
 
-            submenu = tk.Menu(rmenu, tearoff=False)
+            submenu = tk.Menu(submenu_other, tearoff=False)
             colors = lr_vars.VarColorTeg.get()
             submenu.add_cascade(label='сорх в файл', underline=0, command=lambda e=event: lr_action_lib.add_highlight_words_to_file(e))
 
@@ -118,7 +153,7 @@ def rClicker(event) -> str:
                             return lr_action_lib.rClick_add_highlight(e, o, c, v, find=f)
                         sub.add_command(label=color, command=cmd)
 
-            rmenu.add_cascade(label=' подсветка', menu=submenu, underline=0)
+            submenu_other.add_cascade(label=' подсветка', menu=submenu, underline=0)
 
         rmenu.tk_popup(event.x_root + 40, event.y_root + 10, entry="0")
     return "break"

@@ -9,7 +9,21 @@ import lr_lib.etc.help as lr_help
 
 
 class Window(lr_win_menu.WinMenu):
-    """главное окно скрипта"""
+    """главное окно скрипта
+    Window
+    lr_win_menu.WinMenu
+    lr_win_folder.WinFolder
+    lr_win_other.WinOther
+    lr_win_filesort.WinFileSort
+    lr_win_maxmin.WinMaxMin
+    lr_win_widj.WinWidj
+    lr_win_part_lbrb.WinPartsLbRb
+    lr_win_text.WinText
+    lr_win_block.WinBlock
+    lr_win_act.WinAct
+    lr_win_frame.WinFrame
+    ttk.Frame
+    """
 
     def __init__(self):
         lr_win_menu.WinMenu.__init__(self)

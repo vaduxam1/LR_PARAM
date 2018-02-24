@@ -12,7 +12,23 @@ import lr_lib.core.var.vars as lr_vars
 
 
 class ActionWindow(lr_act_win.ActWin):
-    """окно action.c"""
+    """окно action.c
+    ActionWindow
+    lr_act_win.ActWin
+    lr_act_any.ActAny
+    lr_act_goto.ActGoto
+    lr_act_font.ActFont
+    lr_act_replace.ActReplaceRemove
+    lr_act_search.ActSearch
+    lr_act_serializ.TkTextWebSerialization
+    lr_act_backup.ActBackup
+    lr_act_block.ActBlock
+    lr_act_scroll.ActScrollText
+    lr_act_widj.ActWidj
+    lr_act_var.ActVar
+    lr_act_toplevel.ActToplevel
+    tk.Toplevel
+    """
 
     def __init__(self):
         lr_act_win.ActWin.__init__(self)

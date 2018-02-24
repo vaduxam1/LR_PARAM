@@ -395,8 +395,8 @@ def file_from_selection(event) -> str:
     return full_name
 
 
-def snapshot_text_from_selection(event) -> str:
-    """открыть файл из выделения"""
+def snapshot_text_from_selection(event) -> int:
+    """открыть текст snapshot из выделения"""
     action = event_action_getter(event)
     selection = event.widget.selection_get()
     inf = int(''.join(filter(str.isnumeric, selection)))
@@ -409,3 +409,27 @@ def snapshot_text_from_selection(event) -> str:
         lr_other.openTextInEditor(web_.to_str(_all_stat=True))
 
     return inf
+
+
+def wrsp_text_from_selection(event) -> object:
+    """открыть текст wrsp из выделения"""
+    action = event_action_getter(event)
+    selection = event.widget.selection_get()
+
+    try:
+        wrsp_and_param = action.web_action.websReport.wrsp_and_param_names
+        if selection not in wrsp_and_param:  # сменить wrsp-имя в ориг. имя param
+            wrsp_and_param = {wrsp_and_param[k]: k for k in wrsp_and_param}
+            selection = wrsp_and_param[selection]
+    except KeyError:
+        wrsp = None
+    else:
+        wrsp = next(action.web_action.get_web_reg_save_param_by(name=selection), None)
+
+    if wrsp is None:
+        lr_vars.Logger.warning(
+            'wrsp не найден :\n"{}" : len={}\n{}'.format(selection, len(selection), action), log=False)
+    else:
+        lr_other.openTextInEditor(wrsp.to_str(_all_stat=True))
+
+    return wrsp

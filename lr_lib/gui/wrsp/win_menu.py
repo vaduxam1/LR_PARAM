@@ -11,7 +11,6 @@ import lr_lib.gui.wrsp.win_folder as lr_win_folder
 import lr_lib.gui.wrsp.top.top_allfiles as lr_top_allfiles
 import lr_lib.gui.wrsp.top.top_encode as lr_top_encode
 import lr_lib.gui.wrsp.top.top_pool as lr_top_pool
-import lr_lib.gui.action.main_action as lr_action
 import lr_lib.gui.etc.sub_menu as lr_sub_menu
 import lr_lib.core.var.vars as lr_vars
 import lr_lib.etc.help as lr_help
