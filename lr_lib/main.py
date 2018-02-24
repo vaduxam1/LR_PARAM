@@ -28,46 +28,36 @@ def init(excepthook=True):
 
         # lr_vars.MainThreadUpdater
         with lr_other_pool.MainThreadUpdater().init() as lr_vars.MainThreadUpdater:
-
             # lr_vars.M_POOL, lr_vars.T_POOL
             with lr_main_pool.init() as (lr_vars.M_POOL, lr_vars.T_POOL):
 
-                # работа скрипта - внутри _start(core/gui)
-                with (_with_except(_start)() if excepthook else _start()) as ex:
-
+                # core/gui
+                with _start(excepthook=excepthook) as ex:
                     if any(ex):  # выход - в теле with работа уже окончена
                         lr_excepthook.full_tb_write(*ex)
 
 
 @contextlib.contextmanager
-def _start(console_args=sys.argv) -> iter(((None, None, None), )):
+def _start(excepthook=True, console_args=sys.argv) -> iter(((None, None, None), )):
     """запуск core/gui"""
-    as_console = bool(console_args[1:])
-    c_args = lr_core.init(as_console=as_console)
-
-    if as_console:  # консольное использование
-        lr_core.start(c_args, echo=True)
-
-    else:  # gui использование
-        with lr_keyb.keyboard_listener():  # hotkey(param from clipboard)
-            lr_gui.init(action=True)
-            lr_gui.start()  # lock
-
-    yield sys.exc_info()
-    lr_vars.Logger.trace('Exit\nas_console={c}\nconsole_args={cas}\nc_args={ca}'.format(
-        c=as_console, cas=console_args, ca=c_args))
-
-
-def _with_except(func_start: callable) -> callable:
-    """декоратор запуска в обертке excepthook(перехват raise -> lr_vars.Logger.error)
-    """
-    @contextlib.contextmanager
-    def start(*args, **kwargs):
+    if excepthook:  # перехват raise -> lr_vars.Logger.error
         lr_vars.Tk.report_callback_exception = lr_excepthook.excepthook
-        try:
-            with func_start(*args, **kwargs) as exc_info:
-                yield exc_info
-        finally:
-            lr_vars.Tk.report_callback_exception = sys.excepthook
+    try:
 
-    return start
+        as_console = bool(console_args[1:])
+        c_args = lr_core.init(as_console=as_console)
+
+        if as_console:  # консольное использование
+            lr_core.start(c_args, echo=True)
+
+        else:  # gui использование
+            with lr_keyb.keyboard_listener():  # hotkey(param from clipboard)
+                lr_gui.init(c_args)
+                lr_gui.start(action=True, lock=True)
+
+        yield sys.exc_info()
+        lr_vars.Logger.trace('Exit\nas_console={c}\nconsole_args={cas}\nc_args={ca}'.format(
+            c=as_console, cas=console_args, ca=c_args))
+    finally:
+        if excepthook:
+            lr_vars.Tk.report_callback_exception = lr_vars.original_callback_exception
