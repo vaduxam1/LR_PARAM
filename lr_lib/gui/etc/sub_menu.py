@@ -105,7 +105,7 @@ def rClicker(event) -> str:
             submenu_goto = tk.Menu(rmenu, tearoff=False)
             rmenu.add_cascade(label=' Быстрый перход', menu=submenu_goto, underline=0)
 
-            def action_goto(e: object, _search: str) -> None:
+            def action_goto(e, _search: str) -> None:
                 '''перейти к _search обрасти в action.c'''
                 with contextlib.suppress(AttributeError, tk.TclError):
                     event.widget.action.search_entry.set(_search)
@@ -129,8 +129,8 @@ def rClicker(event) -> str:
                 label='Переименовать транзакцию (выделить линию целиком)', underline=0,
                 command=lambda e=event: lr_action_lib.rename_transaction(e))
             submenu_other.add_cascade(
-                label='Файлы-ответов Snapshot (номер из любых цифр выделения)', underline=0,
-                command=lambda e=event: lr_action_lib.snapshot_files(e))
+                label='Файлы-ответов Snapshot (выделить номер)', underline=0,
+                command=lambda e=event: lr_action_lib.snapshot_files(e.widget))
 
             # maxmin
             submenu_maxmin = tk.Menu(submenu_other, tearoff=False)

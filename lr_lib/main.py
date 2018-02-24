@@ -25,12 +25,16 @@ def init(excepthook=True):
     with lr_logger.init(name='__main__', encoding='cp1251', levels=lr_vars.loggingLevels) as lr_vars.Logger:
         lr_vars.Logger.info('version={v}, defaults.VarEncode={ce}\n{si}'.format(
             v=lr_vars.VERSION, ce=lr_vars.VarEncode.get(), si=lr_sysinfo.system_info()))
+
         # lr_vars.MainThreadUpdater
         with lr_other_pool.MainThreadUpdater().init() as lr_vars.MainThreadUpdater:
+
             # lr_vars.M_POOL, lr_vars.T_POOL
             with lr_main_pool.init() as (lr_vars.M_POOL, lr_vars.T_POOL):
+
                 # работа скрипта - внутри _start(core/gui)
                 with (_with_except(_start)() if excepthook else _start()) as ex:
+
                     if any(ex):  # выход - в теле with работа уже окончена
                         lr_excepthook.full_tb_write(*ex)
 
@@ -43,6 +47,7 @@ def _start(console_args=sys.argv) -> iter(((None, None, None), )):
 
     if as_console:  # консольное использование
         lr_core.start(c_args, echo=True)
+
     else:  # gui использование
         with lr_keyb.keyboard_listener():  # hotkey(param from clipboard)
             lr_gui.init(action=True)

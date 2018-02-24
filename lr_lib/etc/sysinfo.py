@@ -13,7 +13,7 @@ def _system_info() -> (str, ):
     """всякая ненужная инфа(при старте скрипта)"""
     replace_dt = {ord(s): '' for s in "(')"}
 
-    def attrs_from_all_objs() -> (object, 'attrs' ,):
+    def attrs_from_all_objs() -> (object, 'attrs',):
         """объект_источник_инфы, "атрибуты, " """
         yield sys, 'dont_write_bytecode, executable, getdefaultencoding, ' \
                    'getfilesystemencoding, getwindowsversion, implementation, platform, exc_info, '
@@ -55,7 +55,7 @@ def _separator(msg: (str, ), max_len: int) -> (str, ):
             yield msg[i]
 
 
-def str_separator(message: str, s_width='#', s_height='#', t='\t', max_=65, n=10) -> str:
+def str_separator(message: str, s_width='#', s_height='#', t='  ', max_=75, n=5) -> str:
     '''сообщение в рамке'''
     def len_split(_m: [str, ]):  # макс длина строки по '\n'
         for st in _m:

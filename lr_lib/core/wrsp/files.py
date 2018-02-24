@@ -154,7 +154,7 @@ def init() -> None:
     '''создать все файлы ответов, для поиска в них param'''
     lr_vars.AllFiles.clear()
     folder = lr_vars.VarFilesFolder.get()
-    lr_vars.Logger.info('обработка файлов из [ {d} ] ...'.format(d=folder))
+    lr_vars.Logger.info('Поиск файлов ответов в "{d}" ...'.format(d=folder))
 
     enc = lr_vars.VarEncode.get()
     allow_deny = lr_vars.VarAllowDenyFiles.get()

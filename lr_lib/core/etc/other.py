@@ -105,7 +105,7 @@ def all_files_info() -> str:
     mn = min([f['File'].get('Size', 0) for f in lr_vars.AllFiles] or [0])
     mx = max([f['File'].get('Size', 0) for f in lr_vars.AllFiles] or [0])
 
-    st_ = 'в {i} inf, найдено {f} файлов ответов.\n Посимвольная статистика файлов ответов: '.format(
+    st_ = 'В {i} inf, найдено {f} файлов ответов.\nСтатистика файлов ответов: '.format(
         f=lf, i=len(list(get_files_infs(lr_vars.AllFiles))))
 
     sum_keys = ['len', 'NotPrintable', 'Lines', 'ascii_letters', 'digits', 'whitespace', 'punctuation']
