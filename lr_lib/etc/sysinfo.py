@@ -55,7 +55,7 @@ def _separator(msg: (str, ), max_len: int) -> (str, ):
             yield msg[i]
 
 
-def str_separator(message: str, s_width='#', s_height='#', t='  ', max_=75, n=5) -> str:
+def str_separator(message: str, s_width='#', s_height='#', t='  ', max_=70, n=5) -> str:
     '''сообщение в рамке'''
     def len_split(_m: [str, ]):  # макс длина строки по '\n'
         for st in _m:
