@@ -21,13 +21,15 @@ class WinMenu(lr_win_folder.WinFolder):
     def __init__(self):
         lr_win_folder.WinFolder.__init__(self)
 
+        self.menubar = tk.Menu(lr_vars.Tk)
+        lr_vars.Tk.config(menu=self.menubar)
+
         self.set_menu()
         self.set_comboFiles_width()
         self.set_rclick_menu()
 
     def set_menu(self) -> None:
         """menubar"""
-        self.menubar = tk.Menu(lr_vars.Tk)
         filemenu = tk.Menu(self.menubar, tearoff=0)
         filemenu.add_command(label="Select Encode", command=lambda: lr_top_encode.TopEncoding(self))
         filemenu.add_command(label="Pools", command=lambda: lr_top_pool.TopPoolSetting(self))
@@ -38,7 +40,6 @@ class WinMenu(lr_win_folder.WinFolder):
         filemenu.add_command(label="Help", command=lambda *a: lr_vars.Logger.info(lr_help.CODE + '\n' + lr_help.HELP))
         filemenu.add_command(label="Exit", command=lr_vars.Tk.destroy)
         self.menubar.add_cascade(label="Menu", menu=filemenu)
-        lr_vars.Tk.config(menu=self.menubar)
 
     def _select_editor(self) -> None:
         """Select Editor"""
