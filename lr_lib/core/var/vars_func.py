@@ -219,7 +219,8 @@ def gui_updater_comboFiles() -> None:
 
 def next_3_or_4_if_bad_or_enmpy_lb_rb(text='') -> None:
     '''увеличить(3) либо (4)'''
-    len_files = len(lr_vars.FilesWithParam) - 1  # нумерация с 0
+    len_files = len(lr_vars.FilesWithParam)
+    lf = (len_files - 1)  # нумерация с 0
     num = lr_vars.VarPartNum.get()
     n = num + 1
     file = lr_vars.VarFile.get()
@@ -232,9 +233,9 @@ def next_3_or_4_if_bad_or_enmpy_lb_rb(text='') -> None:
             num=num, n=n, pc=(file['Param']['Count'] - 1), f=file['File']['Name'], text=text, p=lr_vars.VarParam.get()))
         return
 
-    elif len_files > 0:  # файл(3)
+    elif lf > 0:  # файл(3)
         indx = lr_vars.FilesWithParam.index(file)
-        if indx < len_files:
+        if indx < lf:
             i = indx + 1
             next_file = lr_vars.FilesWithParam[i]
             file_name = next_file['File']['Name']

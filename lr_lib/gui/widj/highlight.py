@@ -31,41 +31,44 @@ class HighlightLines:
         self.on_screen_lines = {num: line.rstrip() for (num, line) in enumerate(lines, start=1) if line.strip()}
         self.on_srean_line_nums = (0, 0)  # текущие (верхний, нижнй) номера линий, отображенных на экране
 
-        # искать индексы в process-пуле или main-потоке
-        self.execute = (lr_vars.M_POOL.imap_unordered if lr_vars.HighlightMPool.get() else map)
-
+        self.highlight_enable = self.tk_text.highlight_var.get()
+        self.execute = (lr_vars.M_POOL.imap_unordered if lr_vars.HighlightMPool.get() else map)  # искать индексы в process-пуле или main-потоке
         self.highlight_cmd = self._highlight_cmd  # подсветить один тег
         self.line_tegs_add = self._line_tegs_add  # подсветить одну линию
         self.highlight_top_bottom_lines = self._highlight_top_bottom_lines  # подсветить все линии
+
         self.set_thread_attrs()  # подсвечивать в фоне/главном потоке
 
-    def set_thread_attrs(self):
+    def set_thread_attrs(self) -> None:
         """подсвечивать в фоне/главном потоке"""
-        self.highlight_cmd = (
-            lr_vars.T_POOL_decorator(self._highlight_cmd) if lr_vars.TagAddThread.get() else self._highlight_cmd
-        )  # подсветить один тег, в фоне/main-потоке
-        self.line_tegs_add = (
-            lr_vars.T_POOL_decorator(self._line_tegs_add) if lr_vars.LineTagAddThread.get() else self._line_tegs_add
-        )  # подсветить одну линию, в фоне/main-потоке
-        self.highlight_top_bottom_lines = (
-            lr_vars.T_POOL_decorator(self._highlight_top_bottom_lines) if lr_vars.HighlightThread.get()
-            else self._highlight_top_bottom_lines
-        )  # подсветить все линии, в фоне/main-потоке
+        def set() -> None:
+            self.highlight_cmd = (
+                lr_vars.T_POOL_decorator(self._highlight_cmd) if lr_vars.TagAddThread.get() else self._highlight_cmd
+            )  # подсветить один тег, в фоне/main-потоке
+            self.line_tegs_add = (
+                lr_vars.T_POOL_decorator(self._line_tegs_add) if lr_vars.LineTagAddThread.get() else self._line_tegs_add
+            )  # подсветить одну линию, в фоне/main-потоке
+            self.highlight_top_bottom_lines = (
+                lr_vars.T_POOL_decorator(self._highlight_top_bottom_lines) if lr_vars.HighlightThread.get()
+                else self._highlight_top_bottom_lines
+            )  # подсветить все линии, в фоне/main-потоке
 
-    def is_on_screen_lines_change(self, on_srean_line_nums: (int, int)) -> bool:
-        """изменились ли self.on_srean_line_nums"""
-        return self.on_srean_line_nums != on_srean_line_nums
+            self.psize = lr_vars.HighlightLinesPortionSize.get()
+            self.highlight_enable = self.tk_text.highlight_var.get()
+            self.execute = (lr_vars.M_POOL.imap_unordered if lr_vars.HighlightMPool.get() else map)
+
+        lr_vars.MainThreadUpdater.submit(set)
 
     def set_top_bottom(self, on_srean_line_nums: (int, int)) -> None:
         """новые границы показанных линий"""
         self.on_srean_line_nums = on_srean_line_nums
 
-        if self.tk_text.highlight_var.get():  # подсветить
+        if self.highlight_enable:  # подсветить
             self.highlight_top_bottom_lines(on_srean_line_nums)
 
     def _highlight_top_bottom_lines(self, on_srean_line_nums: (int, int)) -> None:
         """подсветить все линии на экране"""
-        if self.is_on_screen_lines_change(on_srean_line_nums):
+        if self.on_srean_line_nums != on_srean_line_nums:
             return
         self._highlight_line_nums(on_srean_line_nums)
 
@@ -73,19 +76,19 @@ class HighlightLines:
         """получать индексы и подсвечивать on-screen линии текста, пока top и bottom не изменились"""
         (top, bottom) = on_srean_line_nums
         line_nums = (range(top, (bottom + 1)) & self.on_screen_lines.keys())
-        if (not line_nums) or self.is_on_screen_lines_change(on_srean_line_nums):
+        if (not line_nums) or self.on_srean_line_nums != on_srean_line_nums:
             return
 
         args = lr_other.chunks(((num, self.on_screen_lines.get(num), self.tegs_names) for num in line_nums), self.psize)
         for ln_ti in self.execute(lines_teg_indxs, args):
             for (line_num, tag_indxs) in ln_ti:
-                if self.is_on_screen_lines_change(on_srean_line_nums):
+                if self.on_srean_line_nums != on_srean_line_nums:
                     return
 
                 self.line_tegs_add(tag_indxs)  # подсветить
                 self.on_screen_lines.pop(line_num, None)  # больше не подсвечивать
 
-            if self.is_on_screen_lines_change(on_srean_line_nums):
+            if self.on_srean_line_nums != on_srean_line_nums:
                 return
 
     def _line_tegs_add(self, teg_indxs: {str: {(str, str), }, }) -> None:
@@ -95,11 +98,11 @@ class HighlightLines:
             for (index_start, index_end) in teg_indxs[teg]:
                 self.highlight_cmd(teg, index_start, index_end)
 
-    def _highlight_cmd(self, *teg_and_indxs, lock=HTLock) -> None:
+    def _highlight_cmd(self, teg, index_start, index_end, lock=HTLock) -> None:
         """подсветка одного тега, потокобезопасная
         teg_and_indxs=('foregroundolive', '33.3', '33.7')"""
         lock.acquire()
-        self.tk_text.tag_add(*teg_and_indxs)
+        self.tk_text.tag_add(teg, index_start, index_end)
         lock.release()
 
 

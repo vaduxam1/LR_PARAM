@@ -4,8 +4,6 @@
 import tkinter as tk
 import tkinter.ttk as ttk
 
-from tkinter import messagebox
-
 import lr_lib.core.var.vars as lr_vars
 import lr_lib.gui.action.act_replace as lr_act_replace
 import lr_lib.etc.help as lr_help
@@ -16,23 +14,6 @@ class ActFont(lr_act_replace.ActReplaceRemove):
 
     def __init__(self):
         lr_act_replace.ActReplaceRemove.__init__(self)
-
-        self.highlight_cbx = tk.Checkbutton(self.cbx_bar, text='highlight', font=lr_vars.DefaultFont,
-                                            background=lr_vars.Background,
-                                            variable=self.tk_text.highlight_var, command=self.tk_text.highlight_apply)
-
-        self.buttonColorReset = tk.Button(self.cbx_bar, text='reset', font=lr_vars.DefaultFont, command=self.resColor)
-
-        self.highlight_Thread = tk.Checkbutton(self.cbx_bar, text='', variable=lr_vars.HighlightThread,
-                                               font=lr_vars.DefaultFont)
-        self.highlight_LineThread = tk.Checkbutton(self.cbx_bar, text='', variable=lr_vars.LineTagAddThread,
-                                                   font=lr_vars.DefaultFont)
-        self.highlight_TagThread = tk.Checkbutton(self.cbx_bar, text='', variable=lr_vars.TagAddThread,
-                                                  font=lr_vars.DefaultFont)
-        self.highlight_MThread = tk.Checkbutton(self.cbx_bar, text='', variable=lr_vars.HighlightMPool,
-                                                font=lr_vars.DefaultFont)
-        self.highlight_LinesPortionSize = tk.Spinbox(self.cbx_bar, from_=0, to=100, width=2, font=lr_vars.DefaultFont,
-                                                     textvariable=lr_vars.HighlightLinesPortionSize)
 
         self.font_size_entry = tk.Spinbox(self.font_toolbar, width=2, justify='center', from_=0, to=99,
                                           command=self.tk_text.set_font,
@@ -107,8 +88,3 @@ class ActFont(lr_act_replace.ActReplaceRemove):
         self.scroll_lab2.config(background=color)
         self.tk_text.config(background=color)
         self.tk_text.linenumbers.config(background=color)
-
-    def resColor(self) -> None:
-        """сбросить self.tk_text.highlight_dict настройки цветов"""
-        if messagebox.askquestion('сброс', 'сбросить текст настройки цветов?', parent=self) == 'yes':
-            self.tk_text.reset_highlight()

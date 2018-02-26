@@ -3,6 +3,7 @@
 
 import re
 import copy
+import threading
 
 import tkinter as tk
 
@@ -11,6 +12,9 @@ from tkinter.font import Font
 import lr_lib.core.var.vars as lr_vars
 import lr_lib.gui.widj.highlight as lr_highlight
 import lr_lib.core.action.web_ as lr_web_
+
+
+Lock = threading.Lock()
 
 
 class HighlightText(tk.Text):
@@ -88,11 +92,12 @@ class HighlightText(tk.Text):
     def _text_checkbox(self) -> (str, str, int, int):
         """text checkbox's get,
         + дополнительно используется как self.__class__._text_checkbox(parent) - color/nocolor?"""
-
+        Lock.acquire()
         w = ('bold' if self.weight_var.get() else 'normal')
         s = ('italic' if self.slant_var.get() else 'roman')
         u = (1 if self.underline_var.get() else 0)
         o = (1 if self.overstrike_var.get() else 0)
+        Lock.release()
         return w, s, u, o,
 
     def set_tegs(self, *a, remove=False, parent=None, ground=('background', 'foreground',)) -> None:
@@ -129,6 +134,7 @@ class HighlightText(tk.Text):
 
     def highlight_apply(self, *a) -> None:
         """tk.Text tag_add/remove, сформировать on_screen_lines "карту" подсветки"""
+        self.highlight_lines.set_thread_attrs()
         self.set_tegs(remove=True)
 
         if self.highlight_var.get():
