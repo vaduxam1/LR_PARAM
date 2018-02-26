@@ -181,18 +181,20 @@ class SThreadPool(SThreadIOQueue):
         """создать новый поток, если есть очередь, недостигнут maxsize, и все потоки заняты"""
         self._qsize = self.queue_in.qsize()
 
-        if self._qsize and (self.size < pmax) and all(self.threads):
-            th_count = divmod(self._qsize, qmin)[0]  # 1 поток на каждый MinQSize
+        if self._qsize:
+            t_max = (pmax - self.size)
+            if (t_max > 0) and all(self.threads):
+                th_count = divmod(self._qsize, qmin)[0]  # 1 поток на каждый MinQSize
+                if th_count:
+                    if th_count > max_th:
+                        th_count = max_th
+                else:
+                    th_count = 1
 
-            if th_count:
-                if th_count > max_th:
-                    th_count = max_th
-                if pmax < (th_count + self._qsize):
-                    th_count = (pmax - self._qsize)
-            else:
-                th_count = 1
+                if th_count > t_max:
+                    th_count = t_max
 
-            self.thread_create(th_count=th_count)  # создать
+                self.thread_create(th_count=th_count)  # создать
 
         if self.working:  # перезапуск auto_size_SThreadPool
             lr_vars.Tk.after(timeout, self._auto_size, timeout, pmax, max_th, qmin)
