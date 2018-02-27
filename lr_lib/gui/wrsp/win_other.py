@@ -20,7 +20,7 @@ class WinOther(lr_win_filesort.WinFileSort):
         lr_win_filesort.WinFileSort.__init__(self)
 
         self.cbxFirstLastFile = tk.Checkbutton(
-            self.mid_frame, variable=lr_vars.VarFirstLastFile, text='last', font=lr_vars.DefaultFont + ' italic',
+            self.mid_frame, variable=lr_vars.VarFirstLastFile, text='reverse', font=lr_vars.DefaultFont + ' italic',
             padx=0, pady=0, command=self.firstOrLastFile)
 
         self.StrongSearchInFile_cbx = tk.Checkbutton(

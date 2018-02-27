@@ -14,9 +14,6 @@ import lr_lib.gui.widj.highlight as lr_highlight
 import lr_lib.core.action.web_ as lr_web_
 
 
-Lock = threading.RLock()
-
-
 class HighlightText(tk.Text):
     """Colored tk.Text + line_numbers"""
     def __init__(self, *args, **kwargs):
@@ -92,18 +89,10 @@ class HighlightText(tk.Text):
     def _text_checkbox(self) -> (str, str, int, int):
         """text checkbox's get,
         + дополнительно используется как self.__class__._text_checkbox(parent) - color/nocolor?"""
-        Lock.acquire()
         w = ('bold' if self.weight_var.get() else 'normal')
-        Lock.release()
-        Lock.acquire()
         s = ('italic' if self.slant_var.get() else 'roman')
-        Lock.release()
-        Lock.acquire()
         u = (1 if self.underline_var.get() else 0)
-        Lock.release()
-        Lock.acquire()
         o = (1 if self.overstrike_var.get() else 0)
-        Lock.release()
         return w, s, u, o,
 
     def set_tegs(self, *a, remove=False, parent=None, ground=('background', 'foreground',)) -> None:
@@ -120,16 +109,12 @@ class HighlightText(tk.Text):
         tegs = lr_vars.VarColorTeg.get()
         w, s, u, o = self.__class__._text_checkbox(parent)
 
-        Lock.acquire()
         size = parent.size_var.get()
-        Lock.release()
         f = Font(family=parent.font_var.get(), size=size, weight=w, slant=s, underline=u, overstrike=o)
 
         for g in ground:
             for color in tegs:
-                Lock.acquire()
                 self.tag_config(g + color, **{g: color, 'font': f, })
-                Lock.release()
 
     def reset_highlight(self, highlight=True) -> None:
         """сбросить текст настройки цветов"""
@@ -140,13 +125,9 @@ class HighlightText(tk.Text):
 
     def set_font(self, *a, size=None) -> None:
         if size is None:
-            Lock.acquire()
             size = self.size_var.get()
-            Lock.release()
         w, s, u, o = self._text_checkbox()
-        Lock.acquire()
         self.configure(font=Font(family=self.font_var.get(), size=size, weight=w, slant=s, underline=u, overstrike=o))
-        Lock.release()
 
     def highlight_apply(self, *a) -> None:
         """tk.Text tag_add/remove, сформировать on_screen_lines "карту" подсветки"""

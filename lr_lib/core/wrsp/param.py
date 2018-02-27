@@ -362,8 +362,33 @@ def get_files_with_param(param: str, action=None, set_file=True) -> None:
     if not lr_vars.FilesWithParam:
         raise UserWarning(param_not_found_err_text(action, files, search_data, param))
 
+    if lr_vars.VarFirstLastFile.get():
+        lr_vars.FilesWithParam.reverse()
+        ff = lr_vars.FilesWithParam[0]
+        mai = ff['Param']['max_action_inf']
+        fs = ff['Snapshot']['Nums'][0]
+
+        files_list = []
+        warn_inf = []
+        inf_files = []
+
+        for f in lr_vars.FilesWithParam:  # z_k620
+            s = f['Snapshot']['Nums'][0]
+            if s == mai:
+                warn_inf.append(f)
+            elif s == fs:
+                inf_files.append(f)
+            else:
+                fs = s
+                files_list.extend(reversed(inf_files))
+                inf_files = [f]
+
+        files_list.extend(reversed(inf_files))
+        files_list.extend(warn_inf)
+        lr_vars.FilesWithParam = files_list
+
     if set_file:
-        file = lr_vars.FilesWithParam[-1 if lr_vars.VarFirstLastFile.get() else 0]
+        file = lr_vars.FilesWithParam[0]
         assert isinstance(file, dict), len(lr_vars.FilesWithParam)
         lr_vars.VarFileName.set(file['File']['Name'])  # (3)
 

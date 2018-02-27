@@ -396,9 +396,8 @@ class Window(lr_win_menu.WinMenu):
         )
         lr_tooltip.createToolTip(
             self.cbxFirstLastFile,
-            'выброр файла в (3)\n'
-            'on - последний\n'
-            'off - первый\n\t'
+            'автоматически выбирается первый файл из (3)\n'
+            ' on - reverse список файлов\n'
             '# Window.cbxFirstLastFile\n\t'
             '# lr_vars.VarFirstLastFile -> lr_vars.VarFileName'
         )

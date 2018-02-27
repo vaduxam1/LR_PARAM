@@ -97,8 +97,8 @@ class WinWidj(lr_win_part_lbrb.WinPartsLbRb):
         """выбрать первый/последный файл в (3)"""
         if not lr_vars.FilesWithParam:
             return
-        i = (len(self.comboFiles['values']) - 1) if lr_vars.VarFirstLastFile.get() else 0
-        self.comboFiles.current(i)
+        # i = (len(self.comboFiles['values']) - 1) if lr_vars.VarFirstLastFile.get() else 0
+        self.comboFiles.current(0)
         self.comboFiles_change()
 
     def comboFiles_change(self, *args) -> None:
