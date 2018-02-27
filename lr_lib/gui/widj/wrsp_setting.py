@@ -11,7 +11,7 @@ import lr_lib.core.wrsp.param as lr_param
 
 
 class WrspSettingWindow(tk.Toplevel):
-    '''настройка каментов и имени wrsp'''
+    """настройка каментов и имени wrsp"""
     def __init__(self, *args, parent=None):
         super().__init__(padx=0, pady=0)
         self.parent = parent
@@ -65,7 +65,7 @@ class WrspSettingWindow(tk.Toplevel):
                           '//lr: (login: 3=[1:3]) -> Param:3 ...ons=2'
 
         def set_WRSPStatsTransac() -> None:
-            '''VarWRSPStatsTransacNames state='disabled'''
+            """VarWRSPStatsTransacNames state='disabled"""
             if lr_vars.VarWRSPStatsTransac.get():
                 VarWRSPStatsTransacNames.config(state='normal')
             else:
@@ -179,7 +179,7 @@ class WrspSettingWindow(tk.Toplevel):
 
     @lr_vars.T_POOL_decorator
     def all_wrsp_rename(self, *args) -> None:
-        '''переименавать все wrsp, вручную'''
+        """переименавать все wrsp, вручную"""
         _wrsps = tuple(self.parent.web_action.get_web_reg_save_param_all())
         wrsps = tuple(w.name for w in _wrsps)
         mx = max(map(len, wrsps or ['']))
@@ -206,7 +206,7 @@ class WrspSettingWindow(tk.Toplevel):
 
     @lr_vars.T_POOL_decorator
     def all_wrsp_auto_rename(self, *a, _l='"LB=', _r='"RB=') -> None:
-        '''переименавать все wrsp, автоматически, с учетом всех настроек'''
+        """переименавать все wrsp, автоматически, с учетом всех настроек"""
         _wrsps = tuple(self.parent.web_action.get_web_reg_save_param_all())
         wrsps = tuple(w.name for w in _wrsps)
 

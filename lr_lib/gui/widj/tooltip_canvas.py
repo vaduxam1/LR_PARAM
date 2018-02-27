@@ -8,7 +8,7 @@ import lr_lib.core.var.vars as lr_vars
 
 
 class CanvasTooltip:
-    '''
+    """
     It creates a tooltip for a given canvas tag or id as the mouse is
     above it.
 
@@ -20,7 +20,7 @@ class CanvasTooltip:
            41079350#41079350
 
     Alberto Vassena on 2016.12.10.
-    '''
+    """
 
     def __init__(self, canvas, tag_or_id, *, bg='#FFFFEA', pad=(5, 3, 5, 3), text='', waittime=0, wraplength=750):
         self.waittime = waittime  # in miliseconds, originally 500

@@ -7,7 +7,7 @@ import lr_lib.gui.widj.dialog as lr_dialog
 
 
 def center_widget(widget) -> None:
-    '''center window on screen'''
+    """center window on screen"""
     widget.withdraw()
     widget.update_idletasks()
     x = (widget.winfo_screenwidth() - widget.winfo_reqwidth()) / 2
@@ -17,7 +17,7 @@ def center_widget(widget) -> None:
 
 
 def repA(widget) -> None:
-    '''отчет сокращенный'''
+    """отчет сокращенный"""
     rep = widget.action.web_action.websReport.all_in_one
     t = 'transac_len={}, param_len={}'.format(len(rep), len(widget.action.web_action.websReport.wrsp_and_param_names))
     y = lr_dialog.YesNoCancel(buttons=['OK'], text_before='repA', text_after='websReport.all_in_one',
@@ -26,7 +26,7 @@ def repA(widget) -> None:
 
 
 def repB(widget, counter=None, st='\n----\n') -> None:
-    '''отчет полный'''
+    """отчет полный"""
     wr = widget.action.web_action.websReport
     if counter is None:
         counter = len(wr.wrsp_and_param_names)
@@ -52,7 +52,7 @@ def repB(widget, counter=None, st='\n----\n') -> None:
 
 
 def get_transaction(text: str) -> iter((str,)):
-    '''имена транзакций'''
+    """имена транзакций"""
     for line in filter(bool, map(str.strip, text.split('\n'))):
         if line.startswith('lr_') and line.endswith(');') and ('_transaction("' in line):
             t_name = line.rsplit('"', 1)[0]

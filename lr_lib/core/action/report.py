@@ -15,7 +15,7 @@ is_ascii = set(string.printable).__contains__
 
 
 class WebReport:
-    '''статистика использования web_reg_save_param'''
+    """статистика использования web_reg_save_param"""
     def __init__(self, parent_AWAL):
         self.parent_AWAL = parent_AWAL
 
@@ -31,7 +31,7 @@ class WebReport:
         self.all_in_one = {}
 
     def create(self):
-        '''создать статистику'''
+        """создать статистику"""
         self.wrsp_and_param_names = {}
         self.param_statistic = {}
         self.web_snapshot_param_in_count = {}
@@ -152,7 +152,7 @@ class WebReport:
                 getattr(lr_vars.Logger, lvl)('\n'.join(msgs))
 
     def stats_in_web(self, snapshot: int) -> str:
-        ''''статистика по web_reg_save_param, используемых в теле web.snapshot'''
+        """'статистика по web_reg_save_param, используемых в теле web.snapshot"""
         params_in = self.web_snapshot_param_in_count[snapshot]
         if not params_in:
             return ''
@@ -169,7 +169,7 @@ class WebReport:
         return s
 
     def stats_out_web(self, snapshot: int) -> str:
-        ''''статистика по web_reg_save_param, созданным в web.snapshot'''
+        """'статистика по web_reg_save_param, созданным в web.snapshot"""
         web = next(self.parent_AWAL.get_web_snapshot_by(snapshot=snapshot))
 
         if not web.web_reg_save_param_list:
@@ -185,7 +185,7 @@ class WebReport:
         return '\n\t{c} OUT({n})-> {s}'.format(s=', '.join(statistic), c=lr_param.LR_COMENT, n=len(statistic))
 
     def stats_transaction_web(self, web) -> str:
-        ''''статистика transaction, для web'''
+        """'статистика transaction, для web"""
         transaction = web.transaction
         mm = self.web_transaction[transaction]['minmax_snapshots']
         if isinstance(web, lr_web_.WebSnapshot):
@@ -199,7 +199,7 @@ class WebReport:
             return ''
 
     def checker_warn(self) -> dict:
-        '''проверка на некорректные транзакции'''
+        """проверка на некорректные транзакции"""
         result = dict(info=[], warning=[], )
 
         for t in self.parent_AWAL.transactions.names:
@@ -217,7 +217,7 @@ class WebReport:
         return result
 
     def get_sub_transaction_dt(self, transaction: str, dt_obj: dict) -> dict:
-        '''словарь транзакции, внутри вложенного словаря Transactions.sub_transaction'''
+        """словарь транзакции, внутри вложенного словаря Transactions.sub_transaction"""
         if isinstance(dt_obj, collections.OrderedDict):
             if transaction in dt_obj:
                 yield dt_obj[transaction]
@@ -227,7 +227,7 @@ class WebReport:
 
 
 def snapshot_diapason_string(infs: [int, ]) -> str:
-    '''если inf min=max указать только одно'''
+    """если inf min=max указать только одно"""
     if infs:
         min_inf = min(infs)
         max_inf = max(infs)

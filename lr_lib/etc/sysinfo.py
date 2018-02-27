@@ -46,7 +46,7 @@ def _system_info() -> (str, ):
 
 
 def _separator(msg: (str, ), max_len: int) -> (str, ):
-    '''выравнивание пробелами для сообщения в рамки'''
+    """выравнивание пробелами для сообщения в рамки"""
     for i in range(len(msg)):
         l = len(msg[i])
         if l < max_len:
@@ -56,7 +56,7 @@ def _separator(msg: (str, ), max_len: int) -> (str, ):
 
 
 def str_separator(message: str, s_width='#', s_height='#', t='  ', max_=70, n=5) -> str:
-    '''сообщение в рамке'''
+    """сообщение в рамке"""
     def len_split(_m: [str, ]):  # макс длина строки по '\n'
         for st in _m:
             if len(st) > max_:

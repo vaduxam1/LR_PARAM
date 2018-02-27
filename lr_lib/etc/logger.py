@@ -18,7 +18,7 @@ datefmt = "%H:%M:%S"
 
 
 class GuiHandler(logging.Handler):
-    '''logging в Window'''
+    """logging в Window"""
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.setFormatter(logging.Formatter(formatter, datefmt=datefmt))
@@ -29,14 +29,14 @@ class GuiHandler(logging.Handler):
 
 
 class ConsoleHandler(logging.StreamHandler):
-    '''logging в Console'''
+    """logging в Console"""
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.setFormatter(logging.Formatter(formatter, datefmt=datefmt))
 
 
 class LogHandler(logging.FileHandler):
-    '''logging в лог'''
+    """logging в лог"""
     if not os.path.isdir(lr_vars.logPath):
         os.makedirs(lr_vars.logPath)  # создать каталог лога
 
@@ -46,12 +46,12 @@ class LogHandler(logging.FileHandler):
 
 
 def _LoggerLevelCreator(level_num: int, level: str) -> None:
-    ''' создать/переопределить новый level-exception, для *Handler.level -> logging.level'''
+    """ создать/переопределить новый level-exception, для *Handler.level -> logging.level"""
     logging.addLevelName(level_num, level.upper())
     level = level.lower()
 
     def logging_level(self, message, *args, **kwargs) -> None:
-        '''переопределенный logging метод'''
+        """переопределенный logging метод"""
         if self.isEnabledFor(level_num):
             notepad = kwargs.pop('notepad', None)
             parent = kwargs.pop('parent', None)
@@ -78,7 +78,7 @@ def _LoggerLevelCreator(level_num: int, level: str) -> None:
 
 
 def LoggerLevelCreator(levels: {str: int}) -> None:
-    '''создать logging.level'''
+    """создать logging.level"""
     for level in levels:
         _LoggerLevelCreator(levels[level], level)
 
@@ -99,7 +99,7 @@ def init(name='__main__', encoding='cp1251', levels=lr_vars.loggingLevels) -> it
 
 
 def LoggerCreator(name: str, encoding: str) -> logging.getLogger:
-    '''создать Logger и QueueHandler'''
+    """создать Logger и QueueHandler"""
     LoggerQueue = queue.Queue()
     LoggerQueueListener = logging.handlers.QueueHandler(LoggerQueue)
 

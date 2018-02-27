@@ -3,22 +3,22 @@
 
 
 def default_callback(value, *args, **kwargs) -> None:
-    '''заглушка - пустой callback'''
+    """заглушка - пустой callback"""
     pass
 
 
 class Var:
-    '''переменная, по типу tkiner.StringVar, + callback'''
+    """переменная, по типу tkiner.StringVar, + callback"""
     def __init__(self, value=None, callback_set=default_callback):
         self.value_ = self.default_value = value
         self.callback_set = callback_set  # выполнить callback при установке
 
     def set(self, value, *args, callback=True, **kwargs) -> None:
-        '''установить'''
+        """установить"""
         self.value_ = value
         if callback:
             self.callback_set(value, *args, **kwargs)
 
     def get(self):
-        '''получить'''
+        """получить"""
         return self.value_

@@ -10,7 +10,7 @@ import lr_lib.gui.widj.dialog as lr_dialog
 
 
 def read_web_type(first_line: str, s1='("', s2='(') -> str:
-    '''найти тип web_'''
+    """найти тип web_"""
     s = (s1 if (s1 in first_line) else s2)
     t = first_line.split(s, 1)
     if len(t) == 2:
@@ -20,7 +20,7 @@ def read_web_type(first_line: str, s1='("', s2='(') -> str:
 
 
 def _body_replace(body_split, len_body_split, search, replace, is_wrsp=True) -> iter((str, )):
-    '''замена search в body'''
+    """замена search в body"""
     yield body_split[0]
     if is_wrsp:
         replace = lr_param.param_bounds_setter(replace)
@@ -35,7 +35,7 @@ def _body_replace(body_split, len_body_split, search, replace, is_wrsp=True) -> 
 
 
 def body_replace(body: str, search: str, replace: str, is_wrsp=True) -> str:
-    '''замена search в body'''
+    """замена search в body"""
     body_split = body.split(search)
     len_body_split = len(body_split)
 
@@ -46,7 +46,7 @@ def body_replace(body: str, search: str, replace: str, is_wrsp=True) -> str:
 
 
 def bodys_replace(replace_args: ({int: str}, [(str, str), ]), is_wrsp=True) -> [str, ]:
-    '''замена param's в body's'''
+    """замена param's в body's"""
     body_portion, replace_list = replace_args
     for i in body_portion:
         for search, replace in replace_list:
@@ -55,7 +55,7 @@ def bodys_replace(replace_args: ({int: str}, [(str, str), ]), is_wrsp=True) -> [
 
 
 class WebAny:
-    '''любые web_'''
+    """любые web_"""
     count = 0
 
     def __init__(self, parent_AWAL, lines_list: list, comments: str, transaction: str, _type=''):
@@ -78,7 +78,7 @@ class WebAny:
         # print('\n{w}({n}):\n\tSnap={sn}, lines={l}, symb={s}, {t}'.format(w=self.type, n=self.name, l=len(self.lines_list), s=len(tuple(itertools.chain(*self.lines_list))), sn=self.snapshot, t=self.transaction))
 
     def _read_snapshot(self) -> int:
-        '''Snapshot inf номер'''
+        """Snapshot inf номер"""
         with contextlib.suppress(Exception):
             for line in self.lines_list[1:-1]:
                 strip_line = line.strip()
@@ -92,7 +92,7 @@ class WebAny:
         return 0
 
     def to_str(self, _all_stat=False) -> str:
-        '''весь текст web_'''
+        """весь текст web_"""
         comments = self.comments
 
         if lr_vars.VarWebStatsWarn.get() or _all_stat:
@@ -148,7 +148,7 @@ class WebAny:
         return r
 
     def param_find_replace(self, param: str, replace=None, ask_dict=None) -> (int, int):
-        '''автоматическая замена, c диалоговыми окнами'''
+        """автоматическая замена, c диалоговыми окнами"""
         body_split = self.get_body().split(param)
         len_body_split = len(body_split)
         if not len_body_split:
@@ -188,22 +188,22 @@ class WebAny:
         return param_count, skiped
 
     def _get_body(self, a: int, b: int) -> str:
-        '''тело web_ - поиск и замену делать тут'''
+        """тело web_ - поиск и замену делать тут"""
         return '\n'.join(self.lines_list[a:b])
 
     def _set_body(self, body: str, a: int, b: int) -> None:
-        '''задать новое тело web_'''
+        """задать новое тело web_"""
         self.lines_list[a:b] = body.split('\n')
 
     def get_body(self, mx=2) -> str:
-        '''тело web_ - поиск и замену делать тут'''
+        """тело web_ - поиск и замену делать тут"""
         if len(self.lines_list) > mx:
             return self._get_body(1, -1)
         else:
             return self._get_body(0, mx)
 
     def set_body(self, body: str, mx=2) -> None:
-        '''задать новое тело web_'''
+        """задать новое тело web_"""
         if len(self.lines_list) > mx:
             return self._set_body(body, 1, -1)
         else:
@@ -211,7 +211,7 @@ class WebAny:
 
 
 class WebSnapshot(WebAny):
-    '''web со snapshot > 0, те содержащие файлы ответов'''
+    """web со snapshot > 0, те содержащие файлы ответов"""
     def __init__(self, parent_AWAL, lines_list: list, comments: str, transaction='', _type='', web_reg_save_param_list=None):
         super().__init__(parent_AWAL, lines_list, comments, transaction=transaction, _type=_type)
 
@@ -224,7 +224,7 @@ class WebSnapshot(WebAny):
             # print('\tweb_reg_save_param={} шт'.format(len(self.web_reg_save_param_list)))
 
     def to_str(self, _all_stat=False) -> str:
-        '''весь текст web_'''
+        """весь текст web_"""
         if lr_vars.VarWebStatsTransac.get() or _all_stat:
             _tr = self.parent_AWAL.websReport.stats_transaction_web(self)
         else:
@@ -261,16 +261,16 @@ class WebSnapshot(WebAny):
         return txt.strip('\n')
 
     def get_body(self, a=1, b=-1) -> str:
-        '''тело web_ - поиск и замену делать тут'''
+        """тело web_ - поиск и замену делать тут"""
         return super()._get_body(a, b)
 
     def set_body(self, body: str, a=1, b=-1) -> None:
-        '''задать новое тело web_'''
+        """задать новое тело web_"""
         return super()._set_body(body, a, b)
 
 
 class WebRegSaveParam(WebAny):
-    '''web web_reg_save_param*'''
+    """web web_reg_save_param*"""
     def __init__(self, parent_AWAL, lines_list: list, comments: str, transaction='', _type='', parent_snapshot=None):
         self.parent_snapshot = parent_snapshot  # WebSnapshot
         super().__init__(parent_AWAL, lines_list, comments, transaction=transaction, _type=_type)
@@ -303,7 +303,7 @@ class WebRegSaveParam(WebAny):
         return param
 
     def to_str(self, _all_stat=False) -> str:
-        '''web_reg_save_param текст + //lr:Usage коментарий'''
+        """web_reg_save_param текст + //lr:Usage коментарий"""
         comments = self.comments
 
         if lr_vars.VarWebStatsWarn.get() or _all_stat:

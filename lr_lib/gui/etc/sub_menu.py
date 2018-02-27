@@ -12,7 +12,7 @@ import lr_lib.gui.etc.group_param as lr_group_param
 
 
 def rClicker(event) -> str:
-    ''' right click context menu for all Tk Entry and Text widgets'''
+    """ right click context menu for all Tk Entry and Text widgets"""
     with contextlib.suppress(tk.TclError):
         event.widget.focus()
         try:
@@ -106,7 +106,7 @@ def rClicker(event) -> str:
             rmenu.add_cascade(label=' Быстрый перход', menu=submenu_goto, underline=0)
 
             def action_goto(e, _search: str) -> None:
-                '''перейти к _search обрасти в action.c'''
+                """перейти к _search обрасти в action.c"""
                 with contextlib.suppress(AttributeError, tk.TclError):
                     event.widget.action.search_entry.set(_search)
                     event.widget.action.search_in_action(event.widget.action.search_entry.get())

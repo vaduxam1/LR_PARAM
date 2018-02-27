@@ -10,7 +10,7 @@ import lr_lib.gui.widj.tooltip as lr_tooltip
 
 
 class TopEncoding(tk.Toplevel):
-    '''окно кодировки файлов'''
+    """окно кодировки файлов"""
     def __init__(self, action):
         tk.Toplevel.__init__(self)
         self.action = action

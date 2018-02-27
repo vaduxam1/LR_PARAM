@@ -16,7 +16,7 @@ import lr_lib.core.wrsp.files as lr_files
 
 
 class RespFiles(tk.Toplevel):
-    '''окно файлов ответов, для i_num-snapshot'''
+    """окно файлов ответов, для i_num-snapshot"""
     def __init__(self, widget, i_num, folder_record, folder_response):
         super().__init__(padx=0, pady=0)
         self.widget = widget
@@ -46,7 +46,7 @@ class RespFiles(tk.Toplevel):
         lr_tooltip.createToolTip(ent, lr_other.file_string(file_dt))
 
     def response_widj_creator(self, folder: str, desc='', side='bottom', w1=30, w2=100) -> None:
-        '''виджеты для окна файлов snapshot'''
+        """виджеты для окна файлов snapshot"""
         text = '{desc}\n{folder}'.format(desc=desc, folder=folder)
 
         lab = tk.LabelFrame(self, text=desc, font='Arial 7')
@@ -59,7 +59,7 @@ class RespFiles(tk.Toplevel):
         lr_tooltip.createToolTip(cbx, 'открывать файл, при выборе в комбобоксе')
 
         def files_cmb_set(files=tuple(lr_other.get_files_names(folder, self.i_num))) -> None:
-            '''записать файлы в files_cmb'''
+            """записать файлы в files_cmb"""
             if deny_cbx_var.get():  # отбраковать "вероятно ненужные" файлы
                 files = list(filter(lr_files.is_responce_file, files))
             files_cmb['values'] = files
@@ -74,7 +74,7 @@ class RespFiles(tk.Toplevel):
         lr_tooltip.createToolTip(files_cmb, text)
 
         def get_inf_files() -> iter((str,)):
-            '''все inf файлы директории'''
+            """все inf файлы директории"""
             folder_files = next(os.walk(folder))
             for file in folder_files[2]:
                 num = lr_files.get_inf_file_num(file)
@@ -82,7 +82,7 @@ class RespFiles(tk.Toplevel):
                     yield file
 
         def set_inf(*a) -> None:
-            '''новый snapshot'''
+            """новый snapshot"""
             self.i_num = int(''.join(filter(str.isnumeric, inf_var.get())))
             RespFiles(self.widget, self.i_num, self.folder_record, self.folder_response)
             inf_var.set(self.inf_file)
@@ -115,7 +115,7 @@ class RespFiles(tk.Toplevel):
             self.resp_widj[i][3].config(width=w)
 
     def select_folder(self, folder: str) -> None:
-        '''ноавя директория snapshot'''
+        """ноавя директория snapshot"""
         directory = filedialog.askdirectory()
         if not directory:
             return

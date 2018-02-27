@@ -14,10 +14,10 @@ import lr_lib.core.etc.lbrb_checker as lr_lbrb_checker
 
 
 def init() -> None:
-    '''
+    """
     установка всех lr_vars.Var's callback
     запускать при старте !
-    '''
+    """
     lr_vars.VarParam.callback_set = lr_param.get_files_with_param
     lr_vars.VarFileName.callback_set = _set_file_name
     lr_vars.VarFile.callback_set = _set_file
@@ -25,14 +25,14 @@ def init() -> None:
 
 
 def _set_file_name(name: str) -> None:
-    '''установка Var имени файла(3)'''
+    """установка Var имени файла(3)"""
     file = lr_files.get_file_with_kwargs(lr_vars.FilesWithParam, Name=name)
     assert file, 'файл "{n}" ({tn}) ненайден. {tf} {f}'.format(n=name, tn=type(name), tf=type(file), f=file)
     lr_vars.VarFile.set(file)
 
 
 def _set_file(file: dict, errors='replace') -> None:
-    '''чение файла в lr_vars.VarFileText'''
+    """чение файла в lr_vars.VarFileText"""
     ff = file['File']
 
     with open(ff['FullName'], encoding=lr_vars.VarEncode.get(), errors=errors) as f:
@@ -48,7 +48,7 @@ def _set_file(file: dict, errors='replace') -> None:
 
 
 def _is_mutable_bound(st: str, b1: '{', b2: '}', a2=0) -> int:
-    '''находится ли внутри скобок {...}'''
+    """находится ли внутри скобок {...}"""
     for e, s in enumerate(st, start=1):
         if s == b1:
             a2 += 1
@@ -61,12 +61,12 @@ def _is_mutable_bound(st: str, b1: '{', b2: '}', a2=0) -> int:
 
 
 def is_mutable_bound(left: str, right: str, b1='{', b2='}') -> [int, int]:
-    '''находится ли внутри скобок'''
+    """находится ли внутри скобок"""
     return [_is_mutable_bound(left[::-1], b2, b1), _is_mutable_bound(right, b1, b2)]
 
 
 def set_part_num(num=0) -> None:
-    '''сформировать VarLB VarRB, с учетом номера вхождения param'''
+    """сформировать VarLB VarRB, с учетом номера вхождения param"""
     param = lr_vars.VarParam.get()
     assert param, 'Пустой param(1)[{tp}]:"{p}"'.format(tp=type(param), p=param)
 
@@ -129,7 +129,7 @@ def set_part_num(num=0) -> None:
 
 
 def lb_rb_split_end(lb: str, rb: str) -> (str, str):
-    '''обрезать конечные символы lb rb'''
+    """обрезать конечные символы lb rb"""
     if lr_vars.VarLEnd.get():
         llb = len(lb)
         if llb < 5:
@@ -155,7 +155,7 @@ def lb_rb_split_end(lb: str, rb: str) -> (str, str):
 
 
 def lb_rb_split_list_set(__lb: str, __rb: str, lb: str, rb: str) -> (str, str):
-    '''lr_vars.VarSplitListNumRB.set(1) если {}: {...,'value':'param',...} / или .set(1) если []'''
+    """lr_vars.VarSplitListNumRB.set(1) если {}: {...,'value':'param',...} / или .set(1) если []"""
     VarSplitListNumRB = lr_vars.VarSplitListNumRB.get()
     vlb1 = lr_vars.VarLbB1.get()
     vlb2 = lr_vars.VarLbB2.get()
@@ -205,20 +205,20 @@ def lb_rb_split_list_set(__lb: str, __rb: str, lb: str, rb: str) -> (str, str):
 
 
 def gui_updater_comboParts() -> None:
-    '''при изменении из ядра, менять gui comboParts'''
+    """при изменении из ядра, менять gui comboParts"""
     if lr_vars.Window and not lr_vars.Window._block_:
         lr_vars.Window.comboParts.set(lr_vars.VarPartNum.get())
 
 
 def gui_updater_comboFiles() -> None:
-    '''при изменении из ядра, менять gui comboFiles'''
+    """при изменении из ядра, менять gui comboFiles"""
     if lr_vars.Window and not lr_vars.Window._block_:  #
         lr_vars.Window.comboFiles.set(lr_vars.VarFileName.get())
         lr_vars.Window.comboPartsFill()
 
 
 def next_3_or_4_if_bad_or_enmpy_lb_rb(text='') -> None:
-    '''увеличить(3) либо (4)'''
+    """увеличить(3) либо (4)"""
     len_files = len(lr_vars.FilesWithParam)
     lf = (len_files - 1)  # нумерация с 0
     num = lr_vars.VarPartNum.get()
@@ -252,7 +252,7 @@ def next_3_or_4_if_bad_or_enmpy_lb_rb(text='') -> None:
 
 
 def splitters_combo(combo) -> [str, ]:
-    '''eval разделителей из gui'''
+    """eval разделителей из gui"""
     splitter = combo.get()
     all_splitters = list(combo['values'])
 

@@ -27,7 +27,7 @@ def excepthook(*args) -> None:
 
 
 def full_tb_write(*args):
-    '''логировать полный traceback'''
+    """логировать полный traceback"""
     if not args:
         exc_type, exc_val, exc_tb = sys.exc_info()
     elif len(args) == 3:
@@ -51,13 +51,13 @@ def full_tb_write(*args):
 
 
 def get_tb(exc_type, exc_val, exc_tb, err_name: str) -> str:
-    '''traceback + исходный код'''
+    """traceback + исходный код"""
     if not exc_tb:
         return '{} {} {}'.format(exc_type, exc_val, exc_tb)
     exc_lines = traceback.format_exception(exc_type, exc_val, exc_tb)
 
     def get_code(lib='\{}\\'.format(lr_vars.lib_folder)) -> str:
-        '''исходный код'''
+        """исходный код"""
         line = ''
         for line in reversed(exc_lines):
             if lib in line:

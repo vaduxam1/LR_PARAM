@@ -15,7 +15,7 @@ Colors = iter(itertools.cycle(lr_vars.VarColorTeg.get() - {'white', 'black', 'na
 
 
 class WebLegend(tk.Toplevel):
-    '''окно web_ леленды'''
+    """окно web_ леленды"""
     def __init__(self, parent):
         super().__init__(master=parent, padx=0, pady=0)
         self.geometry('{}x{}'.format(*lr_vars._Tk_LegendWIND_SIZE))
@@ -76,7 +76,7 @@ class WebLegend(tk.Toplevel):
         self.attributes('-topmost', self.top_var.get())
 
     def _configure_interior(self, *args) -> None:
-        '''update the scrollbars to match the size of the inner frame'''
+        """update the scrollbars to match the size of the inner frame"""
         size = (max(self.interior.winfo_reqwidth(), self.minimal_canvas_size[0]),
                 max(self.interior.winfo_reqheight(), self.minimal_canvas_size[1]))
         self.canvas.config(scrollregion='0 0 %s %s' % size)
@@ -131,7 +131,7 @@ class WebLegend(tk.Toplevel):
                 s=self.parent.web_action.websReport.stats_out_web(i).strip(), t=transaction)
 
             def onObjectClick1(event, i=i) -> None:
-                '''показать/удалить линии out'''
+                """показать/удалить линии out"""
                 self.canvas.delete("all")
                 self.web_canavs[i]['enable'] = not self.web_canavs[i]['enable']
                 self.print()
@@ -140,7 +140,7 @@ class WebLegend(tk.Toplevel):
                 self.parent.search_in_action(word='Snapshot=t{i}.inf'.format(i=i), hist=False)
 
             def onObjectClick2(event, i=i) -> None:
-                '''показать/удалить линии in'''
+                """показать/удалить линии in"""
                 self.canvas.delete("all")
                 self.web_canavs[i]['enable_in'] = not self.web_canavs[i]['enable_in']
                 self.print()

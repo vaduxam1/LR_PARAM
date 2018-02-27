@@ -9,7 +9,7 @@ import tkinter.ttk as ttk
 
 
 class YesNoCancel(tk.Toplevel):
-    '''диалог окно, тк велосипед, работает только в потоке'''
+    """диалог окно, тк велосипед, работает только в потоке"""
     def __init__(self, buttons: [str, ], text_before: str, text_after: str, title: str, parent=None, default_key='',
                  is_text=None, focus=None, combo_dict=None):
         super().__init__(master=parent, padx=0, pady=0)
@@ -90,12 +90,12 @@ class YesNoCancel(tk.Toplevel):
             focus.focus_set()
 
     def new_text(self, text: str) -> None:
-        '''стереть = новый текст в self.tk_text'''
+        """стереть = новый текст в self.tk_text"""
         self.tk_text.delete(1.0, tk.END)
         self.tk_text.insert(1.0, text)
 
     def _wind_attributes(self) -> None:
-        '''сделать окно похожим на dialog'''
+        """сделать окно похожим на dialog"""
         # self.resizable(width=False, height=False)
         self.attributes('-topmost', True)  # свсегда сверху
         # self.attributes("-toolwindow", 1)  # remove maximize/minimize
@@ -104,7 +104,7 @@ class YesNoCancel(tk.Toplevel):
         self.grid_columnconfigure(0, weight=1)
 
     def ask(self) -> str:
-        '''приостановить поток, до получения ответа'''
+        """приостановить поток, до получения ответа"""
         try:
             return self.queue.get()
         finally:
@@ -114,11 +114,11 @@ class YesNoCancel(tk.Toplevel):
             self.parent.focus_set()
 
     def close(self) -> None:
-        '''отмена при выходе'''
+        """отмена при выходе"""
         self.queue.put_nowait(self.default_key)
 
     def center_widget(self) -> None:
-        '''center window on screen'''
+        """center window on screen"""
         self.withdraw()
         self.update_idletasks()
         x = (self.winfo_screenwidth() - self.winfo_reqwidth()) / 2

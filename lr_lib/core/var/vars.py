@@ -276,7 +276,7 @@ VarColorTeg = Var(value=set(COLORS.keys()))
 
 
 def _unpunct(st: str) -> str:
-    '''без пунктуации в конце строки'''
+    """без пунктуации в конце строки"""
     if st:
         if st[-1] in string.punctuation:
             return _unpunct(st[:-1])
@@ -460,7 +460,7 @@ FIND_PARAM_HOTKEY = 'ctrl+shift+c'  # хоткей "найти(2) param"
 
 
 def T_POOL_decorator(func: callable):
-    '''декоратор, выполнения func в T_POOL потоке'''
+    """декоратор, выполнения func в T_POOL потоке"""
     @functools.wraps(func)
     def wrap(*args, **kwargs):
         if hasattr(T_POOL, 'submit'):
@@ -474,7 +474,7 @@ def T_POOL_decorator(func: callable):
 
 
 def clearVars() -> None:
-    '''очистка Var's'''
+    """очистка Var's"""
     v = (VarParam, VarFileName, VarFile, VarPartNum, VarLB, VarRB, VarFileText, VarWrspDict, VarFileSortKey1, VarFileSortKey2, )
     for var in v:
         var.set(var.default_value, callback=False)

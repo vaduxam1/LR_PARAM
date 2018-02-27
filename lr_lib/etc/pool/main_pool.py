@@ -14,7 +14,7 @@ import lr_lib.core.var.vars as lr_vars
 
 
 class POOL:
-    '''пул потоков, с возможностью выбора его типа'''
+    """пул потоков, с возможностью выбора его типа"""
     pools = {
         'AsyncPool': lr_lib.etc.pool.other.AsyncPool,
         'NoPool': lr_lib.etc.pool.other.NoPool,
@@ -40,7 +40,7 @@ class POOL:
         self.reset()
 
     def __getattr__(self, item):
-        '''перенаправление вызовов в self.pool'''
+        """перенаправление вызовов в self.pool"""
         if (item == 'imap_unordered') and not hasattr(self.pool, 'imap_unordered'):
             item = 'imap'
         if item == 'imap' and not hasattr(self.pool, 'imap'):
@@ -48,7 +48,7 @@ class POOL:
         return getattr(self.pool, item)
 
     def reset(self, *args) -> None:
-        '''пересоздать пул, при изменении имени/размера'''
+        """пересоздать пул, при изменении имени/размера"""
         n = self.name.get()
         s = self.size.get()
 
@@ -66,12 +66,12 @@ class POOL:
                 self.set_pool(n, processes=s)
 
     def set_pool(self, name, *args, **kwargs):
-        '''создать пул'''
+        """создать пул"""
         self.pool = self.pools[name](*args, **kwargs)
         return self.pool
 
     def pool_exit(self, ex=Exception) -> None:
-        '''закрыть пул'''
+        """закрыть пул"""
         with contextlib.suppress(ex):
             self.pool.shutdown()
         with contextlib.suppress(ex):
@@ -82,7 +82,7 @@ class POOL:
 
 @contextlib.contextmanager
 def init() -> iter((POOL, POOL), ):
-    '''создание пулов'''
+    """создание пулов"""
     try:
         M_POOL = POOL(lr_vars.M_POOL_NAME, lr_vars.M_POOL_Size)
         T_POOL = POOL(lr_vars.T_POOL_NAME, lr_vars.T_POOL_Size)

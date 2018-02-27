@@ -8,7 +8,7 @@ import lr_lib.core.var.vars as lr_vars
 
 
 class LBRBText(tk.Text):
-    '''класс виджета (5)LB/RB'''
+    """класс виджета (5)LB/RB"""
     bounds = {}.fromkeys(['LB', 'RB'])  # LB/RB instance
     info_text = {'LB': '(5) LB | строк=%s | длина=%s', 'RB': '(5) RB | строк=%s | длина=%s'}
 
@@ -31,11 +31,11 @@ class LBRBText(tk.Text):
         self.configure(yscrollcommand=self.scrolly.set, xscrollcommand=self.scrollx.set, bd=0, padx=0, pady=0)
 
     def get(self, index1=1.0, index2='end') -> str:
-        '''текущий LB/RB'''
+        """текущий LB/RB"""
         return super().get(index1, index2)[:-1]  # [:-1] - '\n'
 
     def set(self, text: str) -> None:
-        '''задать LB/RB'''
+        """задать LB/RB"""
         self.delete(1.0, 'end')
         self.insert(1.0, text)
         try:
@@ -45,7 +45,7 @@ class LBRBText(tk.Text):
 
     @classmethod
     def set_LB_RB(cls, *args) -> None:
-        '''извлечь LB/RB из файла'''
+        """извлечь LB/RB из файла"""
         cls.set_label_text()
 
         lb = lr_vars.VarLB.get()
@@ -64,10 +64,10 @@ class LBRBText(tk.Text):
 
     @classmethod
     def set_label_text(cls) -> None:
-        '''сброс label-текста'''
+        """сброс label-текста"""
         for b in cls.info_text:
             cls.bounds[b].label_info['text'] = cls.info_text[b]
 
     def set_height(self) -> None:
-        '''кол-во строк LB/RB'''
+        """кол-во строк LB/RB"""
         self.configure(height=self.heightVar.get())

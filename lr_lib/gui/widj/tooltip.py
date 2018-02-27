@@ -10,7 +10,7 @@ import lr_lib.core.var.vars as lr_vars
 
 
 class ToolTip(object):
-    '''всплывающие подсказки'''
+    """всплывающие подсказки"""
     toolTips = []
     lock = threading.Lock()
 
@@ -21,7 +21,7 @@ class ToolTip(object):
         self.y = 0
 
     def showtip(self, text: str) -> None:
-        '''Display text in tooltip'''
+        """Display text in tooltip"""
         if self.toolTips:
             with self.lock:
                 for tip in self.toolTips:
@@ -50,7 +50,7 @@ class ToolTip(object):
 
 
 def widget_values_counter(widget) -> (int, int):
-    '''кол-во строк/индекс текущей строки виджета'''
+    """кол-во строк/индекс текущей строки виджета"""
     i = li = 0
 
     with contextlib.suppress(Exception):
@@ -63,7 +63,7 @@ def widget_values_counter(widget) -> (int, int):
 
 
 def createToolTip(widget, text: str) -> None:
-    '''всплывающая подсказка для widget'''
+    """всплывающая подсказка для widget"""
     toolTip = ToolTip(widget)
 
     def enter(event, toolTip=toolTip, text=text, wlines='') -> None:
