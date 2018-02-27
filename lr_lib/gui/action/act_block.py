@@ -19,31 +19,21 @@ class ActBlock(lr_act_scroll.ActScrollText):
             self.file_bar, text='unblock', font=lr_vars.DefaultFont + ' bold', command=lambda *a: self._block(False))
 
     @contextlib.contextmanager
-    def block(self, w=('tk_text', 'unblock', 'search_entry', 'search_res_combo', 'toolbar',),
-              no_highlight=False) -> iter:
+    def block(self, w=('tk_text', 'unblock', 'search_entry', 'search_res_combo', 'toolbar',)) -> iter:
         """заблокировать/разблокировать виджеты в gui"""
-        highlight = self.tk_text.highlight_var.get()
-
-        if no_highlight:  # откл подсветку
-            self.tk_text.highlight_var.set(False)
         try:
-            yield self._block(True, w=w)
+            lr_vars.MainThreadUpdater.submit(lambda: self._block(True, w=w))
+            yield
         finally:
-            self._block(False, w=w)
-            if no_highlight:  # вкл подсветку
-                self.tk_text.highlight_var.set(highlight)
-                self.tk_text.action.tk_text.highlight_apply()
+            lr_vars.MainThreadUpdater.submit(lambda: self._block(False, w=w))
 
     def _block(self, bl: bool, w=()) -> None:
         """заблокировать/разблокировать виджеты в gui"""
+        state = ('disabled' if bl else 'normal')
 
-        def set_block(state=('disabled' if bl else 'normal')):
-            """заблокировать/разблокировать"""
-            for attr in dir(self):
-                if not attr.startswith('_') and (attr not in w):
-                    with contextlib.suppress(AttributeError, tk.TclError):
-                        getattr(self, attr).configure(state=state)
-            self.update()
+        for attr in dir(self):
+            if (not attr.startswith('_')) and (attr not in w):
+                with contextlib.suppress(AttributeError, tk.TclError):
+                    getattr(self, attr).configure(state=state)
 
-        lr_vars.MainThreadUpdater.submit(set_block)
-
+        self.update()

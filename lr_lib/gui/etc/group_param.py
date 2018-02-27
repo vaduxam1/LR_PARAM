@@ -101,7 +101,7 @@ def group_param(event, widget=None, params=None, ask=True) -> None:
     widget.action.backup()
 
     # заменить params
-    with lr_vars.Window.block(force=True), widget.action.block(no_highlight=True):
+    with lr_vars.Window.block(force=True), widget.action.block():
         (counter, wrsp_dict, wrsp, unsuccess) = (0, {'param': ''}, '', [])  # начальные vars для progressbar
 
         lr_vars.T_POOL.submit(threadsafe_progress)

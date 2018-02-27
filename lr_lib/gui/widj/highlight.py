@@ -76,17 +76,16 @@ class HighlightLines:
         """получать индексы и подсвечивать on-screen линии текста, пока top и bottom не изменились"""
         (top, bottom) = on_srean_line_nums
         line_nums = (range(top, (bottom + 1)) & self.on_screen_lines.keys())
-        if (not line_nums) or self.on_srean_line_nums != on_srean_line_nums:
+        if (not line_nums) or (self.on_srean_line_nums != on_srean_line_nums):
             return
 
         args = lr_other.chunks(((num, self.on_screen_lines.get(num), self.tegs_names) for num in line_nums), self.psize)
-        for ln_ti in self.execute(lines_teg_indxs, args):
-            for (line_num, tag_indxs) in ln_ti:
-                if self.on_srean_line_nums != on_srean_line_nums:
-                    return
+        for (line_num, tag_indxs) in itertools.chain(*self.execute(lines_teg_indxs, args)):
+            if self.on_srean_line_nums != on_srean_line_nums:
+                return
 
-                self.line_tegs_add(tag_indxs)  # подсветить
-                self.on_screen_lines.pop(line_num, None)  # больше не подсвечивать
+            self.line_tegs_add(tag_indxs)  # подсветить
+            self.on_screen_lines.pop(line_num, None)  # больше не подсвечивать
 
             if self.on_srean_line_nums != on_srean_line_nums:
                 return

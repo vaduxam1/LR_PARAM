@@ -31,24 +31,22 @@ class WinBlock(lr_win_act.WinAct):
                 if force:
                     self._block_ = True
 
-                yield self._block(True, w=w)
+                lr_vars.MainThreadUpdater.submit(lambda: self._block(True, w=w))
+                yield
         finally:
             if force:
                 self._block_ = False
 
             if not self._block_:
-                self._block(False, w=w)
+                lr_vars.MainThreadUpdater.submit(lambda: self._block(False, w=w))
 
     def _block(self, bl: bool, w=()) -> None:
         """заблокировать/разблокировать виджеты в gui"""
+        state = ('disabled' if bl else 'normal')
 
-        def set_block(state=('disabled' if bl else 'normal')):
-            """заблокировать/разблокировать"""
-            for attr in dir(self):
-                if not attr.startswith('_') and (attr not in w):
-                    with contextlib.suppress(AttributeError, tk.TclError):
-                        getattr(self, attr).configure(state=state)
-            self.update()
+        for attr in dir(self):
+            if (not attr.startswith('_')) and (attr not in w):
+                with contextlib.suppress(AttributeError, tk.TclError):
+                    getattr(self, attr).configure(state=state)
 
-        return lr_vars.MainThreadUpdater.submit(set_block)
-
+        self.update()
