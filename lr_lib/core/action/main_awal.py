@@ -122,7 +122,6 @@ class ActionWebsAndLines:
             text_list = text_list.split('\n')
 
         self._set_text_list(iter_lines=text_list)
-        self.action.tk_text.init()
 
         if websReport:  # статистика использования WRSP
             self.websReport.create()

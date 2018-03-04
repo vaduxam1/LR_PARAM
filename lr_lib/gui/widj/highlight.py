@@ -121,9 +121,9 @@ def filter_tag_indxs(line_num: int, line_indxs: dict) -> dict:
     return line_indxs
 
 
-def set_tk_indxs(line_num: int, i_start: int, i_end: int, xy='{}.{}'.format) -> (str, str):
+def set_tk_indxs(line_num: int, i_start: int, i_end: int) -> (str, str):
     """индкесы в формате tk.Text"""
-    return xy(line_num, i_start), xy(line_num, i_end)
+    return '{}.{}'.format(line_num, i_start), '{}.{}'.format(line_num, i_end)
 
 
 def join_indxs(indxs: {int, }) -> iter((int, int),):

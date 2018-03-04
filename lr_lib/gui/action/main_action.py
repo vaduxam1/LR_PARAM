@@ -37,6 +37,7 @@ class ActionWindow(lr_act_win.ActWin):
         self.set_tooltip()  # создать tooltip виджетов
 
         self.open_action()  # открыть action текст
+        self.tk_text.init()
 
     def set_tooltip(self) -> None:
         """создать все tooltip action окна"""

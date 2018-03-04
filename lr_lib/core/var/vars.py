@@ -260,8 +260,8 @@ DefaultActionNoHighlightFontSlant = True  #
 # подсветка
 
 HighlightOn = True  # включить подсветку
-HighlightAfter1 = 100  # задержка, перед запуском подсветки всех линий на экране
-HighlightAfter2 = 25  # задержка, перед запуском подсветки одной линии на экране
+HighlightAfter1 = 100  # задержка(мс), перед запуском подсветки всех линий на экране
+HighlightAfter2 = 25  # задержка(мс), перед запуском подсветки одной линии на экране
 HighlightMPool = tk.BooleanVar(value=False)  # искать индексы для подсветки линий, в M_POOL
 HighlightLinesPortionSize = tk.IntVar(value=1)  # для скольки линий, искать индексы, за один проход/поток
 Background = 'khaki'
