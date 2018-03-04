@@ -349,9 +349,9 @@ class ActionWindow(lr_act_win.ActWin):
 
         self.highlight_cbx.grid(row=1, column=1, sticky=tk.NSEW, columnspan=5)
         self.background_color_combo.grid(row=2, column=1, sticky=tk.NSEW, columnspan=5)
-        self.buttonColorReset.grid(row=3, column=1, sticky=tk.NSEW, columnspan=5)
-        self.highlight_MThread.grid(row=4, column=4, sticky=tk.NSEW)
-        self.highlight_LinesPortionSize.grid(row=4, column=5, sticky=tk.NSEW)
+        self.buttonColorReset.grid(row=3, column=1, sticky=tk.NSEW)
+        self.highlight_MThread.grid(row=3, column=3, sticky=tk.NSEW)
+        self.highlight_LinesPortionSize.grid(row=3, column=2, sticky=tk.NSEW)
 
         self.open_button.grid(row=6, column=16, sticky=tk.NSEW)
         self.editor_button.grid(row=7, column=16, sticky=tk.NSEW, columnspan=2)

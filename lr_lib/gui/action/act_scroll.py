@@ -34,7 +34,7 @@ class ActScrollText(lr_act_widj.ActWidj):
             command=lambda *a: self.tk_text.highlight_lines.set_thread_attrs())
 
         self.highlight_LinesPortionSize = tk.Spinbox(
-            self.cbx_bar, from_=0, to=100, width=2, font=lr_vars.DefaultFont,
+            self.cbx_bar, from_=0, to=100, font=lr_vars.DefaultFont, width=2,
             textvariable=lr_vars.HighlightLinesPortionSize)
 
     def report_position_X(self, *argv) -> None:
