@@ -111,7 +111,7 @@ def get_files_portions(args: [(str, str, bool, bool), ((str, int), )]) -> [dict,
     """создать файлы, для порции inf-файлов"""
     (arg, files) = args
     files_gen = map(_create_files_from_inf, ((arg, file) for file in files))
-    files_ = tuple(itertools.chain(*files_gen))
+    files_ = tuple(file for portion in files_gen for file in portion)
     return files_
 
 
