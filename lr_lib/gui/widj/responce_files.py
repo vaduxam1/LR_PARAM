@@ -39,7 +39,7 @@ class RespFiles(tk.Toplevel):
             lr_other._openTextInEditor(full_name)
 
         file_dt = lr_files.file_dict_creator(
-            ent.get(), full_name, inf_num=0, enc=lr_vars.VarEncode.get(), inf_key='', allow_deny=True, set_statistic=True)
+            ent.get(), full_name, inf_num=0, enc=lr_vars.VarEncode.get(), inf_key='', deny=True, stats=True)
         del file_dt['Param']
         del file_dt['Snapshot']
 

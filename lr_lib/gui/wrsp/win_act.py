@@ -27,7 +27,7 @@ class WinAct(lr_win_frame.WinFrame):
         for action in self.action_windows:
             return self.action_windows[action]
 
-    def new_action_window(self, *args, folder=None, file='action.c'):
+    def new_action_window(self, *args, folder=None, file='action.c') -> lr_action.ActionWindow:
         """создать lr_lib.gui.action.main_action.ActionWindow()"""
         if folder is None:
             folder = lr_vars.VarFilesFolder.get()
@@ -39,3 +39,5 @@ class WinAct(lr_win_frame.WinFrame):
             action._start_auto_update_action_info_lab()  # автообновление label состояния пула
             self.after(100, self.focus_set)  # тк гдето само активируется
             self.after(500, action.focus_set)  # открыть поверх главного окна
+
+            return action

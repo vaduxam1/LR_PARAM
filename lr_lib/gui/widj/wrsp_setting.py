@@ -85,21 +85,22 @@ class WrspSettingWindow(tk.Toplevel):
         SnapshotInName = tk.Checkbutton(_lab3, text=tt_SnapshotInName, font='Arial 7', justify='left',
                                         variable=lr_vars.SnapshotInName)
 
-        TransactionInNameMax = tk.Spinbox(_lab4, font='Arial 7', from_=0, to=1000,
+        TransactionInNameMax = tk.Spinbox(_lab4, font='Arial 7', from_=-1, to=1000,
                                           textvariable=lr_vars.TransactionInNameMax)
 
-        MaxLbWrspName = tk.Spinbox(_lab5, textvariable=lr_vars.MaxLbWrspName, font='Arial 7', from_=0, to=1000)
-        MaxRbWrspName = tk.Spinbox(_lab7, textvariable=lr_vars.MaxRbWrspName, font='Arial 7', from_=0, to=1000)
-        MaxParamWrspName = tk.Spinbox(_lab6, textvariable=lr_vars.MaxParamWrspName, font='Arial 7', from_=0, to=1000)
-        MinWrspRnum = tk.Spinbox(_lab2, textvariable=lr_vars.MinWrspRnum, font='Arial 7', from_=0, to=1000)
-        MaxWrspRnum = tk.Spinbox(_lab2, textvariable=lr_vars.MaxWrspRnum, font='Arial 7', from_=0, to=10**5)
+        MaxLbWrspName = tk.Spinbox(_lab5, textvariable=lr_vars.MaxLbWrspName, font='Arial 7', from_=-1, to=1000)
+        MaxRbWrspName = tk.Spinbox(_lab7, textvariable=lr_vars.MaxRbWrspName, font='Arial 7', from_=-1, to=1000)
+        MaxParamWrspName = tk.Spinbox(_lab6, textvariable=lr_vars.MaxParamWrspName, font='Arial 7', from_=-1, to=1000)
+        MinWrspRnum = tk.Spinbox(_lab2, textvariable=lr_vars.MinWrspRnum, font='Arial 7', from_=-1, to=1000)
+        MaxWrspRnum = tk.Spinbox(_lab2, textvariable=lr_vars.MaxWrspRnum, font='Arial 7', from_=-1, to=10**5)
         wrsp_name_splitter = tk.Entry(_lab8, textvariable=lr_vars.wrsp_name_splitter, font='Arial 7')
         WrspNameFirst = tk.Entry(_lab1, textvariable=lr_vars.WrspNameFirst, font='Arial 7')
 
-        apply_btn = tk.Button(self, font='Arial 7', text='применить',
+        apply_btn = tk.Button(self, font='Arial 8 bold', text='Применить',
                               command=lambda: self.parent.save_action_file(file_name=False))
         wrsp_rename_btn = tk.Button(self, font='Arial 7', text='wrsp_rename', command=self.all_wrsp_rename)
-        wrsp_auto_rename_btn = tk.Button(self, font='Arial 7', text='wrsp_auto_rename', command=self.all_wrsp_auto_rename)
+        wrsp_auto_rename_btn = tk.Button(_lab, font='Arial 8 bold italic', text='wrsp_auto_rename',
+                                         command=self.all_wrsp_auto_rename)
 
         lr_tooltip.createToolTip(apply_btn, 'применить изменения')
         lr_tooltip.createToolTip(VarWebStatsTransac, tt_stat)
@@ -112,22 +113,28 @@ class WrspSettingWindow(tk.Toplevel):
         lr_tooltip.createToolTip(SnapshotInName, tt_SnapshotInName)
         lr_tooltip.createToolTip(TransactionInNameMax, '{transaction}\nв WRSP имени, использовать символы(максимум) имени транзакции\n'
                                                        'Изменится при пересоздании param\n'
-                                                       '0 - откл')
+                                                       '0 - все\n'
+                                                       '-1 - откл')
         lr_tooltip.createToolTip(MaxLbWrspName, '{lb_name}\nмакс число символов, взятых из LB, для WRSP имени\n'
                                                 'Изменится при пересоздании param\n'
-                                                '0 - откл')
+                                                '0 - все\n'
+                                                '-1 - откл')
         lr_tooltip.createToolTip(MaxRbWrspName, '{rb_name}\nмакс число символов, взятых из RB, для WRSP имени\n'
                                                 'Изменится при пересоздании param\n'
-                                                '0 - откл')
+                                                '0 - все\n'
+                                                '-1 - откл')
         lr_tooltip.createToolTip(MaxParamWrspName, '{wrsp_name}\nмакс число символов, взятых из param, для WRSP имени\n'
                                                    'Изменится при пересоздании param\n'
-                                                   '0 - откл')
+                                                   '0 - все\n'
+                                                   '-1 - откл')
         lr_tooltip.createToolTip(MinWrspRnum, '{wrsp_rnd_num}\nмин число, для случайного номера, в WRSP имени\n'
                                               'Изменится при пересоздании param\n'
-                                              '0 - откл')
+                                              '0 - все\n'
+                                              '-1 - откл')
         lr_tooltip.createToolTip(MaxWrspRnum, '{wrsp_rnd_num}\nмакс число, для случайного номера, в WRSP имени\n'
                                               'Изменится при пересоздании param\n'
-                                              '0 - откл')
+                                              '0 - все\n'
+                                              '-1 - откл')
         lr_tooltip.createToolTip(wrsp_name_splitter, 'символ разделения в имени WRSP\nдля "_" : "aFFX9" -> "a_FFX_9"\n'
                                                      'Изменится при пересоздании param\nничего - откл')
         lr_tooltip.createToolTip(WrspNameFirst, '{letter}\nначало(P) WRSP имени: {P_6637_2_aFFX9}\n'
@@ -136,7 +143,8 @@ class WrspSettingWindow(tk.Toplevel):
 
         lr_tooltip.createToolTip(wrsp_rename_btn, 'скопом переименовать, все уже созданные web_reg_save_param\n'
                                                   'имена слева, не трогать\nимена справа, переименовать, либо не трогать')
-        lr_tooltip.createToolTip(wrsp_auto_rename_btn, 'автоматически перетменовать , все уже созданные web_reg_save_param\n'
+        lr_tooltip.createToolTip(wrsp_auto_rename_btn, 'автоматически переименовать(пересоздание имени), '
+                                                       'все уже созданные web_reg_save_param\n'
                                                        'с учетом всех настроек имени,\n'
                                                        'и изменения имен транзакций, после его создания\n\n'
                                                        'имена слева, не трогать\nимена справа, переименовать, либо не трогать')
@@ -161,9 +169,9 @@ class WrspSettingWindow(tk.Toplevel):
         WrspNameFirst.grid(row=8, column=1)
         TransactionInNameMax.grid(row=7, column=1)
 
-        apply_btn.grid(row=10, column=1)
-        wrsp_rename_btn.grid(row=10, column=2)
-        wrsp_auto_rename_btn.grid(row=10, column=3)
+        apply_btn.grid(row=10, column=2)
+        wrsp_rename_btn.grid(row=10, column=1)
+        wrsp_auto_rename_btn.grid(row=5, column=3, sticky=tk.S, columnspan=2)
 
         _lab.grid(row=5, column=1, columnspan=3)
         _lab8.grid(row=5, column=1)

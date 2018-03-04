@@ -17,23 +17,27 @@ import lr_lib.core.var.vars as lr_vars
 def is_responce_file(name: str) -> (str, str):
     """вернуть файлы ответов, отбраковать "вероятно ненужные" файлы"""
     n, ext = os.path.splitext(name)
-    if not ((name in lr_vars.DENY_FILES) or (ext in lr_vars.DENY_EXT) or any(p in n for p in lr_vars.DENY_PART_NAMES)):
+    if not ((name in lr_vars.DENY_FILES) or (ext in lr_vars.DENY_EXT) or any((p in n) for p in lr_vars.DENY_PART_NAME)):
         return n, ext
 
 
-def file_dict_creator(name: str, full_name: str, inf_num: int, enc: str, inf_key: str, allow_deny: bool, set_statistic: bool, dn=-1) -> dict:
+default = -1
+
+
+def file_dict_creator(name: str, full_name: str, inf_num: int, enc: str, inf_key: str, deny: bool, stats: bool) -> dict:
     """создать словарь файла"""
-    file = get_file_with_kwargs(lr_vars.AllFiles, Name=name) if inf_num else None
+    file = (get_file_with_kwargs(lr_vars.AllFiles, Name=name) if inf_num else None)
 
     if file:  # файл уже есть, те пришел из другого inf
         file['Snapshot']['Nums'].add(inf_num)
+
     else:  # новый файл
-        fil_e = is_responce_file(name)
-        if allow_deny or fil_e:
-            if fil_e is None:  # из lr_lib.gui.widj.responce_files
-                name_, _ext = os.path.splitext(name)
+        is_responce = is_responce_file(name)
+        if deny or is_responce:
+            if is_responce is None:  # из lr_lib.gui.widj.responce_files
+                (name_, _ext) = os.path.splitext(name)
             else:
-                name_, _ext = fil_e
+                (name_, _ext) = is_responce
 
             file = dict(
                 File=dict(
@@ -42,36 +46,36 @@ def file_dict_creator(name: str, full_name: str, inf_num: int, enc: str, inf_key
                     _ext=_ext,
                     name_=name_,
                     encoding=enc,
-                    len=dn,
-                    NotPrintable=dn,
-                    ascii_letters=dn,
-                    digits=dn,
-                    whitespace=dn,
-                    punctuation=dn,
-                    Size=dn,
-                    Lines=dn,
+                    len=default,
+                    NotPrintable=default,
+                    ascii_letters=default,
+                    digits=default,
+                    whitespace=default,
+                    punctuation=default,
+                    Size=default,
+                    Lines=default,
                     timeCreate='',
                 ),
                 Snapshot=dict(
                     Nums={inf_num},
-                    len=dn,
+                    len=default,
                     inf_key=inf_key
                 ),
                 Param=dict(
                     Name='',
-                    Count=dn,
+                    Count=default,
                     Count_indexs=[],
                     Count_indexs_len=[],
-                    NotPrintable=dn,
-                    len=dn,
-                    inf_max=dn,
-                    inf_min=dn,
-                    max_action_inf=dn,
-                    action_id=dn,
+                    NotPrintable=default,
+                    len=default,
+                    inf_max=default,
+                    inf_min=default,
+                    max_action_inf=default,
+                    action_id=default,
                 ),
             )
 
-            if set_statistic:
+            if stats:
                 set_file_statistic(file)
             return file
 
@@ -95,7 +99,7 @@ def get_folder_infs(folder: str) -> iter((str, int),):
 def create_files_from_infs(folder: str, enc: str, allow_deny: bool, statistic: bool) -> iter([dict, ]):
     """создать файлы ответов, из всех t*.ini файлов"""
     arg = (folder, enc, allow_deny, statistic, )
-    chunks = [(arg, files) for files in lr_other.chunks(get_folder_infs(folder), lr_vars.FilesCreatePortionSize)]
+    chunks = ((arg, files) for files in lr_other.chunks(get_folder_infs(folder), lr_vars.FilesCreatePortionSize))
     executer = (lr_vars.M_POOL.imap_unordered if lr_vars.SetFilesPOOLEnable else map)
 
     # создать файлы ответов
@@ -106,9 +110,9 @@ def create_files_from_infs(folder: str, enc: str, allow_deny: bool, statistic: b
 def get_files_portions(args: [(str, str, bool, bool), ((str, int), )]) -> [dict, ]:
     """создать файлы, для порции inf-файлов"""
     (arg, files) = args
-    files = map(_create_files_from_inf, ((arg, file) for file in files))
-    files = tuple(itertools.chain(*files))
-    return files
+    files_gen = map(_create_files_from_inf, ((arg, file) for file in files))
+    files_ = tuple(itertools.chain(*files_gen))
+    return files_
 
 
 def _create_files_from_inf(args: [(str, str, bool, bool), (str, int)]) -> iter((dict,)):
@@ -134,7 +138,7 @@ def _create_files_from_inf(args: [(str, str, bool, bool), (str, int)]) -> iter((
         lr_excepthook.full_tb_write(ex)
         # как текст файл
         with open(os.path.join(folder, file), encoding='utf-8', errors='ignore') as inf_file:
-            num, *lines = inf_file.read().split('\n')
+            (num, *lines) = inf_file.read().split('\n')
             try:  # inf номер '[t75]' -> 75
                 num = int(num[2:-1])
             except:
@@ -165,7 +169,7 @@ def init() -> None:
         lr_vars.AllFiles = lr_other.iter_to_list(files)
 
     else:  # все файлы каталога
-        for e, name in enumerate(os.listdir(folder)):
+        for (e, name) in enumerate(os.listdir(folder)):
             full_name = os.path.join(folder, name)
             if os.path.isfile(full_name):
                 file = file_dict_creator(name, full_name, 0, enc, '', allow_deny, statistic)
@@ -206,7 +210,7 @@ def get_files_with_kwargs(files: (dict,), key='File', **kwargs) -> iter((dict,))
     for file in files:
         f = file[key]
         with contextlib.suppress(KeyError):
-            if all(kwargs[k] == f[k] for k in kwargs):
+            if all((kwargs[k] == f[k]) for k in kwargs):
                 yield file
 
 
@@ -247,4 +251,4 @@ def _set_fileFile_stats(fileFile: dict, text: str, let=0, wts=0, ptn=0, dts=0, n
     fileFile['digits'] = dts
     fileFile['NotPrintable'] = na
     fileFile['len'] = (ptn + wts + let + dts + na)
-    fileFile['Lines'] = (counter.get('\n', 0) + 1)  # ?
+    fileFile['Lines'] = (counter.get('\n', 0) + 1)

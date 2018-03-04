@@ -2,7 +2,6 @@
 # подсветка текста
 
 import string
-import itertools
 import threading
 
 import tkinter as tk
@@ -80,12 +79,13 @@ class HighlightLines:
             return
 
         args = lr_other.chunks(((num, self.on_screen_lines.get(num), self.tegs_names) for num in line_nums), self.psize)
-        for (line_num, tag_indxs) in itertools.chain(*self.execute(lines_teg_indxs, args)):
-            if self.on_srean_line_nums != on_srean_line_nums:
-                return
+        for results in self.execute(lines_teg_indxs, args):
+            for (line_num, tag_indxs) in results:
+                if self.on_srean_line_nums != on_srean_line_nums:
+                    return
 
-            self.line_tegs_add(tag_indxs)  # подсветить
-            self.on_screen_lines.pop(line_num, None)  # больше не подсвечивать
+                self.line_tegs_add(tag_indxs)  # подсветить
+                self.on_screen_lines.pop(line_num, None)  # больше не подсвечивать
 
             if self.on_srean_line_nums != on_srean_line_nums:
                 return
@@ -142,7 +142,7 @@ def filter_tag_indxs(line_num: int, line_indxs: dict) -> dict:
 
     if lr_vars.OliveChildTeg in line_indxs:  # удалить из Olive тега все индексы, принадлежищие любому другому тегу
         other_tegs = (line_indxs.keys() - lr_vars.minus_teg)
-        line_indxs[lr_vars.OliveChildTeg] -= set(itertools.chain(*map(line_indxs.__getitem__, other_tegs)))
+        line_indxs[lr_vars.OliveChildTeg] -= set(i for t in other_tegs for i in line_indxs[t])
 
     line_indxs = {k: [set_tk_indxs(line_num, i_start, i_end) for (i_start, i_end) in join_indxs(indxs)]
                   for (k, indxs) in line_indxs.items() if indxs}

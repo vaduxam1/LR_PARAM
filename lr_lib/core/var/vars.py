@@ -18,7 +18,7 @@ from lr_lib.etc.help import (COLORS, HEX, )
 #####################################
 # главные переменные
 
-VERSION = 'v10.4.4'
+VERSION = 'v10.4.5'
 lib_folder = 'lr_lib'
 Tk = tk.Tk()  # tkinter
 original_callback_exception = Tk.report_callback_exception
@@ -399,7 +399,7 @@ FileOptionsStartswith = {s.lower() for s in (
 DENY_FILES = {
     'CodeGenerationLog.txt', 'CorrelationLog.txt',
 }
-DENY_PART_NAMES = {
+DENY_PART_NAME = {
     '_RequestHeader', '_RequestBody',
 }
 DENY_EXT = {
@@ -428,7 +428,7 @@ ENCODE_LIST = list(sorted(ENCODE_LIST))
 # пулы
 
 MainThreadUpdater = None  # выполнять callback из main потока # lr_lib.etc.pool.other.MainThreadUpdater
-MainThreadUpdateTime = tk.IntVar(value=500)  # интервал(мс) проверки очереди, callback(из потоков)
+MainThreadUpdateTime = tk.IntVar(value=1000)  # интервал(мс) проверки очереди, callback(из потоков)
 
 M_POOL = None  # пул процессов  # lr_lib.etc.pool.main_pool.POOL
 M_POOL_NAME = 'multiprocessing.Pool'  # тип основной пул

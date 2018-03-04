@@ -181,7 +181,7 @@ def wrsp_name_creator(param: str, Lb: str, Rb: str, snapshot: int) -> str:
     MaxRbWrspName = lr_vars.MaxRbWrspName.get()
     infs = (snapshot if lr_vars.SnapshotInName.get() else '')
 
-    if MaxLbWrspName and (len(Lb) > 2):
+    if (MaxLbWrspName >= 0) and (len(Lb) > 2):
         lbn = ['']
         for b in Lb:
             if b in allow_lrb:
@@ -193,7 +193,7 @@ def wrsp_name_creator(param: str, Lb: str, Rb: str, snapshot: int) -> str:
     else:
         lb_name = ''
 
-    if MaxRbWrspName and (len(Rb) > 2):
+    if (MaxRbWrspName >= 0) and (len(Rb) > 2):
         rbn = ['']
         for b in Rb:
             if b in allow_lrb:
@@ -209,14 +209,15 @@ def wrsp_name_creator(param: str, Lb: str, Rb: str, snapshot: int) -> str:
     jp = [p[0], ''.join(p[1:-1]), p[-1]]
     wrsp_param_name = lr_vars.wrsp_name_splitter.get().join(jp)
     MaxParamWrspName = lr_vars.MaxParamWrspName.get()
-    if MaxParamWrspName:
+    if MaxParamWrspName >= 0:
         wrsp_param_name = wrsp_param_name[:MaxParamWrspName]
 
     MaxWrspRnum = lr_vars.MaxWrspRnum.get()
-    wrsp_rnd_num = (random.randrange(lr_vars.MinWrspRnum.get(), MaxWrspRnum) if MaxWrspRnum else '')
+    MinWrspRnum = lr_vars.MinWrspRnum.get()
+    wrsp_rnd_num = (random.randrange(MinWrspRnum, MaxWrspRnum) if (MaxWrspRnum and (MinWrspRnum >= 0)) else '')
 
     TransactionInNameMax = lr_vars.TransactionInNameMax.get()
-    if TransactionInNameMax and lr_vars.Window:
+    if (TransactionInNameMax >= 0) and lr_vars.Window:
         action = lr_vars.Window.get_main_action()
         web_action = action.web_action
         w = next(web_action.get_web_by(web_action.get_web_snapshot_all(), snapshot=snapshot))
