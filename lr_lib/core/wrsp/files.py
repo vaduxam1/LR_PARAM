@@ -4,7 +4,6 @@
 import os
 import time
 import string
-import itertools
 import contextlib
 import configparser
 import collections

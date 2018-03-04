@@ -81,21 +81,6 @@ class ActionWindow(lr_act_win.ActWin):
             '# buttonColorReset'
         )
         lr_tooltip.createToolTip(
-            self.highlight_Thread,
-            'выполнять в фоне, весь код подсветки\n\t'
-            '# highlight_Thread'
-        )
-        lr_tooltip.createToolTip(
-            self.highlight_LineThread,
-            'выполнять в фоне, код подсветки для одной линии\n\t'
-            '# highlight_LineThread'
-        )
-        lr_tooltip.createToolTip(
-            self.highlight_TagThread,
-            'выполнять в фоне, код подсветки для одного тега\n\t'
-            '# highlight_TagThread'
-        )
-        lr_tooltip.createToolTip(
             self.highlight_MThread,
             'искать индексы для подсветки линий, в M_POOL\n\t'
             '# highlight_MThread'
@@ -364,9 +349,6 @@ class ActionWindow(lr_act_win.ActWin):
         self.highlight_cbx.grid(row=1, column=1, sticky=tk.NSEW, columnspan=5)
         self.background_color_combo.grid(row=2, column=1, sticky=tk.NSEW, columnspan=5)
         self.buttonColorReset.grid(row=3, column=1, sticky=tk.NSEW, columnspan=5)
-        self.highlight_Thread.grid(row=4, column=1, sticky=tk.NSEW)
-        self.highlight_LineThread.grid(row=4, column=2, sticky=tk.NSEW)
-        self.highlight_TagThread.grid(row=4, column=3, sticky=tk.NSEW)
         self.highlight_MThread.grid(row=4, column=4, sticky=tk.NSEW)
         self.highlight_LinesPortionSize.grid(row=4, column=5, sticky=tk.NSEW)
 

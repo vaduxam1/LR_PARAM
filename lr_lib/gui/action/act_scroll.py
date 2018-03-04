@@ -29,15 +29,6 @@ class ActScrollText(lr_act_widj.ActWidj):
 
         self.buttonColorReset = tk.Button(self.cbx_bar, text='reset', font=lr_vars.DefaultFont, command=self.resColor)
 
-        self.highlight_Thread = tk.Checkbutton(
-            self.cbx_bar, text='', variable=lr_vars.HighlightThread, font=lr_vars.DefaultFont,
-            command=lambda *a: self.tk_text.highlight_lines.set_thread_attrs())
-        self.highlight_LineThread = tk.Checkbutton(
-            self.cbx_bar, text='', variable=lr_vars.LineTagAddThread, font=lr_vars.DefaultFont,
-            command=lambda *a: self.tk_text.highlight_lines.set_thread_attrs())
-        self.highlight_TagThread = tk.Checkbutton(
-            self.cbx_bar, text='', variable=lr_vars.TagAddThread, font=lr_vars.DefaultFont,
-            command=lambda *a: self.tk_text.highlight_lines.set_thread_attrs())
         self.highlight_MThread = tk.Checkbutton(
             self.cbx_bar, text='', variable=lr_vars.HighlightMPool, font=lr_vars.DefaultFont,
             command=lambda *a: self.tk_text.highlight_lines.set_thread_attrs())

@@ -2,16 +2,11 @@
 # подсветка текста
 
 import string
-import threading
 
 import tkinter as tk
 
 import lr_lib.core.var.vars as lr_vars
 import lr_lib.core.etc.other as lr_other
-
-
-# потокобезопасная подсветка одного тега
-HTLock = threading.Lock()
 
 
 class HighlightLines:
@@ -32,30 +27,14 @@ class HighlightLines:
 
         self.highlight_enable = self.tk_text.highlight_var.get()
         self.execute = (lr_vars.M_POOL.imap_unordered if lr_vars.HighlightMPool.get() else map)  # искать индексы в process-пуле или main-потоке
-        self.highlight_cmd = self._highlight_cmd  # подсветить один тег
-        self.line_tegs_add = self._line_tegs_add  # подсветить одну линию
-        self.highlight_top_bottom_lines = self._highlight_top_bottom_lines  # подсветить все линии
-
         self.set_thread_attrs()  # подсвечивать в фоне/главном потоке
 
     def set_thread_attrs(self) -> None:
         """подсвечивать в фоне/главном потоке"""
         def set() -> None:
-            self.highlight_cmd = (
-                lr_vars.T_POOL_decorator(self._highlight_cmd) if lr_vars.TagAddThread.get() else self._highlight_cmd
-            )  # подсветить один тег, в фоне/main-потоке
-            self.line_tegs_add = (
-                lr_vars.T_POOL_decorator(self._line_tegs_add) if lr_vars.LineTagAddThread.get() else self._line_tegs_add
-            )  # подсветить одну линию, в фоне/main-потоке
-            self.highlight_top_bottom_lines = (
-                lr_vars.T_POOL_decorator(self._highlight_top_bottom_lines) if lr_vars.HighlightThread.get()
-                else self._highlight_top_bottom_lines
-            )  # подсветить все линии, в фоне/main-потоке
-
             self.psize = lr_vars.HighlightLinesPortionSize.get()
             self.highlight_enable = self.tk_text.highlight_var.get()
             self.execute = (lr_vars.M_POOL.imap_unordered if lr_vars.HighlightMPool.get() else map)
-
         lr_vars.MainThreadUpdater.submit(set)
 
     def set_top_bottom(self, on_srean_line_nums: (int, int)) -> None:
@@ -63,16 +42,14 @@ class HighlightLines:
         self.on_srean_line_nums = on_srean_line_nums
 
         if self.highlight_enable:  # подсветить
-            self.highlight_top_bottom_lines(on_srean_line_nums)
+            lr_vars.Tk.after(lr_vars.HighlightAfter1, self._highlight_top_bottom_lines, on_srean_line_nums)
 
     def _highlight_top_bottom_lines(self, on_srean_line_nums: (int, int)) -> None:
-        """подсветить все линии на экране"""
+        """подсветить все линии на экране
+        получать индексы и подсвечивать on-screen линии текста, пока top и bottom не изменились"""
         if self.on_srean_line_nums != on_srean_line_nums:
             return
-        self._highlight_line_nums(on_srean_line_nums)
 
-    def _highlight_line_nums(self, on_srean_line_nums: (int, int)) -> None:
-        """получать индексы и подсвечивать on-screen линии текста, пока top и bottom не изменились"""
         (top, bottom) = on_srean_line_nums
         line_nums = (range(top, (bottom + 1)) & self.on_screen_lines.keys())
         if (not line_nums) or (self.on_srean_line_nums != on_srean_line_nums):
@@ -84,7 +61,8 @@ class HighlightLines:
                 if self.on_srean_line_nums != on_srean_line_nums:
                     return
 
-                self.line_tegs_add(tag_indxs)  # подсветить
+                # подсветить
+                lr_vars.Tk.after(lr_vars.HighlightAfter2, self._line_tegs_add, tag_indxs)
                 self.on_screen_lines.pop(line_num, None)  # больше не подсвечивать
 
             if self.on_srean_line_nums != on_srean_line_nums:
@@ -95,14 +73,7 @@ class HighlightLines:
         teg_indxs={'foregroundolive': [('40.3', '40.7'),..], 'backgroundblack': [..],..}"""
         for teg in teg_indxs:
             for (index_start, index_end) in teg_indxs[teg]:
-                self.highlight_cmd(teg, index_start, index_end)
-
-    def _highlight_cmd(self, teg, index_start, index_end, lock=HTLock) -> None:
-        """подсветка одного тега, потокобезопасная
-        teg_and_indxs=('foregroundolive', '33.3', '33.7')"""
-        lock.acquire()
-        self.tk_text.tag_add(teg, index_start, index_end)
-        lock.release()
+                self.tk_text.tag_add(teg, index_start, index_end)
 
 
 def lines_teg_indxs(lines_portion: [(int, str, {str, (str,), }), ]) -> [(int, {str: {(str, str), }}), ]:
