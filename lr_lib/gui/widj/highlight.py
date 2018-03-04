@@ -62,18 +62,18 @@ class HighlightLines:
                     return
 
                 # подсветить
-                lr_vars.Tk.after(lr_vars.HighlightAfter2, self._line_tegs_add, tag_indxs)
-                self.on_screen_lines.pop(line_num, None)  # больше не подсвечивать
+                lr_vars.Tk.after(lr_vars.HighlightAfter2, self._line_tegs_add, tag_indxs, line_num)
 
             if self.on_srean_line_nums != on_srean_line_nums:
                 return
 
-    def _line_tegs_add(self, teg_indxs: {str: {(str, str), }, }) -> None:
+    def _line_tegs_add(self, teg_indxs: {str: {(str, str), }, }, line_num: int) -> None:
         """подсветить одну линию, всеми тегами
         teg_indxs={'foregroundolive': [('40.3', '40.7'),..], 'backgroundblack': [..],..}"""
         for teg in teg_indxs:
             for (index_start, index_end) in teg_indxs[teg]:
                 self.tk_text.tag_add(teg, index_start, index_end)
+        self.on_screen_lines.pop(line_num, None)  # больше не подсвечивать
 
 
 def lines_teg_indxs(lines_portion: [(int, str, {str, (str,), }), ]) -> [(int, {str: {(str, str), }}), ]:
