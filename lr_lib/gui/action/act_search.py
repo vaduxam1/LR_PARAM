@@ -117,8 +117,14 @@ class ActSearch(lr_act_serializ.TkTextWebSerialization):
                 vals = list(self.search_entry['values'])
                 vals.reverse()
                 if word not in vals:
-                    self.search_entry['values'] = ([word] + vals)
-                    self.search_entry.current(0)
+                    try:
+                        self.search_entry['values'] = ([word] + vals)
+                        self.search_entry.current(0)
+                    except tk.TclError as ex:
+                        lr_vars.Logger.trace('{} | {}'.format(type(ex), ex.args))
+                    else:
+                        if self.search_entry['values']:
+                            self.search_entry.current(0)
 
             self.search_res_combo['values'] = self._search_text(word=word)
             _, a, b = lr_tooltip.widget_values_counter(self.search_res_combo)

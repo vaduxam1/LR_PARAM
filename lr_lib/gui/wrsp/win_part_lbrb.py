@@ -47,7 +47,7 @@ class WinPartsLbRb(lr_win_text.WinText):
 
         # --- LB ---
         self.ButtonNewLB = tk.Button(
-            self.last_frameCbx1, text='->', command=self.comboParts_change, font=lr_vars.DefaultFont + ' italic',
+            self.last_frameCbx1, text='>', command=self.comboParts_change, font=lr_vars.DefaultFont + ' italic',
             width=2, padx=0, pady=0,
         )
         self.LBcbx_return = tk.Checkbutton(
@@ -64,7 +64,7 @@ class WinPartsLbRb(lr_win_text.WinText):
             self.lb_split_label, variable=lr_vars.VarSplitListLB, text='eval', font=lr_vars.DefaultFont + ' bold',
             command=self.spl_cbx_cmd_lb, padx=0, pady=0,
         )
-        self.LBent_SplitList = ttk.Combobox(self.lb_split_label, font=lr_vars.DefaultFont, width=10,)
+        self.LBent_SplitList = ttk.Combobox(self.lb_split_label, font=lr_vars.DefaultFont, width=2,)
         self.LBent_SplitList['values'] = list(split_list)
         self.LBent_SplitList.current(0)
 
@@ -81,15 +81,15 @@ class WinPartsLbRb(lr_win_text.WinText):
             font=lr_vars.DefaultFont + ' italic', background=lr_vars.Background,
         )
         self.ButtonLB_note = tk.Button(
-            self.last_frameCbx1, text='edit', command=lambda: self.lr_note(self.LB), width=3,
+            self.last_frameCbx1, text='<', command=lambda: self.lr_note(self.LB), width=3,
             font=lr_vars.DefaultFont + ' italic', padx=0, pady=0,
         )
         self.partNumEmptyLbNext = tk.Checkbutton(
-            self.last_frameCbx1, variable=lr_vars.VarPartNumEmptyLbNext, text='strip',
+            self.last_frameCbx1, variable=lr_vars.VarPartNumEmptyLbNext, text='s',
             font=lr_vars.DefaultFont + ' bold', padx=0, pady=0,
         )
         self.partNumDenyLbNext = tk.Checkbutton(
-            self.last_frameCbx1, variable=lr_vars.VarPartNumDenyLbNext, text='deny',
+            self.last_frameCbx1, variable=lr_vars.VarPartNumDenyLbNext, text='d',
             font=lr_vars.DefaultFont + ' bold', padx=0, pady=0,
         )
         self.LbB1Cbx = tk.Checkbutton(
@@ -99,15 +99,15 @@ class WinPartsLbRb(lr_win_text.WinText):
             self.lb_split_label, variable=lr_vars.VarLbB2, text='[', font=lr_vars.DefaultFont, padx=0, pady=0,
         )
         self.LbRstripCbx = tk.Checkbutton(
-            self.last_frameCbx1, variable=lr_vars.VarLbLstrip, text='lstrip', font=lr_vars.DefaultFont, padx=0, pady=0,
+            self.last_frameCbx1, variable=lr_vars.VarLbLstrip, text='l', font=lr_vars.DefaultFont, padx=0, pady=0,
         )
         self.LbEndCbx = tk.Checkbutton(
-            self.last_frameCbx1, variable=lr_vars.VarLEnd, text='end', font=lr_vars.DefaultFont, padx=0, pady=0,
+            self.last_frameCbx1, variable=lr_vars.VarLEnd, text='e', font=lr_vars.DefaultFont, padx=0, pady=0,
         )
 
         # --- RB ---
         self.ButtonNewRB = tk.Button(
-            self.last_frameCbx2, text='->', command=self.comboParts_change, font=lr_vars.DefaultFont + ' italic',
+            self.last_frameCbx2, text='>', command=self.comboParts_change, font=lr_vars.DefaultFont + ' italic',
             width=2, padx=0, pady=0,
         )
         self.RBcbx_return = tk.Checkbutton(
@@ -126,7 +126,7 @@ class WinPartsLbRb(lr_win_text.WinText):
             self.rb_split_label, variable=lr_vars.VarSplitListRB, text='eval', font=lr_vars.DefaultFont + ' bold',
             command=self.spl_cbx_cmd_rb, padx=0, pady=0,
         )
-        self.RBent_SplitList = ttk.Combobox(self.rb_split_label, font=lr_vars.DefaultFont, width=10,)
+        self.RBent_SplitList = ttk.Combobox(self.rb_split_label, font=lr_vars.DefaultFont, width=2,)
         self.RBent_SplitList['values'] = list(split_list)
         self.RBent_SplitList.current(0)
 
@@ -140,11 +140,11 @@ class WinPartsLbRb(lr_win_text.WinText):
             background=lr_vars.Background, font=lr_vars.DefaultFont + ' italic',
         )
         self.partNumEmptyRbNext = tk.Checkbutton(
-            self.last_frameCbx2, variable=lr_vars.VarPartNumEmptyRbNext, text='strip',
+            self.last_frameCbx2, variable=lr_vars.VarPartNumEmptyRbNext, text='s',
             font=lr_vars.DefaultFont + ' bold', padx=0, pady=0,
         )
         self.partNumDenyRbNext = tk.Checkbutton(
-            self.last_frameCbx2, variable=lr_vars.VarPartNumDenyRbNext, text='deny', font=lr_vars.DefaultFont + ' bold',
+            self.last_frameCbx2, variable=lr_vars.VarPartNumDenyRbNext, text='d', font=lr_vars.DefaultFont + ' bold',
             padx=0, pady=0,
         )
         self.spin_RB_height = tk.Spinbox(
@@ -152,7 +152,7 @@ class WinPartsLbRb(lr_win_text.WinText):
             font=lr_vars.DefaultFont + ' italic', background=lr_vars.Background,
         )
         self.ButtonRB_note = tk.Button(
-            self.last_frameCbx2, text='edit', command=lambda: self.lr_note(self.RB), width=3,
+            self.last_frameCbx2, text='<', command=lambda: self.lr_note(self.RB), width=3,
             font=lr_vars.DefaultFont + ' italic', padx=0, pady=0,
         )
         self.RbB1Cbx = tk.Checkbutton(
@@ -162,10 +162,10 @@ class WinPartsLbRb(lr_win_text.WinText):
             self.rb_split_label, variable=lr_vars.VarRbB2, text=']', font=lr_vars.DefaultFont, padx=0, pady=0,
         )
         self.RbRstripCbx = tk.Checkbutton(
-            self.last_frameCbx2, variable=lr_vars.VarRbRstrip, text='rstrip', font=lr_vars.DefaultFont, padx=0, pady=0,
+            self.last_frameCbx2, variable=lr_vars.VarRbRstrip, text='r', font=lr_vars.DefaultFont, padx=0, pady=0,
         )
         self.RbEndCbx = tk.Checkbutton(
-            self.last_frameCbx2, variable=lr_vars.VarREnd, text='end', font=lr_vars.DefaultFont, padx=0, pady=0,
+            self.last_frameCbx2, variable=lr_vars.VarREnd, text='e', font=lr_vars.DefaultFont, padx=0, pady=0,
         )
 
         #

@@ -7,6 +7,7 @@ import tkinter as tk
 
 import lr_lib.gui.action.act_win as lr_act_win
 import lr_lib.gui.widj.tooltip as lr_tooltip
+import lr_lib.gui.etc.gui_other as lr_gui_other
 import lr_lib.etc.help as lr_help
 import lr_lib.core.var.vars as lr_vars
 
@@ -38,6 +39,7 @@ class ActionWindow(lr_act_win.ActWin):
 
         self.open_action()  # открыть action текст
         self.tk_text.init()
+        lr_gui_other.center_widget(self)
 
     def set_tooltip(self) -> None:
         """создать все tooltip action окна"""
