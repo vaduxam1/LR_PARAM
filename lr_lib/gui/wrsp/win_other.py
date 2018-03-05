@@ -120,7 +120,7 @@ class WinOther(lr_win_filesort.WinFileSort):
         self.sortKey2.set('Nums')
         self.last_frame_text_set()
 
-        lr_tooltip.createToolTip(self.comboFiles, self._TT_text_comboFiles)
+        # lr_tooltip.createToolTip(self.comboFiles, self._TT_text_comboFiles)
         lr_vars.Tk.title(lr_vars.VERSION)
 
     def last_frame_text_set(self) -> None:
