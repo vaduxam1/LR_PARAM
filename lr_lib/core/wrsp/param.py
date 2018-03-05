@@ -367,24 +367,12 @@ def get_files_with_param(param: str, action=None, set_file=True) -> None:
         lr_vars.FilesWithParam.reverse()
         ff = lr_vars.FilesWithParam[0]
         mai = ff['Param']['max_action_inf']
-        fs = ff['Snapshot']['Nums'][0]
 
         files_list = []
         warn_inf = []
-        inf_files = []
-
         for f in lr_vars.FilesWithParam:  # z_k620
             s = f['Snapshot']['Nums'][0]
-            if s == mai:
-                warn_inf.append(f)
-            elif s == fs:
-                inf_files.append(f)
-            else:
-                fs = s
-                files_list.extend(reversed(inf_files))
-                inf_files = [f]
-
-        files_list.extend(reversed(inf_files))
+            (warn_inf if (s == mai) else files_list).append(f)
         files_list.extend(warn_inf)
         lr_vars.FilesWithParam = files_list
 
