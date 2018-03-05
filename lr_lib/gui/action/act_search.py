@@ -62,9 +62,9 @@ class ActSearch(lr_act_serializ.TkTextWebSerialization):
 
         def func() -> None:
             # bhl = self.backgr_butt()
-            # next(bhl)
 
             i = len(list(self.search_res_combo['values']))
+            self.search_res_combo.get()
             if i:
                 self._search_index += 1
                 if self._search_index >= i:
@@ -72,7 +72,7 @@ class ActSearch(lr_act_serializ.TkTextWebSerialization):
 
                 self.search_res_combo.current(self._search_index)
                 self.tk_text_see()
-
+            # next(bhl)
             # next(bhl, None)
 
         lr_vars.MainThreadUpdater.submit(func)
@@ -82,7 +82,6 @@ class ActSearch(lr_act_serializ.TkTextWebSerialization):
 
         def func() -> None:
             # bhl = self.backgr_butt()
-            # next(bhl)
 
             i = len(list(self.search_res_combo['values']))
             if i:
@@ -92,6 +91,7 @@ class ActSearch(lr_act_serializ.TkTextWebSerialization):
                 self.search_res_combo.current(self._search_index)
                 self.tk_text_see()
 
+            # next(bhl)
             # next(bhl, None)
 
         lr_vars.MainThreadUpdater.submit(func)
@@ -102,10 +102,9 @@ class ActSearch(lr_act_serializ.TkTextWebSerialization):
         def func(word=word, hist=hist) -> None:
             if lr_vars.Window._block_:
                 return
-
             # bhl = self.backgr_butt()
-            # next(bhl)
-            self._search_index = -1
+
+            self._search_index = 0
             self.search_res_combo.set('')
 
             if word is None:
@@ -137,6 +136,7 @@ class ActSearch(lr_act_serializ.TkTextWebSerialization):
                 self.search_res_combo.current(0)
                 self.tk_text_see()
 
+            # next(bhl)
             # next(bhl, None)
 
         lr_vars.MainThreadUpdater.submit(func)
@@ -204,10 +204,10 @@ class ActSearch(lr_act_serializ.TkTextWebSerialization):
             self.update()
 
         try:
-            lr_vars.Window.after(10, change)
+            lr_vars.Window.after(20, change)
             yield
         finally:
-            lr_vars.Window.after(100, restore)
+            lr_vars.Window.after(50, restore)
             return
 
     def _replace_button_set(self, *args) -> None:
