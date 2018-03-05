@@ -62,6 +62,10 @@ class ActReplaceRemove(lr_act_search.ActSearch):
             self.web_action_to_tk_text(websReport=True)
 
     def tk_text_dummy_remove(self, force=False, mode='') -> bool:
+        with self.block():
+            return self._tk_text_dummy_remove(force=force, mode=mode)
+
+    def _tk_text_dummy_remove(self, force=False, mode='') -> bool:
         """удалить все dummy web_"""
         text = self.tk_text.get(1.0, tk.END).strip()
         _web_action = lr_main_awal.ActionWebsAndLines(self)

@@ -7,7 +7,6 @@ import tkinter as tk
 import tkinter.ttk as ttk
 
 import lr_lib.gui.widj.lbrb5 as lr_lbrb5
-import lr_lib.gui.widj.tooltip as lr_tooltip
 import lr_lib.gui.wrsp.win_filesort as lr_win_filesort
 import lr_lib.core.var.vars as lr_vars
 import lr_lib.core.wrsp.files as lr_files
@@ -88,7 +87,7 @@ class WinOther(lr_win_filesort.WinFileSort):
             font=lr_vars.DefaultFont + ' italic', padx=0, pady=0)
 
         self.cbxPopupWindow = tk.Checkbutton(
-            self.last_frame, variable=lr_vars.VarShowPopupWindow, text='Window', padx=0, pady=0, background='orange',
+            self.last_frame, variable=lr_vars.VarShowPopupWindow, text='Win', padx=0, pady=0, background='orange',
             font=lr_vars.DefaultFont + ' italic bold')
 
     def force_unblock(self, *args) -> None:
@@ -120,7 +119,6 @@ class WinOther(lr_win_filesort.WinFileSort):
         self.sortKey2.set('Nums')
         self.last_frame_text_set()
 
-        # lr_tooltip.createToolTip(self.comboFiles, self._TT_text_comboFiles)
         lr_vars.Tk.title(lr_vars.VERSION)
 
     def last_frame_text_set(self) -> None:

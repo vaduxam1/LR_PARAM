@@ -193,7 +193,10 @@ def init() -> None:
     except TypeError:  # если VarFileSortKey2 предназначен только для FilesWithParam
         lr_vars.AllFiles = sorted(lr_vars.AllFiles, key=lambda file: file['Snapshot']['Nums'])
 
-    lr_vars.Logger.info(lr_other.all_files_info())
+    if statistic:
+        lr_vars.Logger.info(lr_other.all_files_info())
+    else:
+        lr_vars.Tk.after(500, lambda: thread_set_stat(lr_vars.AllFiles))
 
 
 def get_file_with_kwargs(files: (dict,), **kwargs) -> dict:
@@ -251,3 +254,12 @@ def _set_fileFile_stats(fileFile: dict, text: str, let=0, wts=0, ptn=0, dts=0, n
     fileFile['NotPrintable'] = na
     fileFile['len'] = (ptn + wts + let + dts + na)
     fileFile['Lines'] = (counter.get('\n', 0) + 1)
+
+
+@lr_vars.T_POOL_decorator
+def thread_set_stat(files: [dict, ]) -> None:
+    """создавать статистику в фоне, для всех файлов"""
+    for file in files:
+        set_file_statistic(file)
+
+    lr_vars.Logger.info(lr_other.all_files_info())

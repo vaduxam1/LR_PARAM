@@ -171,7 +171,7 @@ VarPartNumEmptyLbNext = tk.BooleanVar(value=True)  # Использовать с
 VarPartNumDenyLbNext = tk.BooleanVar(value=True)  # Использовать следующий номер вхождения(4) или файл(3), при недопустимом LB/RB(5)
 VarMaxLenLB = tk.IntVar(value=100)  # максимальная длина строк LB
 VarReturnLB = tk.BooleanVar(value=True)  # обрезать LB до переноса строки
-VarRusLB = tk.BooleanVar(value=True)  # обрезать LB до непечатных либо русских символов
+VarRusLB = tk.BooleanVar(value=False)  # обрезать LB до непечатных либо русских символов
 
 VarLbB1 = tk.BooleanVar(value=True)  # по LB определить, если param находится внутри фигурных скобок
 VarLbB2 = tk.BooleanVar(value=True)  # по LB определить, если param находится внутри квадратных скобок
@@ -182,7 +182,7 @@ VarPartNumEmptyRbNext = tk.BooleanVar(value=True)  # Использовать с
 VarPartNumDenyRbNext = tk.BooleanVar(value=True)  # Использовать следующий номер вхождения(4) или файл(3), при недопустимом LB/RB(5)
 VarMaxLenRB = tk.IntVar(value=100)  # максимальная длина строк RB
 VarReturnRB = tk.BooleanVar(value=True)  # обрезать RB до переноса строки
-VarRusRB = tk.BooleanVar(value=True)  # обрезать RB до непечатных либо русских символов
+VarRusRB = tk.BooleanVar(value=False)  # обрезать RB до непечатных либо русских символов
 
 VarRbB1 = tk.BooleanVar(value=True)  # по RB определить, если param находится внутри фигурных скобок
 VarRbB2 = tk.BooleanVar(value=True)  # по RB определить, если param находится внутри квадратных скобок
@@ -225,7 +225,7 @@ allow_symbols = set(allow_symbols)
 #####################################
 # gui
 
-_Tk_WIND_SIZE = [500, 600]  # размер главного окна
+_Tk_WIND_SIZE = [450, 600]  # размер главного окна
 _Tk_ActionWIND_SIZE = [1100, 600]  # размер action окна
 
 _Tk_LegendWIND_SIZE = [1200, 600]  # размер legend окна
@@ -408,7 +408,7 @@ DENY_EXT = {
 VarFilesFolder = tk.StringVar(value=DEFAULT_FILES_FOLDER)  # каталог с файлами
 VarIsSnapshotFiles = tk.BooleanVar(value=True)  # брать файлы, проаписанные в inf файлах каталога / или все файлы
 VarAllowDenyFiles = tk.BooleanVar(value=False)  # разрешить поиск, в DENY_ исключенных из поиска файлах
-VarAllFilesStatistic = tk.IntVar(value=True)  # создавать подробную статистику файлов(размер, символы и тд), сильно замедляет старт утилиты
+VarAllFilesStatistic = tk.IntVar(value=False)  # при старте, создавать подробную статистику файлов(размер, символы и тд), сильно замедляет старт утилиты
 SetFilesPOOLEnable = True  # использовать M_POOL, для создания файлов, при старте программы
 FilesCreatePortionSize = 15  # порция, число обрабатываемых файлов, для создания из них файлой ответов, за один вызов/в одном потоке
 

@@ -21,14 +21,14 @@ class WinFolder(lr_win_other.WinOther):
 
         self.change_folder_cbx = tk.Checkbutton(
             self.last_frame, variable=lr_vars.VarIsSnapshotFiles, padx=0, pady=0, font=lr_vars.DefaultFont + ' italic',
-            command=self.set_folder, text='i')
+            command=self.set_folder, text='')
 
         self.deny_file_cbx = tk.Checkbutton(
             self.last_frame, variable=lr_vars.VarAllowDenyFiles, padx=0, pady=0, font=lr_vars.DefaultFont + ' italic',
-            command=self.set_folder, text='e')
+            command=self.set_folder, text='')
 
         self.filesStats_cbx = tk.Checkbutton(
-            self.last_frame, variable=lr_vars.VarAllFilesStatistic, padx=0, pady=0, text='s',
+            self.last_frame, variable=lr_vars.VarAllFilesStatistic, padx=0, pady=0, text='',
             font=lr_vars.DefaultFont + ' italic', command=self.set_folder)
 
     def set_folder(self) -> None:

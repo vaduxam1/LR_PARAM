@@ -116,13 +116,9 @@ def all_files_info() -> str:
         sl = 0
 
     r = '\n\t' + '\n\t'.join('{} = {} симв.'.format(*a) for a in sorted(_r, key=lambda b: b[1], reverse=True))
-    txt = '{s}{r}\n ' \
-          ' Размер файлов ответов:\n\t' \
+    txt = '{s}{r}\n\t' \
           'всего = {sa} byte\n\t' \
-          'минимальный = {mn} byte\n\t' \
-          'среднее = {sl} byte\n\t' \
-          'максимальный = {mx} byte\n' \
-          '{sep}'.format(s=st_, r=r, mn=mn, mx=mx, sl=sl, sa=sa, sep=lr_vars.PRINT_SEPARATOR)
+          '(мин/сред/макс) = ({mn}/{sl}/{mx} ) byte'.format(s=st_, r=r, mn=mn, mx=mx, sl=round(sl, 3), sa=sa)
 
     return txt
 
