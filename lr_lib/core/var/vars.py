@@ -260,8 +260,8 @@ DefaultActionNoHighlightFontSlant = True  #
 # подсветка
 
 HighlightOn = True  # включить подсветку
-HighlightAfter1 = 50  # задержка(мс), перед запуском подсветки всех линий на экране
-HighlightAfter2 = 25  # задержка(мс), перед запуском подсветки одной линии на экране
+HighlightAfter1 = 250  # задержка(мс), перед запуском подсветки всех линий на экране
+HighlightAfter2 = 100  # задержка(мс), перед запуском подсветки одной линии на экране
 HighlightMPool = tk.BooleanVar(value=False)  # искать индексы для подсветки линий, в M_POOL
 HighlightLinesPortionSize = tk.IntVar(value=1)  # для скольки линий, искать индексы, за один проход/поток
 Background = 'khaki'
@@ -427,7 +427,7 @@ ENCODE_LIST = list(sorted(ENCODE_LIST))
 # пулы
 
 MainThreadUpdater = None  # выполнять callback из main потока # lr_lib.etc.pool.other.MainThreadUpdater
-MainThreadUpdateTime = tk.IntVar(value=500)  # интервал(мс) проверки очереди, callback(из потоков)
+MainThreadUpdateTime = tk.IntVar(value=1000)  # интервал(мс) проверки очереди, callback(из потоков)
 
 M_POOL = None  # пул процессов  # lr_lib.etc.pool.main_pool.POOL
 M_POOL_NAME = 'multiprocessing.Pool'  # тип основной пул
