@@ -95,7 +95,7 @@ def group_param(event, widget=None, params=None, ask=True) -> None:
             lr_vars.Logger.debug(param_counter)
 
             if widget.action.final_wnd_var.get():
-                lr_gui_other.repA(widget)
+                widget.action.legend()
     # --- progressbar ---
 
     widget.action.backup()

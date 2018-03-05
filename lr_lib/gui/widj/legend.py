@@ -9,9 +9,10 @@ import tkinter.ttk as ttk
 import lr_lib.core.var.vars as lr_vars
 import lr_lib.gui.widj.tooltip_canvas as lr_tooltip_canvas
 import lr_lib.gui.widj.tooltip as lr_tooltip
+import lr_lib.gui.etc.gui_other as lr_gui_other
 
 
-Colors = iter(itertools.cycle(lr_vars.VarColorTeg.get() - {'white', 'black', 'navy', }))
+Colors = iter(itertools.cycle(sorted(lr_vars.VarColorTeg.get() - {'white', 'black', 'navy', })))
 
 
 class WebLegend(tk.Toplevel):
@@ -71,6 +72,8 @@ class WebLegend(tk.Toplevel):
         self.top_cbx.pack()
         lr_tooltip.createToolTip(self.top_cbx, 'поверх других окон')
 
+        lr_gui_other.center_widget(self)
+
     def _set_on_top(self, *args) -> None:
         """поверх других окон"""
         self.attributes('-topmost', self.top_var.get())
@@ -103,6 +106,7 @@ class WebLegend(tk.Toplevel):
         H = self.H.get()
         lcolor = 'black'
         rep_param = self.parent.web_action.websReport.param_statistic
+        colrs = sorted(lr_vars.VarColorTeg.get() - {'white', 'black', 'navy', })
 
         for i in self.web_canavs:
             transaction = wdt[i].transaction
@@ -130,24 +134,30 @@ class WebLegend(tk.Toplevel):
             r_out = 'транзакция: "{t}"\n{s}'.format(
                 s=self.parent.web_action.websReport.stats_out_web(i).strip(), t=transaction)
 
-            def onObjectClick1(event, i=i) -> None:
+            def onObjectClick1(event, i=i, colors=colors) -> None:
                 """показать/удалить линии out"""
                 self.canvas.delete("all")
                 self.web_canavs[i]['enable'] = not self.web_canavs[i]['enable']
-                self.print()
+                self.print(colors=colors)
 
             def onObjectClick3(event, i=i) -> None:
                 self.parent.search_in_action(word='Snapshot=t{i}.inf'.format(i=i), hist=False)
 
-            def onObjectClick2(event, i=i) -> None:
+            def onObjectClick2(event, i=i, colors=colors) -> None:
                 """показать/удалить линии in"""
                 self.canvas.delete("all")
                 self.web_canavs[i]['enable_in'] = not self.web_canavs[i]['enable_in']
-                self.print()
+                self.print(colors=colors)
 
             # 1
             if wdt[i].web_reg_save_param_list:  # пометить, что создает новые {param}
                 cmd = self.canvas.create_oval
+                c = colrs.index(color)
+                if c:
+                    c -= 1
+                cl = colrs[c:] + colrs[:c]
+                onObjectClick1 = lambda event, i=i, cl=cl: onObjectClick1(event, i=i, colors=iter(itertools.cycle(cl)))
+                onObjectClick2 = lambda event, i=i, cl=cl: onObjectClick2(event, i=i, colors=iter(itertools.cycle(cl)))
             else:
                 cmd = self.canvas.create_rectangle
             xy1 = lcolor, sep, 20, (width + sep + w_), (20 + height)

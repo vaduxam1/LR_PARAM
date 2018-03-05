@@ -18,7 +18,7 @@ from lr_lib.etc.help import (COLORS, HEX, )
 #####################################
 # главные переменные
 
-VERSION = 'v10.4.5'
+VERSION = 'v10.4.6'
 lib_folder = 'lr_lib'
 Tk = tk.Tk()  # tkinter
 original_callback_exception = Tk.report_callback_exception
@@ -228,8 +228,8 @@ allow_symbols = set(allow_symbols)
 _Tk_WIND_SIZE = [450, 600]  # размер главного окна
 _Tk_ActionWIND_SIZE = [1100, 600]  # размер action окна
 
-_Tk_LegendWIND_SIZE = [1200, 600]  # размер legend окна
-LegendHight = 500  # расстояние между верхом и низом легенды
+_Tk_LegendWIND_SIZE = [600, 325]  # размер legend окна
+LegendHight = 250  # расстояние между верхом и низом легенды
 Legend_minimal_canvas_size = (25000, 2500)  # перврначальная длина скроллов
 Legend_scroll_len_modificator = 75  # модификатор длины скроллов (увеличить, если canvas не умещается в окно)
 
