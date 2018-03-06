@@ -58,7 +58,7 @@ class WinOther(lr_win_filesort.WinFileSort):
         log_vals = list(lr_vars.loggingLevels.keys())
         self.comboLogger = ttk.Combobox(
             self.last_frame, textvariable=lr_vars.VarWindowLogger, justify='center', font=lr_vars.DefaultFont,
-            width=max(len(k) for k in log_vals), style="BW.TButton")
+            width=5, style="BW.TButton")
         self.comboLogger['values'] = log_vals
         self.comboLogger.bind("<<ComboboxSelected>>", lambda *a: lr_vars.VarWindowLogger.set(self.comboLogger.get()))
 
@@ -67,7 +67,7 @@ class WinOther(lr_win_filesort.WinFileSort):
             font=lr_vars.DefaultFont + ' bold', background='orange')
 
         self.cbxClipboard = tk.Checkbutton(
-            self.mid_frame, variable=self.cbxWrspClipboard, text='clipboard', font=lr_vars.DefaultFont + ' italic',
+            self.mid_frame, variable=self.cbxWrspClipboard, text='clipb', font=lr_vars.DefaultFont + ' italic',
             padx=0, pady=0)
 
         self.cbxClearShow = tk.Checkbutton(
@@ -79,7 +79,7 @@ class WinOther(lr_win_filesort.WinFileSort):
             padx=0, pady=0)
 
         self.cbxAutoNoteParam = tk.Checkbutton(
-            self.mid_frame, variable=self.cbxNotepadWrsp, text='notepad', font=lr_vars.DefaultFont + ' italic',
+            self.mid_frame, variable=self.cbxNotepadWrsp, text='note', font=lr_vars.DefaultFont + ' italic',
             padx=0, pady=0)
 
         self.cbxFileNamesNumsShow = tk.Checkbutton(

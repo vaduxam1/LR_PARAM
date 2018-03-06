@@ -58,10 +58,10 @@ class ActWin(lr_act_any.ActAny):
 
         #
         self.max_inf_cbx = tk.Checkbutton(
-            self.toolbar, text='ограничить\nmax inf', font=lr_vars.DefaultFont + ' bold', variable=self.max_inf_cbx_var,
+            self.toolbar, text='ограничить max inf', font=lr_vars.DefaultFont + ' bold', variable=self.max_inf_cbx_var,
             command=self.max_inf_set)
         self.add_inf_cbx = tk.Checkbutton(
-            self.toolbar, anchor=tk.E, text='max\nmode', font=lr_vars.DefaultFont, variable=self.add_inf_cbx_var)
+            self.toolbar, anchor=tk.E, text='max inf mode', font=lr_vars.DefaultFont, variable=self.add_inf_cbx_var)
         self.force_yes_inf_checker_cbx = tk.Checkbutton(
             self.toolbar, text='fYes', font=lr_vars.DefaultFont, variable=self.force_yes_inf)
 

@@ -225,7 +225,7 @@ allow_symbols = set(allow_symbols)
 #####################################
 # gui
 
-_Tk_WIND_SIZE = [450, 600]  # размер главного окна
+_Tk_WIND_SIZE = [420, 600]  # размер главного окна
 _Tk_ActionWIND_SIZE = [1100, 600]  # размер action окна
 
 _Tk_LegendWIND_SIZE = [600, 325]  # размер legend окна
@@ -260,7 +260,7 @@ DefaultActionNoHighlightFontSlant = True  #
 # подсветка
 
 HighlightOn = True  # включить подсветку
-HighlightAfter1 = 250  # задержка(мс), перед запуском подсветки всех линий на экране
+HighlightAfter1 = 75  # задержка(мс), перед запуском подсветки всех линий на экране
 HighlightAfter2 = 100  # задержка(мс), перед запуском подсветки одной линии на экране
 HighlightMPool = tk.BooleanVar(value=False)  # искать индексы для подсветки линий, в M_POOL
 HighlightLinesPortionSize = tk.IntVar(value=1)  # для скольки линий, искать индексы, за один проход/поток

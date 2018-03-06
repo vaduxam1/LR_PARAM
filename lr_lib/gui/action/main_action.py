@@ -414,8 +414,8 @@ class ActionWindow(lr_act_win.ActWin):
         self.tk_text.linenumbers.grid(row=0, column=300, sticky=tk.NS)
         self.tk_text.linenumbers.config(width=30)
 
-        self.max_inf_cbx.grid(row=7, column=1, sticky=tk.NSEW, rowspan=2)
-        self.add_inf_cbx.grid(row=7, column=2, sticky=tk.NSEW, rowspan=2)
+        self.max_inf_cbx.grid(row=7, column=1, sticky=tk.NSEW)
+        self.add_inf_cbx.grid(row=8, column=1, sticky=tk.NSEW)
         self.dummy_button.grid(row=7, column=13, sticky=tk.NSEW)
         self.force_yes_inf_checker_cbx.grid(row=7, column=12, sticky=tk.W)
         self.lr_legend.grid(row=8, column=9, sticky=tk.NSEW)
