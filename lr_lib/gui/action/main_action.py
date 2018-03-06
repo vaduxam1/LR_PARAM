@@ -140,6 +140,16 @@ class ActionWindow(lr_act_win.ActWin):
             '# highlight_LinesPortionSize'
         )
         lr_tooltip.createToolTip(
+            self.highlight_After1,
+            'задержка(мс), перед запуском подсветки всех линий на экране\n\t'
+            '# highlight_After1'
+        )
+        lr_tooltip.createToolTip(
+            self.highlight_After2,
+            'задержка(мс), перед запуском подсветки одной линии на экране\n\t'
+            '# highlight_After2'
+        )
+        lr_tooltip.createToolTip(
             self.open_button,
             'открыть action.c файл\n\t'
             '# open_button'
@@ -400,6 +410,8 @@ class ActionWindow(lr_act_win.ActWin):
         self.buttonColorReset.grid(row=3, column=1, sticky=tk.NSEW)
         self.highlight_MThread.grid(row=3, column=3, sticky=tk.NSEW)
         self.highlight_LinesPortionSize.grid(row=3, column=2, sticky=tk.NSEW)
+        self.highlight_After1.grid(row=4, column=1, sticky=tk.NSEW)
+        self.highlight_After2.grid(row=4, column=2, sticky=tk.NSEW)
 
         self.open_button.grid(row=6, column=16, sticky=tk.NSEW)
         self.editor_button.grid(row=7, column=16, sticky=tk.NSEW, columnspan=2)

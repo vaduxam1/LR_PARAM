@@ -29,12 +29,18 @@ class HighlightLines:
         self.execute = (lr_vars.M_POOL.imap_unordered if lr_vars.HighlightMPool.get() else map)  # искать индексы в process-пуле или main-потоке
         self.set_thread_attrs()  # подсвечивать в фоне/главном потоке
 
+        self.HighlightAfter1 = lr_vars.HighlightAfter1
+        self.HighlightAfter2 = lr_vars.HighlightAfter2
+
     def set_thread_attrs(self) -> None:
         """подсвечивать в фоне/главном потоке"""
         def set() -> None:
             self.psize = lr_vars.HighlightLinesPortionSize.get()
             self.highlight_enable = self.tk_text.highlight_var.get()
             self.execute = (lr_vars.M_POOL.imap_unordered if lr_vars.HighlightMPool.get() else map)
+            self.HighlightAfter1 = int(self.tk_text.action.highlight_After1.get())
+            self.HighlightAfter2 = int(self.tk_text.action.highlight_After2.get())
+
         lr_vars.MainThreadUpdater.submit(set)
 
     def set_top_bottom(self, on_srean_line_nums: (int, int)) -> None:
@@ -42,7 +48,7 @@ class HighlightLines:
         self.on_srean_line_nums = on_srean_line_nums
 
         if self.highlight_enable:  # подсветить
-            lr_vars.Tk.after(lr_vars.HighlightAfter1, self._highlight_top_bottom_lines, on_srean_line_nums)
+            lr_vars.Tk.after(self.HighlightAfter1, self._highlight_top_bottom_lines, on_srean_line_nums)
 
     def _highlight_top_bottom_lines(self, on_srean_line_nums: (int, int)) -> None:
         """подсветить все линии на экране
@@ -62,7 +68,7 @@ class HighlightLines:
                     return
 
                 # подсветить
-                lr_vars.Tk.after(lr_vars.HighlightAfter2, self._line_tegs_add, tag_indxs, line_num)
+                lr_vars.Tk.after(self.HighlightAfter2, self._line_tegs_add, tag_indxs, line_num)
 
             if self.on_srean_line_nums != on_srean_line_nums:
                 return

@@ -18,7 +18,7 @@ from lr_lib.etc.help import (COLORS, HEX, )
 #####################################
 # главные переменные
 
-VERSION = 'v10.4.6'
+VERSION = 'v10.4.7'
 lib_folder = 'lr_lib'
 Tk = tk.Tk()  # tkinter
 original_callback_exception = Tk.report_callback_exception
@@ -264,7 +264,7 @@ var_bar_3 = False  # show/hide info bar
 # подсветка
 
 HighlightOn = True  # включить подсветку
-HighlightAfter1 = 75  # задержка(мс), перед запуском подсветки всех линий на экране
+HighlightAfter1 = 250  # задержка(мс), перед запуском подсветки всех линий на экране
 HighlightAfter2 = 100  # задержка(мс), перед запуском подсветки одной линии на экране
 HighlightMPool = tk.BooleanVar(value=False)  # искать индексы для подсветки линий, в M_POOL
 HighlightLinesPortionSize = tk.IntVar(value=1)  # для скольки линий, искать индексы, за один проход/поток

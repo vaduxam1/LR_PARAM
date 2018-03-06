@@ -208,7 +208,7 @@ class ActWin(lr_act_any.ActAny):
     def _start_auto_update_action_info_lab(self):
         """автообновление self.scroll_lab2"""
         lr_act_other.auto_update_action_info_lab(
-            self=self, config=self.scroll_lab2.config, tk_kext=self.tk_text, id_=self.id_,
+            self=self, config=self.scroll_lab2.config, tk_text=self.tk_text, id_=self.id_,
             timeout=lr_vars.InfoLabelUpdateTime.get(), check_run=lr_vars.Window.action_windows.__contains__,
             title=self.title, _set_title=self._set_title,
         )

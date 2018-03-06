@@ -28,13 +28,13 @@ restart = lr_vars.Tk.after
 ver = lr_vars.VERSION
 
 
-def auto_update_action_info_lab(self, config, tk_kext, id_: int, timeout: int, check_run: callable, title: callable,
+def auto_update_action_info_lab(self, config, tk_text, id_: int, timeout: int, check_run: callable, title: callable,
                                 _set_title: callable) -> None:
     """обновление action.label с процентами и пулом"""
     if not check_run(id_):
         return
 
-    lines = tk_kext.highlight_lines
+    lines = tk_text.highlight_lines
     (top, bottom) = lines.on_srean_line_nums
     title(ttl(txt=_set_title(), top=top, bottom=bottom, v=ver))
 
@@ -48,7 +48,9 @@ def auto_update_action_info_lab(self, config, tk_kext, id_: int, timeout: int, c
     except AttributeError:  # lr_vars.M_POOL.pool._qsize
         pm = ttm2(mp=lr_vars.M_POOL._size)
 
-    config(text=tta(p=round(int(tk_kext.linenumbers.linenum) // lines._max_line_proc), pt=pt, pm=pm))
+    config(text=tta(p=round(int(tk_text.linenumbers.linenum) // lines._max_line_proc), pt=pt, pm=pm))
+
+    tk_text.highlight_lines.set_thread_attrs()
 
     # перезапуск
-    restart(timeout, auto_update_action_info_lab, self, config, tk_kext, id_, timeout, check_run, title, _set_title)
+    restart(timeout, auto_update_action_info_lab, self, config, tk_text, id_, timeout, check_run, title, _set_title)

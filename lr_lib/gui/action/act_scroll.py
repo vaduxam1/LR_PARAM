@@ -37,6 +37,11 @@ class ActScrollText(lr_act_widj.ActWidj):
             self.cbx_bar, from_=0, to=100, font=lr_vars.DefaultFont, width=2,
             textvariable=lr_vars.HighlightLinesPortionSize)
 
+        self.highlight_After1 = tk.Entry(self.cbx_bar, font=lr_vars.DefaultFont, width=4)
+        self.highlight_After2 = tk.Entry(self.cbx_bar, font=lr_vars.DefaultFont, width=4)
+        self.highlight_After1.insert(0, lr_vars.HighlightAfter1)
+        self.highlight_After2.insert(0, lr_vars.HighlightAfter2)
+
     def report_position_X(self, *argv) -> None:
         """get (beginning of) first visible line"""
         self.text_scrollx.set(*argv)
