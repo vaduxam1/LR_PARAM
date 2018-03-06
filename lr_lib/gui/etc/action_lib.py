@@ -433,3 +433,45 @@ def wrsp_text_from_selection(event) -> object:
         lr_other.openTextInEditor(wrsp.to_str(_all_stat=True))
 
     return wrsp
+
+
+@lr_vars.T_POOL_decorator
+def all_wrsp_auto_rename(action, *a, _l='"LB=', _r='"RB=') -> None:
+    """переименавать все wrsp, автоматически, с учетом всех настроек"""
+    _wrsps = tuple(action.web_action.get_web_reg_save_param_all())
+    wrsps = tuple(w.name for w in _wrsps)
+
+    wrsps_new = []
+    lb = rb = ''
+    for w in _wrsps:
+        for line in w.lines_list:
+            line = line.strip()
+            if line.startswith(_l):
+                lb = line.split(_l, 1)[1].rsplit('",', 1)[0]
+            elif line.startswith(_r):
+                rb = line.split(_r, 1)[1].rsplit('",', 1)[0]
+        assert lb, rb
+        new_name = lr_param.wrsp_name_creator(w.param, lb, rb, w.snapshot)
+        wrsps_new.append(new_name)
+
+    mx = max(map(len, wrsps or ['']))
+    m = '"{:<%s}" -> "{}"' % mx
+    all_wrsps = '\n'.join(m.format(old, new) for (old, new) in zip(wrsps, wrsps_new))
+    y = lr_dialog.YesNoCancel(['Переименовать', 'Отмена'], 'Переименовать wrsp слева',
+                              'в wrsp справа', 'wrsp',
+                              parent=action, is_text=all_wrsps)
+
+    if y.ask() == 'Переименовать':
+        new_wrsps = [t.split('-> "', 1)[1].split('"', 1)[0].strip() for t in y.text.strip().split('\n')]
+        assert len(wrsps) == len(new_wrsps)
+        with action.block():
+            action.backup()
+            text = action.tk_text.get('1.0', tk.END)
+
+            for (old, new) in zip(wrsps, new_wrsps):
+                text = text.replace(lr_param.param_bounds_setter(old), lr_param.param_bounds_setter(new))
+                text = text.replace(lr_param.param_bounds_setter(old, start='"', end='"'),
+                                    lr_param.param_bounds_setter(new, start='"', end='"'))
+
+            action.web_action.set_text_list(text, websReport=True)
+            action.web_action_to_tk_text(websReport=False)

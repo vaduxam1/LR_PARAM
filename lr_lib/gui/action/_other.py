@@ -18,7 +18,7 @@ def get_action_file(folder: str, file='action.c') -> str:
             return ''
 
 
-tta = '{p:>3}%\n\npool:\n\n{pt}\n\n{pm}'.format
+tta = '{p:>3}%\npool:\n{pt}\n{pm}'.format
 ttt1 = 'T/qi\n{t}\n{q_in}'.format
 ttt2 = 'T={t}'.format
 ttm1 = 'M/qi\n{mp}\n{q_in}'.format

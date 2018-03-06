@@ -45,3 +45,35 @@ class ActWidj(lr_act_var.ActVar):
         self.help2 = tk.Label(self, text='?', foreground='grey')
         self.help3 = tk.Label(self, text='?', foreground='grey')
 
+        self.var_bar_1 = tk.BooleanVar(value=lr_vars.var_bar_1)
+        self.var_bar_2 = tk.BooleanVar(value=lr_vars.var_bar_2)
+        self.var_bar_3 = tk.BooleanVar(value=lr_vars.var_bar_3)
+
+    def show_hide_bar_1(self):
+        self.var_bar_1.set(not self.var_bar_1.get())
+        if self.var_bar_1.get():
+            self.toolbar.grid(row=2, column=0, sticky=tk.N, columnspan=100)
+            self.help2.grid(row=2, column=201, sticky=tk.NSEW)
+        else:
+            self.toolbar.grid_remove()
+            self.help2.grid_remove()
+
+    def show_hide_bar_2(self):
+        self.var_bar_2.set(not self.var_bar_2.get())
+        if self.var_bar_2.get():
+            self.middle_bar.grid(row=3, column=0, sticky=tk.N)
+            self.help3.grid(row=3, column=201, sticky=tk.NSEW)
+        else:
+            self.middle_bar.grid_remove()
+            self.help3.grid_remove()
+
+    def show_hide_bar_3(self):
+        self.var_bar_3.set(not self.var_bar_3.get())
+        if self.var_bar_3.get():
+            self.scroll_lab2.grid(row=2, column=300, sticky=tk.NSEW, rowspan=2)
+            self.help2.grid(row=2, column=201, sticky=tk.NSEW)
+            self.help3.grid(row=3, column=201, sticky=tk.NSEW)
+        else:
+            self.scroll_lab2.grid_remove()
+            self.help2.grid_remove()
+            self.help3.grid_remove()

@@ -7,7 +7,11 @@ import tkinter as tk
 
 import lr_lib.gui.action.act_win as lr_act_win
 import lr_lib.gui.widj.tooltip as lr_tooltip
+import lr_lib.gui.wrsp.top.top_allfiles as lr_top_allfiles
 import lr_lib.gui.etc.gui_other as lr_gui_other
+import lr_lib.gui.etc.group_param as lr_group_param
+import lr_lib.gui.widj.wrsp_setting as lr_wrsp_setting
+import lr_lib.gui.etc.action_lib as lr_action_lib
 import lr_lib.etc.help as lr_help
 import lr_lib.core.var.vars as lr_vars
 
@@ -39,7 +43,49 @@ class ActionWindow(lr_act_win.ActWin):
 
         self.open_action()  # открыть action текст
         self.tk_text.init()
+
+        self.menubar = tk.Menu()
+        self.config(menu=self.menubar)
+        self.set_menu()
+
         lr_gui_other.center_widget(self)
+
+    def set_menu(self) -> None:
+        """menubar"""
+        filemenu = tk.Menu(self.menubar, tearoff=0)
+        filemenu.add_command(label="WRSP Setting", command=lambda: lr_wrsp_setting.WrspSettingWindow(parent=self))
+        filemenu.add_command(label="Web Legend Window", command=self.legend)
+        filemenu.add_command(label="show/hide main bar", command=self.show_hide_bar_1)
+        filemenu.add_command(label="show/hide navigation bar", command=self.show_hide_bar_2)
+        filemenu.add_command(label="show/hide info bar", command=self.show_hide_bar_3)
+        filemenu.add_command(label="report_A", command=lambda: lr_gui_other.repA(self.tk_text))
+        filemenu.add_command(label="report_B", command=lambda: lr_gui_other.repB(self.tk_text))
+        filemenu.add_command(label="Exit", command=self.destroy)
+        self.menubar.add_cascade(label="Show/Hide", menu=filemenu)
+
+        filemenu2 = tk.Menu(self.menubar, tearoff=0)
+        filemenu2.add_command(label="Open", command=lambda: self.open_action_dialog(title=True, folder=lr_vars.BackupFolder))
+        filemenu2.add_command(label="Save", command=self.save_action_file)
+        filemenu2.add_command(label="Перенести текст_на_экране, во внутр_предсталение", command=self.tk_text_to_web_action)
+        filemenu2.add_command(label="Перенести внутр_предсталение, в текст_на_экране", command=self.web_action_to_tk_text)
+        self.menubar.add_cascade(label="Open/Save", menu=filemenu2)
+
+        filemenu3 = tk.Menu(self.menubar, tearoff=0)
+        filemenu3.add_command(label="Remove thinktime", command=self.thinktime_remove)
+        filemenu3.add_command(label="Remove dummy", command=self.remove_web_dummy_template)
+        filemenu3.add_command(label="Rename transaction", command=self.all_transaction_rename)
+        filemenu3.add_command(label="Rename WRSP", command=lambda: lr_action_lib.all_wrsp_auto_rename(self))
+        self.menubar.add_cascade(label="Remove/Rename", menu=filemenu3)
+
+        filemenu4 = tk.Menu(self.menubar, tearoff=0)
+        filemenu4.add_command(label="Найти и Создать WRSP", command=lambda: lr_group_param.auto_param_creator(self))
+        filemenu4.add_command(label="regexp: найти и создать WRSP", command=lambda: lr_group_param.re_auto_param_creator(self))
+        self.menubar.add_cascade(label="Запуск", menu=filemenu4)
+
+        filemenu5 = tk.Menu(self.menubar, tearoff=0)
+        filemenu5.add_command(label="по Snapshot inf номерам", command=lambda: lr_action_lib.snapshot_files(self.tk_text, i_num=1))
+        filemenu5.add_command(label="подряд", command=lambda: lr_top_allfiles.TopFolder(self))
+        self.menubar.add_cascade(label="Файлы ответов", menu=filemenu5)
 
     def set_tooltip(self) -> None:
         """создать все tooltip action окна"""
@@ -385,9 +431,9 @@ class ActionWindow(lr_act_win.ActWin):
         self.SearchReplace_replaceCombo.grid(row=6, column=9, columnspan=8, sticky=tk.NSEW)
         self.SearchReplace_button.grid(row=6, column=8, sticky=tk.NSEW)
 
-        self.toolbar.grid(row=2, column=0, sticky=tk.N, columnspan=100)
+        # self.toolbar.grid(row=2, column=0, sticky=tk.N, columnspan=100)
 
-        self.middle_bar.grid(row=3, column=0, sticky=tk.N)
+        # self.middle_bar.grid(row=3, column=0, sticky=tk.N)
         self.inf_bar.grid(row=3, column=1, sticky=tk.N)
         self.transaction_bar.grid(row=3, column=2, sticky=tk.E)
         self.wrsp_bar.grid(row=3, column=3, sticky=tk.W)
@@ -399,7 +445,7 @@ class ActionWindow(lr_act_win.ActWin):
         self.text_scrolly.grid(row=0, column=201, sticky=tk.NSEW)
         self.text_scrollx.grid(row=1, column=0, sticky=tk.NSEW, columnspan=201)
         self.scroll_lab.grid(row=1, column=300, sticky=tk.NSEW)
-        self.scroll_lab2.grid(row=2, column=300, sticky=tk.NSEW, rowspan=2)
+        # self.scroll_lab2.grid(row=2, column=300, sticky=tk.NSEW, rowspan=2)
 
         self.inf_combo.grid(row=1, column=1, sticky=tk.NSEW)
         self.transaction_combo.grid(row=1, column=2, sticky=tk.NSEW)
@@ -407,8 +453,8 @@ class ActionWindow(lr_act_win.ActWin):
         self.param_combo.grid(row=1, column=4, sticky=tk.NSEW)
 
         self.help1.grid(row=1, column=201, sticky=tk.NSEW)
-        self.help2.grid(row=2, column=201, sticky=tk.NSEW)
-        self.help3.grid(row=3, column=201, sticky=tk.NSEW)
+        # self.help2.grid(row=2, column=201, sticky=tk.NSEW)
+        # self.help3.grid(row=3, column=201, sticky=tk.NSEW)
 
         self.tk_text.grid(row=0, column=0, sticky=tk.NSEW, columnspan=201)
         self.tk_text.linenumbers.grid(row=0, column=300, sticky=tk.NS)

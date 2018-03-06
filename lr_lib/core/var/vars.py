@@ -256,6 +256,10 @@ DefaultActionNoHighlightFontOverstrike = False  #
 DefaultActionNoHighlightFontUnderline = False  #
 DefaultActionNoHighlightFontSlant = True  #
 
+var_bar_1 = False  # show/hide main bar
+var_bar_2 = False  # show/hide navigation bar
+var_bar_3 = False  # show/hide info bar
+
 #####################################
 # подсветка
 
