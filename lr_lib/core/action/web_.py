@@ -148,7 +148,7 @@ class WebAny:
         return r
 
     def param_find_replace(self, param: str, replace=None, ask_dict=None) -> (int, int):
-        """автоматическая замена, c диалоговыми окнами"""
+        """поиск или замена"""
         body_split = self.get_body().split(param)
         len_body_split = len(body_split)
         if not len_body_split:
@@ -165,7 +165,7 @@ class WebAny:
             if lr_lbrb_checker.check_bound_lb_rb(left, right) or (ask and self.ask_replace(param, replace, left, right, ask_dict)):
                 chunk_indxs.append(indx)
 
-        add_index = force_ask_replace if action.force_ask_var.get() else normal_replace
+        add_index = (force_ask_replace if action.force_ask_var.get() else normal_replace)
         for indx in range(1, len_body_split):
             left = body_split[indx - 1]
             right = body_split[indx]
@@ -177,14 +177,14 @@ class WebAny:
             contains = chunk_indxs.__contains__
 
             body_chunks = [body_split.pop(0)]
-            for indx, body_chunk in enumerate(body_split, start=1):
+            for (indx, body_chunk) in enumerate(body_split, start=1):
                 splitter = (replace if contains(indx) else param)
                 body_chunks.append(splitter + body_chunk)
 
             self.set_body(''.join(body_chunks))  # замена
 
         param_count = len(chunk_indxs)
-        skiped = len_body_split - param_count - 1
+        skiped = (len_body_split - param_count - 1)
         return param_count, skiped
 
     def _get_body(self, a: int, b: int) -> str:

@@ -43,6 +43,7 @@ class ActAny(lr_act_goto.ActGoto):
             self.tk_text.delete(1.0, tk.END)
 
     def set_combo_len(self):
+        """задать ширину всех ['values'] виджетов"""
         if lr_vars.Window._block_:
             return
 
@@ -53,7 +54,7 @@ class ActAny(lr_act_goto.ActGoto):
             attr = getattr(self, w)
             if isinstance(attr, ttk.Combobox):
                 m = max([len(str(f)) for f in attr['values']] or [min_len])
-                attr.configure(width=m if min_len <= m <= max_len else min_len if m < min_len else max_len)
+                attr.configure(width=m if (min_len <= m <= max_len) else (min_len if (m < min_len) else max_len))
 
         self.selection_font_combo.configure(width=20)
         self.font_combo.configure(width=20)

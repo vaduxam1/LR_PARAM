@@ -99,8 +99,7 @@ def create_web_reg_save_param_and_dict(wrsp_dict=None) -> (str, dict):
 
 
 wrsp_allow_symb = string.ascii_letters + string.digits + lr_vars.AddAllowParamSymb  # из каких символов, может состоять param
-allow_lrb = set(
-    string.ascii_letters + string.digits)  # из каких символов, может состоять lb rb части имени web_reg_save_param
+allow_lrb = set(string.ascii_letters + string.digits)  # из каких символов, может состоять lb rb части имени web_reg_save_param
 wrsp_deny_punctuation = {ord(c): '' for c in string.punctuation.replace('_',
                                                                         '')}  # из каких символов, не может состоять имя web_reg_save_param
 wrsp_deny_punctuation.update(
@@ -217,7 +216,7 @@ def wrsp_name_creator(param: str, Lb: str, Rb: str, snapshot: int) -> str:
     wrsp_rnd_num = (random.randrange(MinWrspRnum, MaxWrspRnum) if (MaxWrspRnum and (MinWrspRnum >= 0)) else '')
 
     TransactionInNameMax = lr_vars.TransactionInNameMax.get()
-    if (TransactionInNameMax >= 0) and lr_vars.Window:
+    if (TransactionInNameMax >= 0) and lr_vars.Window.action_windows:
         action = lr_vars.Window.get_main_action()
         web_action = action.web_action
         w = next(web_action.get_web_by(web_action.get_web_snapshot_all(), snapshot=snapshot))
@@ -300,7 +299,7 @@ def create_files_with_search_data(files: (dict,), search_data: dict, action=None
 
         inf_min = d['inf_min'] = min(action_infs or [-1])
         inf_max = d['inf_max'] = max(action_infs or [-1])
-        d['max_action_inf'] = param_inf = set_param_in_action_inf(action, d['Name'])
+        d['max_action_inf'] = param_inf = next(set_param_in_action_inf(action, d['Name']), -1)
         if not action.add_inf_cbx_var.get():
             param_inf -= 1  # inf, педшествующий номеру inf, где первый раз встречается pram
         if action.max_inf_cbx_var.get() and param_inf and (inf_max > param_inf):
@@ -322,12 +321,12 @@ def create_files_with_search_data(files: (dict,), search_data: dict, action=None
             yield file
 
 
-def set_param_in_action_inf(action, param: str) -> int:
+def set_param_in_action_inf(action, param: str) -> iter((int, )):
     """первый action-inf в котором расположен param, тк inf-номер запроса <= inf-номер web_reg_save_param"""
     for web_ in action.web_action.get_web_snapshot_all():
         allow, deny = web_.param_find_replace(param)
         if allow:
-            return web_.snapshot
+            yield web_.snapshot
     return 0
 
 

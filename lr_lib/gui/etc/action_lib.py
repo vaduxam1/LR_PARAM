@@ -151,12 +151,16 @@ def _all_wrsp_dict_web_reg_save_param(action, selection: str) -> lr_web_.WebRegS
             continue
 
     len_dl = len(lr_vars.VarWrspDictList)
+    fl = list(lr_param.set_param_in_action_inf(action, param)) or [-1]
     y = lr_dialog.YesNoCancel(
         buttons=['Заменить/Создать', 'Выйти'],
-        text_before='отображены все найденные варианты, которыми можно создать web_reg_save_param\n'
-                    'необходимо оставить только один вариант, удалив остальные.',
-        text_after=('итого %s вариантов.' % len_dl), is_text='\n\n'.join(w[1] for w in lr_vars.VarWrspDictList),
-        title='{} : {} шт.'.format(selection, len_dl), parent=action, default_key='Заменить/Создать')
+        text_before='отображены все({ld} шт.) найденные варианты, которыми можно создать web_reg_save_param\n'
+                    'необходимо оставить только один вариант, удалив остальные.'.format(ld=len_dl),
+        text_after=('"{p}" используется в Snapshots[{mi}:{ma}] = {s} шт.'.format(
+            s=len(fl), p=selection, mi=min(fl), ma=max(fl))),
+        is_text='\n\n'.join(w[1] for w in lr_vars.VarWrspDictList),
+        title='{}'.format(selection), parent=action,
+        default_key='Заменить/Создать')
     ask = y.ask()
 
     if ask == 'Заменить/Создать':
