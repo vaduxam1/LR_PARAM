@@ -50,7 +50,7 @@ def auto_update_action_info_lab(self, config, tk_text, id_: int, timeout: int, c
         pm = ttm2(mp=lr_vars.M_POOL._size)
 
     config(text=tta(pt=pt, pm=pm))
-
+    tk_text.linenumbers.redraw()
     tk_text.highlight_lines.set_thread_attrs()
 
     # перезапуск
