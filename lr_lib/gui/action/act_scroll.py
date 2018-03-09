@@ -42,6 +42,8 @@ class ActScrollText(lr_act_widj.ActWidj):
         self.highlight_After1.insert(0, lr_vars.HighlightAfter1)
         self.highlight_After2.insert(0, lr_vars.HighlightAfter2)
 
+        self.prev_top_bottom = (-1, -1)  # номера отображенных на экране линий, в пред. раз
+
     def report_position_X(self, *argv) -> None:
         """get (beginning of) first visible line"""
         self.text_scrollx.set(*argv)
@@ -58,7 +60,9 @@ class ActScrollText(lr_act_widj.ActWidj):
             int(self.tk_text.index("@0,0").split('.', 1)[0]),
             int(self.tk_text.index("@0,%d" % self.tk_text.winfo_height()).split('.', 1)[0])
         )
-        self.tk_text.highlight_lines.set_top_bottom(top_bottom)
+        if self.prev_top_bottom != top_bottom:
+            self.prev_top_bottom = top_bottom
+            self.tk_text.highlight_lines.set_top_bottom(top_bottom)
 
     def resColor(self) -> None:
         """сбросить self.tk_text.highlight_dict настройки цветов"""

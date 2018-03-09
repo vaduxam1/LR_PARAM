@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# примеры разных пулов потоков
+# примеры разных пулов потоков + (запуск подсветки линий tk_text в MainThreadUpdater)
 
 import contextlib
 import asyncio
@@ -11,7 +11,8 @@ import lr_lib.core.var.vars as lr_vars
 
 
 class MainThreadUpdater:
-    """выполнить из main потока(например если что-то нельзя(RuntimeError) выполнять в потоке)"""
+    """выполнить из main потока(например если что-то нельзя(RuntimeError) выполнять в потоке)
+    + HighlightLines """
     __slots__ = ('working', 'queue_in', )
 
     def __init__(self):
@@ -42,12 +43,17 @@ class MainThreadUpdater:
                 lr_excepthook.excepthook(*sys.exc_info())
                 continue
 
-        ob = self.working  # в self.working лежит lr_highlight.HighlightLines()
-        if ob:  # True перезапуск + подсветка линий текста на экране
-            lr_vars.Tk.after(timeout, self._queue_listener)
+        ob = self.working  # bool или lr_highlight.HighlightLines()
+        if ob:
+            lr_vars.Tk.after(timeout, self._queue_listener)  # перезапуск
 
-            if not isinstance(ob, bool):  # подсветка
-                lr_vars.Tk.after(ob.HighlightAfter1, ob._highlight_top_bottom_lines, ob.on_srean_line_nums)
+            try:  # подсветка линий текста на экране
+                highlight_need = ob.highlight_need
+            except AttributeError:
+                return
+            else:
+                if highlight_need:
+                    lr_vars.Tk.after(ob.HighlightAfter1, ob._highlight_top_bottom_lines, ob.on_srean_line_nums)
 
 
 class NoPool:

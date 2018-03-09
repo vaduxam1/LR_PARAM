@@ -88,6 +88,9 @@ class HighlightLines:
         self.on_screen_lines.pop(line_num, None)  # больше не подсвечивать
         self.highlight_need = False
 
+    def __bool__(self):
+        return True
+
 
 def lines_teg_indxs(lines_portion: [(int, str, {str, (str,), }), ]) -> [(int, {str: {(str, str), }}), ]:
     """вычислить координаты подсветки линии, для порции линий
