@@ -42,8 +42,12 @@ class MainThreadUpdater:
                 lr_excepthook.excepthook(*sys.exc_info())
                 continue
 
-        if self.working:  # перезапуск
+        ob = self.working  # в self.working лежит lr_highlight.HighlightLines()
+        if ob:  # True перезапуск + подсветка линий текста на экране
             lr_vars.Tk.after(timeout, self._queue_listener)
+
+            if not isinstance(ob, bool):  # подсветка
+                lr_vars.Tk.after(ob.HighlightAfter1, ob._highlight_top_bottom_lines, ob.on_srean_line_nums)
 
 
 class NoPool:

@@ -32,6 +32,10 @@ class HighlightLines:
         self.HighlightAfter1 = lr_vars.HighlightAfter1
         self.HighlightAfter2 = lr_vars.HighlightAfter2
 
+        # признак необходимости подсветить линии на экране, сама подсветка запускается в lr_vars.MainThreadUpdater
+        self.highlight_need = True
+        lr_vars.MainThreadUpdater.working = self  # MainThreadUpdater !
+
     def set_thread_attrs(self) -> None:
         """подсвечивать в фоне/главном потоке"""
         def set() -> None:
@@ -47,8 +51,9 @@ class HighlightLines:
         """новые границы показанных линий"""
         self.on_srean_line_nums = on_srean_line_nums
 
-        if self.highlight_enable:  # подсветить
-            lr_vars.Tk.after(self.HighlightAfter1, self._highlight_top_bottom_lines, on_srean_line_nums)
+        if self.highlight_enable:  # подсвечивать при вкл
+            self.highlight_need = True
+            # lr_vars.Tk.after(self.HighlightAfter1, self._highlight_top_bottom_lines, on_srean_line_nums)
 
     def _highlight_top_bottom_lines(self, on_srean_line_nums: (int, int)) -> None:
         """подсветить все линии на экране
@@ -79,7 +84,9 @@ class HighlightLines:
         for teg in teg_indxs:
             for (index_start, index_end) in teg_indxs[teg]:
                 self.tk_text.tag_add(teg, index_start, index_end)
+
         self.on_screen_lines.pop(line_num, None)  # больше не подсвечивать
+        self.highlight_need = False
 
 
 def lines_teg_indxs(lines_portion: [(int, str, {str, (str,), }), ]) -> [(int, {str: {(str, str), }}), ]:
