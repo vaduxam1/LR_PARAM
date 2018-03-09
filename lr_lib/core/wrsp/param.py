@@ -216,7 +216,7 @@ def wrsp_name_creator(param: str, Lb: str, Rb: str, snapshot: int) -> str:
     wrsp_rnd_num = (random.randrange(MinWrspRnum, MaxWrspRnum) if (MaxWrspRnum and (MinWrspRnum >= 0)) else '')
 
     TransactionInNameMax = lr_vars.TransactionInNameMax.get()
-    if (TransactionInNameMax >= 0) and lr_vars.Window.action_windows:
+    if (TransactionInNameMax >= 0) and lr_vars.Window and lr_vars.Window.action_windows:
         action = lr_vars.Window.get_main_action()
         web_action = action.web_action
         w = next(web_action.get_web_by(web_action.get_web_snapshot_all(), snapshot=snapshot))
