@@ -16,7 +16,7 @@ class ActToplevel(tk.Toplevel):
 
         self.protocol("WM_DELETE_WINDOW", self.on_closing)
         self.grid_rowconfigure(0, weight=1)
-        self.grid_columnconfigure(0, weight=1)
+        self.grid_columnconfigure(1, weight=1)
         self.geometry('{}x{}'.format(*lr_vars._Tk_ActionWIND_SIZE))
 
     def on_closing(self) -> None:

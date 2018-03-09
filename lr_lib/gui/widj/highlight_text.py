@@ -221,5 +221,3 @@ class TextLineNumbers(tk.Canvas):
             self.linenum = str(i).split(".", 1)[0]
             self.create_text(2, y, anchor="nw", text=self.linenum)
             i = self.tk_text.index("%s+1line" % i)
-
-        self.tk_text.action.scroll_lab.config(text=self.tk_text.highlight_lines._max_line)

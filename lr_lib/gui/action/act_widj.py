@@ -38,7 +38,7 @@ class ActWidj(lr_act_var.ActVar):
         self.cbx_bar = tk.LabelFrame(self.toolbar, relief='groove', bd=0, text='', labelanchor=tk.S)
 
         #
-        self.scroll_lab = tk.Label(self, text='0')
+        # self.scroll_lab = tk.Label(self, text='0')
         self.scroll_lab2 = ttk.Label(self, text='0 %', background=lr_vars.Background)
 
         self.help1 = tk.Label(self, text='?', foreground='grey')
@@ -61,7 +61,7 @@ class ActWidj(lr_act_var.ActVar):
             self.var_bar_1.set(not vb)
 
         if self.var_bar_1.get():
-            self.toolbar.grid(row=2, column=0, sticky=tk.N, columnspan=100)
+            self.toolbar.grid(row=2, column=1, sticky=tk.N, columnspan=100)
             self.help2.grid(row=2, column=201, sticky=tk.NSEW)
         else:
             self.toolbar.grid_remove()
@@ -71,7 +71,7 @@ class ActWidj(lr_act_var.ActVar):
         """show/hide self.middle_bar"""
         self.var_bar_2.set(not self.var_bar_2.get())
         if self.var_bar_2.get():
-            self.middle_bar.grid(row=3, column=0, sticky=tk.N)
+            self.middle_bar.grid(row=3, column=1, sticky=tk.N)
             self.help3.grid(row=3, column=201, sticky=tk.NSEW)
         else:
             self.middle_bar.grid_remove()
@@ -81,7 +81,7 @@ class ActWidj(lr_act_var.ActVar):
         """show/hide self.scroll_lab2"""
         self.var_bar_3.set(not self.var_bar_3.get())
         if self.var_bar_3.get():
-            self.scroll_lab2.grid(row=2, column=300, sticky=tk.NSEW, rowspan=2)
+            self.scroll_lab2.grid(row=2, column=0, sticky=tk.NSEW, rowspan=2)
             self.help2.grid(row=2, column=201, sticky=tk.NSEW)
             self.help3.grid(row=3, column=201, sticky=tk.NSEW)
         else:

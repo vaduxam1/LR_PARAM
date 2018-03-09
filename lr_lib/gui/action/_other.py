@@ -18,12 +18,12 @@ def get_action_file(folder: str, file='action.c') -> str:
             return ''
 
 
-tta = '{p:>3}%\npool:\n{pt}\n{pm}'.format
+tta = 'pool:\n{pt}\n{pm}'.format
 ttt1 = 'T/qi\n{t}\n{q_in}'.format
 ttt2 = 'T={t}'.format
 ttm1 = 'M/qi\n{mp}\n{q_in}'.format
 ttm2 = 'M={mp}'.format
-ttl = '{txt} lines[{top}:{bottom}] | {v} | undo(ctrl-z)/redo(ctrl-y)'.format
+ttl = '{txt} lines[{top}:{bottom}]/{lmax} : {p}% | {v} | undo(ctrl-z)/redo(ctrl-y)'.format
 restart = lr_vars.Tk.after
 ver = lr_vars.VERSION
 
@@ -36,7 +36,8 @@ def auto_update_action_info_lab(self, config, tk_text, id_: int, timeout: int, c
 
     lines = tk_text.highlight_lines
     (top, bottom) = lines.on_srean_line_nums
-    title(ttl(txt=_set_title(), top=top, bottom=bottom, v=ver))
+    title(ttl(txt=_set_title(), top=top, bottom=bottom, v=ver, lmax=lines._max_line,
+              p=round(int(tk_text.linenumbers.linenum) // lines._max_line_proc)))
 
     try:
         pt = ttt1(q_in=lr_vars.T_POOL.pool._qsize, t=lr_vars.T_POOL._size)
@@ -48,7 +49,7 @@ def auto_update_action_info_lab(self, config, tk_text, id_: int, timeout: int, c
     except AttributeError:  # lr_vars.M_POOL.pool._qsize
         pm = ttm2(mp=lr_vars.M_POOL._size)
 
-    config(text=tta(p=round(int(tk_text.linenumbers.linenum) // lines._max_line_proc), pt=pt, pm=pm))
+    config(text=tta(pt=pt, pm=pm))
 
     tk_text.highlight_lines.set_thread_attrs()
 

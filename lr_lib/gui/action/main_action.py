@@ -456,7 +456,7 @@ class ActionWindow(lr_act_win.ActWin):
 
         self.text_scrolly.grid(row=0, column=201, sticky=tk.NSEW)
         self.text_scrollx.grid(row=1, column=0, sticky=tk.NSEW, columnspan=201)
-        self.scroll_lab.grid(row=1, column=300, sticky=tk.NSEW)
+        # self.scroll_lab.grid(row=1, column=1, sticky=tk.NSEW)
         # self.scroll_lab2.grid(row=2, column=300, sticky=tk.NSEW, rowspan=2)
 
         self.inf_combo.grid(row=1, column=1, sticky=tk.NSEW)
@@ -468,8 +468,8 @@ class ActionWindow(lr_act_win.ActWin):
         # self.help2.grid(row=2, column=201, sticky=tk.NSEW)
         # self.help3.grid(row=3, column=201, sticky=tk.NSEW)
 
-        self.tk_text.grid(row=0, column=0, sticky=tk.NSEW, columnspan=201)
-        self.tk_text.linenumbers.grid(row=0, column=300, sticky=tk.NS)
+        self.tk_text.grid(row=0, column=1, sticky=tk.NSEW, columnspan=201)
+        self.tk_text.linenumbers.grid(row=0, column=0, sticky=tk.NSEW)
         self.tk_text.linenumbers.config(width=30)
 
         self.max_inf_cbx.grid(row=7, column=1, sticky=tk.NSEW)
