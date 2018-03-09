@@ -251,7 +251,7 @@ DefaultHighlightActionFontSlant = False  #
 
 DefaultActionNoHighlightFont = 'Georgia'  # шрифт текста action
 DefaultActionNoHighlightFontSize = 9  # размер шрифта текста action
-DefaultActionNoHighlightFontBold = True  #
+DefaultActionNoHighlightFontBold = False  #
 DefaultActionNoHighlightFontOverstrike = False  #
 DefaultActionNoHighlightFontUnderline = False  #
 DefaultActionNoHighlightFontSlant = True  #

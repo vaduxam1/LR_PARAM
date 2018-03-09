@@ -56,13 +56,8 @@ def group_param(event, widget=None, params=None, ask=True) -> None:
 
     # --- progressbar ---
     p1 = ((len_params / 100) or 1)
-    
-    def threadsafe_progress(lock=threading.Lock()):
-        """threadsafe progressbar в потоке, тк одновременное warning popup-окно и прогрессбар блочат main поток"""
-        with lock:
-            __progressbar()
 
-    def __progressbar() -> None:
+    def threadsafe_progress() -> None:
         """progressbar выполнения, из local vars"""
         fail = len(unsuccess)
 
@@ -76,6 +71,7 @@ def group_param(event, widget=None, params=None, ask=True) -> None:
             )
             widget.action.background_color_set(color=None)  # action цвет по кругу
             lr_vars.MainThreadUpdater.submit(lambda: lr_vars.T_POOL.submit(threadsafe_progress))  # перезапуск с задержкой
+            return
 
         else:  # выход - результаты работы
             param_counter = widget.action.param_counter(all_param_info=False)
@@ -96,6 +92,7 @@ def group_param(event, widget=None, params=None, ask=True) -> None:
 
             if widget.action.final_wnd_var.get():
                 widget.action.legend()
+            return
     # --- progressbar ---
 
     widget.action.backup()
@@ -103,12 +100,14 @@ def group_param(event, widget=None, params=None, ask=True) -> None:
     # заменить params
     with lr_vars.Window.block(force=True), widget.action.block():
         (counter, wrsp_dict, wrsp, unsuccess) = (0, {'param': ''}, '', [])  # начальные vars для progressbar
-
+        widget.action.show_hide_bar_1(force_show=True)
         lr_vars.T_POOL.submit(threadsafe_progress)
-        for (counter, wrsp_dict, wrsp, unsuccess) in _group_param_iter(params, widget.action):  # заменить
+        # заменить
+        for (counter, wrsp_dict, wrsp, unsuccess) in _group_param_iter(params, widget.action):
             continue  # vars для progressbar
 
         wrsp_dict = None  # выход progressbar
+        widget.action.show_hide_bar_1()
 
 
 def _group_param_iter(params: [str, ], action) -> iter((int, dict, str, [str, ]),):

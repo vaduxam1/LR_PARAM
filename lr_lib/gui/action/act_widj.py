@@ -49,8 +49,17 @@ class ActWidj(lr_act_var.ActVar):
         self.var_bar_2 = tk.BooleanVar(value=lr_vars.var_bar_2)
         self.var_bar_3 = tk.BooleanVar(value=lr_vars.var_bar_3)
 
-    def show_hide_bar_1(self):
-        self.var_bar_1.set(not self.var_bar_1.get())
+    def show_hide_bar_1(self, force_show=False) -> None:
+        """show/hide self.toolbar"""
+        vb = self.var_bar_1.get()
+        if force_show:
+            if not vb:
+                self.var_bar_1.set(True)
+            else:
+                return
+        else:
+            self.var_bar_1.set(not vb)
+
         if self.var_bar_1.get():
             self.toolbar.grid(row=2, column=0, sticky=tk.N, columnspan=100)
             self.help2.grid(row=2, column=201, sticky=tk.NSEW)
@@ -58,7 +67,8 @@ class ActWidj(lr_act_var.ActVar):
             self.toolbar.grid_remove()
             self.help2.grid_remove()
 
-    def show_hide_bar_2(self):
+    def show_hide_bar_2(self) -> None:
+        """show/hide self.middle_bar"""
         self.var_bar_2.set(not self.var_bar_2.get())
         if self.var_bar_2.get():
             self.middle_bar.grid(row=3, column=0, sticky=tk.N)
@@ -67,7 +77,8 @@ class ActWidj(lr_act_var.ActVar):
             self.middle_bar.grid_remove()
             self.help3.grid_remove()
 
-    def show_hide_bar_3(self):
+    def show_hide_bar_3(self) -> None:
+        """show/hide self.scroll_lab2"""
         self.var_bar_3.set(not self.var_bar_3.get())
         if self.var_bar_3.get():
             self.scroll_lab2.grid(row=2, column=300, sticky=tk.NSEW, rowspan=2)

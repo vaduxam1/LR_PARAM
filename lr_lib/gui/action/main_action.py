@@ -71,8 +71,8 @@ class ActionWindow(lr_act_win.ActWin):
         self.menubar.add_cascade(label="Open/Save", menu=filemenu2)
 
         filemenu3 = tk.Menu(self.menubar, tearoff=0)
-        filemenu3.add_command(label="Remove thinktime", command=self.thinktime_remove)
         filemenu3.add_command(label="Remove dummy", command=self.remove_web_dummy_template)
+        filemenu3.add_command(label="Remove thinktime", command=self.thinktime_remove)
         filemenu3.add_command(label="Rename transaction", command=self.all_transaction_rename)
         filemenu3.add_command(label="Rename WRSP", command=lambda: lr_action_lib.all_wrsp_auto_rename(self))
         self.menubar.add_cascade(label="Remove/Rename", menu=filemenu3)
