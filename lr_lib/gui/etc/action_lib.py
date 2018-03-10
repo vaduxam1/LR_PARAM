@@ -115,6 +115,7 @@ def all_wrsp_dict_web_reg_save_param(event, wrsp_web_=None) -> None:
                 continue
         finally:
             action.max_inf_cbx_var.set(m)
+            action.tk_text_to_web_action(websReport=False)
 
         if wrsp_web_:
             action.search_in_action(word=wrsp_web_.to_str())
@@ -181,7 +182,7 @@ def _all_wrsp_dict_web_reg_save_param(action, selection: str) -> iter((lr_web_.W
         word = 'LAST);'
         text = y.text
         for part in text.split(word):
-            part = part.strip('\n')
+            part = part.lstrip()
             if not part.strip():
                 continue
             wrsp = part + word
@@ -202,6 +203,7 @@ def _all_wrsp_dict_web_reg_save_param(action, selection: str) -> iter((lr_web_.W
                 w_remove = False
 
             yield wrsp_web_
+
         action.web_action_to_tk_text(websReport=True)  # вставить в action.c
 
 
