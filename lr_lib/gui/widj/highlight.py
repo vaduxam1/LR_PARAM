@@ -68,14 +68,11 @@ class HighlightLines:
         if self.on_srean_line_nums != on_srean_line_nums:
             return
 
-        for (teg, (index_start, index_end)) in self.find_tag_indxs(line_num):
-            self.tk_text.tag_add(teg, index_start, index_end)
+        for (teg, i_start, i_end) in self.find_tag_indxs(line_num):
+            self.tk_text.tag_add(teg, '{}.{}'.format(line_num, i_start), '{}.{}'.format(line_num, i_end))
 
         self.on_screen_lines.pop(line_num, None)  # больше не подсвечивать
         self.highlight_need = False
-
-    def __bool__(self):
-        return True
 
     def find_tag_indxs(self, line_num: int) -> iter(([str, (str, str)], )):
         """вычислить координаты подсветки линии"""
@@ -86,10 +83,13 @@ class HighlightLines:
             generate_line_tags_names_indxs(line, setdefault, self.tegs_names)
             genetate_line_tags_purct_etc_indxs(line, setdefault)
 
-            yield from filter_tag_indxs(line_num, line_indxs)
+            yield from filter_tag_indxs(line_indxs)
+
+    def __bool__(self):
+        return True
 
 
-def filter_tag_indxs(line_num: int, line_indxs: dict) -> iter(([str, (str, str)], )):
+def filter_tag_indxs(line_indxs: dict) -> iter(([str, (str, str)], )):
     """привести, вычисленные индексы текста, в нужный формат"""
     bg_indxs = set()  # все background
     for teg in line_indxs:
@@ -111,12 +111,7 @@ def filter_tag_indxs(line_num: int, line_indxs: dict) -> iter(([str, (str, str)]
         indxs = line_indxs[teg]
         if indxs:
             for (i_start, i_end) in join_indxs(indxs):
-                yield teg, set_tk_indxs(line_num, i_start, i_end)
-
-
-def set_tk_indxs(line_num: int, i_start: int, i_end: int) -> (str, str):
-    """индкесы в формате tk.Text"""
-    return '{}.{}'.format(line_num, i_start), '{}.{}'.format(line_num, i_end)
+                yield teg, i_start, i_end
 
 
 def join_indxs(indxs: {int, }) -> iter((int, int),):
