@@ -32,7 +32,7 @@ class HighlightLines:
 
         # признак необходимости подсветить линии на экране, сама подсветка запускается в lr_vars.MainThreadUpdater
         self.highlight_need = True
-        lr_vars.MainThreadUpdater.working = self  # MainThreadUpdater !
+        lr_vars.MainThreadUpdater.highlight_callback = self.highlight_callback  # MainThreadUpdater !
 
     def set_thread_attrs(self) -> None:
         """подсвечивать в фоне/главном потоке"""
@@ -48,13 +48,13 @@ class HighlightLines:
         if self.highlight_enable:  # подсвечивать при вкл
             self.highlight_need = True
 
-    def highlight_top_bottom_lines(self) -> None:
+    def highlight_callback(self) -> None:
         """подсветить все линии на экране - запускается из MainThreadUpdater"""
         if self.highlight_need:
             self.highlight_need = False  # больше не подсвечивать
-            lr_vars.Tk.after(self.HighlightAfter1, self._highlight_top_bottom_lines, self.on_srean_line_nums)
+            lr_vars.Tk.after(self.HighlightAfter1, self.highlight_top_bottom_lines, self.on_srean_line_nums)
 
-    def _highlight_top_bottom_lines(self, on_srean_line_nums: (int, int)) -> None:
+    def highlight_top_bottom_lines(self, on_srean_line_nums: (int, int)) -> None:
         """подсветить все линии на экране
         получать индексы и подсвечивать on-screen линии текста, пока top и bottom не изменились"""
         if self.on_srean_line_nums != on_srean_line_nums:

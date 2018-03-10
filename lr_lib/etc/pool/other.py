@@ -13,7 +13,10 @@ import lr_lib.core.var.vars as lr_vars
 class MainThreadUpdater:
     """выполнить из main потока(например если что-то нельзя(RuntimeError) выполнять в потоке)
     + HighlightLines """
-    __slots__ = ('working', 'queue_in', )
+
+    def highlight_callback(self) -> None:
+        """заглушка HighlightLines - подсветка линий текста на экране"""
+        return
 
     def __init__(self):
         self.working = None
@@ -43,11 +46,9 @@ class MainThreadUpdater:
                 lr_excepthook.excepthook(*sys.exc_info())
                 continue
 
-        ob = self.working  # bool или lr_highlight.HighlightLines()
-        if ob:
+        if self.working:
             lr_vars.Tk.after(lr_vars.MainThreadUpdateTime.get(), self._queue_listener)  # перезапуск
-            with contextlib.suppress(AttributeError):
-                ob.highlight_top_bottom_lines()  # подсветка линий текста на экране
+            self.highlight_callback()
 
 
 class NoPool:
