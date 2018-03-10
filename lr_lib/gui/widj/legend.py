@@ -12,7 +12,14 @@ import lr_lib.gui.widj.tooltip as lr_tooltip
 import lr_lib.gui.etc.gui_other as lr_gui_other
 
 
-Colors = iter(itertools.cycle(sorted(lr_vars.VarColorTeg.get() - {'white', 'black', 'navy', })))
+def clrs() -> [str, ]:
+    """цвет"""
+    cs = sorted(c for c in lr_vars.VarColorTeg.get() if not any((r >= 0) for r in map(
+         c.find, {'white', 'black', 'navy', 'grey', 'alice'})))
+    return cs
+
+
+Colors = iter(itertools.cycle(clrs()))
 
 
 class WebLegend(tk.Toplevel):
@@ -106,9 +113,7 @@ class WebLegend(tk.Toplevel):
         H = self.H.get()
         lcolor = 'black'
         rep_param = self.parent.web_action.websReport.param_statistic
-        colrs = sorted(c for c in lr_vars.VarColorTeg.get() if not any(map(
-            c.startswith, {'white', 'black', 'navy', 'grey'})))
-        print(colrs)
+        colrs = clrs()
 
         for i in self.web_canavs:
             transaction = wdt[i].transaction
