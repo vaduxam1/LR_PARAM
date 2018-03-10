@@ -151,15 +151,26 @@ def _all_wrsp_dict_web_reg_save_param(action, selection: str) -> lr_web_.WebRegS
             continue
 
     len_dl = len(lr_vars.VarWrspDictList)
-    fl = list(lr_param.set_param_in_action_inf(action, param)) or [-1]
+    fl = list(lr_param.set_param_in_action_inf(action, param))
+    if not fl:
+        wrsp_and_param = action.web_action.websReport.wrsp_and_param_names
+        if param in wrsp_and_param:  # сменить wrsp-имя в ориг. имя param
+            fl = list(lr_param.set_param_in_action_inf(action, wrsp_and_param[param]))
+        else:
+            wp = {wrsp_and_param[k]: k for k in wrsp_and_param}
+            if param in wp:
+                fl = list(lr_param.set_param_in_action_inf(action, wp[param]))
+    if not fl:
+        fl = [-1]
+
     y = lr_dialog.YesNoCancel(
         buttons=['Заменить/Создать', 'Выйти'],
-        text_before='отображены все({ld} шт.) найденные варианты, которыми можно создать web_reg_save_param\n'
+        text_after='отображены все({ld} шт.) найденные варианты, которыми можно создать web_reg_save_param\n'
                     'необходимо оставить только один вариант, удалив остальные.'.format(ld=len_dl),
-        text_after=('"{p}" используется в Snapshots[{mi}:{ma}] = {s} шт.'.format(
+        text_before=('"{p}" используется в Snapshots[{mi}:{ma}] = {s} шт.'.format(
             s=len(fl), p=selection, mi=min(fl), ma=max(fl))),
         is_text='\n\n'.join(w[1] for w in lr_vars.VarWrspDictList),
-        title='{}'.format(selection), parent=action,
+        title='"{s}" len={l} : {f} варианта'.format(s=selection, l=len(selection), f=len_dl), parent=action,
         default_key='Заменить/Создать')
     ask = y.ask()
 
