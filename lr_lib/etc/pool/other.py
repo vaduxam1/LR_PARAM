@@ -33,7 +33,7 @@ class MainThreadUpdater:
         finally:  # запретить перезапуск _queue_listener
             self.working = False
 
-    def _queue_listener(self, timeout=lr_vars.MainThreadUpdateTime.get()) -> None:
+    def _queue_listener(self) -> None:
         """выполнять из очереди, пока есть, затем перезапустить"""
         while self.queue_in.qsize():
             try:  # получить и выполнить callback
@@ -45,7 +45,7 @@ class MainThreadUpdater:
 
         ob = self.working  # bool или lr_highlight.HighlightLines()
         if ob:
-            lr_vars.Tk.after(timeout, self._queue_listener)  # перезапуск
+            lr_vars.Tk.after(lr_vars.MainThreadUpdateTime.get(), self._queue_listener)  # перезапуск
 
             try:  # подсветка линий текста на экране
                 highlight_need = ob.highlight_need

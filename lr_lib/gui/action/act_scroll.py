@@ -33,16 +33,10 @@ class ActScrollText(lr_act_widj.ActWidj):
             self.cbx_bar, text='', variable=lr_vars.HighlightMPool, font=lr_vars.DefaultFont,
             command=lambda *a: self.tk_text.highlight_lines.set_thread_attrs())
 
-        self.highlight_LinesPortionSize = tk.Spinbox(
-            self.cbx_bar, from_=0, to=100, font=lr_vars.DefaultFont, width=2,
-            textvariable=lr_vars.HighlightLinesPortionSize)
-
         self.highlight_After1 = tk.Entry(self.cbx_bar, font=lr_vars.DefaultFont, width=4)
         self.highlight_After2 = tk.Entry(self.cbx_bar, font=lr_vars.DefaultFont, width=4)
         self.highlight_After1.insert(0, lr_vars.HighlightAfter1)
         self.highlight_After2.insert(0, lr_vars.HighlightAfter2)
-
-        self.prev_top_bottom = (-1, -1)  # номера отображенных на экране линий, в пред. раз
 
     def report_position_X(self, *argv) -> None:
         """get (beginning of) first visible line"""
@@ -60,9 +54,7 @@ class ActScrollText(lr_act_widj.ActWidj):
             int(self.tk_text.index("@0,0").split('.', 1)[0]),
             int(self.tk_text.index("@0,%d" % self.tk_text.winfo_height()).split('.', 1)[0])
         )
-        if self.prev_top_bottom != top_bottom:
-            self.prev_top_bottom = top_bottom
-            self.tk_text.highlight_lines.set_top_bottom(top_bottom)
+        self.tk_text.highlight_lines.set_top_bottom(top_bottom)
 
     def resColor(self) -> None:
         """сбросить self.tk_text.highlight_dict настройки цветов"""

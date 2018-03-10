@@ -267,7 +267,6 @@ HighlightOn = True  # включить подсветку
 HighlightAfter1 = 250  # задержка(мс), перед запуском подсветки всех линий на экране
 HighlightAfter2 = 250  # задержка(мс), перед запуском подсветки одной линии на экране
 HighlightMPool = tk.BooleanVar(value=False)  # искать индексы для подсветки линий, в M_POOL
-HighlightLinesPortionSize = tk.IntVar(value=1)  # для скольки линий, искать индексы, за один проход/поток
 Background = 'khaki'
 
 highlight_words_folder = os.path.join(lib_folder, 'etc')
@@ -431,7 +430,7 @@ ENCODE_LIST = list(sorted(ENCODE_LIST))
 # пулы
 
 MainThreadUpdater = None  # выполнять callback из main потока # lr_lib.etc.pool.other.MainThreadUpdater
-MainThreadUpdateTime = tk.IntVar(value=1000)  # интервал(мс) проверки очереди, callback(из потоков)
+MainThreadUpdateTime = tk.IntVar(value=500)  # интервал(мс) проверки очереди, callback(из потоков) + скорость обновления подсветки
 
 M_POOL = None  # пул процессов  # lr_lib.etc.pool.main_pool.POOL
 M_POOL_NAME = 'multiprocessing.Pool'  # тип основной пул
@@ -443,7 +442,7 @@ T_POOL_NAME = 'SThreadPool(threading.Thread)'  # тип фоновый пул
 # T_POOL_NAME = 'concurrent.futures.ThreadPoolExecutor'  # тип фоновый пул
 T_POOL_Size = None  # фоновый T пул - любой(int>=2), concurrent.futures(int/None - авто)
 # 'threading.Thread': SThreadPool - авто size
-SThreadPoolSizeMin = tk.IntVar(value=0)  # SThreadPool min size(int)
+SThreadPoolSizeMin = tk.IntVar(value=1)  # SThreadPool min size(int)
 SThreadPoolSizeMax = tk.IntVar(value=10)  # SThreadPool max size (int>=2)
 SThreadExitTimeout = tk.IntVar(value=5)  # таймаут(сек) выхода, бездействующих потоков(до SThreadPoolSizeMin)
 SThreadPoolAddMinQSize = tk.IntVar(value=100)  # мин длина очереди, для добавления, более чем одного потока, за раз

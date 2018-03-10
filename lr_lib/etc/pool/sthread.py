@@ -156,7 +156,7 @@ class SThreadPool(SThreadIOQueue):
     def _create_thread(self) -> SThread:
         """создать worker-поток"""
         th = SThread(self.queue_in, pool=self)
-        print(' + add {}, from: {}'.format(th.name, threading.current_thread().name))
+        # print(' + add {}, from: {}'.format(th.name, threading.current_thread().name))
         return th
 
     def _remove_thread(self, th: SThread) -> None:
@@ -165,7 +165,7 @@ class SThreadPool(SThreadIOQueue):
         with contextlib.suppress(ValueError):
             self.threads.remove(th)
         self._set_pool_size()
-        print(' - del {}, from: {}'.format(th.name, threading.current_thread().name))
+        # print(' - del {}, from: {}'.format(th.name, threading.current_thread().name))
         DLOCK.release()
 
     def _set_pool_size(self) -> None:

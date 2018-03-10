@@ -14,7 +14,6 @@ class HighlightLines:
     def __init__(self, tk_text, tegs_names: {str, (str, ), }):
         self.tk_text = tk_text
 
-        self.psize = lr_vars.HighlightLinesPortionSize.get()
         self.tegs_names = tegs_names
 
         lines = self.tk_text.get(1.0, tk.END).lower().split('\n')
@@ -39,7 +38,6 @@ class HighlightLines:
     def set_thread_attrs(self) -> None:
         """подсвечивать в фоне/главном потоке"""
         def set() -> None:
-            self.psize = lr_vars.HighlightLinesPortionSize.get()
             self.highlight_enable = self.tk_text.highlight_var.get()
             self.execute = (lr_vars.M_POOL.imap_unordered if lr_vars.HighlightMPool.get() else map)
             self.HighlightAfter1 = int(self.tk_text.action.highlight_After1.get())
@@ -50,10 +48,8 @@ class HighlightLines:
     def set_top_bottom(self, on_srean_line_nums: (int, int)) -> None:
         """новые границы показанных линий"""
         self.on_srean_line_nums = on_srean_line_nums
-
         if self.highlight_enable:  # подсвечивать при вкл
             self.highlight_need = True
-            # lr_vars.Tk.after(self.HighlightAfter1, self._highlight_top_bottom_lines, on_srean_line_nums)
 
     def _highlight_top_bottom_lines(self, on_srean_line_nums: (int, int)) -> None:
         """подсветить все линии на экране
@@ -66,16 +62,11 @@ class HighlightLines:
         if (not line_nums) or (self.on_srean_line_nums != on_srean_line_nums):
             return
 
-        args = lr_other.chunks(((num, self.on_screen_lines.get(num), self.tegs_names) for num in line_nums), self.psize)
-        for results in self.execute(lines_teg_indxs, args):
-            for (line_num, tag_indxs) in results:
-                if self.on_srean_line_nums != on_srean_line_nums:
-                    return
-
-                # подсветить
-                lr_vars.Tk.after(self.HighlightAfter2, self._line_tegs_add, tag_indxs, line_num)
-
-            if self.on_srean_line_nums != on_srean_line_nums:
+        args = ((num, self.on_screen_lines[num], self.tegs_names) for num in line_nums if self.on_screen_lines.get(num))
+        for (line_num, tag_indxs) in self.execute(find_tag_indxs, args):
+            if self.on_srean_line_nums == on_srean_line_nums:
+                lr_vars.Tk.after(self.HighlightAfter2, self._line_tegs_add, tag_indxs, line_num)  # подсветить
+            else:
                 return
 
     def _line_tegs_add(self, teg_indxs: {str: {(str, str), }, }, line_num: int) -> None:
@@ -90,12 +81,6 @@ class HighlightLines:
 
     def __bool__(self):
         return True
-
-
-def lines_teg_indxs(lines_portion: [(int, str, {str, (str,), }), ]) -> [(int, {str: {(str, str), }}), ]:
-    """вычислить координаты подсветки линии, для порции линий
-    lines_portion=((247, '\t\t"mode=html",', {'backgroundorange': {('*/', 2), ..."""
-    return tuple(map(find_tag_indxs, lines_portion))
 
 
 def find_tag_indxs(arg: (int, str, {str, (str,), })) -> (int, {str: [(str, str), ], }):
@@ -143,7 +128,8 @@ def set_tk_indxs(line_num: int, i_start: int, i_end: int) -> (str, str):
 
 
 def join_indxs(indxs: {int, }) -> iter((int, int),):
-    """объединить идущие подряд индексы: {3, 10, 4, 7, 9, 2, 1, 11} -> (1, 4), (7, 7), (9, 11)"""
+    """объединить идущие подряд индексы, увеличить посл.индекс (+1):
+    {3, 10, 4, 7, 9, 2, 1, 11} -> (1, 4(+1)), (7, 7(+1)), (9, 11(+1)) -> (1, 5), (7, 8), (9, 12)"""
     (index, *_indxs) = sorted(indxs)
     i_end = i_start = index
 
