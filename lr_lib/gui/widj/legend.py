@@ -106,7 +106,9 @@ class WebLegend(tk.Toplevel):
         H = self.H.get()
         lcolor = 'black'
         rep_param = self.parent.web_action.websReport.param_statistic
-        colrs = sorted(lr_vars.VarColorTeg.get() - {'white', 'black', 'navy', })
+        colrs = sorted(c for c in lr_vars.VarColorTeg.get() if not any(map(
+            c.startswith, {'white', 'black', 'navy', 'grey'})))
+        print(colrs)
 
         for i in self.web_canavs:
             transaction = wdt[i].transaction
@@ -117,7 +119,7 @@ class WebLegend(tk.Toplevel):
                     lcolor = color = next(colors)
                 else:
                     lt = None
-                    lcolor = color = 'white'
+                    lcolor = color = 'grey'
                 t = (lt, transaction)
                 text = '({})->'.format(lt)
                 self.tr.append(t)
@@ -125,7 +127,7 @@ class WebLegend(tk.Toplevel):
                 text = '<-{}'.format(lt)
 
             self.canvas.create_text((sep + 40), 10, text=text)
-            if color in ('white', 'yellow', ):
+            if color in ('grey', 'yellow', ):
                 lcolor = 'black'
 
             st = 'Snap: {}\nout: {}'.format(i, len(wdt[i].web_reg_save_param_list))

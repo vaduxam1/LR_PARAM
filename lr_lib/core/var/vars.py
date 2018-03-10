@@ -42,7 +42,7 @@ VarWrspDictList = []  # все возможные web_reg_save_param слова�
 VarWebStatsTransac = tk.BooleanVar(value=False)  # коментарии с именем транзакции
 VarWebStatsIn = tk.BooleanVar(value=False)  # In коментарии
 VarWebStatsOut = tk.BooleanVar(value=False)  # Out коментарии
-VarWebStatsWarn = tk.BooleanVar(value=False)  # Warning коментарии
+VarWebStatsWarn = tk.BooleanVar(value=True)  # Warning коментарии
 VarWRSPStatsTransac = tk.BooleanVar(value=False)  # для wrsp, статистика использования param
 VarWRSPStatsTransacNames = tk.BooleanVar(value=False)  # для wrsp, имена транзакций в которых используется param
 VarWRSPStats = tk.BooleanVar(value=False)  # для wrsp, создавать подробные/короткие коментарии
@@ -329,12 +329,15 @@ VarDefaultColorTeg = {
 }
 
 DefaultColor = 'olive'  # цвет для "фонового" текста
+hex_unicode_words = '\\\\x\w\w'  # re.compile(hex_unicode_words).findall('start\\xCE\\xE1end')
 hex_unicode_ground = 'foreground'  # \\xCE\\xE1
 hex_unicode_color = 'olive'  # \\xCE\\xE1
 PunctDigitTag = 'foregroundblack'
 RusTag = 'backgroundorange'
 wrsp_color1 = 'chartreuse'
 wrsp_color2 = 'darkblue'
+color_transactions_names = 'darkslategrey'
+color_warn_wrsp = 'red'
 
 ForceOlive = (
     'value=xon', 'value=on', 'value={\\"left\\', 'value=i"', 'value={}', 'value={\\"', 'value=dummy',

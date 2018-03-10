@@ -146,14 +146,14 @@ class HighlightText(tk.Text):
     def get_tegs_names(self) -> {str: {str,}}:
         """_tegs_names + \\xCE\\xE1"""
         tegs_names = {}
-        hex_unicode_words = re.compile('\\\\x\w\w').findall(self.get(1.0, tk.END))  # \\xCE\\xE1
+        hex_unicode_words = re.compile(lr_vars.hex_unicode_words).findall(self.get(1.0, tk.END))  # \\xCE\\xE1
         self.highlight_dict.setdefault(
             lr_vars.hex_unicode_ground, dict()).setdefault(lr_vars.hex_unicode_color, set()).update(hex_unicode_words)
 
         for ground in self.highlight_dict:
             colors = self.highlight_dict[ground]
             for color in colors:
-                tag = ground + color
+                tag = (ground + color)
                 for name in colors[color]:
 
                     task = (name.lower(), len(name))  # name.lower() !
@@ -164,13 +164,13 @@ class HighlightText(tk.Text):
 
         wrsp_all = tuple(self.action.web_action.get_web_reg_save_param_all())
         ps = self.action.web_action.websReport.param_statistic
-        for wr in wrsp_all:
+        for wr in wrsp_all:  # warn_wrsp highlight
             n = wr.name
             if (n in ps) and (not all(ps[n].values())):
-                self.highlight_mode(wr.name, option='background', color='yellow')
+                self.highlight_mode(wr.name, option='background', color=lr_vars.color_warn_wrsp)
 
         for n in self.action.web_action.transactions.names:
-            self.highlight_mode(n, option='foreground', color='darkslategrey')
+            self.highlight_mode(n, option='foreground', color=lr_vars.color_transactions_names)
 
         return tegs_names
 
