@@ -68,10 +68,8 @@ class HighlightLines:
         if self.on_srean_line_nums != on_srean_line_nums:
             return
 
-        teg_indxs = self.find_tag_indxs(line_num)
-        for teg in teg_indxs:
-            for (index_start, index_end) in teg_indxs[teg]:
-                self.tk_text.tag_add(teg, index_start, index_end)
+        for (teg, (index_start, index_end)) in self.find_tag_indxs(line_num):
+            self.tk_text.tag_add(teg, index_start, index_end)
 
         self.on_screen_lines.pop(line_num, None)  # больше не подсвечивать
         self.highlight_need = False
@@ -79,7 +77,7 @@ class HighlightLines:
     def __bool__(self):
         return True
 
-    def find_tag_indxs(self, line_num: int) -> {str: [(str, str), ], }:
+    def find_tag_indxs(self, line_num: int) -> iter(([str, (str, str)], )):
         """вычислить координаты подсветки линии"""
         line_indxs = {}
         line = self.on_screen_lines.get(line_num)
@@ -88,11 +86,10 @@ class HighlightLines:
             generate_line_tags_names_indxs(line, setdefault, self.tegs_names)
             genetate_line_tags_purct_etc_indxs(line, setdefault)
 
-            line_indxs = filter_tag_indxs(line_num, line_indxs)
-        return line_indxs
+            yield from filter_tag_indxs(line_num, line_indxs)
 
 
-def filter_tag_indxs(line_num: int, line_indxs: dict) -> dict:
+def filter_tag_indxs(line_num: int, line_indxs: dict) -> iter(([str, (str, str)], )):
     """привести, вычисленные индексы текста, в нужный формат"""
     bg_indxs = set()  # все background
     for teg in line_indxs:
@@ -110,10 +107,11 @@ def filter_tag_indxs(line_num: int, line_indxs: dict) -> dict:
         other_tegs = (line_indxs.keys() - lr_vars.minus_teg)
         line_indxs[lr_vars.OliveChildTeg] -= set(i for t in other_tegs for i in line_indxs[t])
 
-    line_indxs = {k: [set_tk_indxs(line_num, i_start, i_end) for (i_start, i_end) in join_indxs(indxs)]
-                  for (k, indxs) in line_indxs.items() if indxs}
-
-    return line_indxs
+    for teg in line_indxs:
+        indxs = line_indxs[teg]
+        if indxs:
+            for (i_start, i_end) in join_indxs(indxs):
+                yield teg, set_tk_indxs(line_num, i_start, i_end)
 
 
 def set_tk_indxs(line_num: int, i_start: int, i_end: int) -> (str, str):
