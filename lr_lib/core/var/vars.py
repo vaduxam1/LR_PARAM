@@ -18,7 +18,7 @@ from lr_lib.etc.help import (COLORS, HEX, )
 #####################################
 # главные переменные
 
-VERSION = 'v10.4.9'
+VERSION = 'v10.5.0'
 lib_folder = 'lr_lib'
 Tk = tk.Tk()  # tkinter
 original_callback_exception = Tk.report_callback_exception
@@ -264,7 +264,7 @@ var_bar_3 = False  # show/hide info bar
 # подсветка
 
 HighlightOn = True  # включить подсветку
-HighlightAfter1 = 250  # задержка(мс), перед запуском подсветки всех линий на экране
+HighlightAfter1 = 150  # задержка(мс), перед запуском подсветки всех линий на экране
 HighlightAfter2 = 250  # задержка(мс), перед запуском подсветки одной линии на экране
 Background = 'khaki'
 
@@ -429,7 +429,7 @@ ENCODE_LIST = list(sorted(ENCODE_LIST))
 # пулы
 
 MainThreadUpdater = None  # выполнять callback из main потока # lr_lib.etc.pool.other.MainThreadUpdater
-MainThreadUpdateTime = tk.IntVar(value=500)  # интервал(мс) проверки очереди, callback(из потоков) + скорость обновления подсветки
+MainThreadUpdateTime = tk.IntVar(value=250)  # интервал(мс) проверки очереди, callback(из потоков) + скорость обновления подсветки
 
 M_POOL = None  # пул процессов  # lr_lib.etc.pool.main_pool.POOL
 M_POOL_NAME = 'multiprocessing.Pool'  # тип основной пул
