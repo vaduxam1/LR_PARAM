@@ -13,6 +13,7 @@ class HighlightLines:
     """подсветка линий текста"""
     def __init__(self, tk_text, tegs_names: {str, (str, ), }):
         self.tk_text = tk_text
+        self.id = id(self)
 
         self.tegs_names = tegs_names
 
@@ -27,18 +28,19 @@ class HighlightLines:
         self.highlight_enable = self.tk_text.highlight_var.get()
         self.set_thread_attrs()  # подсвечивать в фоне/главном потоке
 
+        self.HighlightAfter0 = lr_vars.HighlightAfter0
         self.HighlightAfter1 = lr_vars.HighlightAfter1
         self.HighlightAfter2 = lr_vars.HighlightAfter2
 
-        # признак необходимости подсветить линии на экране, сама подсветка запускается в lr_vars.MainThreadUpdater
+        # признак необходимости подсветить линии на экране
         self.highlight_need = True
-        lr_vars.MainThreadUpdater.highlight_callback = self.highlight_callback  # MainThreadUpdater !
 
     def set_thread_attrs(self) -> None:
         """подсвечивать в фоне/главном потоке"""
         def set() -> None:
             self.highlight_enable = self.tk_text.highlight_var.get()
             self.HighlightAfter1 = int(self.tk_text.action.highlight_After1.get())
+            self.HighlightAfter1 = int(self.tk_text.action.highlight_After0.get())
             self.HighlightAfter2 = int(self.tk_text.action.highlight_After2.get())
         lr_vars.MainThreadUpdater.submit(set)
 
@@ -49,10 +51,14 @@ class HighlightLines:
             self.highlight_need = True
 
     def highlight_callback(self) -> None:
-        """подсветить все линии на экране - запускается из MainThreadUpdater"""
+        """подсветить все линии на экране, и перезапустить"""
         if self.highlight_need:
-            self.highlight_need = False  # больше не подсвечивать
+            self.highlight_need = False
+            # подсветить
             lr_vars.Tk.after(self.HighlightAfter1, self.highlight_top_bottom_lines, self.on_srean_line_nums)
+
+        if self.tk_text.highlight_lines.id == self.id:  # перезапустить
+            lr_vars.Tk.after(self.HighlightAfter0, self.highlight_callback)
 
     def highlight_top_bottom_lines(self, on_srean_line_nums: (int, int)) -> None:
         """подсветить все линии на экране

@@ -11,13 +11,7 @@ import lr_lib.core.var.vars as lr_vars
 
 
 class MainThreadUpdater:
-    """выполнить из main потока(например если что-то нельзя(RuntimeError) выполнять в потоке)
-    + HighlightLines """
-
-    def highlight_callback(self) -> None:
-        """заглушка HighlightLines - подсветка линий текста на экране"""
-        return
-
+    """выполнить из main потока(например если что-то нельзя(RuntimeError) выполнять в потоке)"""
     def __init__(self):
         self.working = None
         self.queue_in = queue.Queue()  # очередь выполнения callback
@@ -48,7 +42,6 @@ class MainThreadUpdater:
 
         if self.working:
             lr_vars.Tk.after(lr_vars.MainThreadUpdateTime.get(), self._queue_listener)  # перезапуск
-            self.highlight_callback()
 
 
 class NoPool:

@@ -264,8 +264,9 @@ var_bar_3 = False  # show/hide info bar
 # подсветка
 
 HighlightOn = True  # включить подсветку
-HighlightAfter1 = 45  # задержка(мс), перед запуском подсветки всех линий на экране
-HighlightAfter2 = 100  # задержка(мс), перед запуском подсветки одной линии на экране
+HighlightAfter0 = 250  # задержка(мс), перед перезапуском проверки необходимости подсветки
+HighlightAfter1 = 45  # задержка(мс), перед стартом подсветки всех линий, отображенных на экране
+HighlightAfter2 = 100  # задержка(мс), перед подсветкой одной линии
 Background = 'khaki'
 
 highlight_words_folder = os.path.join(lib_folder, 'etc')
@@ -429,7 +430,7 @@ ENCODE_LIST = list(sorted(ENCODE_LIST))
 # пулы
 
 MainThreadUpdater = None  # выполнять callback из main потока # lr_lib.etc.pool.other.MainThreadUpdater
-MainThreadUpdateTime = tk.IntVar(value=250)  # интервал(мс) проверки очереди, callback(из потоков) + скорость обновления подсветки
+MainThreadUpdateTime = tk.IntVar(value=500)  # интервал(мс) проверки очереди, callback(из потоков) + скорость обновления подсветки
 
 M_POOL = None  # пул процессов  # lr_lib.etc.pool.main_pool.POOL
 M_POOL_NAME = 'multiprocessing.Pool'  # тип основной пул

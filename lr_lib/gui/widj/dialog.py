@@ -1,6 +1,7 @@
 # -*- coding: UTF-8 -*-
 # диалог окно
 
+import codecs
 import queue
 import contextlib
 
@@ -69,7 +70,7 @@ class YesNoCancel(tk.Toplevel):
                     height = 5
                 self.tk_text.configure(height=height, width=100)
 
-            self.tk_text.insert(1.0, is_text)
+            self.tk_text.insert(1.0, codecs.decode(is_text, 'unicode_escape', errors='replace'))
             self.text_scrolly = ttk.Scrollbar(self, orient=tk.VERTICAL, command=self.tk_text.yview)
             self.text_scrollx = ttk.Scrollbar(self, orient=tk.HORIZONTAL, command=self.tk_text.xview)
             self.tk_text.configure(yscrollcommand=self.text_scrolly.set, xscrollcommand=self.text_scrollx.set, padx=0, pady=0)

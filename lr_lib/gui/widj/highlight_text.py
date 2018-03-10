@@ -68,12 +68,14 @@ class HighlightText(tk.Text):
         self.bind("<Configure>", self.linenumbers.redraw)
 
         # кдасс подсветки текста
-        self.highlight_lines = lr_highlight.HighlightLines(self, self.get_tegs_names())
+        self.highlight_lines = self.init()
         self.set_tegs()
 
-    def init(self):
+    def init(self) -> lr_highlight.HighlightLines:
         """пересоздать self.highlight_lines"""
-        self.highlight_lines = lr_highlight.HighlightLines(self, self.get_tegs_names())
+        self.highlight_lines = ob = lr_highlight.HighlightLines(self, self.get_tegs_names())
+        ob.highlight_callback()
+        return ob
 
     def undo(self, event):
         return self.edit_undo()

@@ -102,7 +102,7 @@ def event_action_getter(event):
 
 
 @lr_vars.T_POOL_decorator
-def all_wrsp_dict_web_reg_save_param(event) -> None:
+def all_wrsp_dict_web_reg_save_param(event, wrsp_web_=None) -> None:
     """все варианты создания web_reg_save_param, искать не ограничивая верхний номер Snapshot"""
     action = event_action_getter(event)
     m = action.max_inf_cbx_var.get()
@@ -111,7 +111,8 @@ def all_wrsp_dict_web_reg_save_param(event) -> None:
 
     with action.block():
         try:
-            wrsp_web_ = _all_wrsp_dict_web_reg_save_param(action, selection)
+            for wrsp_web_ in filter(bool, _all_wrsp_dict_web_reg_save_param(action, selection)):
+                continue
         finally:
             action.max_inf_cbx_var.set(m)
 
@@ -119,7 +120,7 @@ def all_wrsp_dict_web_reg_save_param(event) -> None:
             action.search_in_action(word=wrsp_web_.to_str())
 
 
-def _all_wrsp_dict_web_reg_save_param(action, selection: str) -> lr_web_.WebRegSaveParam:
+def _all_wrsp_dict_web_reg_save_param(action, selection: str) -> iter((lr_web_.WebRegSaveParam, )):
     """все варианты создания web_reg_save_param"""
     with contextlib.suppress(AttributeError):
         wrsp_and_param = action.web_action.websReport.wrsp_and_param_names
@@ -166,29 +167,42 @@ def _all_wrsp_dict_web_reg_save_param(action, selection: str) -> lr_web_.WebRegS
     y = lr_dialog.YesNoCancel(
         buttons=['Заменить/Создать', 'Выйти'],
         text_after='отображены все({ld} шт.) найденные варианты, которыми можно создать web_reg_save_param\n'
-                    'необходимо оставить только один вариант, удалив остальные.'.format(ld=len_dl),
+                   'Необходимо оставить только один вариант, удалив остальные.\n'
+                   'Либо можно оставить несколько, будут созданыы все, но использоватся, только первый.'.format(ld=len_dl),
         text_before=('"{p}" используется в Snapshots[{mi}:{ma}] = {s} шт.'.format(
             s=len(fl), p=selection, mi=min(fl), ma=max(fl))),
         is_text='\n\n'.join(w[1] for w in lr_vars.VarWrspDictList),
-        title='"{s}" len={l} : {f} варианта'.format(s=selection, l=len(selection), f=len_dl), parent=action,
+        title='"{s}" len={l} : {f} вариантов'.format(s=selection, l=len(selection), f=len_dl), parent=action,
         default_key='Заменить/Создать')
     ask = y.ask()
 
+    w_remove = True  # удалять старый, если создается несколько wrsp_web_
     if ask == 'Заменить/Создать':
-        wrsp = y.text.strip('\n')
-        # брать snapshot из камента
-        s = wrsp.split(lr_param.SnapInComentS, 1)[1]
-        s = s.split(lr_param.SnapInComentE, 1)[0]
-        s = s.split(',', 1)[0]  # может быть несколько?
-        snap = int(s)
+        word = 'LAST);'
+        text = y.text
+        for part in text.split(word):
+            part = part.strip('\n')
+            if not part.strip():
+                continue
+            wrsp = part + word
+            # брать snapshot из камента
+            s = wrsp.split(lr_param.SnapInComentS, 1)[1]
+            s = s.split(lr_param.SnapInComentE, 1)[0]
+            s = s.split(',', 1)[0]  # может быть несколько?
+            snap = int(s)
 
-        action.backup()
-        action.web_action.web_reg_save_param_remove(selection)  # удалить старый wrsp
-        wrsp_web_ = action.web_action.web_reg_save_param_insert(snap, wrsp)  # сохр wrsp в web
-        action.web_action.replace_bodys([(param, wrsp_web_.name)])  # заменить в телах web's
+            action.backup()
+            if w_remove:
+                action.web_action.web_reg_save_param_remove(selection)  # удалить старый wrsp
+
+            wrsp_web_ = action.web_action.web_reg_save_param_insert(snap, wrsp)  # сохр wrsp в web
+
+            if w_remove:
+                action.web_action.replace_bodys([(param, wrsp_web_.name)])  # заменить в телах web's
+                w_remove = False
+
+            yield wrsp_web_
         action.web_action_to_tk_text(websReport=True)  # вставить в action.c
-
-        return wrsp_web_
 
 
 @lr_vars.T_POOL_decorator
