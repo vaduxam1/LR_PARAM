@@ -46,14 +46,8 @@ class MainThreadUpdater:
         ob = self.working  # bool или lr_highlight.HighlightLines()
         if ob:
             lr_vars.Tk.after(lr_vars.MainThreadUpdateTime.get(), self._queue_listener)  # перезапуск
-
-            try:  # подсветка линий текста на экране
-                highlight_need = ob.highlight_need
-            except AttributeError:
-                return
-            else:
-                if highlight_need:
-                    lr_vars.Tk.after(ob.HighlightAfter1, ob._highlight_top_bottom_lines, ob.on_srean_line_nums)
+            with contextlib.suppress(AttributeError):
+                ob.highlight_top_bottom_lines()  # подсветка линий текста на экране
 
 
 class NoPool:

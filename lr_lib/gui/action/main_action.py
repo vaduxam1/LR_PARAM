@@ -130,11 +130,6 @@ class ActionWindow(lr_act_win.ActWin):
             '# buttonColorReset'
         )
         lr_tooltip.createToolTip(
-            self.highlight_MThread,
-            'искать индексы для подсветки линий, в M_POOL\n\t'
-            '# highlight_MThread'
-        )
-        lr_tooltip.createToolTip(
             self.highlight_After1,
             'задержка(мс), перед запуском подсветки всех линий на экране\n\t'
             '# highlight_After1'
@@ -403,7 +398,6 @@ class ActionWindow(lr_act_win.ActWin):
         self.highlight_cbx.grid(row=1, column=1, sticky=tk.NSEW, columnspan=5)
         self.background_color_combo.grid(row=2, column=1, sticky=tk.NSEW, columnspan=5)
         self.buttonColorReset.grid(row=3, column=1, sticky=tk.NSEW)
-        self.highlight_MThread.grid(row=3, column=2, sticky=tk.NSEW)
         self.highlight_After1.grid(row=3, column=3, sticky=tk.NSEW)
         self.highlight_After2.grid(row=3, column=4, sticky=tk.NSEW)
 

@@ -266,7 +266,6 @@ var_bar_3 = False  # show/hide info bar
 HighlightOn = True  # включить подсветку
 HighlightAfter1 = 250  # задержка(мс), перед запуском подсветки всех линий на экране
 HighlightAfter2 = 250  # задержка(мс), перед запуском подсветки одной линии на экране
-HighlightMPool = tk.BooleanVar(value=False)  # искать индексы для подсветки линий, в M_POOL
 Background = 'khaki'
 
 highlight_words_folder = os.path.join(lib_folder, 'etc')
