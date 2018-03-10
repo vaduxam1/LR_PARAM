@@ -51,6 +51,7 @@ class HighlightLines:
     def highlight_top_bottom_lines(self) -> None:
         """подсветить все линии на экране - запускается из MainThreadUpdater"""
         if self.highlight_need:
+            self.highlight_need = False  # больше не подсвечивать
             lr_vars.Tk.after(self.HighlightAfter1, self._highlight_top_bottom_lines, self.on_srean_line_nums)
 
     def _highlight_top_bottom_lines(self, on_srean_line_nums: (int, int)) -> None:
@@ -68,14 +69,14 @@ class HighlightLines:
         if self.on_srean_line_nums != on_srean_line_nums:
             return
 
-        line_indxs = {}
-        line = self.on_screen_lines.get(line_num)
+        line = self.on_screen_lines.pop(line_num, '')  # .pop() - больше не подсвечивать
+        if not line:
+            return
 
+        line_indxs = {}
         # вычислить
-        if line:
-            callback = line_indxs.setdefault
-            generate_line_tags_names_indxs(line, callback, self.tegs_names)
-            genetate_line_tags_purct_etc_indxs(line, callback)
+        generate_line_tags_names_indxs(line, line_indxs.setdefault, self.tegs_names)
+        genetate_line_tags_purct_etc_indxs(line, line_indxs.setdefault)
 
         # отфильтровать лишнее
         bg_indxs = set()  # все background
@@ -100,10 +101,6 @@ class HighlightLines:
             if indxs:
                 for (i_start, i_end) in join_indxs(indxs):
                     self.tk_text.tag_add(teg, '{}.{}'.format(line_num, i_start), '{}.{}'.format(line_num, i_end))
-
-        # больше не подсвечивать
-        self.on_screen_lines.pop(line_num, None)
-        self.highlight_need = False
 
 
 def join_indxs(indxs: {int, }) -> iter((int, int),):
