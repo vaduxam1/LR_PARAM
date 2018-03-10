@@ -64,54 +64,46 @@ class HighlightLines:
             lr_vars.Tk.after(self.HighlightAfter2, self._line_tegs_add, line_num, on_srean_line_nums)  # подсветить
 
     def _line_tegs_add(self, line_num: int, on_srean_line_nums: (int, int)) -> None:
-        """подсветить одну линию, всеми тегами"""
+        """вычислить координаты подсветки одной линии и подсветить"""
         if self.on_srean_line_nums != on_srean_line_nums:
             return
 
-        for (teg, i_start, i_end) in self.find_tag_indxs(line_num):
-            self.tk_text.tag_add(teg, '{}.{}'.format(line_num, i_start), '{}.{}'.format(line_num, i_end))
-
-        self.on_screen_lines.pop(line_num, None)  # больше не подсвечивать
-        self.highlight_need = False
-
-    def find_tag_indxs(self, line_num: int) -> iter(([str, (str, str)], )):
-        """вычислить координаты подсветки линии"""
         line_indxs = {}
         line = self.on_screen_lines.get(line_num)
+
+        # вычислить
         if line:
-            setdefault = line_indxs.setdefault
-            generate_line_tags_names_indxs(line, setdefault, self.tegs_names)
-            genetate_line_tags_purct_etc_indxs(line, setdefault)
+            callback = line_indxs.setdefault
+            generate_line_tags_names_indxs(line, callback, self.tegs_names)
+            genetate_line_tags_purct_etc_indxs(line, callback)
 
-            yield from filter_tag_indxs(line_indxs)
+        # отфильтровать лишнее
+        bg_indxs = set()  # все background
+        for teg in line_indxs:
+            indxs = set(line_indxs[teg])
+            line_indxs[teg] = indxs  # удалить индексы-дубли
 
-    def __bool__(self):
-        return True
+            if teg.startswith(lr_vars.ColorMainTegStartswith):
+                bg_indxs.update(indxs)
 
+        for teg in line_indxs:  # удалить все background индексы, из не-background тегов
+            if not teg.startswith(lr_vars.ColorMainTegStartswith):
+                line_indxs[teg] -= bg_indxs
 
-def filter_tag_indxs(line_indxs: dict) -> iter(([str, (str, str)], )):
-    """привести, вычисленные индексы текста, в нужный формат"""
-    bg_indxs = set()  # все background
-    for teg in line_indxs:
-        indxs = set(line_indxs[teg])
-        line_indxs[teg] = indxs  # удалить индексы-дубли
+        if lr_vars.OliveChildTeg in line_indxs:  # удалить из Olive тега все индексы, принадлежищие любому другому тегу
+            other_tegs = (line_indxs.keys() - lr_vars.minus_teg)
+            line_indxs[lr_vars.OliveChildTeg] -= set(i for t in other_tegs for i in line_indxs[t])
 
-        if teg.startswith(lr_vars.ColorMainTegStartswith):
-            bg_indxs.update(indxs)
+        # подсветить
+        for teg in line_indxs:
+            indxs = line_indxs[teg]
+            if indxs:
+                for (i_start, i_end) in join_indxs(indxs):
+                    self.tk_text.tag_add(teg, '{}.{}'.format(line_num, i_start), '{}.{}'.format(line_num, i_end))
 
-    for teg in line_indxs:  # удалить все background индексы, из не-background тегов
-        if not teg.startswith(lr_vars.ColorMainTegStartswith):
-            line_indxs[teg] -= bg_indxs
-
-    if lr_vars.OliveChildTeg in line_indxs:  # удалить из Olive тега все индексы, принадлежищие любому другому тегу
-        other_tegs = (line_indxs.keys() - lr_vars.minus_teg)
-        line_indxs[lr_vars.OliveChildTeg] -= set(i for t in other_tegs for i in line_indxs[t])
-
-    for teg in line_indxs:
-        indxs = line_indxs[teg]
-        if indxs:
-            for (i_start, i_end) in join_indxs(indxs):
-                yield teg, i_start, i_end
+        # больше не подсвечивать
+        self.on_screen_lines.pop(line_num, None)
+        self.highlight_need = False
 
 
 def join_indxs(indxs: {int, }) -> iter((int, int),):
