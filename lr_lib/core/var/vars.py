@@ -265,8 +265,8 @@ var_bar_3 = False  # show/hide info bar
 
 HighlightOn = True  # включить подсветку
 HighlightAfter0 = 250  # задержка(мс), перед перезапуском проверки необходимости подсветки
-HighlightAfter1 = 45  # задержка(мс), перед стартом подсветки всех линий, отображенных на экране
-HighlightAfter2 = 100  # задержка(мс), перед подсветкой одной линии
+HighlightAfter1 = 100  # задержка(мс), перед стартом подсветки всех линий, отображенных на экране
+HighlightAfter2 = 200  # задержка(мс), перед подсветкой одной линии
 Background = 'khaki'
 
 highlight_words_folder = os.path.join(lib_folder, 'etc')
