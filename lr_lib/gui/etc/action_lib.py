@@ -115,9 +115,9 @@ def all_wrsp_dict_web_reg_save_param(event, wrsp_web_=None) -> None:
                 continue
         finally:
             action.max_inf_cbx_var.set(m)
-            action.tk_text_to_web_action(websReport=False)
 
         if wrsp_web_:
+            action.tk_text_to_web_action(websReport=False)
             action.search_in_action(word=wrsp_web_.to_str())
 
 
