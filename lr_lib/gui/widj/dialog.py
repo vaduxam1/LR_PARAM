@@ -12,7 +12,7 @@ import tkinter.ttk as ttk
 class YesNoCancel(tk.Toplevel):
     """диалог окно, тк велосипед, работает только в потоке"""
     def __init__(self, buttons: [str, ], text_before: str, text_after: str, title: str, parent=None, default_key='',
-                 is_text=None, focus=None, combo_dict=None):
+                 is_text=None, focus=None, combo_dict=None, t_enc=False):
         super().__init__(master=parent, padx=0, pady=0)
 
         self._wind_attributes()
@@ -70,7 +70,9 @@ class YesNoCancel(tk.Toplevel):
                     height = 5
                 self.tk_text.configure(height=height, width=100)
 
-            self.tk_text.insert(1.0, codecs.decode(is_text, 'unicode_escape', errors='replace'))
+            if t_enc:
+                is_text = codecs.decode(is_text, 'unicode_escape', errors='replace')
+            self.tk_text.insert(1.0, is_text)
             self.text_scrolly = ttk.Scrollbar(self, orient=tk.VERTICAL, command=self.tk_text.yview)
             self.text_scrollx = ttk.Scrollbar(self, orient=tk.HORIZONTAL, command=self.tk_text.xview)
             self.tk_text.configure(yscrollcommand=self.text_scrolly.set, xscrollcommand=self.text_scrollx.set, padx=0, pady=0)
@@ -94,6 +96,7 @@ class YesNoCancel(tk.Toplevel):
         """стереть = новый текст в self.tk_text"""
         self.tk_text.delete(1.0, tk.END)
         self.tk_text.insert(1.0, text)
+        return
 
     def _wind_attributes(self) -> None:
         """сделать окно похожим на dialog"""
@@ -103,6 +106,7 @@ class YesNoCancel(tk.Toplevel):
         self.protocol('WM_DELETE_WINDOW', self.close)  # remove close_threads
         self.grid_rowconfigure(0, weight=1)
         self.grid_columnconfigure(0, weight=1)
+        return
 
     def ask(self) -> str:
         """приостановить поток, до получения ответа"""
@@ -117,6 +121,7 @@ class YesNoCancel(tk.Toplevel):
     def close(self) -> None:
         """отмена при выходе"""
         self.queue.put_nowait(self.default_key)
+        return
 
     def center_widget(self) -> None:
         """center window on screen"""
@@ -126,3 +131,4 @@ class YesNoCancel(tk.Toplevel):
         y = (self.winfo_screenheight() - self.winfo_reqheight()) / 2
         self.geometry("+%d+%d" % (x, y))
         self.deiconify()
+        return

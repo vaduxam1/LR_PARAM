@@ -55,6 +55,7 @@ def mouse_web_reg_save_param(widget, param, mode=('SearchAndReplace', 'highlight
         elif 'highlight' in mode:
             widget.action.tk_text.highlight_mode(param)
             widget.action.tk_text.highlight_apply()
+    return
 
 
 @lr_vars.T_POOL_decorator
@@ -77,6 +78,7 @@ def rClick_Param(event, *args, **kwargs) -> None:
 
     callback = lambda: mouse_web_reg_save_param(widget, param, *args, set_param=False, **kwargs)
     lr_vars.Window.get_files(param=param, callback=callback, action=action)
+    return
 
 
 def remove_web_reg_save_param_from_action(event, selection=None, find=True) -> None:
@@ -89,6 +91,7 @@ def remove_web_reg_save_param_from_action(event, selection=None, find=True) -> N
 
     if find and param:
         event.widget.action.search_in_action(word=param)
+    return
 
 
 def event_action_getter(event):
@@ -119,6 +122,7 @@ def all_wrsp_dict_web_reg_save_param(event, wrsp_web_=None) -> None:
         if wrsp_web_:
             action.tk_text_to_web_action(websReport=False)
             action.search_in_action(word=wrsp_web_.to_str())
+    return
 
 
 def _all_wrsp_dict_web_reg_save_param(action, selection: str) -> iter((lr_web_.WebRegSaveParam, )):
@@ -276,6 +280,7 @@ def rClick_max_inf(event) -> None:
     selection = event.widget.selection_get()
     m = re.sub("\D", "", selection)
     lr_vars.VarSearchMaxSnapshot.set(int(m))
+    return
 
 
 def rClick_min_inf(event) -> None:
@@ -283,6 +288,7 @@ def rClick_min_inf(event) -> None:
     selection = event.widget.selection_get()
     m = re.sub("\D", "", selection)
     lr_vars.VarSearchMinSnapshot.set(int(m))
+    return
 
 
 def rClick_Search(event) -> None:
@@ -290,6 +296,7 @@ def rClick_Search(event) -> None:
     selection = event.widget.selection_get()
     with contextlib.suppress(AttributeError):
         event.widget.action.search_in_action(word=selection)
+    return
 
 
 @lr_vars.T_POOL_decorator
@@ -322,6 +329,7 @@ def rename_transaction(event, parent=None, s='lr_start_transaction("', e='lr_end
         event.widget.delete(1.0, tk.END)
         event.widget.insert(1.0, '\n'.join(lit))  # вставить
         event.widget.action.save_action_file(file_name=False)
+    return
 
 
 @lr_vars.T_POOL_decorator
@@ -364,6 +372,7 @@ def encoder(event, action=None) -> None:
         if action:
             widget.action.save_action_file(file_name=False)
             widget.action.search_in_action(word=new_name)
+    return
 
 
 def add_highlight_words_to_file(event) -> None:
@@ -374,6 +383,7 @@ def add_highlight_words_to_file(event) -> None:
         f.write(selection + '\n')
 
     rClick_add_highlight(event, 'foreground', lr_vars.DefaultColor, 'добавить', find=True)
+    return
 
 
 def rClick_add_highlight(event, option: str, color: str, val: str, find=False) -> None:
@@ -395,6 +405,7 @@ def rClick_add_highlight(event, option: str, color: str, val: str, find=False) -
     if find:
         event.widget.action.search_in_action(word=selection)
         event.widget.action.tk_text_see()
+    return
 
 
 def snapshot_files(widget, folder_record='', i_num=0, selection='') -> None:
@@ -409,6 +420,7 @@ def snapshot_files(widget, folder_record='', i_num=0, selection='') -> None:
         i_num = ''.join(filter(str.isnumeric, selection))
 
     lr_responce_files.RespFiles(widget, i_num, folder_record, folder_response)
+    return
 
 
 def file_from_selection(event) -> str:
@@ -506,3 +518,5 @@ def all_wrsp_auto_rename(action, *a, _l='"LB=', _r='"RB=') -> None:
 
             action.web_action.set_text_list(text, websReport=True)
             action.web_action_to_tk_text(websReport=False)
+    return
+

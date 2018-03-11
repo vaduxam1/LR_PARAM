@@ -14,6 +14,7 @@ def center_widget(widget) -> None:
     y = (widget.winfo_screenheight() - widget.winfo_reqheight()) / 2
     widget.geometry("+%d+%d" % (x, y))
     widget.deiconify()
+    return
 
 
 def repA(widget) -> None:
@@ -21,8 +22,9 @@ def repA(widget) -> None:
     rep = widget.action.web_action.websReport.all_in_one
     t = 'transac_len={}, param_len={}'.format(len(rep), len(widget.action.web_action.websReport.wrsp_and_param_names))
     y = lr_dialog.YesNoCancel(buttons=['OK'], text_before='repA', text_after='websReport.all_in_one',
-                              is_text=lr_other.get_json(rep), title=t, parent=widget.action)
+                              is_text=lr_other.get_json(rep), title=t, parent=widget.action, t_enc=True,)
     lr_vars.T_POOL_decorator(y.ask)()
+    return
 
 
 def repB(widget, counter=None, st='\n----\n') -> None:
@@ -45,10 +47,11 @@ def repB(widget, counter=None, st='\n----\n') -> None:
 
     y = lr_dialog.YesNoCancel(
         buttons=['OK'], text_before=tb, text_after='{} шт'.format(counter), is_text='\n\n{}'.format(ta),
-        title='создано: {} шт.'.format(counter), parent=widget.action
+        title='создано: {} шт.'.format(counter), parent=widget.action, t_enc=True,
     )
     lr_vars.T_POOL_decorator(y.ask)()
     # lr_vars.Logger.trace('{}\n\n{}'.format(tb, ta))
+    return
 
 
 def get_transaction(text: str) -> iter((str,)):
