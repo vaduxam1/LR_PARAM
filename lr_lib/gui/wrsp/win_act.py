@@ -37,6 +37,8 @@ class WinAct(lr_win_frame.WinFrame):
             self.action_windows[action.id_] = action  # сохранить
 
             action._start_auto_update_action_info_lab()  # автообновление label состояния пула
+            action.tk_text.highlight_callback()  # автообновление потсветки текста
+
             self.after(100, self.focus_set)  # тк гдето само активируется
             self.after(500, action.focus_set)  # открыть поверх главного окна
 

@@ -18,7 +18,7 @@ from lr_lib.etc.help import (COLORS, HEX, )
 #####################################
 # главные переменные
 
-VERSION = 'v10.5.0'
+VERSION = 'v10.5.1'
 lib_folder = 'lr_lib'
 Tk = tk.Tk()  # tkinter
 original_callback_exception = Tk.report_callback_exception
@@ -240,7 +240,7 @@ VarToolTipTimeout = tk.StringVar(value=9000)  # время жизни всплы
 ToolTipFont = ('Arial', '7', 'bold italic')  # всплывающие подсказки
 DefaultFont = 'Arial 7'  # шрифт кнопок и тд
 DefaultLBRBFont = 'Arial 8 bold'  # шрифт LB/RB(5)
-InfoLabelUpdateTime = tk.IntVar(value=2000)  # (мс) обновление action.label с процентами и пулом
+InfoLabelUpdateTime = tk.IntVar(value=1000)  # (мс) обновление action.label с процентами и пулом
 
 DefaultActionHighlightFont = 'Eras Medium ITC'  # шрифт подсвеченного текста action
 DefaultActionHighlightFontSize = 9  # размер подсвеченного шрифта текста action
@@ -264,7 +264,7 @@ var_bar_3 = False  # show/hide info bar
 # подсветка
 
 HighlightOn = True  # включить подсветку
-HighlightAfter0 = 250  # задержка(мс), перед перезапуском проверки необходимости подсветки
+HighlightAfter0 = 100  # задержка(мс), перед перезапуском проверки необходимости подсветки
 HighlightAfter1 = 100  # задержка(мс), перед стартом подсветки всех линий, отображенных на экране
 HighlightAfter2 = 200  # задержка(мс), перед подсветкой одной линии
 Background = 'khaki'

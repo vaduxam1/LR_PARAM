@@ -35,7 +35,7 @@ def auto_update_action_info_lab(self, config, tk_text, id_: int, timeout: int, c
         return
 
     lines = tk_text.highlight_lines
-    (top, bottom) = lines.on_srean_line_nums
+    (top, bottom) = lines.on_sreen_line_nums
     title(ttl(txt=_set_title(), top=top, bottom=bottom, v=ver, lmax=lines._max_line,
               p=round(int(tk_text.linenumbers.linenum) // lines._max_line_proc)))
 

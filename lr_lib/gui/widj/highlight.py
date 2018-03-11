@@ -23,7 +23,7 @@ class HighlightLines:
 
         # неподсвеченные линии текста
         self.on_screen_lines = {num: line.rstrip() for (num, line) in enumerate(lines, start=1) if line.strip()}
-        self.on_srean_line_nums = (0, 0)  # текущие (верхний, нижнй) номера линий, отображенных на экране
+        self.on_sreen_line_nums = (0, 0)  # текущие (верхний, нижнй) номера линий, отображенных на экране
 
         self.highlight_enable = self.tk_text.highlight_var.get()
         self.set_thread_attrs()  # подсвечивать в фоне/главном потоке
@@ -34,45 +34,50 @@ class HighlightLines:
 
         # признак необходимости подсветить линии на экране
         self.highlight_need = True
+        self.after = self.tk_text.after
 
     def set_thread_attrs(self) -> None:
-        """подсвечивать в фоне/главном потоке"""
+        """взять настройки подсветки, из виджетов"""
         def set() -> None:
+            """lr_vars.MainThreadUpdater.submit(set)"""
             self.highlight_enable = self.tk_text.highlight_var.get()
+            self.HighlightAfter0 = int(self.tk_text.action.highlight_After0.get())
             self.HighlightAfter1 = int(self.tk_text.action.highlight_After1.get())
-            self.HighlightAfter1 = int(self.tk_text.action.highlight_After0.get())
             self.HighlightAfter2 = int(self.tk_text.action.highlight_After2.get())
+            return
+
         lr_vars.MainThreadUpdater.submit(set)
+        return
 
-    def set_top_bottom(self, on_srean_line_nums: (int, int)) -> None:
+    def set_top_bottom(self, on_srean_line_nums: (int, int), __highlight=True) -> None:
         """новые границы показанных линий"""
-        self.on_srean_line_nums = on_srean_line_nums
+        self.on_sreen_line_nums = on_srean_line_nums
         if self.highlight_enable:  # подсвечивать при вкл
-            self.highlight_need = True
+            self.highlight_need = __highlight
+        return
 
-    def highlight_callback(self) -> None:
+    def highlight_callback(self, __highlight=False) -> None:
         """подсветить все линии на экране, и перезапустить"""
         if self.highlight_need:
-            self.highlight_need = False
+            self.highlight_need = __highlight
             # подсветить
-            lr_vars.Tk.after(self.HighlightAfter1, self.highlight_top_bottom_lines, self.on_srean_line_nums)
-
-        if self.tk_text.highlight_lines.id == self.id:  # перезапустить
-            lr_vars.Tk.after(self.HighlightAfter0, self.highlight_callback)
+            self.after(self.HighlightAfter1, self.highlight_top_bottom_lines, self.on_sreen_line_nums)
+        return
 
     def highlight_top_bottom_lines(self, on_srean_line_nums: (int, int)) -> None:
         """подсветить все линии на экране
         получать индексы и подсвечивать on-screen линии текста, пока top и bottom не изменились"""
-        if self.on_srean_line_nums != on_srean_line_nums:
+        if self.on_sreen_line_nums != on_srean_line_nums:
             return
 
         (top, bottom) = on_srean_line_nums
         for line_num in (range(top, (bottom + 1)) & self.on_screen_lines.keys()):
-            lr_vars.Tk.after(self.HighlightAfter2, self._line_tegs_add, line_num, on_srean_line_nums)  # подсветить
+            self.after(self.HighlightAfter2, self._line_tegs_add, line_num, on_srean_line_nums)  # подсветить
+        return
 
-    def _line_tegs_add(self, line_num: int, on_srean_line_nums: (int, int)) -> None:
+    def _line_tegs_add(self, line_num: int, on_srean_line_nums: (int, int), XY='{}.{}'.format) -> None:
         """вычислить координаты подсветки одной линии и подсветить"""
-        if self.on_srean_line_nums != on_srean_line_nums:
+        if self.on_sreen_line_nums != on_srean_line_nums:
             return
 
         line = self.on_screen_lines.pop(line_num, '')  # .pop() - больше не подсвечивать
@@ -102,20 +107,22 @@ class HighlightLines:
             line_indxs[lr_vars.OliveChildTeg] -= set(i for t in other_tegs for i in line_indxs[t])
 
         # подсветить
+        tag_add = self.tk_text.tag_add
         for teg in line_indxs:
             indxs = line_indxs[teg]
             if indxs:
-                for (i_start, i_end) in join_indxs(indxs):
-                    self.tk_text.tag_add(teg, '{}.{}'.format(line_num, i_start), '{}.{}'.format(line_num, i_end))
+                for (i_start, i_end) in join_indxs(*sorted(indxs)):
+                    tag_add(teg, XY(line_num, i_start), XY(line_num, i_end))
+        return
 
 
-def join_indxs(indxs: {int, }) -> iter((int, int),):
-    """объединить идущие подряд индексы, увеличить посл.индекс (+1):
-    {3, 10, 4, 7, 9, 2, 1, 11} -> (1, 4(+1)), (7, 7(+1)), (9, 11(+1)) -> (1, 5), (7, 8), (9, 12)"""
-    (index, *_indxs) = sorted(indxs)
+def join_indxs(index: int, *indxs: sorted) -> iter((int, int),):
+    """ join_indxs(*sorted(indxs))
+    объединить идущие подряд индексы, увеличить посл.индекс (+1):
+     indxs = {1, 2, 3, 4, 7, 9, 10, 11} -> (1, 4(+1)), (7, 7(+1)), (9, 11(+1)) -> (1, 5), (7, 8), (9, 12)"""
     i_end = i_start = index
 
-    for index in _indxs:
+    for index in indxs:
         i_end += 1
 
         if index != i_end:
@@ -147,6 +154,7 @@ def generate_line_tags_names_indxs(line: str, setdefault: callable, teg_names: {
                     olive_callback(i)
                 else:
                     teg_callback(i)
+    return
 
 
 punctuation_digits = set(string.punctuation + string.digits)
@@ -165,3 +173,4 @@ def genetate_line_tags_purct_etc_indxs(line: str, setdefault: callable) -> None:
             punct_digit_callback(index)
         else:
             rus_callback(index)
+    return

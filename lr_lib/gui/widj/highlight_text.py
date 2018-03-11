@@ -73,9 +73,13 @@ class HighlightText(tk.Text):
 
     def init(self) -> lr_highlight.HighlightLines:
         """пересоздать self.highlight_lines"""
-        self.highlight_lines = ob = lr_highlight.HighlightLines(self, self.get_tegs_names())
-        ob.highlight_callback()
-        return ob
+        self.highlight_lines = lr_highlight.HighlightLines(self, self.get_tegs_names())
+        return self.highlight_lines
+
+    def highlight_callback(self):
+        if self.action.id_ in lr_vars.Window.action_windows:  # перезапустить
+            self.highlight_lines.highlight_callback()
+            lr_vars.Tk.after(self.highlight_lines.HighlightAfter0, self.highlight_callback)
 
     def undo(self, event):
         return self.edit_undo()
