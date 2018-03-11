@@ -26,7 +26,7 @@ class HighlightLines:
         self.on_sreen_line_nums = (0, 0)  # текущие (верхний, нижнй) номера линий, отображенных на экране
 
         self.highlight_enable = self.tk_text.highlight_var.get()
-        self.set_thread_attrs()  # подсвечивать в фоне/главном потоке
+        self.set_thread_attrs()
 
         self.HighlightAfter0 = lr_vars.HighlightAfter0
         self.HighlightAfter1 = lr_vars.HighlightAfter1
@@ -49,35 +49,35 @@ class HighlightLines:
         lr_vars.MainThreadUpdater.submit(set)
         return
 
-    def set_top_bottom(self, on_srean_line_nums: (int, int), __highlight=True) -> None:
+    def set_top_bottom(self, on_sreen_line_nums: (int, int), __highlight=True) -> None:
         """новые границы показанных линий"""
-        self.on_sreen_line_nums = on_srean_line_nums
+        self.on_sreen_line_nums = on_sreen_line_nums
         if self.highlight_enable:  # подсвечивать при вкл
             self.highlight_need = __highlight
         return
 
     def highlight_callback(self, __highlight=False) -> None:
-        """подсветить все линии на экране, и перезапустить"""
+        """подсветить все линии на экране"""
         if self.highlight_need:
             self.highlight_need = __highlight
             # подсветить
             self.after(self.HighlightAfter1, self.highlight_top_bottom_lines, self.on_sreen_line_nums)
         return
 
-    def highlight_top_bottom_lines(self, on_srean_line_nums: (int, int)) -> None:
+    def highlight_top_bottom_lines(self, on_sreen_line_nums: (int, int)) -> None:
         """подсветить все линии на экране
         получать индексы и подсвечивать on-screen линии текста, пока top и bottom не изменились"""
-        if self.on_sreen_line_nums != on_srean_line_nums:
+        if self.on_sreen_line_nums != on_sreen_line_nums:
             return
 
-        (top, bottom) = on_srean_line_nums
+        (top, bottom) = on_sreen_line_nums
         for line_num in (range(top, (bottom + 1)) & self.on_screen_lines.keys()):
-            self.after(self.HighlightAfter2, self._line_tegs_add, line_num, on_srean_line_nums)  # подсветить
+            self.after(self.HighlightAfter2, self._line_tegs_add, line_num, on_sreen_line_nums)  # подсветить
         return
 
-    def _line_tegs_add(self, line_num: int, on_srean_line_nums: (int, int), XY='{}.{}'.format) -> None:
+    def _line_tegs_add(self, line_num: int, on_sreen_line_nums: (int, int), XY='{}.{}'.format) -> None:
         """вычислить координаты подсветки одной линии и подсветить"""
-        if self.on_sreen_line_nums != on_srean_line_nums:
+        if self.on_sreen_line_nums != on_sreen_line_nums:
             return
 
         line = self.on_screen_lines.pop(line_num, '')  # .pop() - больше не подсвечивать

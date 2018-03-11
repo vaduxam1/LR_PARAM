@@ -76,10 +76,12 @@ class HighlightText(tk.Text):
         self.highlight_lines = lr_highlight.HighlightLines(self, self.get_tegs_names())
         return self.highlight_lines
 
-    def highlight_callback(self):
+    def highlight_callback(self) -> None:
+        """подсветить все линии на экране, и перезапустить"""
         if self.action.id_ in lr_vars.Window.action_windows:  # перезапустить
             self.highlight_lines.highlight_callback()
             lr_vars.Tk.after(self.highlight_lines.HighlightAfter0, self.highlight_callback)
+        return
 
     def undo(self, event):
         return self.edit_undo()
@@ -91,6 +93,7 @@ class HighlightText(tk.Text):
         """заменить весь текст на новый"""
         self.delete(1.0, tk.END)
         self.insert(1.0, text)
+        return
 
     def _text_checkbox(self) -> (str, str, int, int):
         """text checkbox's get,
@@ -113,14 +116,15 @@ class HighlightText(tk.Text):
             parent = self
 
         tegs = lr_vars.VarColorTeg.get()
-        w, s, u, o = self.__class__._text_checkbox(parent)
+        (w, s, u, o) = self.__class__._text_checkbox(parent)
 
         size = parent.size_var.get()
-        f = Font(family=parent.font_var.get(), size=size, weight=w, slant=s, underline=u, overstrike=o)
+        fnt = Font(family=parent.font_var.get(), size=size, weight=w, slant=s, underline=u, overstrike=o)
 
         for g in ground:
             for color in tegs:
-                self.tag_config(g + color, **{g: color, 'font': f, })
+                self.tag_config(g + color, **{g: color, 'font': fnt, })
+        return
 
     def reset_highlight(self, highlight=True) -> None:
         """сбросить текст настройки цветов"""
@@ -128,12 +132,14 @@ class HighlightText(tk.Text):
         self.highlight_dict.update(copy.deepcopy(lr_vars.VarDefaultColorTeg))
         if highlight:
             self.highlight_apply()
+        return
 
     def set_font(self, *a, size=None) -> None:
         if size is None:
             size = self.size_var.get()
         w, s, u, o = self._text_checkbox()
         self.configure(font=Font(family=self.font_var.get(), size=size, weight=w, slant=s, underline=u, overstrike=o))
+        return
 
     def highlight_apply(self, *a) -> None:
         """tk.Text tag_add/remove, сформировать on_screen_lines "карту" подсветки"""
@@ -146,6 +152,7 @@ class HighlightText(tk.Text):
 
             self.init()
             self.action.report_position()  # показать
+        return
 
     def get_tegs_names(self) -> {str: {str,}}:
         """_tegs_names + \\xCE\\xE1"""
@@ -194,6 +201,7 @@ class HighlightText(tk.Text):
                 self.highlight_mode(line.strip())
         else:
             self.highlight_mode(web_.name)
+        return
 
     def highlight_mode(self, word: str, option='foreground', color=lr_vars.DefaultColor) -> None:
         """залить цветом все word в tk.Text widget"""
@@ -202,6 +210,7 @@ class HighlightText(tk.Text):
             colors[color].add(word)
         except (KeyError, AttributeError):
             colors[color] = {word}
+        return
 
 
 class TextLineNumbers(tk.Canvas):
@@ -227,3 +236,5 @@ class TextLineNumbers(tk.Canvas):
             self.linenum = str(i).split(".", 1)[0]
             self.create_text(2, y, anchor="nw", text=self.linenum)
             i = self.tk_text.index("%s+1line" % i)
+
+        return
