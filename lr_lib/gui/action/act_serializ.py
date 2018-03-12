@@ -47,8 +47,16 @@ class TkTextWebSerialization(lr_act_backup.ActBackup):
         if text is None:
             text = self.tk_text.get(1.0, tk.END)
 
+        # сохранить позицию с тексте, перед его заменой
+        pos = self.tk_text.cursor_position
+
         self.web_action.set_text_list(text, websReport=websReport)
         self.web_action_to_tk_text(websReport=False, highlight_apply=highlight_apply, gui_reset=gui_reset)
+
+        # востановить позицию с тексте
+        self.tk_text.mark_set("insert", pos)
+        self.tk_text.focus_set()
+        self.tk_text.see("insert")
 
     def open_action(self, file=None, errors='replace', callback=None) -> None:
         """сформировать action.c"""

@@ -18,6 +18,7 @@ class HighlightText(tk.Text):
     """Colored tk.Text + line_numbers"""
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.cursor_position = self.index(tk.INSERT)  # координаты текущей позиции в tk.Text
 
         self.action = args[0]  # parent
 
@@ -76,11 +77,13 @@ class HighlightText(tk.Text):
         self.highlight_lines = lr_highlight.HighlightLines(self, self.get_tegs_names())
         return self.highlight_lines
 
-    def highlight_callback(self) -> None:
+    def after_callback(self) -> None:
         """подсветить все линии на экране, и перезапустить"""
+        self.cursor_position = self.index(tk.INSERT)
+
         if self.action.id_ in lr_vars.Window.action_windows:  # перезапустить
             self.highlight_lines.highlight_callback()
-            lr_vars.Tk.after(self.highlight_lines.HighlightAfter0, self.highlight_callback)
+            lr_vars.Tk.after(self.highlight_lines.HighlightAfter0, self.after_callback)
         return
 
     def undo(self, event):
