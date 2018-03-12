@@ -285,7 +285,6 @@ class ActionWebsAndLines:
                     replace_list = [(wn, param), ]
 
                     self.replace_bodys(replace_list, is_wrsp=is_wrsp)  # удалить из всех web
-                    break
 
         return param
 
