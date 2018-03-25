@@ -10,6 +10,7 @@ import collections
 
 import lr_lib
 import lr_lib.core.etc.other
+import lr_lib.etc.excepthook
 import lr_lib.core.var.vars as lr_vars
 
 
