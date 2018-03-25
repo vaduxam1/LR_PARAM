@@ -7,7 +7,7 @@ import threading
 
 from queue import Empty, PriorityQueue
 
-import lr_lib.etc.excepthook as lr_excepthook
+import lr_lib
 import lr_lib.core.var.vars as lr_vars
 
 
@@ -102,7 +102,7 @@ class SThread(threading.Thread, SThreadIOQueue):
                         return
                     continue
                 except Exception:
-                    return lr_excepthook.excepthook(*sys.exc_info())
+                    return lr_lib.etc.excepthook.excepthook(*sys.exc_info())
 
                 else:
                     try:  # выполнить задачу
@@ -112,7 +112,7 @@ class SThread(threading.Thread, SThreadIOQueue):
                     except Exception:  # выход/ошибка
                         if task is None:
                             return
-                        return lr_excepthook.excepthook(*sys.exc_info())
+                        return lr_lib.etc.excepthook.excepthook(*sys.exc_info())
 
                     finally:  # поток свободен
                         self.task = self.queue_in.task_done()

@@ -4,14 +4,14 @@
 import tkinter as tk
 import tkinter.ttk as ttk
 
+import lr_lib.gui.wrsp.win_block
 import lr_lib.core.var.vars as lr_vars
-import lr_lib.gui.wrsp.win_block as lr_win_block
 
 
-class WinText(lr_win_block.WinBlock):
+class WinText(lr_lib.gui.wrsp.win_block.WinBlock):
     """tk.Text"""
     def __init__(self):
-        lr_win_block.WinBlock.__init__(self)
+        lr_lib.gui.wrsp.win_block.WinBlock.__init__(self)
 
         self.tk_text = tk.Text(
             self, foreground='grey', background=lr_vars.Background, wrap=tk.NONE, height=10, padx=0, pady=0, undo=True,

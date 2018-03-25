@@ -3,15 +3,15 @@
 
 import tkinter.ttk as ttk
 
-import lr_lib.gui.wrsp.win_widj as lr_win_widj
+import lr_lib
+import lr_lib.gui.wrsp.win_widj
 import lr_lib.core.var.vars as lr_vars
-import lr_lib.core.etc.other as lr_other
 
 
-class WinMaxMin(lr_win_widj.WinWidj):
+class WinMaxMin(lr_lib.gui.wrsp.win_widj.WinWidj):
     """min_inf / max_inf"""
     def __init__(self):
-        lr_win_widj.WinWidj.__init__(self)
+        lr_lib.gui.wrsp.win_widj.WinWidj.__init__(self)
 
         self.max_inf = ttk.Combobox(
             self.show_param_frame, width=10, textvariable=lr_vars.VarSearchMaxSnapshot, justify='center',
@@ -31,7 +31,7 @@ class WinMaxMin(lr_win_widj.WinWidj):
 
     def set_maxmin_inf(self, files):
         """установка виджетов min_inf max_inf"""
-        infs = list(lr_other.get_files_infs(files))
+        infs = list(lr_lib.core.etc.other.get_files_infs(files))
         self.max_inf['values'] = list(reversed(infs))
         self.min_inf['values'] = infs
 

@@ -6,16 +6,16 @@ import tkinter.ttk as ttk
 
 from tkinter import messagebox
 
-import lr_lib.gui.widj.tooltip as lr_tooltip
-import lr_lib.gui.action.act_serializ as lr_act_serializ
+import lr_lib.gui.widj.tooltip
+import lr_lib.gui.action.act_serializ
 import lr_lib.core.var.vars as lr_vars
 
 
-class ActSearch(lr_act_serializ.TkTextWebSerialization):
+class ActSearch(lr_lib.gui.action.act_serializ.TkTextWebSerialization):
     """поиск текста"""
 
     def __init__(self):
-        lr_act_serializ.TkTextWebSerialization.__init__(self)
+        lr_lib.gui.action.act_serializ.TkTextWebSerialization.__init__(self)
 
         self._search_index = -1
 
@@ -126,7 +126,7 @@ class ActSearch(lr_act_serializ.TkTextWebSerialization):
                             self.search_entry.current(0)
 
             self.search_res_combo['values'] = self._search_text(word=word)
-            _, a, b = lr_tooltip.widget_values_counter(self.search_res_combo)
+            _, a, b = lr_lib.gui.widj.tooltip.widget_values_counter(self.search_res_combo)
             self.up_search_button['text'] = self._uptext % '{0}/{1}'.format(a, b)
 
             if not self.search_res_combo['values']:
@@ -154,7 +154,7 @@ class ActSearch(lr_act_serializ.TkTextWebSerialization):
             self.tk_text.mark_set("insert", pos)
             self.tk_text.focus_set()
             self.tk_text.see("insert")
-            _, a, b = lr_tooltip.widget_values_counter(self.search_res_combo)
+            _, a, b = lr_lib.gui.widj.tooltip.widget_values_counter(self.search_res_combo)
             self.up_search_button.config(text=self._uptext % '{0}/{1}'.format(a, b))
 
         lr_vars.MainThreadUpdater.submit(callback)
@@ -199,7 +199,7 @@ class ActSearch(lr_act_serializ.TkTextWebSerialization):
             self.search_entry.config(font=lr_vars.DefaultFont)
             self.search_res_combo.config(font=lr_vars.DefaultFont)
             self.down_search_button.config(background='lightgray')
-            _, a, b = lr_tooltip.widget_values_counter(self.search_res_combo)
+            _, a, b = lr_lib.gui.widj.tooltip.widget_values_counter(self.search_res_combo)
             self.up_search_button.config(text=self._uptext % '{0}/{1}'.format(a, b), background='lightgrey')
             self.update()
 

@@ -9,7 +9,7 @@ import logging.handlers
 
 from tkinter import messagebox
 
-import lr_lib.core.etc.other as lr_other
+import lr_lib
 import lr_lib.core.var.vars as lr_vars
 
 
@@ -61,7 +61,7 @@ def _LoggerLevelCreator(level_num: int, level: str) -> None:
                 self._log(level_num, message, args, **kwargs)  # оригинальный logging метод
 
             if notepad:
-                lr_other.openTextInEditor(message)
+                lr_lib.core.etc.other.openTextInEditor(message)
             # окно с ошибкой
             if lr_vars.VarShowPopupWindow.get() and (level in ('critical', 'error', 'warning',)):
                 if (parent is None) and lr_vars.Window:  # сделать action родителем

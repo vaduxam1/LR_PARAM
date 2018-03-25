@@ -4,15 +4,15 @@
 import tkinter as tk
 import tkinter.ttk as ttk
 
-import lr_lib.gui.action.act_var as lr_act_var
+import lr_lib.gui.action.act_var
 import lr_lib.core.var.vars as lr_vars
 
 
-class ActWidj(lr_act_var.ActVar):
+class ActWidj(lr_lib.gui.action.act_var.ActVar):
     """виджеты, которые надо создать первыми"""
 
     def __init__(self):
-        lr_act_var.ActVar.__init__(self)
+        lr_lib.gui.action.act_var.ActVar.__init__(self)
 
         # bars
         self.toolbar = tk.LabelFrame(

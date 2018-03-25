@@ -3,10 +3,8 @@
 
 import contextlib
 
+import lr_lib
 import lr_lib.core.var.vars as lr_vars
-import lr_lib.core.wrsp.param as lr_param
-import lr_lib.core.etc.lbrb_checker as lr_lbrb_checker
-import lr_lib.gui.widj.dialog as lr_dialog
 
 
 def read_web_type(first_line: str, s1='("', s2='(') -> str:
@@ -16,19 +14,19 @@ def read_web_type(first_line: str, s1='("', s2='(') -> str:
     if len(t) == 2:
         return t[0].strip()
     else:
-        raise UserWarning('{l} не содержит {s}'.format(l=first_line, s=[s1, s2]))
+        raise UserWarning('{fl} не содержит {s}'.format(fl=first_line, s=[s1, s2]))
 
 
-def _body_replace(body_split, len_body_split, search, replace, is_wrsp=True) -> iter((str, )):
+def _body_replace(body_split: [str, ], len_body_split: int, search: str, replace: str, is_wrsp=True) -> iter((str, )):
     """замена search в body"""
     yield body_split[0]
     if is_wrsp:
-        replace = lr_param.param_bounds_setter(replace)
+        replace = lr_lib.core.wrsp.param.param_bounds_setter(replace)
 
     for indx in range(1, len_body_split):
         left = body_split[indx - 1]
         right = body_split[indx]
-        if lr_lbrb_checker.check_bound_lb_rb(left, right):
+        if lr_lib.core.etc.lbrb_checker.check_bound_lb_rb(left, right):
             yield replace + right
         else:
             yield search + right
@@ -58,9 +56,9 @@ class WebAny:
     """любые web_"""
     count = 0
 
-    def __init__(self, parent_AWAL, lines_list: list, comments: str, transaction: str, _type=''):
-        self.parent_AWAL = parent_AWAL  # ActionWebsAndLines
-        self.tk_text = self.parent_AWAL.action.tk_text
+    def __init__(self, ActionWebsAndLines, lines_list: list, comments: str, transaction: str, _type=''):
+        self.ActionWebsAndLines = ActionWebsAndLines  # ActionWebsAndLines
+        self.tk_text = self.ActionWebsAndLines.action.tk_text
         self.lines_list = lines_list
 
         WebAny.count += 1
@@ -82,10 +80,10 @@ class WebAny:
         with contextlib.suppress(Exception):
             for line in self.lines_list[1:-1]:
                 strip_line = line.strip()
-                if strip_line.startswith(lr_param.Snap1) and strip_line.endswith(lr_param.Snap2):
-                    inf_num = line.split(lr_param.Snap1, 1)
+                if strip_line.startswith(lr_lib.core.wrsp.param.Snap1) and strip_line.endswith(lr_lib.core.wrsp.param.Snap2):
+                    inf_num = line.split(lr_lib.core.wrsp.param.Snap1, 1)
                     inf_num = inf_num[-1]
-                    inf_num = inf_num.rsplit(lr_param.Snap2, 1)
+                    inf_num = inf_num.rsplit(lr_lib.core.wrsp.param.Snap2, 1)
                     inf_num = inf_num[0]
                     assert all(map(str.isnumeric, inf_num))
                     return int(inf_num)
@@ -96,10 +94,10 @@ class WebAny:
         comments = self.comments
 
         if lr_vars.VarWebStatsWarn.get() or _all_stat:
-            if self.snapshot in self.parent_AWAL.websReport.rus_webs:
-                comments += '\n\t{} WARNING: NO ASCII Symbols(rus?)'.format(lr_param.LR_COMENT)
+            if self.snapshot in self.ActionWebsAndLines.websReport.rus_webs:
+                comments += '\n\t{} WARNING: NO ASCII Symbols(rus?)'.format(lr_lib.core.wrsp.param.LR_COMENT)
             if (len(self.lines_list) > 2) and (not self.snapshot):
-                comments += '\n\t{} WARNING: no "Snapshot=t.inf" (del?)'.format(lr_param.LR_COMENT)
+                comments += '\n\t{} WARNING: no "Snapshot=t.inf" (del?)'.format(lr_lib.core.wrsp.param.LR_COMENT)
 
         text = '{coment}\n{snap_text}'.format(coment=comments, snap_text='\n'.join(self.lines_list))
         return text.strip('\n')
@@ -124,7 +122,7 @@ class WebAny:
 
         return name
 
-    def ask_replace(self, param, replace, left, right, ask_dict) -> bool:
+    def ask_replace(self, param: str, replace: str, left: str, right: str, ask_dict: dict) -> bool:
         buttons = (ys, yta, no, nta, rais) = ('Да', 'Да, для Всех', 'Нет', 'Нет, для Всех', 'Преврать',)
         dk = (nta, yta, rais)
 
@@ -138,8 +136,8 @@ class WebAny:
         t1 = 'заменяемая строка:\n{prev}{p}{part}'.format(
             prev=left[-lr_vars.AskLbRbMaxLen:].rsplit('\n', 1)[-1].lstrip(), p=param,
             part=right[:lr_vars.AskLbRbMaxLen].split('\n', 1)[0].rstrip())
-        y = lr_dialog.YesNoCancel(buttons=buttons, text_before=t1, text_after=t2, title='автозамена "{s}" на "{r}"'.format(
-            s=param, r=replace), parent=self.parent_AWAL.action, default_key=nta, focus=self.parent_AWAL.action.tk_text)
+        y = lr_lib.gui.widj.dialog.YesNoCancel(buttons=buttons, text_before=t1, text_after=t2, title='автозамена "{s}" на "{r}"'.format(
+            s=param, r=replace), parent=self.ActionWebsAndLines.action, default_key=nta, focus=self.ActionWebsAndLines.action.tk_text)
         a = y.ask()
 
         if ask_dict and (a in dk):
@@ -153,7 +151,7 @@ class WebAny:
         len_body_split = len(body_split)
         if not len_body_split:
             return 0, 0
-        action = self.parent_AWAL.action
+        action = self.ActionWebsAndLines.action
         chunk_indxs = []
 
         def force_ask_replace(indx: int, left: str, right: str) -> None:
@@ -162,7 +160,7 @@ class WebAny:
                 chunk_indxs.append(indx)
 
         def normal_replace(indx: int, left: str, right: str, ask=(not action.no_var.get())) -> None:
-            if lr_lbrb_checker.check_bound_lb_rb(left, right) or (ask and self.ask_replace(param, replace, left, right, ask_dict)):
+            if lr_lib.core.etc.lbrb_checker.check_bound_lb_rb(left, right) or (ask and self.ask_replace(param, replace, left, right, ask_dict)):
                 chunk_indxs.append(indx)
 
         add_index = (force_ask_replace if action.force_ask_var.get() else normal_replace)
@@ -173,7 +171,7 @@ class WebAny:
                 add_index(indx, left, right)
 
         if chunk_indxs and replace:
-            replace = lr_param.param_bounds_setter(replace)
+            replace = lr_lib.core.wrsp.param.param_bounds_setter(replace)
             contains = chunk_indxs.__contains__
 
             body_chunks = [body_split.pop(0)]
@@ -212,8 +210,8 @@ class WebAny:
 
 class WebSnapshot(WebAny):
     """web со snapshot > 0, те содержащие файлы ответов"""
-    def __init__(self, parent_AWAL, lines_list: list, comments: str, transaction='', _type='', web_reg_save_param_list=None):
-        super().__init__(parent_AWAL, lines_list, comments, transaction=transaction, _type=_type)
+    def __init__(self, ActionWebsAndLines, lines_list: list, comments: str, transaction='', _type='', web_reg_save_param_list=None):
+        super().__init__(ActionWebsAndLines, lines_list, comments, transaction=transaction, _type=_type)
 
         if web_reg_save_param_list is None:
             self.web_reg_save_param_list = []
@@ -226,17 +224,17 @@ class WebSnapshot(WebAny):
     def to_str(self, _all_stat=False) -> str:
         """весь текст web_"""
         if lr_vars.VarWebStatsTransac.get() or _all_stat:
-            _tr = self.parent_AWAL.websReport.stats_transaction_web(self)
+            _tr = self.ActionWebsAndLines.websReport.stats_transaction_web(self)
         else:
             _tr = ''
 
         if lr_vars.VarWebStatsOut.get() or _all_stat:
-            _out = self.parent_AWAL.websReport.stats_out_web(self.snapshot)
+            _out = self.ActionWebsAndLines.websReport.stats_out_web(self.snapshot)
         else:
             _out = ''
 
         if lr_vars.VarWebStatsIn.get() or _all_stat:
-            _in = self.parent_AWAL.websReport.stats_in_web(self.snapshot)
+            _in = self.ActionWebsAndLines.websReport.stats_in_web(self.snapshot)
         else:
             _in = ''
 
@@ -250,11 +248,11 @@ class WebSnapshot(WebAny):
         if lr_vars.VarWebStatsWarn.get() or _all_stat:
             bad_wrsp = []
             for w in self.web_reg_save_param_list:
-                if self.snapshot in self.parent_AWAL.websReport.param_statistic[w.name]['snapshots']:
+                if self.snapshot in self.ActionWebsAndLines.websReport.param_statistic[w.name]['snapshots']:
                     bad_wrsp.append(w.param)
             if bad_wrsp:
                 text = '\t{c} WARNING: WrspInAndOutUsage: {lp}={p}\n{t}'.format(
-                    t=text, c=lr_param.LR_COMENT, p=bad_wrsp, lp=len(bad_wrsp))
+                    t=text, c=lr_lib.core.wrsp.param.LR_COMENT, p=bad_wrsp, lp=len(bad_wrsp))
 
         wrsps = ''.join(map(WebRegSaveParam.to_str, self.web_reg_save_param_list))
         txt = '{wrsp}{stat_string}\n{text}'.format(stat_string=stat_string, text=text, wrsp=wrsps)
@@ -271,9 +269,9 @@ class WebSnapshot(WebAny):
 
 class WebRegSaveParam(WebAny):
     """web web_reg_save_param*"""
-    def __init__(self, parent_AWAL, lines_list: list, comments: str, transaction='', _type='', parent_snapshot=None):
+    def __init__(self, ActionWebsAndLines, lines_list: list, comments: str, transaction='', _type='', parent_snapshot=None):
         self.parent_snapshot = parent_snapshot  # WebSnapshot
-        super().__init__(parent_AWAL, lines_list, comments, transaction=transaction, _type=_type)
+        super().__init__(ActionWebsAndLines, lines_list, comments, transaction=transaction, _type=_type)
         if self.parent_snapshot is not None:
             self.snapshot = self.parent_snapshot.snapshot
 
@@ -282,10 +280,10 @@ class WebRegSaveParam(WebAny):
 
     def _read_param(self, param='') -> str:
         try:
-            if lr_param.wrsp_start in self.comments:
-                param = self.comments.split(lr_param.wrsp_start, 1)[1].split(lr_param.wrsp_end, 1)[0]
+            if lr_lib.core.wrsp.param.wrsp_start in self.comments:
+                param = self.comments.split(lr_lib.core.wrsp.param.wrsp_start, 1)[1].split(lr_lib.core.wrsp.param.wrsp_end, 1)[0]
             elif 'PARAM["' in self.comments:
-                param = self.comments.split('PARAM["', 1)[1].split(lr_param.wrsp_end, 1)[0]
+                param = self.comments.split('PARAM["', 1)[1].split(lr_lib.core.wrsp.param.wrsp_end, 1)[0]
 
             if not param:  # если param создавал LoadRunner
                 srch = '{%s} = "' % self.name
@@ -307,11 +305,11 @@ class WebRegSaveParam(WebAny):
         comments = self.comments
 
         if lr_vars.VarWebStatsWarn.get() or _all_stat:
-            rep = self.parent_AWAL.websReport.param_statistic[self.name]
+            rep = self.ActionWebsAndLines.websReport.param_statistic[self.name]
             if not rep['param_count']:
-                comments += '\n{c} WARNING: NoWebRegSaveParamUsage?'.format(c=lr_param.LR_COMENT)
+                comments += '\n{c} WARNING: NoWebRegSaveParamUsage?'.format(c=lr_lib.core.wrsp.param.LR_COMENT)
             elif self.snapshot >= min(filter(bool, rep['snapshots'])):
-                comments += '\n{c} WARNING: WrspInAndOutUsage wrsp.snapshot >= usage.snapshot'.format(c=lr_param.LR_COMENT)
+                comments += '\n{c} WARNING: WrspInAndOutUsage wrsp.snapshot >= usage.snapshot'.format(c=lr_lib.core.wrsp.param.LR_COMENT)
 
         if lr_vars.VarWRSPStatsTransac.get() or _all_stat:
             usage_string = self.usage_string(_all_stat=_all_stat)
@@ -323,7 +321,7 @@ class WebRegSaveParam(WebAny):
         return '\n{}\n'.format(txt.strip('\n'))
 
     def usage_string(self, _all_stat=False) -> str:
-        rep = self.parent_AWAL.websReport
+        rep = self.ActionWebsAndLines.websReport
         ps = rep.param_statistic[self.name]
         wt = rep.web_transaction[self.transaction]
         t_snap = (wt['minmax_snapshots'] if self.transaction else '')
@@ -334,6 +332,6 @@ class WebRegSaveParam(WebAny):
             tn = ''
 
         s = '{c} ({w_transac}: {t_snap}) -> Param:{p_all} | Snapshots:{snap} | Transactions={len_transac}:{transac_names}'.format(
-            wrsp_name=self.transaction, p_all=ps['param_count'], snap=ps['minmax_snapshots'], c=lr_param.LR_COMENT,
+            wrsp_name=self.transaction, p_all=ps['param_count'], snap=ps['minmax_snapshots'], c=lr_lib.core.wrsp.param.LR_COMENT,
             len_transac=ps['transaction_count'], transac_names=tn, w_transac=self.transaction, t_snap=t_snap)
         return s

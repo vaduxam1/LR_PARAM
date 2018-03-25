@@ -6,7 +6,7 @@ import asyncio
 import queue
 import sys
 
-import lr_lib.etc.excepthook as lr_excepthook
+import lr_lib
 import lr_lib.core.var.vars as lr_vars
 
 
@@ -37,7 +37,7 @@ class MainThreadUpdater:
                 callback = self.queue_in.get()
                 callback()
             except Exception:
-                lr_excepthook.excepthook(*sys.exc_info())
+                lr_lib.etc.excepthook.excepthook(*sys.exc_info())
                 continue
 
         if self.working:

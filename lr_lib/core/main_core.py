@@ -3,31 +3,29 @@
 
 import argparse
 
-import lr_lib.core.var.vars_func as lr_vars_func
+import lr_lib
 import lr_lib.core.var.vars as lr_vars
-import lr_lib.core.wrsp.files as lr_files
-import lr_lib.core.wrsp.param as lr_param
 
 
 def init(as_console: bool) -> dict:
     """стартовать core"""
-    lr_vars_func.init()  # связь основных Var
+    lr_lib.core.var.vars_func.init()  # связь основных Var
     
     if as_console:  # поиск param из консоли
         c_args = _console_argument_parser()
         _console_vars_setter(c_args)
-        lr_files.init()
+        lr_lib.core.wrsp.files.init()
         return c_args
 
     else:  # для поиска из gui
-        lr_files.init()
+        lr_lib.core.wrsp.files.init()
         return {}
 
 
 def start(c_args: dict, echo=True) -> str:
     """консольное использование - поиск param из ядра"""
     lr_vars.VarParam.set(c_args['param'])  # найти файлы с param
-    web_reg_save_param = lr_param.create_web_reg_save_param()  # сформировать wrsp
+    web_reg_save_param = lr_lib.core.wrsp.param.create_web_reg_save_param()  # сформировать wrsp
 
     if echo:
         lr_vars.Logger.info(web_reg_save_param, notepad=True)

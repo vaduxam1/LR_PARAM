@@ -6,11 +6,8 @@
 
 import string  # используется в eval splitters_combo(), не удалять !
 
+import lr_lib
 import lr_lib.core.var.vars as lr_vars
-import lr_lib.core.wrsp.param as lr_param
-import lr_lib.core.wrsp.files as lr_files
-import lr_lib.core.etc.other as lr_other
-import lr_lib.core.etc.lbrb_checker as lr_lbrb_checker
 
 
 def init() -> None:
@@ -18,7 +15,7 @@ def init() -> None:
     установка всех lr_vars.Var's callback
     запускать при старте !
     """
-    lr_vars.VarParam.callback_set = lr_param.get_files_with_param
+    lr_vars.VarParam.callback_set = lr_lib.core.wrsp.param.get_files_with_param
     lr_vars.VarFileName.callback_set = _set_file_name
     lr_vars.VarFile.callback_set = _set_file
     lr_vars.VarPartNum.callback_set = set_part_num
@@ -26,7 +23,7 @@ def init() -> None:
 
 def _set_file_name(name: str) -> None:
     """установка Var имени файла(3)"""
-    file = lr_files.get_file_with_kwargs(lr_vars.FilesWithParam, Name=name)
+    file = lr_lib.core.wrsp.files.get_file_with_kwargs(lr_vars.FilesWithParam, Name=name)
     assert file, 'файл "{n}" ({tn}) ненайден. {tf} {f}'.format(n=name, tn=type(name), tf=type(file), f=file)
     lr_vars.VarFile.set(file)
 
@@ -41,9 +38,9 @@ def _set_file(file: dict, errors='replace') -> None:
     lr_vars.VarPartNum.set(0)
 
     if not ff['timeCreate']:  # создать статистику, если нет
-        lr_files.set_file_statistic(file, as_text=True)
+        lr_lib.core.wrsp.files.set_file_statistic(file, as_text=True)
         # сохранить статистику в AllFiles
-        file_from_allfiles = lr_files.get_file_with_kwargs(lr_vars.AllFiles, Name=ff['Name'])
+        file_from_allfiles = lr_lib.core.wrsp.files.get_file_with_kwargs(lr_vars.AllFiles, Name=ff['Name'])
         file_from_allfiles.update({k: file[k] for k in file if k != 'Param'})
 
 
@@ -98,9 +95,9 @@ def set_part_num(num=0) -> None:
 
     # обрезать по 'непечатные/русские'
     if lr_vars.VarRusLB.get():
-        lb = ''.join(lr_other.only_ascii_symbols(lb[::-1]))[::-1]
+        lb = ''.join(lr_lib.core.etc.other.only_ascii_symbols(lb[::-1]))[::-1]
     if lr_vars.VarRusRB.get():
-        rb = ''.join(lr_other.only_ascii_symbols(rb))
+        rb = ''.join(lr_lib.core.etc.other.only_ascii_symbols(rb))
 
     lb, rb = lb_rb_split_list_set(__lb, __rb, lb, rb)
     lb, rb = lb_rb_split_end(lb, rb)
@@ -115,16 +112,16 @@ def set_part_num(num=0) -> None:
         return next_3_or_4_if_bad_or_enmpy_lb_rb('пустом[LB]')
     elif lr_vars.VarPartNumEmptyRbNext.get() and not rb.strip():
         return next_3_or_4_if_bad_or_enmpy_lb_rb('пустом[RB]')
-    if lr_vars.VarPartNumDenyLbNext.get() and not lr_lbrb_checker.check_bound_lb(__lb):
+    if lr_vars.VarPartNumDenyLbNext.get() and not lr_lib.core.etc.lbrb_checker.check_bound_lb(__lb):
         return next_3_or_4_if_bad_or_enmpy_lb_rb('недопустимом[LB]')
-    if lr_vars.VarPartNumDenyRbNext.get() and (not lr_lbrb_checker.check_bound_rb(__rb)):
+    if lr_vars.VarPartNumDenyRbNext.get() and (not lr_lib.core.etc.lbrb_checker.check_bound_rb(__rb)):
         return next_3_or_4_if_bad_or_enmpy_lb_rb('недопустимом[RB]')
 
     # сохранить
     lr_vars.VarLB.set(lb)
     lr_vars.VarRB.set(rb)
 
-    wrsp_dict = lr_param.wrsp_dict_creator()
+    wrsp_dict = lr_lib.core.wrsp.param.wrsp_dict_creator()
     lr_vars.VarWrspDict.set(wrsp_dict)
 
 

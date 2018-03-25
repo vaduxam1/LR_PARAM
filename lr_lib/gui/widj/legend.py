@@ -6,10 +6,9 @@ import itertools
 import tkinter as tk
 import tkinter.ttk as ttk
 
+import lr_lib
+import lr_lib.gui.widj.tooltip_canvas
 import lr_lib.core.var.vars as lr_vars
-import lr_lib.gui.widj.tooltip_canvas as lr_tooltip_canvas
-import lr_lib.gui.widj.tooltip as lr_tooltip
-import lr_lib.gui.etc.gui_other as lr_gui_other
 
 
 def clrs() -> [str, ]:
@@ -59,7 +58,7 @@ class WebLegend(tk.Toplevel):
 
         self.h_entry = tk.Spinbox(
             self, width=4, justify='center', from_=0, to=10000, command=self.print, textvariable=self.H)
-        lr_tooltip.createToolTip(self.h_entry, 'высота, между верхними и нижними объектами')
+        lr_lib.gui.widj.tooltip.createToolTip(self.h_entry, 'высота, между верхними и нижними объектами')
 
         def enter_H(*_) -> None:
             """self.H.set по кнопке Enter, при ручном вводе"""
@@ -72,14 +71,14 @@ class WebLegend(tk.Toplevel):
         self.tr = []  # [(0, 'NoTransaction_1'), (1, 'login'),...
         self.tr_but = tk.Button(self, text='transac', command=self.show_transac)
         self.tr_but.pack()
-        lr_tooltip.createToolTip(self.tr_but, 'показать соответствие номеров(из окна легенды) и имен транзакций')
+        lr_lib.gui.widj.tooltip.createToolTip(self.tr_but, 'показать соответствие номеров(из окна легенды) и имен транзакций')
 
         self.top_var = tk.BooleanVar(value=True)
         self.top_cbx = tk.Checkbutton(self, text='onTop', command=self._set_on_top, variable=self.top_var)
         self.top_cbx.pack()
-        lr_tooltip.createToolTip(self.top_cbx, 'поверх других окон')
+        lr_lib.gui.widj.tooltip.createToolTip(self.top_cbx, 'поверх других окон')
 
-        lr_gui_other.center_widget(self)
+        lr_lib.gui.etc.gui_other.center_widget(self)
 
     def _set_on_top(self, *args) -> None:
         """поверх других окон"""
@@ -171,7 +170,7 @@ class WebLegend(tk.Toplevel):
 
             shape_1 = cmd(*xy1[1:], fill=color, width=2)
 
-            lr_tooltip_canvas.CanvasTooltip(self.canvas, shape_1, text=r_out)
+            lr_lib.gui.widj.tooltip_canvas.CanvasTooltip(self.canvas, shape_1, text=r_out)
             self.canvas.tag_bind(shape_1, '<ButtonPress-1>', onObjectClick1)
             self.canvas.tag_bind(shape_1, '<Button-3>', onObjectClick3)
             self.web_canavs[i][1] = list(xy1)
@@ -194,7 +193,7 @@ class WebLegend(tk.Toplevel):
             shape_2 = cmd(*xy2, fill=color, width=2)
 
             self.canvas.tag_bind(shape_2, '<Button-3>', onObjectClick3)
-            lr_tooltip_canvas.CanvasTooltip(self.canvas, shape_2, text=r_in)
+            lr_lib.gui.widj.tooltip_canvas.CanvasTooltip(self.canvas, shape_2, text=r_in)
             self.canvas.tag_bind(shape_2, '<ButtonPress-1>', onObjectClick2)
             self.web_canavs[i][2] = list(xy2)
 
@@ -227,7 +226,7 @@ class WebLegend(tk.Toplevel):
 
                             self.canvas.tag_bind(line, '<Button-3>', onObjectClick)
                             r = 'Snapshot=t{i}.inf\n{r}'.format(r='\n'.join(in_count), i=i)
-                            lr_tooltip_canvas.CanvasTooltip(self.canvas, line, text=r)
+                            lr_lib.gui.widj.tooltip_canvas.CanvasTooltip(self.canvas, line, text=r)
                             self.canvas.tag_bind(line, '<ButtonPress-1>',
                                                  lambda *a, r=r.replace('\n', ', '): self.title(r + self.ttl))
 

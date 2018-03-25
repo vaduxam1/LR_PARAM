@@ -6,49 +6,47 @@ import contextlib
 
 import tkinter as tk
 
-import lr_lib.gui.action._other as lr_act_other
-import lr_lib.gui.action.act_any as lr_act_any
-import lr_lib.gui.widj.legend as lr_legend
-import lr_lib.gui.widj.dialog as lr_dialog
-import lr_lib.gui.widj.wrsp_setting as lr_wrsp_setting
-import lr_lib.gui.etc.sub_menu as lr_sub_menu
-import lr_lib.gui.etc.group_param as lr_group_param
-import lr_lib.gui.wrsp.top.top_allfiles as lr_top_allfiles
-import lr_lib.gui.etc.action_lib as lr_action_lib
-import lr_lib.gui.etc.gui_other as lr_gui_other
+import lr_lib
+import lr_lib.gui.action.act_any
+import lr_lib.gui.widj.legend
+import lr_lib.gui.widj.dialog
+import lr_lib.gui.widj.wrsp_setting
+import lr_lib.gui.etc.sub_menu
+import lr_lib.gui.etc.group_param
+import lr_lib.gui.wrsp.top.top_allfiles
+import lr_lib.gui.etc.action_lib
+import lr_lib.gui.etc.gui_other
 import lr_lib.core.var.vars as lr_vars
-import lr_lib.core.wrsp.param as lr_param
-import lr_lib.core.etc.other as lr_other
 
 
-class ActWin(lr_act_any.ActAny):
+class ActWin(lr_lib.gui.action.act_any.ActAny):
     """родитель lr_lib.gui.action.main_action.ActionWindow"""
 
     def __init__(self):
-        lr_act_any.ActAny.__init__(self)
+        lr_lib.gui.action.act_any.ActAny.__init__(self)
 
         self.editor_button = tk.Button(
             self.file_bar, text='editor', font=lr_vars.DefaultFont + ' bold',
-            command=lambda: lr_other.openTextInEditor(self.tk_text.get(1.0, tk.END)))
+            command=lambda: lr_lib.core.etc.other.openTextInEditor(self.tk_text.get(1.0, tk.END)))
 
         self.auto_param_creator_button = tk.Button(
             self.toolbar, text='Найти param LB=', background='orange', font=lr_vars.DefaultFont + ' bold',
-            command=lambda: lr_group_param.auto_param_creator(self))
+            command=lambda: lr_lib.gui.etc.group_param.auto_param_creator(self))
 
         self.re_auto_param_creator_button = tk.Button(
             self.toolbar, text='Найти param RegExp', font=lr_vars.DefaultFont + ' bold',
-            command=lambda: lr_group_param.re_auto_param_creator(self))
+            command=lambda: lr_lib.gui.etc.group_param.re_auto_param_creator(self))
 
         self.final_wnd_cbx = tk.Checkbutton(
             self.toolbar, text='final', font=lr_vars.DefaultFont, variable=self.final_wnd_var)
 
         self.wrsp_setting = tk.Button(
             self.toolbar, text='wrsp_setting', font=lr_vars.DefaultFont + ' bold',
-            command=lambda *a: lr_wrsp_setting.WrspSettingWindow(parent=self))
+            command=lambda *a: lr_lib.gui.widj.wrsp_setting.WrspSettingWindow(parent=self))
 
         self.resp_btn = tk.Button(
             self.toolbar, text='файлы ответов', font=lr_vars.DefaultFont,
-            command=lambda *a: lr_action_lib.snapshot_files(self.tk_text, i_num=1))
+            command=lambda *a: lr_lib.gui.etc.action_lib.snapshot_files(self.tk_text, i_num=1))
 
         #
         self.force_ask_cbx = tk.Checkbutton(
@@ -67,15 +65,15 @@ class ActWin(lr_act_any.ActAny):
 
         #
         self.lr_report_B = tk.Button(self.toolbar, text='reportB', font=lr_vars.DefaultFont,
-                                     command=lambda *a: lr_gui_other.repB(self.tk_text))
+                                     command=lambda *a: lr_lib.gui.etc.gui_other.repB(self.tk_text))
         self.lr_report_A = tk.Button(self.toolbar, text='reportA', font=lr_vars.DefaultFont,
-                                     command=lambda *a: lr_gui_other.repA(self.tk_text))
+                                     command=lambda *a: lr_lib.gui.etc.gui_other.repA(self.tk_text))
 
         #
         self.lr_legend = tk.Button(self.toolbar, text='web_legend', font=lr_vars.DefaultFont, command=self.legend)
         self.btn_all_files = tk.Button(
             self.toolbar, text='все файлы', font=lr_vars.DefaultFont,
-            command=lambda *a: lr_top_allfiles.TopFolder(self))
+            command=lambda *a: lr_lib.gui.wrsp.top.top_allfiles.TopFolder(self))
 
         # запускать в конце
         self.post_init()
@@ -86,7 +84,7 @@ class ActWin(lr_act_any.ActAny):
                  self.search_entry,)
         for w in widjs:
             with contextlib.suppress(Exception):  # виджетам доступно меню мыши
-                self.bind_class(w, sequence='<Button-3>', func=lr_sub_menu.rClicker, add='')
+                self.bind_class(w, sequence='<Button-3>', func=lr_lib.gui.etc.sub_menu.rClicker, add='')
 
         self.widj_reset()
 
@@ -112,15 +110,15 @@ class ActWin(lr_act_any.ActAny):
                         'Snapshot=t{w}.inf, перед которым вставляется:'.format(
                             prm=wrsp_dict['param'], p=max_action_inf, w=inf_nums[0], inf_nums=inf_nums,))
             except Exception as ex:
-                self.search_in_action(word=lr_param.Snap.format(num=max_action_inf), hist=False)
+                self.search_in_action(word=lr_lib.core.wrsp.param.Snap.format(num=max_action_inf), hist=False)
                 qb = 'param: "{p}"\nweb_reg_save_param: "{n}"'.format(
                     p=wrsp_dict['param'], n='{%s}' % wrsp_dict['web_reg_name'])
 
                 if self.force_yes_inf.get():
                     lr_vars.Logger.warning('{q}\n\n{e}{wrsp}'.format(e=ex, q=qb, wrsp=wrsp))
                 else:
-                    y = lr_dialog.YesNoCancel(buttons=['Создать', 'Пропустить'], text_after=qb, text_before=str(ex),
-                                              title='создать web_reg_save_param ?', parent=self).ask()
+                    y = lr_lib.gui.widj.dialog.YesNoCancel(buttons=['Создать', 'Пропустить'], text_after=qb, text_before=str(ex),
+                                                           title='создать web_reg_save_param ?', parent=self).ask()
                     if y == 'Пропустить':
                         raise
                     else:
@@ -136,7 +134,7 @@ class ActWin(lr_act_any.ActAny):
             if not wrsp_dict:  # текущий
                 wrsp_dict = lr_vars.VarWrspDict.get()
             if not wrsp:
-                wrsp = lr_param.create_web_reg_save_param(wrsp_dict)
+                wrsp = lr_lib.core.wrsp.param.create_web_reg_save_param(wrsp_dict)
 
         if not replace:
             replace = wrsp_dict['web_reg_name']
@@ -201,13 +199,13 @@ class ActWin(lr_act_any.ActAny):
 
     def legend(self) -> None:
         """окно легенды"""
-        t = lr_legend.WebLegend(self)
+        t = lr_lib.gui.widj.legend.WebLegend(self)
         t.add_web_canavs()
         t.print()
 
     def _start_auto_update_action_info_lab(self):
         """автообновление self.scroll_lab2"""
-        lr_act_other.auto_update_action_info_lab(
+        lr_lib.gui.action._other.auto_update_action_info_lab(
             self=self, config=self.scroll_lab2.config, tk_text=self.tk_text, id_=self.id_,
             timeout=lr_vars.InfoLabelUpdateTime.get(), check_run=lr_vars.Window.action_windows.__contains__,
             title=self.title, _set_title=self._set_title,

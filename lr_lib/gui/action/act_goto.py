@@ -6,16 +6,16 @@ import contextlib
 import tkinter as tk
 import tkinter.ttk as ttk
 
+import lr_lib
+import lr_lib.gui.action.act_font
 import lr_lib.core.var.vars as lr_vars
-import lr_lib.core.wrsp.param as lr_param
-import lr_lib.gui.action.act_font as lr_act_font
 
 
-class ActGoto(lr_act_font.ActFont):
+class ActGoto(lr_lib.gui.action.act_font.ActFont):
     """виджеты перехода по тексту"""
 
     def __init__(self):
-        lr_act_font.ActFont.__init__(self)
+        lr_lib.gui.action.act_font.ActFont.__init__(self)
 
         self.inf_combo = ttk.Combobox(self.inf_bar, justify='center', font=lr_vars.DefaultFont)
         self.inf_combo.bind("<KeyRelease-Return>", self.goto_inf)
@@ -35,7 +35,7 @@ class ActGoto(lr_act_font.ActFont):
 
     def goto_inf(self, *args) -> None:
         with contextlib.suppress(tk.TclError):
-            self.search_in_action(word=lr_param.Snap.format(num=self.inf_combo.get().strip()), hist=False)
+            self.search_in_action(word=lr_lib.core.wrsp.param.Snap.format(num=self.inf_combo.get().strip()), hist=False)
 
     def goto_transaction(self, *args) -> None:
         with contextlib.suppress(tk.TclError):

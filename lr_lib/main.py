@@ -8,52 +8,53 @@
 import sys
 import contextlib
 
-import lr_lib.gui.main_gui as lr_gui
-import lr_lib.core.main_core as lr_core
 import lr_lib.core.var.vars as lr_vars
-import lr_lib.etc.logger as lr_logger
-import lr_lib.etc.sysinfo as lr_sysinfo
-import lr_lib.etc.excepthook as lr_excepthook
-import lr_lib.etc.keyb as lr_keyb
-import lr_lib.etc.pool.main_pool as lr_main_pool
-import lr_lib.etc.pool.other as lr_other_pool
+
+import lr_lib.gui.main_gui
+import lr_lib.core.main_core
+import lr_lib.etc.logger
+import lr_lib.etc.sysinfo
+import lr_lib.etc.excepthook
+import lr_lib.etc.keyb
+import lr_lib.etc.pool.main_pool
+import lr_lib.etc.pool.other
 
 
 def init(excepthook=True):
     """инит дополнительных классов, сохр. их в lr_vars, запуск core/gui"""
     # lr_vars.Logger
-    with lr_logger.init(name='__main__', encoding='cp1251', levels=lr_vars.loggingLevels) as lr_vars.Logger:
+    with lr_lib.etc.logger.init(name='__main__', encoding='cp1251', levels=lr_vars.loggingLevels) as lr_vars.Logger:
         lr_vars.Logger.info('version={v}, defaults.VarEncode={ce}\n{si}'.format(
-            v=lr_vars.VERSION, ce=lr_vars.VarEncode.get(), si=lr_sysinfo.system_info()))
+            v=lr_vars.VERSION, ce=lr_vars.VarEncode.get(), si=lr_lib.etc.sysinfo.system_info()))
 
         # lr_vars.MainThreadUpdater
-        with lr_other_pool.MainThreadUpdater().init() as lr_vars.MainThreadUpdater:
+        with lr_lib.etc.pool.other.MainThreadUpdater().init() as lr_vars.MainThreadUpdater:
             # lr_vars.M_POOL, lr_vars.T_POOL
-            with lr_main_pool.init() as (lr_vars.M_POOL, lr_vars.T_POOL):
+            with lr_lib.etc.pool.main_pool.init() as (lr_vars.M_POOL, lr_vars.T_POOL):
 
                 # core/gui
                 with _start(excepthook=excepthook) as ex:
                     if any(ex):  # выход - в теле with работа уже окончена
-                        lr_excepthook.full_tb_write(*ex)
+                        lr_lib.etc.excepthook.full_tb_write(*ex)
 
 
 @contextlib.contextmanager
 def _start(excepthook=True, console_args=sys.argv) -> iter(((None, None, None), )):
     """запуск core/gui"""
     if excepthook:  # перехват raise -> lr_vars.Logger.error
-        lr_vars.Tk.report_callback_exception = lr_excepthook.excepthook
+        lr_vars.Tk.report_callback_exception = lr_lib.etc.excepthook.excepthook
     try:
 
         as_console = bool(console_args[1:])
-        c_args = lr_core.init(as_console=as_console)
+        c_args = lr_lib.core.main_core.init(as_console=as_console)
 
         if as_console:  # консольное использование
-            lr_core.start(c_args, echo=True)
+            lr_lib.core.main_core.start(c_args, echo=True)
 
         else:  # gui использование
-            with lr_keyb.keyboard_listener():  # hotkey(param from clipboard)
-                lr_gui.init(c_args)
-                lr_gui.start(action=True, lock=True)
+            with lr_lib.etc.keyb.keyboard_listener():  # hotkey(param from clipboard)
+                lr_lib.gui.main_gui.init(c_args)
+                lr_lib.gui.main_gui.start(action=True, lock=True)
 
         yield sys.exc_info()
         lr_vars.Logger.trace('Exit\nas_console={c}\nconsole_args={cas}\nc_args={ca}'.format(

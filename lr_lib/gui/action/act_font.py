@@ -4,16 +4,16 @@
 import tkinter as tk
 import tkinter.ttk as ttk
 
+import lr_lib
+import lr_lib.gui.action.act_replace
 import lr_lib.core.var.vars as lr_vars
-import lr_lib.gui.action.act_replace as lr_act_replace
-import lr_lib.etc.help as lr_help
 
 
-class ActFont(lr_act_replace.ActReplaceRemove):
+class ActFont(lr_lib.gui.action.act_replace.ActReplaceRemove):
     """шрифты и цвет"""
 
     def __init__(self):
-        lr_act_replace.ActReplaceRemove.__init__(self)
+        lr_lib.gui.action.act_replace.ActReplaceRemove.__init__(self)
 
         self.font_size_entry = tk.Spinbox(self.font_toolbar, width=2, justify='center', from_=0, to=99,
                                           command=self.tk_text.set_font,
@@ -68,7 +68,7 @@ class ActFont(lr_act_replace.ActReplaceRemove):
 
         self.background_color_combo = ttk.Combobox(self.cbx_bar, textvariable=self.background_var, justify='center',
                                                    font=lr_vars.DefaultFont)
-        self.background_color_combo['values'] = list(sorted(lr_help.COLORS.keys()))
+        self.background_color_combo['values'] = list(sorted(lr_lib.etc.help.COLORS.keys()))
 
         self.background_color_combo.bind("<KeyRelease-Return>", self.background_color_set)
         self.background_color_combo.bind("<<ComboboxSelected>>", self.background_color_set)

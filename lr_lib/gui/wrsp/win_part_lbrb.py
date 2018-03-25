@@ -6,16 +6,15 @@ import string
 import tkinter as tk
 import tkinter.ttk as ttk
 
-import lr_lib.gui.widj.lbrb5 as lr_lbrb5
-import lr_lib.gui.wrsp.win_text as lr_win_text
+import lr_lib
+import lr_lib.gui.wrsp.win_text
 import lr_lib.core.var.vars as lr_vars
-import lr_lib.core.etc.other as lr_other
 
 
-class WinPartsLbRb(lr_win_text.WinText):
+class WinPartsLbRb(lr_lib.gui.wrsp.win_text.WinText):
     """основные виджеты: (4) (5)LB (5)RB"""
     def __init__(self):
-        lr_win_text.WinText.__init__(self)
+        lr_lib.gui.wrsp.win_text.WinText.__init__(self)
 
         self.t4 = tk.Label(self.mid_frame, text='(4)', font=lr_vars.DefaultFont + ' italic bold', padx=0, pady=0,
                            foreground='brown')
@@ -25,8 +24,8 @@ class WinPartsLbRb(lr_win_text.WinText):
         )
 
         # (5) Lb/Rb
-        self.LB = lr_lbrb5.LBRBText('LB', self)
-        self.RB = lr_lbrb5.LBRBText('RB', self)
+        self.LB = lr_lib.gui.widj.lbrb5.LBRBText('LB', self)
+        self.RB = lr_lib.gui.widj.lbrb5.LBRBText('RB', self)
         self.LB.tag_configure('right', justify='right')
 
         self.last_frameCbx1 = ttk.Label(self.LB.label_info, padding="0 0 0 0")
@@ -186,7 +185,7 @@ class WinPartsLbRb(lr_win_text.WinText):
         if not lr_vars.FilesWithParam:
             return
         lr_vars.VarPartNum.set(int(self.comboParts.get()))
-        lr_lbrb5.LBRBText.set_LB_RB()
+        lr_lib.gui.widj.lbrb5.LBRBText.set_LB_RB()
         self.show_frame_info_file()
 
     def show_frame_info_file(self) -> None:
@@ -234,4 +233,4 @@ class WinPartsLbRb(lr_win_text.WinText):
     @lr_vars.T_POOL_decorator
     def lr_note(self, ob) -> None:
         """открыть в блокноте"""
-        lr_other.openTextInEditor(ob.get())
+        lr_lib.core.etc.other.openTextInEditor(ob.get())

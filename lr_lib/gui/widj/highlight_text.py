@@ -3,24 +3,23 @@
 
 import re
 import copy
-import threading
 
 import tkinter as tk
 
 from tkinter.font import Font
 
+import lr_lib
+import lr_lib.gui.widj.highlight
 import lr_lib.core.var.vars as lr_vars
-import lr_lib.gui.widj.highlight as lr_highlight
-import lr_lib.core.action.web_ as lr_web_
 
 
 class HighlightText(tk.Text):
     """Colored tk.Text + line_numbers"""
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    def __init__(self, action, *args, **kwargs):
+        super().__init__(action, *args, **kwargs)
         self.cursor_position = self.index(tk.INSERT)  # координаты текущей позиции в tk.Text
 
-        self.action = args[0]  # parent
+        self.action = action  # parent
 
         self.bind_all("<Control-z>", self.undo)
         self.bind_all("<Control-y>", self.redo)
@@ -72,9 +71,9 @@ class HighlightText(tk.Text):
         self.highlight_lines = self.init()
         self.set_tegs()
 
-    def init(self) -> lr_highlight.HighlightLines:
+    def init(self) -> lr_lib.gui.widj.highlight.HighlightLines:
         """пересоздать self.highlight_lines"""
-        self.highlight_lines = lr_highlight.HighlightLines(self, self.get_tegs_names())
+        self.highlight_lines = lr_lib.gui.widj.highlight.HighlightLines(self, self.get_tegs_names())
         return self.highlight_lines
 
     def after_callback(self) -> None:
@@ -195,7 +194,7 @@ class HighlightText(tk.Text):
         for line in web_.comments.split('\n'):
             self.highlight_mode(line.strip())
 
-        if isinstance(web_, lr_web_.WebRegSaveParam):
+        if isinstance(web_, lr_lib.core.action.web_.WebRegSaveParam):
             m = lr_vars.web_reg_highlight_len
             self.highlight_mode('{}'.format(web_.name[:m]), option='background', color=lr_vars.wrsp_color1)
             self.highlight_mode(web_.name[m:], option='foreground', color=lr_vars.wrsp_color2)

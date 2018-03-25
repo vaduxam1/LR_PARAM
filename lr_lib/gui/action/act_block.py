@@ -5,15 +5,15 @@ import contextlib
 
 import tkinter as tk
 
+import lr_lib.gui.action.act_scroll
 import lr_lib.core.var.vars as lr_vars
-import lr_lib.gui.action.act_scroll as lr_act_scroll
 
 
-class ActBlock(lr_act_scroll.ActScrollText):
+class ActBlock(lr_lib.gui.action.act_scroll.ActScrollText):
     """блокировка виджетов"""
 
     def __init__(self):
-        lr_act_scroll.ActScrollText.__init__(self)
+        lr_lib.gui.action.act_scroll.ActScrollText.__init__(self)
 
         self.unblock = tk.Button(
             self.file_bar, text='unblock', font=lr_vars.DefaultFont + ' bold', command=lambda *a: self._block(False))

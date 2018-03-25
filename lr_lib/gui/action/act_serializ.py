@@ -5,18 +5,18 @@ import os
 
 import tkinter as tk
 
-import lr_lib.gui.etc.gui_other as lr_gui_other
-import lr_lib.gui.action._other as lr_act_other
-import lr_lib.gui.action.act_backup as lr_act_backup
+import lr_lib
+import lr_lib.gui.etc.gui_other
+import lr_lib.gui.action._other
+import lr_lib.gui.action.act_backup
 import lr_lib.core.var.vars as lr_vars
-import lr_lib.core.etc.other as lr_other
 
 
-class TkTextWebSerialization(lr_act_backup.ActBackup):
+class TkTextWebSerialization(lr_lib.gui.action.act_backup.ActBackup):
     """преобразование action-текста(tk_text) во внутреннее представление(web_action), и обратно"""
 
     def __init__(self):
-        lr_act_backup.ActBackup.__init__(self)
+        lr_lib.gui.action.act_backup.ActBackup.__init__(self)
 
         self.backup_open_button = tk.Button(
             self.file_bar, text='backup_open', background='orange', font=lr_vars.DefaultFont + ' bold',
@@ -60,7 +60,7 @@ class TkTextWebSerialization(lr_act_backup.ActBackup):
 
     def open_action(self, file=None, errors='replace', callback=None) -> None:
         """сформировать action.c"""
-        self.action_file = file or lr_act_other.get_action_file(lr_vars.VarFilesFolder.get())
+        self.action_file = file or lr_lib.gui.action._other.get_action_file(lr_vars.VarFilesFolder.get())
 
         if os.path.isfile(self.action_file):
             with open(self.action_file, errors=errors, encoding=lr_vars.VarEncode.get()) as text:
@@ -98,7 +98,7 @@ class TkTextWebSerialization(lr_act_backup.ActBackup):
     def show_info(self) -> None:
         """всякая инфа"""
         len_all_files = len(lr_vars.AllFiles)
-        all_infs = len(list(lr_other.get_files_infs(lr_vars.AllFiles)))
+        all_infs = len(list(lr_lib.core.etc.other.get_files_infs(lr_vars.AllFiles)))
 
         lr_vars.Window.last_frame['text'] = "snapshots: {i} inf's | файлов: {f} | {d}".format(
             d=lr_vars.VarFilesFolder.get(), f=len_all_files, i=all_infs)
@@ -123,4 +123,4 @@ class TkTextWebSerialization(lr_act_backup.ActBackup):
     def widj_reset(self) -> None:
         """обновить виджеты"""
         self.transaction.clear()
-        self.transaction.extend(lr_gui_other.get_transaction(self.tk_text.get(1.0, tk.END)))
+        self.transaction.extend(lr_lib.gui.etc.gui_other.get_transaction(self.tk_text.get(1.0, tk.END)))

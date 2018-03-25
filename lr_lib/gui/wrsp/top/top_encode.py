@@ -4,9 +4,8 @@
 import tkinter as tk
 import tkinter.ttk as ttk
 
+import lr_lib
 import lr_lib.core.var.vars as lr_vars
-import lr_lib.gui.etc.gui_other as lr_gui_other
-import lr_lib.gui.widj.tooltip as lr_tooltip
 
 
 class TopEncoding(tk.Toplevel):
@@ -27,7 +26,7 @@ class TopEncoding(tk.Toplevel):
         encodeEntry['values'] = lr_vars.ENCODE_LIST
         encodeEntry.bind("<<ComboboxSelected>>", lambda *a: self.action.comboFiles_change())
 
-        lr_tooltip.createToolTip(encodeEntry, tt)
+        lr_lib.gui.widj.tooltip.createToolTip(encodeEntry, tt)
         encodeEntry.pack()
-        lr_gui_other.center_widget(self)
+        lr_lib.gui.etc.gui_other.center_widget(self)
 

@@ -5,18 +5,18 @@ import tkinter as tk
 
 from tkinter import messagebox
 
-import lr_lib.gui.widj.dialog as lr_dialog
-import lr_lib.gui.action.act_search as lr_act_search
+import lr_lib
+import lr_lib.etc.template
+import lr_lib.gui.widj.dialog
+import lr_lib.gui.action.act_search
 import lr_lib.core.var.vars as lr_vars
-import lr_lib.core.action.main_awal as lr_main_awal
-import lr_lib.etc.template as lr_template
 
 
-class ActReplaceRemove(lr_act_search.ActSearch):
+class ActReplaceRemove(lr_lib.gui.action.act_search.ActSearch):
     """замена и удаление текста"""
 
     def __init__(self):
-        lr_act_search.ActSearch.__init__(self)
+        lr_lib.gui.action.act_search.ActSearch.__init__(self)
 
         self.lr_think_time = tk.Button(
             self.toolbar, text='lr_think_time', font=lr_vars.DefaultFont + ' bold', command=self.thinktime_remove)
@@ -32,11 +32,11 @@ class ActReplaceRemove(lr_act_search.ActSearch):
     @lr_vars.T_POOL_decorator
     def remove_web_dummy_template(self, *args, force=True) -> None:
         """для WebDummyTemplate_List - удалить все dummy web_"""
-        lr_template.Dummy.setattrs(lr_template.WebDummyTemplate_Part_Endswith)
+        lr_lib.etc.template.Dummy.setattrs(lr_lib.etc.template.WebDummyTemplate_Part_Endswith)
         ok = self.tk_text_dummy_remove(force=force, mode='endswith')
 
-        for template in lr_template.WebDummyTemplate_List:
-            lr_template.Dummy.setattrs(template)
+        for template in lr_lib.etc.template.WebDummyTemplate_List:
+            lr_lib.etc.template.Dummy.setattrs(template)
             if ok:
                 ok = self.tk_text_dummy_remove(force=False)
 
@@ -47,7 +47,7 @@ class ActReplaceRemove(lr_act_search.ActSearch):
                     gws = str(self.web_action.websReport.google_webs)[:50]
                     wt = ''.join(web.to_str())
                     sn = '"Snapshot=t{}.inf"'.format(web.snapshot)
-                    yask = lr_dialog.YesNoCancel(
+                    yask = lr_lib.gui.widj.dialog.YesNoCancel(
                         ['Удалить текущий', "Удалить все Snapshot's {}".format(gws), 'Пропустить', 'Выход'],
                         "удалить {sn} содержащий {d}".format(d={k: wt.count(k) for k in lr_vars.DENY_WEB_}, sn=sn),
                         'всего можно удалить {} шт'.format(len(self.web_action.websReport.google_webs)),
@@ -68,13 +68,13 @@ class ActReplaceRemove(lr_act_search.ActSearch):
     def _tk_text_dummy_remove(self, force=False, mode='') -> bool:
         """удалить все dummy web_"""
         text = self.tk_text.get(1.0, tk.END).strip()
-        _web_action = lr_main_awal.ActionWebsAndLines(self)
+        _web_action = lr_lib.core.action.main_awal.ActionWebsAndLines(self)
         _web_action.set_text_list(text)
 
         if mode == 'endswith':
-            is_remove = lr_template.dummy_endswith_remove
+            is_remove = lr_lib.etc.template.dummy_endswith_remove
         else:
-            is_remove = lr_template.dummy_remove
+            is_remove = lr_lib.etc.template.dummy_remove
 
         rem = 0
         for web_ in tuple(_web_action.get_web_all()):
@@ -99,7 +99,7 @@ class ActReplaceRemove(lr_act_search.ActSearch):
                 lwnt = len(text_t)
                 lwnd = len(text_w)
             else:
-                _type = lr_template.Dummy.web_dummy_template.split('("', 1)[0].strip()
+                _type = lr_lib.etc.template.Dummy.web_dummy_template.split('("', 1)[0].strip()
                 lwnt = len(tuple(w for w in text_t if w.type == _type))
                 lwnd = len(tuple(w for w in text_w if w.type == _type))
 
@@ -107,7 +107,7 @@ class ActReplaceRemove(lr_act_search.ActSearch):
             buttons = ['Удалить/Пересканировать', 'Пропустить', 'Выход']
             n1, n2, n3, n4 = '{}|Snapshot|строк|символов'.format(_type).split('|')
 
-            ync = lr_dialog.YesNoCancel(
+            ync = lr_lib.gui.widj.dialog.YesNoCancel(
                 buttons=buttons, text_before='Удалить {cd} шт. "dummy" - {web_name} из action.c текста?\n'
                                              'Если изменить web_dummy_template текст,\n'
                                              'action.c пересканируется, с повторным показом диалог окна.\n'
@@ -122,16 +122,16 @@ class ActReplaceRemove(lr_act_search.ActSearch):
                     ltn=ltn,
                     ldn=ldn, web_name=_type),
                 title='web_dummy_template | удалить {rem} шт ?'.format(rem=rem),
-                is_text=lr_template.Dummy.web_dummy_template, parent=self)
+                is_text=lr_lib.etc.template.Dummy.web_dummy_template, parent=self)
 
             y = ync.ask()
             if y == buttons[2]:
                 return False
 
             template = ync.text.strip()
-            if ((len(template) != lr_template.Dummy.web_len) or
-                    (len(template.split('\n')) != lr_template.Dummy.dummy_len)):
-                lr_template.Dummy.setattrs(template)
+            if ((len(template) != lr_lib.etc.template.Dummy.web_len) or
+                    (len(template.split('\n')) != lr_lib.etc.template.Dummy.dummy_len)):
+                lr_lib.etc.template.Dummy.setattrs(template)
                 return self.tk_text_dummy_remove()
 
             if y == buttons[0]:
@@ -171,9 +171,9 @@ class ActReplaceRemove(lr_act_search.ActSearch):
         mx = max(map(len, transactions or ['']))
         m = '"{:<%s}" -> "{}"' % mx
         all_transaction = '\n'.join(m.format(old, new) for old, new in zip(transactions, transactions))
-        y = lr_dialog.YesNoCancel(['Переименовать', 'Отмена'], 'Переименовать transaction слева',
+        y = lr_lib.gui.widj.dialog.YesNoCancel(['Переименовать', 'Отмена'], 'Переименовать transaction слева',
                                   'в transaction справа', 'transaction',
-                                  parent=self, is_text=all_transaction)
+                                               parent=self, is_text=all_transaction)
         st = 'lr_start_transaction("'
         en = 'lr_end_transaction("'
         if y.ask() == 'Переименовать':

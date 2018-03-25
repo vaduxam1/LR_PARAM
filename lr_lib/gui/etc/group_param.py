@@ -4,17 +4,13 @@
 import re
 import sys
 import queue
-import threading
 import contextlib
 
 import tkinter as tk
 
-import lr_lib.gui.etc.gui_other as lr_gui_other
-import lr_lib.gui.widj.dialog as lr_dialog
+import lr_lib
+import lr_lib.core.etc.lbrb_checker
 import lr_lib.core.var.vars as lr_vars
-import lr_lib.core.wrsp.param as lr_param
-import lr_lib.core.etc.lbrb_checker as lr_lbrb_checker
-import lr_lib.etc.excepthook as lr_excepthook
 
 
 progress_str = '{proc}% : {counter}/{len_params} | fail={fail}\n{wrsp}'
@@ -38,7 +34,7 @@ def group_param(event, widget=None, params=None, ask=True) -> None:
     _len_params = len(params)
     if ask:
         pc = '%s шт.' % _len_params
-        y = lr_dialog.YesNoCancel(
+        y = lr_lib.gui.widj.dialog.YesNoCancel(
             buttons=['Найти', 'Отменить', 'Пропуск'], text_before='найти group param', text_after=pc,
             is_text='\n'.join(params), title=pc, parent=widget.action, default_key='Найти')
         ask = y.ask()
@@ -121,7 +117,7 @@ def _group_param_iter(params: [str, ], action) -> iter((int, dict, str, [str, ])
     next(replace)
     try:
         for (counter, wrsp_dict) in enumerate(iter(wrsp_dict_queue.get, None), start=1):
-            wrsp = lr_param.create_web_reg_save_param(wrsp_dict)
+            wrsp = lr_lib.core.wrsp.param.create_web_reg_save_param(wrsp_dict)
 
             # вставить web_reg_save_param перед web
             action.web_action.web_reg_save_param_insert(wrsp_dict, wrsp)
@@ -144,7 +140,7 @@ def _thread_wrsp_dict_creator(wrsp_dicts: queue.Queue, params: [str, ], unsucces
             wrsp_dicts.put_nowait(lr_vars.VarWrspDict.get())  # вернуть wrsp_dict
         except Exception:
             unsuccess.append(param)
-            lr_excepthook.excepthook(*sys.exc_info())
+            lr_lib.etc.excepthook.excepthook(*sys.exc_info())
 
     wrsp_dicts.put_nowait(None)  # exit
 
@@ -152,9 +148,9 @@ def _thread_wrsp_dict_creator(wrsp_dicts: queue.Queue, params: [str, ], unsucces
 @lr_vars.T_POOL_decorator
 def auto_param_creator(action) -> None:
     """group params по кнопке PARAM - по LB + по началу имени"""
-    y = lr_dialog.YesNoCancel(['Найти', 'Отменить'], is_text='\n'.join(lr_vars.Params_names), parent=action,
-                              text_before='Будет произведен поиск param, имя которых начинается на указанные имена.',
-                              title='начало param-имен', text_after='При необходимости - добавить/удалить')
+    y = lr_lib.gui.widj.dialog.YesNoCancel(['Найти', 'Отменить'], is_text='\n'.join(lr_vars.Params_names), parent=action,
+                                           text_before='Будет произведен поиск param, имя которых начинается на указанные имена.',
+                                           title='начало param-имен', text_after='При необходимости - добавить/удалить')
     ans = y.ask()
     if ans == 'Найти':
         param_parts = list(filter(bool, map(str.strip, y.text.split('\n'))))
@@ -168,9 +164,9 @@ def auto_param_creator(action) -> None:
             not (len(p) > 2 and p.startswith('on') and p[2].isupper())))]
         params.sort(key=lambda param: len(param), reverse=True)
 
-        y = lr_dialog.YesNoCancel(['Создать', 'Отменить'], is_text='\n'.join(params), parent=action,
-                                  text_before='создание + автозамена. %s шт' % len(params), title='Имена param',
-                                  text_after='При необходимости - добавить/удалить')
+        y = lr_lib.gui.widj.dialog.YesNoCancel(['Создать', 'Отменить'], is_text='\n'.join(params), parent=action,
+                                               text_before='создание + автозамена. %s шт' % len(params), title='Имена param',
+                                               text_after='При необходимости - добавить/удалить')
         ans = y.ask()
         if ans == 'Создать':
             params = list(filter(bool, map(str.strip, y.text.split('\n'))))
@@ -188,10 +184,10 @@ def session_params(action, lb_list=None, ask=True) -> list:
         lb_col_count = re.findall(r'p_p_col_count=\d&', text)
 
         text = '\n'.join(set(lb_list + lb_uuid + lb_col_count))
-        y = lr_dialog.YesNoCancel(buttons=['Найти', 'Пропуск'], text_before='найти param по LB=',
-                                  text_after='указать LB, с новой строки', is_text=text,
-                                  title='автозамена по LB=',
-                                  parent=action, default_key='Найти')
+        y = lr_lib.gui.widj.dialog.YesNoCancel(buttons=['Найти', 'Пропуск'], text_before='найти param по LB=',
+                                               text_after='указать LB, с новой строки', is_text=text,
+                                               title='автозамена по LB=',
+                                               parent=action, default_key='Найти')
         if y.ask() == 'Найти':
             lb_list = y.text.split('\n')
         else:
@@ -220,11 +216,11 @@ def _group_param_search(action, param_part: "zkau_", part_mode=True) -> iter(("z
             left = split_text[index].rsplit('\n', 1)[-1].lstrip()
             right = split_text[index + 1].split('\n', 1)[0].rstrip()
 
-            if lr_lbrb_checker.check_bound_lb(left) if part_mode else (right[0] in lr_param.wrsp_allow_symb):
+            if lr_lib.core.etc.lbrb_checker.check_bound_lb(left) if part_mode else (right[0] in lr_lib.core.wrsp.param.wrsp_allow_symb):
                 param = []  # "5680"
 
                 for s in right:
-                    if s in lr_param.wrsp_allow_symb:
+                    if s in lr_lib.core.wrsp.param.wrsp_allow_symb:
                         param.append(s)
                     else:
                         break
@@ -239,10 +235,10 @@ def _group_param_search(action, param_part: "zkau_", part_mode=True) -> iter(("z
 @lr_vars.T_POOL_decorator
 def re_auto_param_creator(action) -> None:
     """group params поиск, на основе регулярных выражений"""
-    y = lr_dialog.YesNoCancel(['Найти', 'Отменить'], is_text='\n'.join(lr_vars.REGEXP_PARAMS), parent=action,
-                              text_before='Будет произведен поиск param: re.findall(regexp, action_text)',
-                              title='regexp {} шт.'.format(len(lr_vars.REGEXP_PARAMS)),
-                              text_after='При необходимости - добавить/удалить')
+    y = lr_lib.gui.widj.dialog.YesNoCancel(['Найти', 'Отменить'], is_text='\n'.join(lr_vars.REGEXP_PARAMS), parent=action,
+                                           text_before='Будет произведен поиск param: re.findall(regexp, action_text)',
+                                           title='regexp {} шт.'.format(len(lr_vars.REGEXP_PARAMS)),
+                                           text_after='При необходимости - добавить/удалить')
     ans = y.ask()
     if ans == 'Найти':
         regexps = list(filter(bool, map(str.strip, y.text.split('\n'))))
@@ -271,10 +267,10 @@ def re_auto_param_creator(action) -> None:
     params = list(set(params))
     if params:
         params.sort(key=lambda param: len(param), reverse=True)
-        y = lr_dialog.YesNoCancel(['создать', 'Отменить'], is_text='\n'.join(params), parent=action,
-                                  text_before='Будет произведено создание param',
-                                  title='param {} шт.'.format(len(params)),
-                                  text_after='При необходимости - добавить/удалить')
+        y = lr_lib.gui.widj.dialog.YesNoCancel(['создать', 'Отменить'], is_text='\n'.join(params), parent=action,
+                                               text_before='Будет произведено создание param',
+                                               title='param {} шт.'.format(len(params)),
+                                               text_after='При необходимости - добавить/удалить')
         ans = y.ask()
         if ans == 'создать':
             params = list(filter(bool, map(str.strip, y.text.split('\n'))))
@@ -290,5 +286,5 @@ def group_param_search_quotes(action, r=r'=(.+?)\"') -> iter((str,)):
             yield from filter(bool, map(str.strip, params))
 
     for param in get_params():
-        if all(map(lr_param.wrsp_allow_symb.__contains__, param)):  # не содержит неподходящих символов
+        if all(map(lr_lib.core.wrsp.param.wrsp_allow_symb.__contains__, param)):  # не содержит неподходящих символов
             yield param

@@ -6,17 +6,15 @@ import subprocess
 import tkinter as tk
 import tkinter.ttk as ttk
 
-import lr_lib.gui.widj.lbrb5 as lr_lbrb5
-import lr_lib.gui.wrsp.win_filesort as lr_win_filesort
+import lr_lib
+import lr_lib.gui.wrsp.win_filesort
 import lr_lib.core.var.vars as lr_vars
-import lr_lib.core.wrsp.files as lr_files
-import lr_lib.core.etc.other as lr_other
 
 
-class WinOther(lr_win_filesort.WinFileSort):
+class WinOther(lr_lib.gui.wrsp.win_filesort.WinFileSort):
     """разное"""
     def __init__(self):
-        lr_win_filesort.WinFileSort.__init__(self)
+        lr_lib.gui.wrsp.win_filesort.WinFileSort.__init__(self)
 
         self.cbxFirstLastFile = tk.Checkbutton(
             self.mid_frame, variable=lr_vars.VarFirstLastFile, text='reverse', font=lr_vars.DefaultFont + ' italic',
@@ -38,7 +36,7 @@ class WinOther(lr_win_filesort.WinFileSort):
             font=lr_vars.DefaultFont + ' italic', padx=0, pady=0)
 
         self.ButtonNote = tk.Button(
-            self.last_frame, text='text', command=lambda: lr_other.openTextInEditor(self.tk_text.get('1.0', tk.END)),
+            self.last_frame, text='text', command=lambda: lr_lib.core.etc.other.openTextInEditor(self.tk_text.get('1.0', tk.END)),
             font=lr_vars.DefaultFont + ' italic', padx=0, pady=0)
 
         self.ButtonLog = tk.Button(
@@ -98,7 +96,7 @@ class WinOther(lr_win_filesort.WinFileSort):
     def param_file_editor(self, *args):
         """открыть param файл в editor"""
         return subprocess.Popen(
-            [lr_vars.EDITOR['exe'], lr_files.get_file_with_kwargs(lr_vars.FilesWithParam)['File']['FullName']])
+            [lr_vars.EDITOR['exe'], lr_lib.core.wrsp.files.get_file_with_kwargs(lr_vars.FilesWithParam)['File']['FullName']])
 
     def clear(self) -> None:
         """очистить поля ввода"""
@@ -112,7 +110,7 @@ class WinOther(lr_win_filesort.WinFileSort):
         self.comboFiles.current(0)
         self.comboParts.current(0)
 
-        lr_lbrb5.LBRBText.set_label_text()
+        lr_lib.gui.widj.lbrb5.LBRBText.set_label_text()
 
         self.set_comboFiles_width()
         self.sortKey1.set('Snapshot')
@@ -125,7 +123,7 @@ class WinOther(lr_win_filesort.WinFileSort):
         """отображение всякой информации"""
         t = 'inf={i}: файлов={f} | MP: {pool}[{p_size}] | T: {tpool}[{tpool_size}] | {d}'.format(
             d=lr_vars.VarFilesFolder.get(), f=len(lr_vars.AllFiles), pool=lr_vars.M_POOL._name,
-            i=len(list(lr_other.get_files_infs(lr_vars.AllFiles))), tpool_size=lr_vars.T_POOL._size,
+            i=len(list(lr_lib.core.etc.other.get_files_infs(lr_vars.AllFiles))), tpool_size=lr_vars.T_POOL._size,
             p_size=lr_vars.M_POOL._size, tpool=lr_vars.T_POOL._name)
 
         self.last_frame['text'] = t

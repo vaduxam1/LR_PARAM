@@ -6,10 +6,9 @@ import time
 import random
 import string
 
-import lr_lib.core.etc.other as lr_other
-import lr_lib.core.etc.lbrb_checker as lr_lbrb_checker
+import lr_lib
 import lr_lib.core.var.vars as lr_vars
-import lr_lib.etc.help as lr_help
+
 
 LR_COMENT = '//lr:'
 
@@ -108,8 +107,8 @@ wrsp_deny_punctuation.update(
 
 def wrsp_dict_creator(is_param=True) -> dict:
     """сформировать данные для web_reg_save_param"""
-    all_infs = tuple(lr_other.get_files_infs(lr_vars.AllFiles))
-    param_infs = tuple(lr_other.get_files_infs(lr_vars.FilesWithParam))
+    all_infs = tuple(lr_lib.core.etc.other.get_files_infs(lr_vars.AllFiles))
+    param_infs = tuple(lr_lib.core.etc.other.get_files_infs(lr_vars.FilesWithParam))
     len_param_files = len(lr_vars.FilesWithParam)
     file = lr_vars.VarFile.get()
     param_num = lr_vars.VarPartNum.get() + 1  # нумерация с 0
@@ -151,8 +150,8 @@ def wrsp_dict_creator(is_param=True) -> dict:
         Rb_len=len(Rb),
         lb_len=len(lb),
         rb_len=len(rb),
-        lb_NotPrintable=lr_other.not_printable(lb),
-        rb_NotPrintable=lr_other.not_printable(rb),
+        lb_NotPrintable=lr_lib.core.etc.other.not_printable(lb),
+        rb_NotPrintable=lr_lib.core.etc.other.not_printable(rb),
         param_text_index=param_index,
         all_inf_min=min(all_infs),
         all_inf_max=max(all_infs),
@@ -222,7 +221,7 @@ def wrsp_name_creator(param: str, Lb: str, Rb: str, snapshot: int) -> str:
         w = next(web_action.get_web_by(web_action.get_web_snapshot_all(), snapshot=snapshot))
 
         if w and w.transaction and (not w.transaction.startswith(web_action.transactions._no_transaction_name)):
-            transaction = '_'.join(''.join(filter(str.isalnum, t)).translate(lr_help.TRANSLIT_DT)
+            transaction = '_'.join(''.join(filter(str.isalnum, t)).translate(lr_lib.etc.help.TRANSLIT_DT)
                                    for t in w.transaction.split())
             transaction = transaction[:TransactionInNameMax]
         else:
@@ -278,7 +277,7 @@ def search_param_in_file(file: dict) -> (dict or None):
             i = indx - 1
             left = split_line[i]
             right = split_line[indx]
-            if lr_lbrb_checker.check_bound_lb_rb(left, right):
+            if lr_lib.core.etc.lbrb_checker.check_bound_lb_rb(left, right):
                 Param['Count_indexs'].append(i)
 
     if Param['Count_indexs']:
@@ -302,7 +301,7 @@ def create_files_with_search_data(files: (dict,), search_data: dict, action=None
         d['max_action_inf'] = param_inf = next(set_param_in_action_inf(action, d['Name']), -1)
         if not action.add_inf_cbx_var.get():
             param_inf -= 1  # inf, педшествующий номеру inf, где первый раз встречается pram
-        if action.max_inf_cbx_var.get() and param_inf and (inf_max > param_inf):
+        if (param_inf > 0) and action.max_inf_cbx_var.get() and param_inf and (inf_max > param_inf):
             inf_max = d['inf_max'] = param_inf
 
     for __file in files:
@@ -338,7 +337,7 @@ def get_search_data(param: str) -> dict:
             inf_min=lr_vars.VarSearchMinSnapshot.get(),
             len=(len(param) if hasattr(param, '__len__') else None),
             inf_max=lr_vars.VarSearchMaxSnapshot.get(),
-            NotPrintable=lr_other.not_printable(param),
+            NotPrintable=lr_lib.core.etc.other.not_printable(param),
         ),
         File=dict(
             encoding=lr_vars.VarEncode.get(),
@@ -358,7 +357,7 @@ def get_files_with_param(param: str, action=None, set_file=True) -> None:
     param_searcher = (search_param_in_file if lr_vars.VarStrongSearchInFile.get() else _search_param_in_file)
     execute = (lr_vars.M_POOL.imap_unordered if lr_vars.FindParamPOOLEnable else map)
 
-    lr_vars.FilesWithParam = sorted(filter(bool, execute(param_searcher, files)), key=lr_other.sort_files)  # (2) поиск
+    lr_vars.FilesWithParam = sorted(filter(bool, execute(param_searcher, files)), key=lr_lib.core.etc.other.sort_files)  # (2) поиск
     if not lr_vars.FilesWithParam:
         raise UserWarning(param_not_found_err_text(action, files, search_data, param))
 
@@ -381,7 +380,7 @@ def get_files_with_param(param: str, action=None, set_file=True) -> None:
         lr_vars.VarFileName.set(file['File']['Name'])  # (3)
 
     if lr_vars.VarFileNamesNumsShow.get():
-        lr_vars.Logger.info(lr_other.param_files_info())
+        lr_vars.Logger.info(lr_lib.core.etc.other.param_files_info())
 
 
 def param_not_found_err_text(action, files: [dict, ], search_data: dict, param: str) -> str:
@@ -399,16 +398,16 @@ def param_not_found_err_text(action, files: [dict, ], search_data: dict, param: 
     else:
         min_iaf = max_iaf = '?'
 
-    files_infs = len(tuple(lr_other.get_files_infs(lr_vars.AllFiles)))
-    lenfi = len(tuple(lr_other.get_files_infs(files)))
+    files_infs = len(tuple(lr_lib.core.etc.other.get_files_infs(lr_vars.AllFiles)))
+    lenfi = len(tuple(lr_lib.core.etc.other.get_files_infs(files)))
 
     error = 'Не найдены файлы содержащие param "{param}"\n\nsearch_data: {d}\n\n' \
             'Всего Snapshot {i}=[ t{ai_min}:t{ai_max} ]/файлов={f}\n' \
             'В action.c: Snapshot {ai}=[ t{a_min}:t{a_max} ] / Файлов={afa}\n' \
             'Поиск происходил в: Snapshot {lf}=[ t{min_iaf}:t{max_iaf} ] / файлах={f_}\n' \
             'Директория поиска: {folder}\nоткл чекб "strong", вероятно может помочь найти варианты'.format(
-        ai_min=min(tuple(lr_other.get_files_infs(lr_vars.AllFiles))), ai=lai, afa=afa, f_=len(files), param=param,
-        ai_max=max(lr_other.get_files_infs(lr_vars.AllFiles)), folder=lr_vars.VarFilesFolder.get(), i=files_infs,
+        ai_min=min(tuple(lr_lib.core.etc.other.get_files_infs(lr_vars.AllFiles))), ai=lai, afa=afa, f_=len(files), param=param,
+        ai_max=max(lr_lib.core.etc.other.get_files_infs(lr_vars.AllFiles)), folder=lr_vars.VarFilesFolder.get(), i=files_infs,
         min_iaf=min_iaf, max_iaf=max_iaf, a_min=a_min, a_max=a_max, d=search_data, f=len(lr_vars.AllFiles), lf=lenfi,)
     
     return error

@@ -8,8 +8,8 @@ import contextlib
 import configparser
 import collections
 
-import lr_lib.core.etc.other as lr_other
-import lr_lib.etc.excepthook as lr_excepthook
+import lr_lib
+import lr_lib.core.etc.other
 import lr_lib.core.var.vars as lr_vars
 
 
@@ -98,7 +98,7 @@ def get_folder_infs(folder: str) -> iter((str, int),):
 def create_files_from_infs(folder: str, enc: str, allow_deny: bool, statistic: bool) -> iter([dict, ]):
     """создать файлы ответов, из всех t*.ini файлов"""
     arg = (folder, enc, allow_deny, statistic, )
-    chunks = ((arg, files) for files in lr_other.chunks(get_folder_infs(folder), lr_vars.FilesCreatePortionSize))
+    chunks = ((arg, files) for files in lr_lib.core.etc.other.chunks(get_folder_infs(folder), lr_vars.FilesCreatePortionSize))
     executer = (lr_vars.M_POOL.imap_unordered if lr_vars.SetFilesPOOLEnable else map)
 
     # создать файлы ответов
@@ -134,7 +134,7 @@ def _create_files_from_inf(args: [(str, str, bool, bool), (str, int)]) -> iter((
                             yield file
 
     except Exception as ex:
-        lr_excepthook.full_tb_write(ex)
+        lr_lib.etc.excepthook.full_tb_write(ex)
         # как текст файл
         with open(os.path.join(folder, file), encoding='utf-8', errors='ignore') as inf_file:
             (num, *lines) = inf_file.read().split('\n')
@@ -165,7 +165,7 @@ def init() -> None:
 
     if lr_vars.VarIsSnapshotFiles.get():    # файлы ответов  из LoadRunner inf
         files = create_files_from_infs(folder, enc, allow_deny, statistic)
-        lr_vars.AllFiles = lr_other.iter_to_list(files)
+        lr_vars.AllFiles = lr_lib.core.etc.other.iter_to_list(files)
 
     else:  # все файлы каталога
         for (e, name) in enumerate(os.listdir(folder)):
@@ -184,17 +184,17 @@ def init() -> None:
         fs['Nums'] = sorted(fs['Nums'])  # set -> list
         fs['len'] = len(fs['Nums'])
 
-    all_files_inf = tuple(lr_other.get_files_infs(lr_vars.AllFiles))
+    all_files_inf = tuple(lr_lib.core.etc.other.get_files_infs(lr_vars.AllFiles))
     lr_vars.VarSearchMaxSnapshot.set(max(all_files_inf or [-1]))
     lr_vars.VarSearchMinSnapshot.set(min(all_files_inf or [-1]))
 
     try:  # сортировка файлов
-        lr_vars.AllFiles = sorted(lr_vars.AllFiles, key=lr_other.sort_files)
+        lr_vars.AllFiles = sorted(lr_vars.AllFiles, key=lr_lib.core.etc.other.sort_files)
     except TypeError:  # если VarFileSortKey2 предназначен только для FilesWithParam
         lr_vars.AllFiles = sorted(lr_vars.AllFiles, key=lambda file: file['Snapshot']['Nums'])
 
     if statistic:
-        lr_vars.Logger.info(lr_other.all_files_info())
+        lr_vars.Logger.info(lr_lib.core.etc.other.all_files_info())
     else:
         lr_vars.Tk.after(500, lambda: thread_set_stat(lr_vars.AllFiles))
 
@@ -262,4 +262,4 @@ def thread_set_stat(files: [dict, ]) -> None:
     for file in files:
         set_file_statistic(file)
 
-    lr_vars.Logger.info(lr_other.all_files_info())
+    lr_vars.Logger.info(lr_lib.core.etc.other.all_files_info())

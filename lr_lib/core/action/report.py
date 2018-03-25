@@ -5,19 +5,18 @@ import copy
 import string
 import collections
 
-import lr_lib.core.action.transac as lr_transac
+import lr_lib
+import lr_lib.core.action.web_
 import lr_lib.core.var.vars as lr_vars
-import lr_lib.core.action.web_ as lr_web_
-import lr_lib.core.wrsp.param as lr_param
 
 
-is_ascii = set(string.printable).__contains__
+is_ascii = set(string.printable)
 
 
 class WebReport:
     """статистика использования web_reg_save_param"""
-    def __init__(self, parent_AWAL):
-        self.parent_AWAL = parent_AWAL
+    def __init__(self, ActionWebsAndLines):
+        self.ActionWebsAndLines = ActionWebsAndLines
 
         self.wrsp_and_param_names = {}  # {'P_6046_1__z_k62_0': 'z_k620', ...}
         self.param_statistic = {}  # {'P_3396_4_Menupopup__a_FFXc_0__id_mainMenu': {'param_count': 2, 'snapshots': [874, 875], 'snapshots_count': 2, 'minmax_snapshots': '[t874:t875]=2', 'transaction_names': {'logout'}, 'transaction_count': 1}}
@@ -42,11 +41,11 @@ class WebReport:
         self.bad_wrsp_in_usage = []
 
         self._wrsp = {}
-        self.all_in_one = copy.deepcopy(self.parent_AWAL.transactions.sub_transaction)
-        wrsp_all = tuple(self.parent_AWAL.get_web_reg_save_param_all())
+        self.all_in_one = copy.deepcopy(self.ActionWebsAndLines.transactions.sub_transaction)
+        wrsp_all = tuple(self.ActionWebsAndLines.get_web_reg_save_param_all())
 
         for wr in wrsp_all:
-            self.parent_AWAL.action.tk_text.web_add_highlight(wr)
+            self.ActionWebsAndLines.action.tk_text.web_add_highlight(wr)
 
             self.wrsp_and_param_names[wr.name] = wr.param
             self._wrsp[wr.name] = wr
@@ -62,13 +61,13 @@ class WebReport:
                 'transaction_count': 0,
             }
 
-        for web in self.parent_AWAL.get_web_all():
-            self.parent_AWAL.action.tk_text.web_add_highlight(web)
+        for web in self.ActionWebsAndLines.get_web_all():
+            self.ActionWebsAndLines.action.tk_text.web_add_highlight(web)
 
             snapshot = web.snapshot
             transaction = web.transaction
 
-            if isinstance(web, lr_web_.WebSnapshot):  # проставить родителя wrsp объекта
+            if isinstance(web, lr_lib.core.action.web_.WebSnapshot):  # проставить родителя wrsp объекта
                 for wrsp in web.web_reg_save_param_list:
                     wrsp.snapshot = web.snapshot
                     wrsp.parent_snapshot = web
@@ -77,7 +76,7 @@ class WebReport:
                 self.web_transaction_sorted.append(transaction)
 
             for line in web.lines_list:
-                no_ascii = len(line) - len(tuple(filter(is_ascii, line)))
+                no_ascii = len(line) - len([s for s in line if s in is_ascii])
                 if no_ascii:
                     self.rus_webs[snapshot] = no_ascii
 
@@ -98,7 +97,7 @@ class WebReport:
             self.web_snapshot_param_in_count[snapshot] = in_count = {}
 
             for wr_name in self.wrsp_and_param_names:
-                param_in_count = body.count(lr_param.param_bounds_setter(wr_name))
+                param_in_count = body.count(lr_lib.core.wrsp.param.param_bounds_setter(wr_name))
                 if param_in_count:
                     in_count[wr_name] = param_in_count
                     statistic = self.param_statistic[wr_name]
@@ -124,16 +123,16 @@ class WebReport:
         for dt in self.web_transaction.values():
             dt['minmax_snapshots'] = snapshot_diapason_string(dt['snapshots'])  # для transac comment
 
-        web_snapshot_all = tuple(self.parent_AWAL.get_web_snapshot_all())
+        web_snapshot_all = tuple(self.ActionWebsAndLines.get_web_snapshot_all())
 
-        def get_stats(name, deny=('snapshots', 'transaction_names', 'snapshots_count', )):
+        def get_stats(name: str, deny=('snapshots', 'transaction_names', 'snapshots_count', )) -> iter:
             wps = self.param_statistic[name]
             for k in wps:
                 if k not in deny:
                     yield k, wps[k]
 
         def web_reg(snapshot: int) -> iter((str, dict),):
-            web = self.parent_AWAL.get_web_by(web_snapshot_all, snapshot=snapshot)
+            web = self.ActionWebsAndLines.get_web_by(web_snapshot_all, snapshot=snapshot)
             web = next(web)
             for wrsp in web.web_reg_save_param_list:
                 name = wrsp.name
@@ -157,7 +156,7 @@ class WebReport:
         if not params_in:
             return ''
 
-        def get(wr_name, format='{param}(P:{p_in}/{p_all}|S:{snap}|T:{transac})'.format):
+        def get(wr_name: str, format='{param}(P:{p_in}/{p_all}|S:{snap}|T:{transac})'.format):
             ps = self.param_statistic[wr_name]
             s = format(param=self.wrsp_and_param_names[wr_name], p_in=params_in[wr_name], p_all=ps['param_count'],
                        snap=ps['minmax_snapshots'], transac=ps['transaction_count'])
@@ -165,12 +164,12 @@ class WebReport:
 
         statistic = (get(wr_name) for wr_name in sorted(params_in, key=len))
         s = '\n\t{c} IN({i})<-[{ui}]: {st}'.format(
-            st=', '.join(statistic), c=lr_param.LR_COMENT, i=sum(params_in[w] for w in params_in), ui=len(params_in))
+            st=', '.join(statistic), c=lr_lib.core.wrsp.param.LR_COMENT, i=sum(params_in[w] for w in params_in), ui=len(params_in))
         return s
 
     def stats_out_web(self, snapshot: int) -> str:
         """'статистика по web_reg_save_param, созданным в web.snapshot"""
-        web = next(self.parent_AWAL.get_web_snapshot_by(snapshot=snapshot))
+        web = next(self.ActionWebsAndLines.get_web_snapshot_by(snapshot=snapshot))
 
         if not web.web_reg_save_param_list:
             return ''
@@ -182,18 +181,18 @@ class WebReport:
                 p=wr.param, p_all=ps['param_count'], snap=ps['minmax_snapshots'], transac=ps['transaction_count'])
             statistic.append(pss)
 
-        return '\n\t{c} OUT({n})-> {s}'.format(s=', '.join(statistic), c=lr_param.LR_COMENT, n=len(statistic))
+        return '\n\t{c} OUT({n})-> {s}'.format(s=', '.join(statistic), c=lr_lib.core.wrsp.param.LR_COMENT, n=len(statistic))
 
-    def stats_transaction_web(self, web) -> str:
+    def stats_transaction_web(self, web: lr_lib.core.action.web_.WebSnapshot) -> str:
         """'статистика transaction, для web"""
         transaction = web.transaction
         mm = self.web_transaction[transaction]['minmax_snapshots']
-        if isinstance(web, lr_web_.WebSnapshot):
+        if isinstance(web, lr_lib.core.action.web_.WebSnapshot):
             m = self.web_transaction[transaction]['snapshots'].index(web.snapshot) + 1
             mm = '{m}/{mm}'.format(mm=mm, m=m)
 
         if transaction:
-            t_comment = '\n\t{c} "{t}"({mm})'.format(c=lr_param.LR_COMENT, t=transaction, mm=mm)
+            t_comment = '\n\t{c} "{t}"({mm})'.format(c=lr_lib.core.wrsp.param.LR_COMENT, t=transaction, mm=mm)
             return t_comment
         else:
             return ''
@@ -202,16 +201,16 @@ class WebReport:
         """проверка на некорректные транзакции"""
         result = dict(info=[], warning=[], )
 
-        for t in self.parent_AWAL.transactions.names:
-            if t.startswith(lr_transac.Transactions._no_transaction_name):
+        for t in self.ActionWebsAndLines.transactions.names:
+            if t.startswith(lr_lib.core.action.transac.Transactions._no_transaction_name):
                 continue
             dtt = next(self.get_sub_transaction_dt(t, self.all_in_one))
 
             if (not dtt) and (t not in self.web_transaction):  # считается пустой(без snapshot), только если не содержит подтранзакций
                 result['info'].append('Пустая транзакция "{}"'.format(t))
-            if t not in self.parent_AWAL.transactions.start_stop['start']:
+            if t not in self.ActionWebsAndLines.transactions.start_stop['start']:
                 result['warning'].append('Отсутствует транзакция start_transaction("{}")'.format(t))
-            if t not in self.parent_AWAL.transactions.start_stop['stop']:
+            if t not in self.ActionWebsAndLines.transactions.start_stop['stop']:
                 result['warning'].append('Отсутствует транзакция stop_transaction("{}")'.format(t))
 
         return result

@@ -6,19 +6,20 @@ import configparser
 
 import tkinter as tk
 
-import lr_lib.gui.action.act_toplevel as lr_act_toplevel
+import lr_lib
+import lr_lib.core.action.main_awal
+import lr_lib.gui.action.act_toplevel
 import lr_lib.core.var.vars as lr_vars
-import lr_lib.core.action.main_awal as lr_main_awal
 
 
-class ActVar(lr_act_toplevel.ActToplevel):
+class ActVar(lr_lib.gui.action.act_toplevel.ActToplevel):
     """переменные которые надо создать первыми"""
 
     def __init__(self):
-        lr_act_toplevel.ActToplevel.__init__(self)
+        lr_lib.gui.action.act_toplevel.ActToplevel.__init__(self)
         self.id_ = id(self)
 
-        self.web_action = lr_main_awal.ActionWebsAndLines(action=self)
+        self.web_action = lr_lib.core.action.main_awal.ActionWebsAndLines(action=self)
         self.action_file = None  # путь_имя текущего action.c
 
         self.usr_file = '{}.usr'.format(os.path.basename(os.path.dirname(lr_vars.VarFilesFolder.get())))

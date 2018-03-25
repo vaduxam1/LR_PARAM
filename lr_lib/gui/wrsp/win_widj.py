@@ -6,16 +6,14 @@ import time
 import tkinter as tk
 import tkinter.ttk as ttk
 
-import lr_lib.gui.widj.lbrb5 as lr_lbrb5
-import lr_lib.gui.widj.tooltip as lr_tooltip
-import lr_lib.gui.wrsp.win_part_lbrb as lr_win_part_lbrb
+import lr_lib
+import lr_lib.gui.widj.lbrb5
+import lr_lib.gui.wrsp.win_part_lbrb
+import lr_lib.core.wrsp.files
 import lr_lib.core.var.vars as lr_vars
-import lr_lib.core.wrsp.files as lr_files
-import lr_lib.core.wrsp.param as lr_param
-import lr_lib.core.etc.other as lr_other
 
 
-class WinWidj(lr_win_part_lbrb.WinPartsLbRb):
+class WinWidj(lr_lib.gui.wrsp.win_part_lbrb.WinPartsLbRb):
     """основные виджеты: (1) (2) (3) (6)"""
     cbxClearShowVar = tk.IntVar(value=lr_vars.cbxClearShowVar)  # перед (2), очищать центральный виджет текста
     cbxWrspClipboard = tk.IntVar(value=lr_vars.cbxWrspClipboard)  # после (2), копировать wrsp в буфер обмена
@@ -23,7 +21,7 @@ class WinWidj(lr_win_part_lbrb.WinPartsLbRb):
     cbxNotepadWrsp = tk.IntVar(value=lr_vars.cbxNotepadWrsp)  # после (2), открывать web_reg_save_param в блокноте
 
     def __init__(self):
-        lr_win_part_lbrb.WinPartsLbRb.__init__(self)
+        lr_lib.gui.wrsp.win_part_lbrb.WinPartsLbRb.__init__(self)
 
         self.t0 = tk.Label(self.find_frame, text='?', font=lr_vars.DefaultFont + ' italic', padx=0, pady=0,
                            foreground='grey')
@@ -109,7 +107,7 @@ class WinWidj(lr_win_part_lbrb.WinPartsLbRb):
         self.comboPartsFill()
         self.comboParts.set(part if part else 0)
         self.comboParts_change()
-        lr_tooltip.createToolTip(self.comboFiles, lr_other.file_string(lr_files.get_file_with_kwargs(
+        lr_lib.gui.widj.tooltip.createToolTip(self.comboFiles, lr_lib.core.etc.other.file_string(lr_lib.core.wrsp.files.get_file_with_kwargs(
             lr_vars.FilesWithParam, Name=name)))
 
     def comboPartsFill(self) -> None:
@@ -119,8 +117,8 @@ class WinWidj(lr_win_part_lbrb.WinPartsLbRb):
             self.comboParts['values'] = file['Param']['Count_indexs']
         else:
             self.comboParts['values'] = list(range(file['Param']['Count']))
-        lr_tooltip.createToolTip(
-            lr_vars.Window.comboFiles, lr_other.file_string(lr_files.get_file_with_kwargs(
+        lr_lib.gui.widj.tooltip.createToolTip(
+            lr_vars.Window.comboFiles, lr_lib.core.etc.other.file_string(lr_lib.core.wrsp.files.get_file_with_kwargs(
                 lr_vars.FilesWithParam, Name=file['File']['Name'])))
 
     def show_LR_Param(self, callback=None) -> str:
@@ -128,11 +126,11 @@ class WinWidj(lr_win_part_lbrb.WinPartsLbRb):
         lr_vars.VarLB.set(self.LB.get())
         lr_vars.VarRB.set(self.RB.get())
         # с учетом редактирования LB/RB(5)
-        web_reg_save_param = lr_param.create_web_reg_save_param(lr_param.wrsp_dict_creator())
+        web_reg_save_param = lr_lib.core.wrsp.param.create_web_reg_save_param(lr_lib.core.wrsp.param.wrsp_dict_creator())
 
         if web_reg_save_param:
             if self.cbxNotepadWrsp.get():
-                lr_other.openTextInEditor(web_reg_save_param)
+                lr_lib.core.etc.other.openTextInEditor(web_reg_save_param)
             if self.cbxWrspClipboard.get():
                 self.clip_add(web_reg_save_param)
             if self.cbxClearShowVar.get():
@@ -152,7 +150,7 @@ class WinWidj(lr_win_part_lbrb.WinPartsLbRb):
         """очистка виджетов перед поиском"""
         self.LB.set('')
         self.RB.set('')
-        lr_lbrb5.LBRBText.set_label_text()
+        lr_lib.gui.widj.lbrb5.LBRBText.set_label_text()
         self.comboFiles['values'] = [self.no_files_text]
         self.comboParts['values'] = [-1]
         self.comboFiles.current(0)

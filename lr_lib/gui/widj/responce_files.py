@@ -8,11 +8,8 @@ import tkinter.ttk as ttk
 
 from tkinter import filedialog
 
-import lr_lib.gui.etc.gui_other as lr_gui_other
-import lr_lib.gui.widj.tooltip as lr_tooltip
-import lr_lib.core.etc.other as lr_other
+import lr_lib
 import lr_lib.core.var.vars as lr_vars
-import lr_lib.core.wrsp.files as lr_files
 
 
 class RespFiles(tk.Toplevel):
@@ -24,7 +21,7 @@ class RespFiles(tk.Toplevel):
         self.transient(self.widget)
         self.inf_file = 't{i}.inf'.format(i=i_num)
         self.title('Snapshot=' + self.inf_file)
-        lr_gui_other.center_widget(self)
+        lr_lib.gui.etc.gui_other.center_widget(self)
 
         self.folder_record = folder_record
         self.folder_response = folder_response
@@ -36,14 +33,14 @@ class RespFiles(tk.Toplevel):
     def combo_select(self, ent: tk.Entry, folder: str, cbx_var: tk.BooleanVar):
         full_name = os.path.join(folder, ent.get())
         if cbx_var.get():
-            lr_other._openTextInEditor(full_name)
+            lr_lib.core.etc.other._openTextInEditor(full_name)
 
-        file_dt = lr_files.file_dict_creator(
+        file_dt = lr_lib.core.wrsp.files.file_dict_creator(
             ent.get(), full_name, inf_num=0, enc=lr_vars.VarEncode.get(), inf_key='', deny=True, stats=True)
         del file_dt['Param']
         del file_dt['Snapshot']
 
-        lr_tooltip.createToolTip(ent, lr_other.file_string(file_dt))
+        lr_lib.gui.widj.tooltip.createToolTip(ent, lr_lib.core.etc.other.file_string(file_dt))
 
     def response_widj_creator(self, folder: str, desc='', side='bottom', w1=30, w2=100) -> None:
         """виджеты для окна файлов snapshot"""
@@ -51,33 +48,33 @@ class RespFiles(tk.Toplevel):
 
         lab = tk.LabelFrame(self, text=desc, font='Arial 7')
         btn = tk.Button(lab, text='folder', command=lambda: self.select_folder(folder), font='Arial 7')
-        lr_tooltip.createToolTip(btn, 'выбор папки с файлами\nвнутри должен быть файл {i}\n{d}'.format(
+        lr_lib.gui.widj.tooltip.createToolTip(btn, 'выбор папки с файлами\nвнутри должен быть файл {i}\n{d}'.format(
             i=self.inf_file, d=folder))
 
         cbx_var = tk.BooleanVar(value=True)
         cbx = tk.Checkbutton(lab, text='', variable=cbx_var, font='Arial 7')
-        lr_tooltip.createToolTip(cbx, 'открывать файл, при выборе в комбобоксе')
+        lr_lib.gui.widj.tooltip.createToolTip(cbx, 'открывать файл, при выборе в комбобоксе')
 
-        def files_cmb_set(files=tuple(lr_other.get_files_names(folder, self.i_num))) -> None:
+        def files_cmb_set(files=tuple(lr_lib.core.etc.other.get_files_names(folder, self.i_num))) -> None:
             """записать файлы в files_cmb"""
             if deny_cbx_var.get():  # отбраковать "вероятно ненужные" файлы
-                files = list(filter(lr_files.is_responce_file, files))
+                files = list(filter(lr_lib.core.wrsp.files.is_responce_file, files))
             files_cmb['values'] = files
 
         deny_cbx_var = tk.BooleanVar(value=True)
         deny_cbx = tk.Checkbutton(lab, text='', variable=deny_cbx_var, command=files_cmb_set, font='Arial 7')
-        lr_tooltip.createToolTip(deny_cbx, 'отбраковать "вероятно ненужные" файлы')
+        lr_lib.gui.widj.tooltip.createToolTip(deny_cbx, 'отбраковать "вероятно ненужные" файлы')
 
         files_cmb = ttk.Combobox(lab, background=lr_vars.Background, font='Arial 7')
         files_cmb_set()
         files_cmb.bind("<<ComboboxSelected>>", lambda *a: self.combo_select(files_cmb, folder, cbx_var))
-        lr_tooltip.createToolTip(files_cmb, text)
+        lr_lib.gui.widj.tooltip.createToolTip(files_cmb, text)
 
         def get_inf_files() -> iter((str,)):
             """все inf файлы директории"""
             folder_files = next(os.walk(folder))
             for file in folder_files[2]:
-                num = lr_files.get_inf_file_num(file)
+                num = lr_lib.core.wrsp.files.get_inf_file_num(file)
                 if num:
                     yield file
 
@@ -89,13 +86,13 @@ class RespFiles(tk.Toplevel):
 
         inf_var = tk.StringVar(value=self.inf_file)
         inf_cmb = ttk.Combobox(lab, background=lr_vars.Background, font='Arial 7', textvariable=inf_var)
-        inf_cmb['values'] = list(sorted(get_inf_files(), key=lr_other.numericalSort))
+        inf_cmb['values'] = list(sorted(get_inf_files(), key=lr_lib.core.etc.other.numericalSort))
         inf_cmb.bind("<<ComboboxSelected>>", set_inf)
         inf_cmb.config(width=max(len(i) for i in (inf_cmb['values'] or [''])))
         inf = os.path.join(folder, self.inf_file)
         if os.path.isfile(inf):
             with open(inf) as f:
-                lr_tooltip.createToolTip(inf_cmb, 'сменить snapshot\n' + f.read())
+                lr_lib.gui.widj.tooltip.createToolTip(inf_cmb, 'сменить snapshot\n' + f.read())
 
         lab.pack(side=side)
         files_cmb.pack(side='top')

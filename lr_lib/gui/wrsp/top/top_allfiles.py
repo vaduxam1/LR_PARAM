@@ -7,11 +7,8 @@ import subprocess
 import tkinter as tk
 import tkinter.ttk as ttk
 
+import lr_lib
 import lr_lib.core.var.vars as lr_vars
-import lr_lib.core.wrsp.files as lr_files
-import lr_lib.core.etc.other as lr_other
-import lr_lib.gui.etc.gui_other as lr_gui_other
-import lr_lib.gui.widj.tooltip as lr_tooltip
 
 
 class TopFolder(tk.Toplevel):
@@ -29,12 +26,12 @@ class TopFolder(tk.Toplevel):
             self, text='open', font=lr_vars.DefaultFont + ' italic', padx=0, pady=0,
             command=lambda: subprocess.Popen([lr_vars.EDITOR['exe'], comboAllFilesFolder.get()]))
 
-        ttip = lambda a: lr_tooltip.createToolTip(comboAllFilesFolder, lr_other.file_string(
-            lr_files.get_file_with_kwargs(lr_vars.AllFiles, FullName=comboAllFilesFolder.get()), deny=[]))
+        ttip = lambda a: lr_lib.gui.widj.tooltip.createToolTip(comboAllFilesFolder, lr_lib.core.etc.other.file_string(
+            lr_lib.core.wrsp.files.get_file_with_kwargs(lr_vars.AllFiles, FullName=comboAllFilesFolder.get()), deny=[]))
 
         comboAllFilesFolder.bind("<<ComboboxSelected>>", ttip)
-        lr_tooltip.createToolTip(buttonAllFilesFolder, 'открыть выбранный файл')
-        lr_tooltip.createToolTip(comboAllFilesFolder, 'список всех файлов, в которых производится поиск {param}'
+        lr_lib.gui.widj.tooltip.createToolTip(buttonAllFilesFolder, 'открыть выбранный файл')
+        lr_lib.gui.widj.tooltip.createToolTip(comboAllFilesFolder, 'список всех файлов, в которых производится поиск {param}'
                                                       '\n\t# Window.folder_wind\n\t# lr_vars.AllFiles')
 
         files = list(f['File']['FullName'] for f in lr_vars.AllFiles)
@@ -47,5 +44,5 @@ class TopFolder(tk.Toplevel):
 
         buttonAllFilesFolder.pack()
         comboAllFilesFolder.pack()
-        lr_gui_other.center_widget(self)
+        lr_lib.gui.etc.gui_other.center_widget(self)
 

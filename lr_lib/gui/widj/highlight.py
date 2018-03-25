@@ -6,7 +6,6 @@ import string
 import tkinter as tk
 
 import lr_lib.core.var.vars as lr_vars
-import lr_lib.core.etc.other as lr_other
 
 
 class HighlightLines:

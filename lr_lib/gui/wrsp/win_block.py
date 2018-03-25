@@ -5,7 +5,7 @@ import contextlib
 
 import tkinter as tk
 
-import lr_lib.gui.wrsp.win_act as lr_win_act
+import lr_lib.gui.wrsp.win_act
 import lr_lib.core.var.vars as lr_vars
 
 
@@ -14,10 +14,10 @@ AllowWidj = (
 )
 
 
-class WinBlock(lr_win_act.WinAct):
+class WinBlock(lr_lib.gui.wrsp.win_act.WinAct):
     """блокировать виджеты"""
     def __init__(self):
-        lr_win_act.WinAct.__init__(self)
+        lr_lib.gui.wrsp.win_act.WinAct.__init__(self)
 
         self._block_ = None  # принудительно блокировать виджеты
 

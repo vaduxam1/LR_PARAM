@@ -7,15 +7,15 @@ import time
 import tkinter as tk
 import tkinter.ttk as ttk
 
+import lr_lib.gui.action.act_goto
 import lr_lib.core.var.vars as lr_vars
-import lr_lib.gui.action.act_goto as lr_act_goto
 
 
-class ActAny(lr_act_goto.ActGoto):
+class ActAny(lr_lib.gui.action.act_goto.ActGoto):
     """разное"""
 
     def __init__(self):
-        lr_act_goto.ActGoto.__init__(self)
+        lr_lib.gui.action.act_goto.ActGoto.__init__(self)
 
     def widj_reset(self) -> None:
         """обновить виджеты"""

@@ -5,15 +5,15 @@ import tkinter as tk
 
 from tkinter import filedialog
 
-import lr_lib.gui.wrsp.win_other as lr_win_other
+import lr_lib
+import lr_lib.gui.wrsp.win_other
 import lr_lib.core.var.vars as lr_vars
-import lr_lib.core.wrsp.files as lr_files
 
 
-class WinFolder(lr_win_other.WinOther):
+class WinFolder(lr_lib.gui.wrsp.win_other.WinOther):
     """выбор каталога файлов ответов"""
     def __init__(self):
-        lr_win_other.WinOther.__init__(self)
+        lr_lib.gui.wrsp.win_other.WinOther.__init__(self)
 
         self.Button_change_folder = tk.Button(
             self.last_frame, text='folder', padx=0, pady=0, command=self.change_folder_ask,
@@ -35,7 +35,7 @@ class WinFolder(lr_win_other.WinOther):
         """установка folder"""
         self.clear()
         with self.block():
-            lr_files.init()
+            lr_lib.core.wrsp.files.init()
 
         self.last_frame_text_set()
         self.setSortKey1()
@@ -46,6 +46,6 @@ class WinFolder(lr_win_other.WinOther):
         if d:
             lr_vars.VarFilesFolder.set(d)
             with self.block():
-                lr_files.init()
+                lr_lib.core.wrsp.files.init()
             self.clear()
 

@@ -3,12 +3,11 @@
 
 import tkinter as tk
 
-import lr_lib.gui.wrsp.win_menu as lr_win_menu
-import lr_lib.gui.widj.tooltip as lr_tooltip
-import lr_lib.etc.help as lr_help
+import lr_lib
+import lr_lib.gui.wrsp.win_menu
 
 
-class Window(lr_win_menu.WinMenu):
+class Window(lr_lib.gui.wrsp.win_menu.WinMenu):
     """главное окно скрипта
     Window
     lr_win_menu.WinMenu
@@ -26,16 +25,16 @@ class Window(lr_win_menu.WinMenu):
     """
 
     def __init__(self):
-        lr_win_menu.WinMenu.__init__(self)
+        lr_lib.gui.wrsp.win_menu.WinMenu.__init__(self)
 
         self.set_tooltip()
         self.set_grid()
 
     def set_tooltip(self) -> None:
         """создать все tooltip основного gui окна"""
-        lr_tooltip.createToolTip(self.t0, lr_help.CODE)
-        lr_tooltip.createToolTip(self.t01, lr_help.WORK)
-        lr_tooltip.createToolTip(self.t02, lr_help.ADD)
+        lr_lib.gui.widj.tooltip.createToolTip(self.t0, lr_lib.etc.help.CODE)
+        lr_lib.gui.widj.tooltip.createToolTip(self.t01, lr_lib.etc.help.WORK)
+        lr_lib.gui.widj.tooltip.createToolTip(self.t02, lr_lib.etc.help.ADD)
 
         t0 = '(3) - выбор файла из результатов поиска (2):lr_vars.FilesWithParam\n\t' \
              '# Window.comboFiles == lr_vars.FilesWithParam\n\t' \
@@ -56,42 +55,42 @@ class Window(lr_win_menu.WinMenu):
              '# lr_vars.VarWrspDict' \
              ' -> param.web_reg_save_param'
 
-        lr_tooltip.createToolTip(self.t3, t0)
-        lr_tooltip.createToolTip(self.comboFiles, t0)
-        lr_tooltip.createToolTip(self.comboParam, t1)
-        lr_tooltip.createToolTip(self.t1, t1)
-        lr_tooltip.createToolTip(self.t2, t2)
-        lr_tooltip.createToolTip(self.ButtonFindParamFiles, t2)
-        lr_tooltip.createToolTip(self.comboParts, t4)
-        lr_tooltip.createToolTip(self.t4, t4)
-        lr_tooltip.createToolTip(self.t6, t6)
-        lr_tooltip.createToolTip(self.ButtonShowParam, t6)
+        lr_lib.gui.widj.tooltip.createToolTip(self.t3, t0)
+        lr_lib.gui.widj.tooltip.createToolTip(self.comboFiles, t0)
+        lr_lib.gui.widj.tooltip.createToolTip(self.comboParam, t1)
+        lr_lib.gui.widj.tooltip.createToolTip(self.t1, t1)
+        lr_lib.gui.widj.tooltip.createToolTip(self.t2, t2)
+        lr_lib.gui.widj.tooltip.createToolTip(self.ButtonFindParamFiles, t2)
+        lr_lib.gui.widj.tooltip.createToolTip(self.comboParts, t4)
+        lr_lib.gui.widj.tooltip.createToolTip(self.t4, t4)
+        lr_lib.gui.widj.tooltip.createToolTip(self.t6, t6)
+        lr_lib.gui.widj.tooltip.createToolTip(self.ButtonShowParam, t6)
         
-        lr_tooltip.createToolTip(
+        lr_lib.gui.widj.tooltip.createToolTip(
             self.sortKey1,
             'sortKey1\nпри выборе - Формирует sortKey2.\nНекоторые ключи формируются после поиска(2)\n\t'
             '# Window.sortKey1\n\t# lr_vars.VarFileSortKey1 -> lr_vars.VarFileSortKey2'
         )
-        lr_tooltip.createToolTip(
+        lr_lib.gui.widj.tooltip.createToolTip(
             self.sortKey2,
             'sortKey2\nпри выборе - Сортировка файлов(3) в соответствие с выбранными sortKey ключами,\n'
             'те ключами файла(всплывающая подсказка для файла в комбобоксе(3), после поиска(2)).\n'
             'Некоторые ключи требуют включения чекбокса Статистика файлов.\n\t# Window.sortKey2\n\t'
             '# lr_vars.VarFileSortKey2 -> lr_vars.VarParam.set'
         )
-        lr_tooltip.createToolTip(
+        lr_lib.gui.widj.tooltip.createToolTip(
             self.cbxOrdVersion,
             'версия функции поиска Ord: param.find_param_ord\n1 - новая(7.2.0)\n'
             '0 - старая - не находит Ord при пересечении LB/RB\n\t'
             '# Windows.cbxOrdVersion\n\t# lr_vars.VarOrdVersion'
         )
-        lr_tooltip.createToolTip(
+        lr_lib.gui.widj.tooltip.createToolTip(
             self.spin_toolTipTimeout,
             'время жизни, всплывающих подсказок, в мсек,\nтк подсказки иногда намертво "зависают"\n'
             ' 0 - "отключить" оборбражение\n\t'
             '# Windows.spin_toolTipTimeout\n\t# lr_vars.VarToolTipTimeout'
         )
-        lr_tooltip.createToolTip(
+        lr_lib.gui.widj.tooltip.createToolTip(
             self.t5l,
             '(5) LB - Левое поле.\nПри необходимости, необходимо отредактировать,\n'
             'если в поле попал "вариативный" параметр, нежелательные спец символы, и тд.\n'
@@ -100,7 +99,7 @@ class Window(lr_win_menu.WinMenu):
             '# Window.LB\n\t'
             '# lr_vars.VarLB'
         )
-        lr_tooltip.createToolTip(
+        lr_lib.gui.widj.tooltip.createToolTip(
             self.t5r,
             '(5) RB - Правое поле.\nПри необходимости, необходимо отредактировать,\n'
             'если в поле попал "вариативный" параметр, нежелательные спец символы, и тд.\n'
@@ -110,143 +109,143 @@ class Window(lr_win_menu.WinMenu):
             '# Window.RB\n\t'
             '# lr_vars.VarRB'
         )
-        lr_tooltip.createToolTip(
+        lr_lib.gui.widj.tooltip.createToolTip(
             self.ButtonNewLB,
             'заново сформировать (5)LB, с учетом (1)-(5)\n\t'
             '# Window.ButtonNewLBRB -> lr_vars.VarPartNum'
         )
-        lr_tooltip.createToolTip(
+        lr_lib.gui.widj.tooltip.createToolTip(
             self.ButtonNewRB,
             'заново сформировать (5)RB, с учетом (1)-(5)\n\t# Window.ButtonNewLBRB -> lr_vars.VarPartNum'
         )
-        lr_tooltip.createToolTip(
+        lr_lib.gui.widj.tooltip.createToolTip(
             self.LbB1Cbx,
             'по LB определить, если param находится внутри фигурных скобок: {... value="zkau_1", ...}\n'
             'Есди да, установить lr_vars.VarSplitListNumRB.set(1)\n\t'
             '# Window.LbB1Cbx\n\t'
             'lr_vars.VarLbB1'
         )
-        lr_tooltip.createToolTip(
+        lr_lib.gui.widj.tooltip.createToolTip(
             self.RbB1Cbx,
             'по RB определить, если param находится внутри фигурных скобок: {... value="zkau_1", ...}\n'
             'Есди да, установить lr_vars.VarSplitListNumRB.set(1)\n\t'
             '# Window.RbB1Cbx\n\t'
             'lr_vars.VarRbB1'
         )
-        lr_tooltip.createToolTip(
+        lr_lib.gui.widj.tooltip.createToolTip(
             self.LbB2Cbx,
             'по LB определить, если param находится внутри квадратных скобок: [... value="zkau_1", ...]\n'
             'Есди да, установить lr_vars.VarSplitListNumRB.set(3)\n\t'
             '# Window.LbB2Cbx\n\t'
             'lr_vars.VarLbB2'
         )
-        lr_tooltip.createToolTip(
+        lr_lib.gui.widj.tooltip.createToolTip(
             self.RbB2Cbx,
             'по RB определить, если param находится внутри квадратных скобок: [... value="zkau_1", ...]\n'
             'Есди да, установить lr_vars.VarSplitListNumRB.set(3)\n\t'
             '# Window.RbB2Cbx\n\t'
             'lr_vars.VarRbB2'
         )
-        lr_tooltip.createToolTip(
+        lr_lib.gui.widj.tooltip.createToolTip(
             self.RbRstripCbx,
             'обрезать Rb справа, до string.whitespace символов\n\t'
             '# Window.RbRstripCbx\n\t'
             'lr_vars.VarRbRstrip'
         )
-        lr_tooltip.createToolTip(
+        lr_lib.gui.widj.tooltip.createToolTip(
             self.LbRstripCbx,
             'обрезать Lb слева, до string.whitespace символов\n\t'
             '# Window.LbRstripCbx\n\t'
             'lr_vars.VarLbRstrip'
         )
-        lr_tooltip.createToolTip(
+        lr_lib.gui.widj.tooltip.createToolTip(
             self.RbEndCbx,
             'обрезать Rb, справа, до нежелательных символов, например "[]{},"\n\t'
             '# Window.RbEndCbx\n\t'
             'lr_vars.VarREnd'
         )
-        lr_tooltip.createToolTip(
+        lr_lib.gui.widj.tooltip.createToolTip(
             self.LbEndCbx,
             'обрезать Lb, слева, до нежелательных символов, например "[]{},"\n\t'
             '# Window.LbEndCbx\n\t'
             'lr_vars.VarLEnd'
         )
-        lr_tooltip.createToolTip(
+        lr_lib.gui.widj.tooltip.createToolTip(
             self.actionButton,
             'открыть action.c файл, для поиска {param} из меню правой кнопки мыши\n\t'
             '# Window.actionButton'
         )
-        lr_tooltip.createToolTip(
+        lr_lib.gui.widj.tooltip.createToolTip(
             self.ButtonNote,
             'tk.Text в Блокнот/Editor\n\t'
             '# Window.ButtonNote'
         )
-        lr_tooltip.createToolTip(
+        lr_lib.gui.widj.tooltip.createToolTip(
             self.ButtonLog,
             'лог в Блокнот/Editor\n\t'
             '# Window.ButtonLog'
         )
-        lr_tooltip.createToolTip(
+        lr_lib.gui.widj.tooltip.createToolTip(
             self.max_lb,
             'макс кол-во символов в LB(5)\n'
             'нажать Enter\n\t'
             '# Window.max_lb_rb\n\t'
             '# lr_vars.VarMaxLen'
         )
-        lr_tooltip.createToolTip(
+        lr_lib.gui.widj.tooltip.createToolTip(
             self.max_rb,
             'макс кол-во символов в RB(5)\n'
             'нажать Enter\n\t'
             '# Window.max_lb_rb\n\t'
             '# lr_vars.VarMaxLen'
         )
-        lr_tooltip.createToolTip(
+        lr_lib.gui.widj.tooltip.createToolTip(
             self.Button_change_folder,
             'Смена директории поиска {param} файлов\n\t'
             '# Window.Button_change_folder\n\t'
             '# lr_vars.VarFilesFolder -> lr_vars.AllFiles'
         )
-        lr_tooltip.createToolTip(
+        lr_lib.gui.widj.tooltip.createToolTip(
             self.ButtonParamFileOpen,
             'файл(3) в Блокнот/Editor\n\t'
             '# Window.ButtonParamFileOpen'
         )
-        lr_tooltip.createToolTip(
+        lr_lib.gui.widj.tooltip.createToolTip(
             self.ButtonClearUp,
             'очистить tk.Text\n\t'
             '# Window.ButtonClearUp'
         )
-        lr_tooltip.createToolTip(
+        lr_lib.gui.widj.tooltip.createToolTip(
             self.ButtonClearDown,
             'очистить все поля ввода\n\t'
             '# Window.ButtonClearDown'
         )
-        lr_tooltip.createToolTip(
+        lr_lib.gui.widj.tooltip.createToolTip(
             self.cbxClearShow,
             'очищать tk.Text,\n'
             'перед выводом(6)\n\t'
             '# Window.cbxClearShow'
         )
-        lr_tooltip.createToolTip(
+        lr_lib.gui.widj.tooltip.createToolTip(
             self.LBcbx_SplitList,
             "обрезать LB(5) до ->>\n\t"
             "# Window.LBcbx_SplitList\n\t"
             "# lr_vars.VarSplitListLB"
         )
-        lr_tooltip.createToolTip(
+        lr_lib.gui.widj.tooltip.createToolTip(
             self.RBcbx_SplitList,
             "обрезать RB(5) до ->>\n\t"
             "# Window.RBcbx_SplitList\n\t"
             "# lr_vars.VarSplitListRB"
         )
-        lr_tooltip.createToolTip(
+        lr_lib.gui.widj.tooltip.createToolTip(
             self.LBent_SplitList,
             "<<- обрезать LB(5) до первого встретившегося значения из eval([ '...', ... ])\n"
             "При необходимости, можно добавить/удалить строки-разделители\n"
             "Делить, Не учитывая последних N символов строки LB(5) ->>\n\t"
             "# Window.ent_SplitList <- Window.LBcbx_SplitList"
         )
-        lr_tooltip.createToolTip(
+        lr_lib.gui.widj.tooltip.createToolTip(
             self.RBent_SplitList,
             "<<- обрезать RB(5) до первого встретившегося значения из "
             "eval([ '...', ... ])\n"
@@ -254,7 +253,7 @@ class Window(lr_win_menu.WinMenu):
             "Делить, Не учитывая первых N символов строки RB(5) ->>\n\t"
             "# Window.ent_SplitList <- Window.RBcbx_SplitList"
         )
-        lr_tooltip.createToolTip(
+        lr_lib.gui.widj.tooltip.createToolTip(
             self.LBSpinSplitList,
             '<<- Не учитывать N последних символов LB, при SplitList обрезке\nСтратерия использования:\n'
             ' 1 - (не рекомендуется) для формирования короткого и "безопасного" LB=, как следствие очень большой Ord=\n'
@@ -263,7 +262,7 @@ class Window(lr_win_menu.WinMenu):
             ' 3 - (основной вариант) для формирования более длинного LB=, как следствие маленький Ord='
             '\n\t# Window.LBSpinSplitList\n\t# lr_vars.VarSplitListNumLB'
         )
-        lr_tooltip.createToolTip(
+        lr_lib.gui.widj.tooltip.createToolTip(
             self.RBSpinSplitList,
             '<<- Не учитывать первых N символов RB, при SplitList обрезке\n'
             ' 1 - (безопасный вариант) если param находится внутри фигурных скобок: {... value="zkau_1", ...}\n'
@@ -275,52 +274,52 @@ class Window(lr_win_menu.WinMenu):
             '   для формирования более длинного RB=, как следствие маленький Ord=\n\t'
             '# Window.LBSpinSplitList\n\t# lr_vars.VarSplitListNumRB'
         )
-        lr_tooltip.createToolTip(
+        lr_lib.gui.widj.tooltip.createToolTip(
             self.cbxClipboard,
             'копировать web_reg_save_param в буфер обмена\n'
             'при выводе(6)\n\t'
             '# Window.cbxClipboard'
         )
-        lr_tooltip.createToolTip(
+        lr_lib.gui.widj.tooltip.createToolTip(
             self.LBcbx_return,
             'обрезать (5)LB до переноса строки\n\t'
             '# Window.cbx_return\n\t'
             '# lr_vars.VarReturn -> lr_vars.VarPartNum'
         )
-        lr_tooltip.createToolTip(
+        lr_lib.gui.widj.tooltip.createToolTip(
             self.RBcbx_return,
             'обрезать (5)RB до переноса строки\n\t'
             '# Window.cbx_return\n\t'
             '# lr_vars.VarReturn -> lr_vars.VarPartNum'
         )
-        lr_tooltip.createToolTip(
+        lr_lib.gui.widj.tooltip.createToolTip(
             self.LBcbx_rus,
             'обрезать (5)LB до не ASCII либо Русских символов\n\t'
             '# Window.cbx_rus\n\t'
             '# lr_vars.VarRus -> lr_vars.VarPartNum'
         )
-        lr_tooltip.createToolTip(
+        lr_lib.gui.widj.tooltip.createToolTip(
             self.RBcbx_rus,
             'обрезать (5)RB до не ASCII либо Русских символов\n\t'
             '# Window.cbx_rus\n\t'
             '# lr_vars.VarRus -> lr_vars.VarPartNum'
         )
-        lr_tooltip.createToolTip(
+        lr_lib.gui.widj.tooltip.createToolTip(
             self.spin_RB_height,
             'изменить высоту RB\n\t'
             '# Window.spin_RB_height'
         )
-        lr_tooltip.createToolTip(
+        lr_lib.gui.widj.tooltip.createToolTip(
             self.ButtonRB_note,
             'RB в Блокнот/Editor\n\t'
             '# Window.ButtonRB_note'
         )
-        lr_tooltip.createToolTip(
+        lr_lib.gui.widj.tooltip.createToolTip(
             self.spin_LB_height,
             'изменить высоту LB\n\t'
             '# Window.spin_LB_height'
         )
-        lr_tooltip.createToolTip(
+        lr_lib.gui.widj.tooltip.createToolTip(
             self.change_folder_cbx,
             'Определить Файлы, для поиска(2)\n'
             ' On - Только файлы прописанные в *.inf - формат LoadRunner\n'
@@ -328,39 +327,39 @@ class Window(lr_win_menu.WinMenu):
             '# Window.change_folder_cbx\n\t'
             '# lr_vars.VarIsSnapshotFiles -> lr_vars.AllFiles'
         )
-        lr_tooltip.createToolTip(
+        lr_lib.gui.widj.tooltip.createToolTip(
             self.ButtonLB_note,
             'LB в Блокнот/Editor\n\t'
             '# Window.ButtonLB_note'
         )
-        lr_tooltip.createToolTip(
+        lr_lib.gui.widj.tooltip.createToolTip(
             self.cbxPopupWindow,
             'показывать popup окна\n'
             'финальные результаты, ошибки и тд\n\t'
             '# Window.cbxPopupWindow\n\t'
             '# lr_vars.VarShowPopupWindow'
         )
-        lr_tooltip.createToolTip(
+        lr_lib.gui.widj.tooltip.createToolTip(
             self.min_inf,
             'min номер inf.\n'
             'нижняя граница t*.inf, при поиске(2)\n\t'
             '# Window.min_inf'
             '\n\t# lr_vars.VarSearchMinSnapshot -> lr_vars.VarParam.set'
         )
-        lr_tooltip.createToolTip(
+        lr_lib.gui.widj.tooltip.createToolTip(
             self.max_inf,
             'max номер inf.\n'
             'верхняя граница t*.inf, при поиске(2)\n\t'
             '# Window.max_inf\n\t'
             '# lr_vars.VarSearchMaxSnapshot -> lr_vars.VarParam.set'
         )
-        lr_tooltip.createToolTip(
+        lr_lib.gui.widj.tooltip.createToolTip(
             self.cbxAutoNoteParam,
             'открыть web_reg_save_param в Блокнот/Editor,\n'
             'при выводе(6)\n\t'
             '# Window.cbxAutoNoteParam'
         )
-        lr_tooltip.createToolTip(
+        lr_lib.gui.widj.tooltip.createToolTip(
             self.deny_file_cbx,
             'Определить Файлы, для поиска(2)\n'
             ' On - Все файлы.\n '
@@ -369,13 +368,13 @@ class Window(lr_win_menu.WinMenu):
             '# Window.deny_file_cbx\n\t'
             '# lr_vars.VarAllowDenyFiles -> lr_vars.AllFiles'
         )
-        lr_tooltip.createToolTip(
+        lr_lib.gui.widj.tooltip.createToolTip(
             self.cbxAutoShowParam,
             'формировать web_reg_save_param, после поиска(2)\n'
             ' те выполнять шаги (3)-(6) автоматически\n\t'
             '# Window.cbxWrspAutoCreate'
         )
-        lr_tooltip.createToolTip(
+        lr_lib.gui.widj.tooltip.createToolTip(
             self.StrongSearchInFile_cbx,
             'принудительно использовать контроль LB/RB(на недопустимые символы),\n'
             'при поиске(2) param(1), в файлах(3) ответов\n'
@@ -383,7 +382,7 @@ class Window(lr_win_menu.WinMenu):
             'выкл - любые доступные (3) и (4), с ним лучше отключать чекб strip и deny\n\t'
             '# Window.StrongSearchInFile_cbx\n\t# lr_vars.VarStrongSearchInFile'
         )
-        lr_tooltip.createToolTip(
+        lr_lib.gui.widj.tooltip.createToolTip(
             self.filesStats_cbx,
             'Статискика файлов\n'
             ' On - создать статистику Сразу, для всех файлов (размер, кол-во символов и тд)\n'
@@ -394,45 +393,45 @@ class Window(lr_win_menu.WinMenu):
             '# Window.filesStats_cbx\n\t'
             '# lr_vars.VarAllFilesStatistic -> lr_vars.AllFiles'
         )
-        lr_tooltip.createToolTip(
+        lr_lib.gui.widj.tooltip.createToolTip(
             self.cbxFirstLastFile,
             'автоматически выбирается первый файл из (3)\n'
             ' on - reverse список файлов\n'
             '# Window.cbxFirstLastFile\n\t'
             '# lr_vars.VarFirstLastFile -> lr_vars.VarFileName'
         )
-        lr_tooltip.createToolTip(
+        lr_lib.gui.widj.tooltip.createToolTip(
             self.cbxFileNamesNumsShow,
             'показывать имена найденых файлов и inf номера, после поиска(2)\n\t'
             '# Window.cbxFileNamesNumsShow\n\t'
             '# lr_vars.VarFileNamesNumsShow'
         )
-        lr_tooltip.createToolTip(
+        lr_lib.gui.widj.tooltip.createToolTip(
             self.comboLogger,
             'минимальный уровень вывода сообщений в gui\n\t'
             '# Window.comboLogger\n\t'
             '# lr_vars.VarWindowLogger'
         )
-        lr_tooltip.createToolTip(
+        lr_lib.gui.widj.tooltip.createToolTip(
             self.unblock,
             'разблокировать виджеты, во время работы\n\t'
             '# Window.unblock'
         )
-        lr_tooltip.createToolTip(
+        lr_lib.gui.widj.tooltip.createToolTip(
             self.partNumEmptyLbNext,
             'использовать следующее param вхождение(4) или файл(3)\n'
             'при пустом str.strip(LB(5))\n\t'
             '# Window.partNumEmptyLbNext\n\t'
             '# lr_vars.VarPartNumEmptyLbNext'
         )
-        lr_tooltip.createToolTip(
+        lr_lib.gui.widj.tooltip.createToolTip(
             self.partNumEmptyRbNext,
             'использовать следующее param вхождение(4) или файл(3)\n'
             'при пустом str.strip(RB(5))\n\t'
             '# Window.partNumEmptyRbNext\n\t'
             '# lr_vars.VarPartNumEmptyRbNext'
         )
-        lr_tooltip.createToolTip(
+        lr_lib.gui.widj.tooltip.createToolTip(
             self.partNumDenyLbNext,
             'использовать следующее param вхождение(4) или файл(3)\n'
             'при недопустимом LB(5), если последний cимвол LB:\n'
@@ -440,7 +439,7 @@ class Window(lr_win_menu.WinMenu):
             '# Window.partNumDenyLbNext\n\t'
             '# lr_vars.VarPartNumDenyLbNext'
         )
-        lr_tooltip.createToolTip(
+        lr_lib.gui.widj.tooltip.createToolTip(
             self.partNumDenyRbNext,
             'использовать следующее param вхождение(4) или файл(3)\n'
             'при недопустимом RB(5), если первый cимвол RB:\n'

@@ -5,14 +5,14 @@ import itertools
 
 import tkinter.ttk as ttk
 
-import lr_lib.gui.wrsp.win_maxmin as lr_win_maxmin
+import lr_lib.gui.wrsp.win_maxmin
 import lr_lib.core.var.vars as lr_vars
 
 
-class WinFileSort(lr_win_maxmin.WinMaxMin):
+class WinFileSort(lr_lib.gui.wrsp.win_maxmin.WinMaxMin):
     """сортировка файлов, файловыми ключами"""
     def __init__(self):
-        lr_win_maxmin.WinMaxMin.__init__(self)
+        lr_lib.gui.wrsp.win_maxmin.WinMaxMin.__init__(self)
 
         self.sortKey1 = ttk.Combobox(
             self.last_frame, textvariable=lr_vars.VarFileSortKey1, justify='center', width=10,

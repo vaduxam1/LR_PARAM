@@ -5,15 +5,16 @@ import os
 import contextlib
 
 import tkinter as tk
+
+import lr_lib.gui.action.act_block
 import lr_lib.core.var.vars as lr_vars
-import lr_lib.gui.action.act_block as lr_act_block
 
 
-class ActBackup(lr_act_block.ActBlock):
+class ActBackup(lr_lib.gui.action.act_block.ActBlock):
     """бекап action"""
 
     def __init__(self):
-        lr_act_block.ActBlock.__init__(self)
+        lr_lib.gui.action.act_block.ActBlock.__init__(self)
         self._backup_index = 0
 
         self.backup_entry = tk.Entry(self.file_bar, font=lr_vars.DefaultFont, width=5, justify='center')
