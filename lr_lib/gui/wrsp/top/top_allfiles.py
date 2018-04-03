@@ -13,7 +13,7 @@ import lr_lib.core.var.vars as lr_vars
 
 class TopFolder(tk.Toplevel):
     """окно списка всех файлов"""
-    def __init__(self, action, mx=150):
+    def __init__(self, action: 'lr_lib.gui.wrsp.main_window.Window', mx=150):
         tk.Toplevel.__init__(self)
         self.action = action
 

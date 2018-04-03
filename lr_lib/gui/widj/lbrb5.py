@@ -4,6 +4,7 @@
 import tkinter as tk
 import tkinter.ttk as ttk
 
+import lr_lib
 import lr_lib.core.var.vars as lr_vars
 
 
@@ -12,7 +13,7 @@ class LBRBText(tk.Text):
     bounds = {}.fromkeys(['LB', 'RB'])  # LB/RB instance
     info_text = {'LB': '(5) LB | строк=%s | длина=%s', 'RB': '(5) RB | строк=%s | длина=%s'}
 
-    def __init__(self, name: str, parent: object):
+    def __init__(self, name: str, parent: 'lr_lib.gui.wrsp.main_window.Window'):
         self.heightVar = tk.IntVar(value=lr_vars.DEFAULT_LB_RB_MIN_HEIGHT)
 
         self.label_info = tk.LabelFrame(parent, text=self.info_text[name], font=lr_vars.DefaultFont + ' bold italic',

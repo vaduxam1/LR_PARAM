@@ -18,7 +18,8 @@ import lr_lib.core.var.vars as lr_vars
 
 
 @lr_vars.T_POOL_decorator
-def mouse_web_reg_save_param(widget: lr_lib.gui.widj.highlight_text.HighlightText, param, mode=('SearchAndReplace', 'highlight', ), wrsp=None, wrsp_dict=None, set_param=True) -> None:
+def mouse_web_reg_save_param(widget: lr_lib.gui.widj.highlight_text.HighlightText, param: str,
+                             mode=('SearchAndReplace', 'highlight', ), wrsp=None, wrsp_dict=None, set_param=True) -> None:
     """в окне action.c, для param, автозамена, залить цветом, установить виджеты"""
     with widget.action.block():
         if 'SearchAndReplace' in mode:
@@ -123,7 +124,8 @@ def all_wrsp_dict_web_reg_save_param(event, wrsp_web_=None) -> None:
     return
 
 
-def _all_wrsp_dict_web_reg_save_param(action, selection: str) -> iter((lr_lib.core.action.web_.WebRegSaveParam,)):
+def _all_wrsp_dict_web_reg_save_param(action: 'lr_lib.gui.action.main_action.ActionWindow',
+                                      selection: str) -> iter((lr_lib.core.action.web_.WebRegSaveParam,)):
     """все варианты создания web_reg_save_param"""
     with contextlib.suppress(AttributeError):
         wrsp_and_param = action.web_action.websReport.wrsp_and_param_names
@@ -500,7 +502,7 @@ def wrsp_text_from_selection(event) -> object:
 
 
 @lr_vars.T_POOL_decorator
-def all_wrsp_auto_rename(action, *a, _l='"LB=', _r='"RB=') -> None:
+def all_wrsp_auto_rename(action: 'lr_lib.core.action.main_awal.ActionWebsAndLines', *a, _l='"LB=', _r='"RB=') -> None:
     """переименавать все wrsp, автоматически, с учетом всех настроек"""
     _wrsps = tuple(action.web_action.get_web_reg_save_param_all())
     wrsps = tuple(w.name for w in _wrsps)

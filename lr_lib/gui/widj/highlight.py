@@ -5,12 +5,13 @@ import string
 
 import tkinter as tk
 
+import lr_lib
 import lr_lib.core.var.vars as lr_vars
 
 
 class HighlightLines:
     """подсветка линий текста"""
-    def __init__(self, tk_text, tegs_names: {str, (str, ), }):
+    def __init__(self, tk_text: 'lr_lib.gui.widj.highlight_text.HighlightText', tegs_names: {str, (str, ), }):
         self.tk_text = tk_text
         self.id = id(self)
 

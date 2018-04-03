@@ -15,8 +15,8 @@ is_ascii = set(string.printable)
 
 class WebReport:
     """статистика использования web_reg_save_param"""
-    def __init__(self, ActionWebsAndLines):
-        self.ActionWebsAndLines = ActionWebsAndLines
+    def __init__(self, parent_: 'lr_lib.core.action.main_awal.ActionWebsAndLines'):
+        self.ActionWebsAndLines = parent_
 
         self.wrsp_and_param_names = {}  # {'P_6046_1__z_k62_0': 'z_k620', ...}
         self.param_statistic = {}  # {'P_3396_4_Menupopup__a_FFXc_0__id_mainMenu': {'param_count': 2, 'snapshots': [874, 875], 'snapshots_count': 2, 'minmax_snapshots': '[t874:t875]=2', 'transaction_names': {'logout'}, 'transaction_count': 1}}

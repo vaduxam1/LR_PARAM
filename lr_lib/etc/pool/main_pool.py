@@ -26,7 +26,7 @@ class POOL:
         'multiprocessing.dummy.Pool': multiprocessing.dummy.Pool,
     }  # типы пулов, для создания POOL
 
-    def __init__(self, name, size=False):
+    def __init__(self, name: str, size=False):
         if size is False:
             size = lr_vars.cpu_count
 
@@ -38,7 +38,7 @@ class POOL:
         self.pool = None  # текущий инстанс пула
         self.reset()
 
-    def __getattr__(self, item):
+    def __getattr__(self, item: str):
         """перенаправление вызовов в self.pool"""
         if (item == 'imap_unordered') and not hasattr(self.pool, 'imap_unordered'):
             item = 'imap'
@@ -64,7 +64,7 @@ class POOL:
             else:
                 self.set_pool(n, processes=s)
 
-    def set_pool(self, name, *args, **kwargs):
+    def set_pool(self, name: str, *args, **kwargs):
         """создать пул"""
         self.pool = self.pools[name](*args, **kwargs)
         return self.pool

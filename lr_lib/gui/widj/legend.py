@@ -23,7 +23,7 @@ Colors = iter(itertools.cycle(clrs()))
 
 class WebLegend(tk.Toplevel):
     """окно web_ леленды"""
-    def __init__(self, parent):
+    def __init__(self, parent: 'lr_lib.gui.action.main_action.ActionWindow'):
         super().__init__(master=parent, padx=0, pady=0)
         self.geometry('{}x{}'.format(*lr_vars._Tk_LegendWIND_SIZE))
         self.ttl = ' Нажатие правой кнопкой мыши - переход в соответствующую обрасть action.c текста'

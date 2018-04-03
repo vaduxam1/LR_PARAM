@@ -15,7 +15,7 @@ import lr_lib.core.var.vars as lr_vars
 
 class HighlightText(tk.Text):
     """Colored tk.Text + line_numbers"""
-    def __init__(self, action, *args, **kwargs):
+    def __init__(self, action: 'lr_lib.gui.action.main_action.ActionWindow', *args, **kwargs):
         super().__init__(action, *args, **kwargs)
         self.cursor_position = self.index(tk.INSERT)  # координаты текущей позиции в tk.Text
 

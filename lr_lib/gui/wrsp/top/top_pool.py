@@ -10,7 +10,7 @@ import lr_lib.core.var.vars as lr_vars
 
 class TopPoolSetting(tk.Toplevel):
     """окно настройки пулов"""
-    def __init__(self, action):
+    def __init__(self, action: 'lr_lib.gui.wrsp.main_window.Window'):
         tk.Toplevel.__init__(self)
         self.action = action
 

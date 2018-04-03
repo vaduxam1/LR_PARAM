@@ -1,6 +1,7 @@
 # -*- coding: UTF-8 -*-
 # внутреннее предсталление action.c текста
 
+import lr_lib
 import lr_lib.core.wrsp.param
 import lr_lib.core.action.transac
 import lr_lib.core.action.report
@@ -10,12 +11,12 @@ import lr_lib.core.var.vars as lr_vars
 
 class ActionWebsAndLines:
     """внутреннее представление action.c текста, как список web_ объектов, и "неважного" текста между ними"""
-    def __init__(self, action):
-        self.action = action  # lr_lib.gui.action.main_action.ActionWindow
+    def __init__(self, action: 'lr_lib.gui.action.main_action.ActionWindow'):
+        self.action = action
 
         self.webs_and_lines = []  # представление
 
-        self.websReport = lr_lib.core.action.report.WebReport(ActionWebsAndLines=self)
+        self.websReport = lr_lib.core.action.report.WebReport(parent_=self)
         self.transactions = lr_lib.core.action.transac.Transactions(self)
 
         self.action_infs = []  # номера inf в action
@@ -49,7 +50,7 @@ class ActionWebsAndLines:
             if not isinstance(web, str):
                 yield web
 
-    def get_web_by(self, webs, **kwargs) -> iter((lr_lib.core.action.web_.WebAny,)):
+    def get_web_by(self, webs: (lr_lib.core.action.web_.WebAny, ), **kwargs) -> iter((lr_lib.core.action.web_.WebAny,)):
         """объекты по kwargs условию: kwargs={'abc': [123]} -> web's.abc == [123]"""
         attrs = kwargs.items()
         for web in webs:
@@ -91,7 +92,7 @@ class ActionWebsAndLines:
 
             web_.set_body(body)
 
-    def replace_bodys_iter(self, web_actions: tuple, is_wrsp=True) -> None:
+    def replace_bodys_iter(self, web_actions: (lr_lib.core.action.web_.WebAny, ), is_wrsp=True) -> None:
         """заменить группу param, во всех web_ body - сопрограмма"""
         search_replace = yield
         while search_replace is not None:
@@ -105,7 +106,7 @@ class ActionWebsAndLines:
 
             search_replace = yield
 
-    def _add_to_text_list(self, element: (str or object)) -> None:
+    def _add_to_text_list(self, element: (str or lr_lib.core.action.web_.WebAny)) -> None:
         """объединять строки, идущие подряд"""
         last_ = self.webs_and_lines[-1]
 

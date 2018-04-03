@@ -56,8 +56,9 @@ class WebAny:
     """любые web_"""
     count = 0
 
-    def __init__(self, ActionWebsAndLines, lines_list: list, comments: str, transaction: str, _type=''):
-        self.ActionWebsAndLines = ActionWebsAndLines  # ActionWebsAndLines
+    def __init__(self, parent_: 'lr_lib.core.action.main_awal.ActionWebsAndLines', lines_list: list,
+                 comments: str, transaction: str, _type=''):
+        self.ActionWebsAndLines = parent_
         self.tk_text = self.ActionWebsAndLines.action.tk_text
         self.lines_list = lines_list
 
@@ -210,8 +211,9 @@ class WebAny:
 
 class WebSnapshot(WebAny):
     """web со snapshot > 0, те содержащие файлы ответов"""
-    def __init__(self, ActionWebsAndLines, lines_list: list, comments: str, transaction='', _type='', web_reg_save_param_list=None):
-        super().__init__(ActionWebsAndLines, lines_list, comments, transaction=transaction, _type=_type)
+    def __init__(self, parent_: 'lr_lib.core.action.main_awal.ActionWebsAndLines', lines_list: list, comments: str,
+                 transaction='', _type='', web_reg_save_param_list=None):
+        super().__init__(parent_, lines_list, comments, transaction=transaction, _type=_type)
 
         if web_reg_save_param_list is None:
             self.web_reg_save_param_list = []
@@ -269,9 +271,10 @@ class WebSnapshot(WebAny):
 
 class WebRegSaveParam(WebAny):
     """web web_reg_save_param*"""
-    def __init__(self, ActionWebsAndLines, lines_list: list, comments: str, transaction='', _type='', parent_snapshot=None):
+    def __init__(self, parent_: 'lr_lib.core.action.main_awal.ActionWebsAndLines', lines_list: list, comments: str,
+                 transaction='', _type='', parent_snapshot=None):
         self.parent_snapshot = parent_snapshot  # WebSnapshot
-        super().__init__(ActionWebsAndLines, lines_list, comments, transaction=transaction, _type=_type)
+        super().__init__(parent_, lines_list, comments, transaction=transaction, _type=_type)
         if self.parent_snapshot is not None:
             self.snapshot = self.parent_snapshot.snapshot
 

@@ -106,7 +106,7 @@ def group_param(event, widget=None, params=None, ask=True) -> None:
         widget.action.show_hide_bar_1()
 
 
-def _group_param_iter(params: [str, ], action) -> iter((int, dict, str, [str, ]),):
+def _group_param_iter(params: [str, ], action: 'lr_lib.gui.action.main_action.ActionWindow') -> iter((int, dict, str, [str, ]),):
     """ядро - найти и заменить группу web_reg_save_param"""
     unsuccess = []  # params, обработанные с ошибкой
     wrsp_dict_queue = queue.Queue()
@@ -132,7 +132,7 @@ def _group_param_iter(params: [str, ], action) -> iter((int, dict, str, [str, ])
 
 
 @lr_vars.T_POOL_decorator
-def _thread_wrsp_dict_creator(wrsp_dicts: queue.Queue, params: [str, ], unsuccess: [], action) -> None:
+def _thread_wrsp_dict_creator(wrsp_dicts: queue.Queue, params: [str, ], unsuccess: [], action: 'lr_lib.gui.action.main_action.ActionWindow') -> None:
     """ядро - создать wrsp_dicts в фоне, чтобы не терять время, при показе popup окон"""
     for param in params:
         try:
@@ -146,7 +146,7 @@ def _thread_wrsp_dict_creator(wrsp_dicts: queue.Queue, params: [str, ], unsucces
 
 
 @lr_vars.T_POOL_decorator
-def auto_param_creator(action) -> None:
+def auto_param_creator(action: 'lr_lib.gui.action.main_action.ActionWindow') -> None:
     """group params по кнопке PARAM - по LB + по началу имени"""
     y = lr_lib.gui.widj.dialog.YesNoCancel(['Найти', 'Отменить'], is_text='\n'.join(lr_vars.Params_names), parent=action,
                                            text_before='Будет произведен поиск param, имя которых начинается на указанные имена.',
@@ -173,7 +173,7 @@ def auto_param_creator(action) -> None:
             group_param(None, widget=action.tk_text, params=params, ask=False)
 
 
-def session_params(action, lb_list=None, ask=True) -> list:
+def session_params(action: 'lr_lib.gui.action.main_action.ActionWindow', lb_list=None, ask=True) -> list:
     """поиск param в action, по LB="""
     if lb_list is None:
         lb_list = lr_vars.LB_PARAM_FIND_LIST
@@ -200,14 +200,14 @@ def session_params(action, lb_list=None, ask=True) -> list:
     return list(reversed(sorted(p for p in set(params) if p not in lr_vars.DENY_PARAMS)))
 
 
-def group_param_search(action, param_part: "zkau_") -> ["zkau_5650", "zkau_5680", ]:
+def group_param_search(action: 'lr_lib.gui.action.main_action.ActionWindow', param_part: "zkau_") -> ["zkau_5650", "zkau_5680", ]:
     """поиск в action.c, всех уникальных param, в имени которых есть param_part"""
     params = list(set(_group_param_search(action, param_part)))  # уникальных
     params.sort(key=lambda param: len(param), reverse=True)
     return params
 
 
-def _group_param_search(action, param_part: "zkau_", part_mode=True) -> iter(("zkau_5650", "zkau_5680",)):
+def _group_param_search(action: 'lr_lib.gui.action.main_action.ActionWindow', param_part: "zkau_", part_mode=True) -> iter(("zkau_5650", "zkau_5680",)):
     """поиск в action.c, всех param, в имени которых есть param_part / или по LB"""
     for web_ in action.web_action.get_web_snapshot_all():
         split_text = web_.get_body().split(param_part)
@@ -233,7 +233,7 @@ def _group_param_search(action, param_part: "zkau_", part_mode=True) -> iter(("z
 
 
 @lr_vars.T_POOL_decorator
-def re_auto_param_creator(action) -> None:
+def re_auto_param_creator(action: 'lr_lib.gui.action.main_action.ActionWindow') -> None:
     """group params поиск, на основе регулярных выражений"""
     y = lr_lib.gui.widj.dialog.YesNoCancel(['Найти', 'Отменить'], is_text='\n'.join(lr_vars.REGEXP_PARAMS), parent=action,
                                            text_before='Будет произведен поиск param: re.findall(regexp, action_text)',
@@ -277,7 +277,7 @@ def re_auto_param_creator(action) -> None:
             group_param(None, widget=action.tk_text, params=params, ask=False)
 
 
-def group_param_search_quotes(action, r=r'=(.+?)\"') -> iter((str,)):
+def group_param_search_quotes(action: 'lr_lib.gui.action.main_action.ActionWindow', r=r'=(.+?)\"') -> iter((str,)):
     """поиск param, внутри кавычек"""
 
     def get_params() -> iter((str,)):

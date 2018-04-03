@@ -3,6 +3,7 @@
 
 import collections
 
+import lr_lib
 import lr_lib.core.var.vars as lr_vars
 
 
@@ -10,7 +11,7 @@ class Transactions:
     """объект хранящий иерархию "транзакций" в action.c"""
     _no_transaction_name = 'NoTransaction_'
 
-    def __init__(self, parent):
+    def __init__(self, parent: 'lr_lib.core.action.main_awal.ActionWebsAndLines'):
         self.parent = parent
         self.names = []  # порядок следования имен
         self.start_stop = dict(start=[], stop=[])

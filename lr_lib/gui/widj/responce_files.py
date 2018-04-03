@@ -14,7 +14,7 @@ import lr_lib.core.var.vars as lr_vars
 
 class RespFiles(tk.Toplevel):
     """окно файлов ответов, для i_num-snapshot"""
-    def __init__(self, widget, i_num, folder_record, folder_response):
+    def __init__(self, widget, i_num: int, folder_record: str, folder_response: str):
         super().__init__(padx=0, pady=0)
         self.widget = widget
         self.i_num = i_num

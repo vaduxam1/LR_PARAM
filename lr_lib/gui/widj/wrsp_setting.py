@@ -9,7 +9,7 @@ import lr_lib.core.var.vars as lr_vars
 
 class WrspSettingWindow(tk.Toplevel):
     """настройка каментов и имени wrsp"""
-    def __init__(self, *args, parent=None):
+    def __init__(self, parent: 'lr_lib.gui.action.main_action.ActionWindow'):
         super().__init__(padx=0, pady=0)
         self.parent = parent
         self.transient(self.parent)
