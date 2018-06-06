@@ -129,14 +129,15 @@ def _create_files_from_inf(args: [(str, str, bool, bool), (str, int)]) -> iter((
                     file_name = config[sect][opt]
                     full_name = os.path.join(folder, file_name)
                     if os.path.isfile(full_name):
-                        file = file_dict_creator(file_name, full_name, num, enc, opt, allow_deny, statistic)
-                        if file:
-                            file.update(config._sections)
-                            yield file
+                        f = file_dict_creator(file_name, full_name, num, enc, opt, allow_deny, statistic)
+                        if f:
+                            f.update(config._sections)
+                            yield f
 
     except Exception as ex:
         lr_lib.etc.excepthook.full_tb_write(ex)
         # как текст файл
+        print('!!!!!!!!!!!!!!!!', file)
         with open(os.path.join(folder, file), encoding='utf-8', errors='ignore') as inf_file:
             (num, *lines) = inf_file.read().split('\n')
             try:  # inf номер '[t75]' -> 75
