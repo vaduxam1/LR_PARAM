@@ -29,4 +29,4 @@ class TopEncoding(tk.Toplevel):
         lr_lib.gui.widj.tooltip.createToolTip(encodeEntry, tt)
         encodeEntry.pack()
         lr_lib.gui.etc.gui_other.center_widget(self)
-
+        return

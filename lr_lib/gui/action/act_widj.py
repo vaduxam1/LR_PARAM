@@ -48,6 +48,7 @@ class ActWidj(lr_lib.gui.action.act_var.ActVar):
         self.var_bar_1 = tk.BooleanVar(value=lr_vars.var_bar_1)
         self.var_bar_2 = tk.BooleanVar(value=lr_vars.var_bar_2)
         self.var_bar_3 = tk.BooleanVar(value=lr_vars.var_bar_3)
+        return
 
     def show_hide_bar_1(self, force_show=False) -> None:
         """show/hide self.toolbar"""
@@ -66,6 +67,7 @@ class ActWidj(lr_lib.gui.action.act_var.ActVar):
         else:
             self.toolbar.grid_remove()
             self.help2.grid_remove()
+        return
 
     def show_hide_bar_2(self) -> None:
         """show/hide self.middle_bar"""
@@ -76,6 +78,7 @@ class ActWidj(lr_lib.gui.action.act_var.ActVar):
         else:
             self.middle_bar.grid_remove()
             self.help3.grid_remove()
+        return
 
     def show_hide_bar_3(self) -> None:
         """show/hide self.scroll_lab2"""
@@ -88,3 +91,4 @@ class ActWidj(lr_lib.gui.action.act_var.ActVar):
             self.scroll_lab2.grid_remove()
             self.help2.grid_remove()
             self.help3.grid_remove()
+        return

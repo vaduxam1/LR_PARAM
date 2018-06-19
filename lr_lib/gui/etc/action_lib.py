@@ -48,6 +48,7 @@ def mouse_web_reg_save_param(widget: lr_lib.gui.widj.highlight_text.HighlightTex
                     except tk.TclError:
                         widget.action.search_res_combo.current(0)
                     widget.action.tk_text_see()
+                    return
 
                 lr_vars.MainThreadUpdater.submit(callback)
 
@@ -154,7 +155,8 @@ def _all_wrsp_dict_web_reg_save_param(action: 'lr_lib.gui.action.main_action.Act
         except UserWarning:
             break
         except Exception:
-            continue
+            pass
+        continue
 
     len_dl = len(lr_vars.VarWrspDictList)
     fl = list(lr_lib.core.wrsp.param.set_param_in_action_inf(action, param))
@@ -218,8 +220,10 @@ def _all_wrsp_dict_web_reg_save_param(action: 'lr_lib.gui.action.main_action.Act
                 first_only = False
 
             yield wrsp_web_
+            continue
 
         action.web_action_to_tk_text(websReport=True)  # вставить в action.c
+        return
 
 
 def _wrsp_name_replace(web_text: str, new_name: str) -> str:
@@ -228,6 +232,7 @@ def _wrsp_name_replace(web_text: str, new_name: str) -> str:
         if line.lstrip().startswith(lr_lib.core.wrsp.param.wrsp_lr_start):
             new_line = (lr_lib.core.wrsp.param.wrsp_lr_start + new_name + lr_lib.core.wrsp.param.wrsp_lr_end)
             return web_text.replace(line, new_line)
+        continue
 
     lr_vars.Logger.debug('Ошибка замены имени wrsp "{n}" - не найдена web_reg_save_param линия.\n{t}'.format(
         n=new_name, t=web_text))
@@ -347,6 +352,7 @@ def rename_transaction(event, parent=None, s='lr_start_transaction("', e='lr_end
             l = line.lstrip()
             if l.startswith(s1) or l.startswith(s2):
                 lit[e] = line.replace(old_name, new_name)
+            continue
 
         event.widget.action.backup()
         event.widget.delete(1.0, tk.END)
@@ -516,9 +522,11 @@ def all_wrsp_auto_rename(action: 'lr_lib.core.action.main_awal.ActionWebsAndLine
                 lb = line.split(_l, 1)[1].rsplit('",', 1)[0]
             elif line.startswith(_r):
                 rb = line.split(_r, 1)[1].rsplit('",', 1)[0]
+            continue
         assert lb, rb
         new_name = lr_lib.core.wrsp.param.wrsp_name_creator(w.param, lb, rb, w.snapshot)
         wrsps_new.append(new_name)
+        continue
 
     mx = max(map(len, wrsps or ['']))
     m = '"{:<%s}" -> "{}"' % mx
@@ -538,6 +546,7 @@ def all_wrsp_auto_rename(action: 'lr_lib.core.action.main_awal.ActionWebsAndLine
                 text = text.replace(lr_lib.core.wrsp.param.param_bounds_setter(old), lr_lib.core.wrsp.param.param_bounds_setter(new))
                 text = text.replace(lr_lib.core.wrsp.param.param_bounds_setter(old, start='"', end='"'),
                                     lr_lib.core.wrsp.param.param_bounds_setter(new, start='"', end='"'))
+                continue
 
             action.web_action.set_text_list(text, websReport=True)
             action.web_action_to_tk_text(websReport=False)

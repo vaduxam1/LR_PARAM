@@ -14,8 +14,7 @@ def get_action_file(folder: str, file='action.c') -> str:
         action_file = os.path.join(folder, file)
         if os.path.isfile(action_file):
             return action_file
-        else:
-            return ''
+    return ''
 
 
 tta = 'pool:\n{pt}\n{pm}'.format
@@ -55,3 +54,4 @@ def auto_update_action_info_lab(self, config, tk_text, id_: int, timeout: int, c
 
     # перезапуск
     restart(timeout, auto_update_action_info_lab, self, config, tk_text, id_, timeout, check_run, title, _set_title)
+    return

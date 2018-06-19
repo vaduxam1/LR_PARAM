@@ -18,6 +18,7 @@ class Transactions:
         self.sub_transaction = collections.OrderedDict()  # иерархия
         self._no_transaction_num = 0
         self.__is_no_transaction_name = ''
+        return
 
     def __no_transaction_name(self) -> str:
         """если нет имени транзакции"""
@@ -32,6 +33,7 @@ class Transactions:
         for n in reversed(self.names):
             if n not in self.start_stop['stop']:
                 return n
+            continue
         return self.__no_transaction_name()
 
     def start_transaction(self, transaction: str) -> None:
@@ -47,10 +49,12 @@ class Transactions:
             for t in self.names:
                 if t not in self.start_stop['stop']:
                     dt = dt[t]
+                continue
             dt[transaction] = collections.OrderedDict()
 
             self.names.append(transaction)
             self.start_stop['start'].append(transaction)
+        return
 
     def stop_transaction(self, transaction: str) -> None:
         if transaction not in self.names:
@@ -58,3 +62,4 @@ class Transactions:
                 'транзакция: stop перед start\nОтсутствует start_transaction("{}")'.format(transaction))
         else:
             self.start_stop['stop'].append(transaction)
+        return

@@ -38,6 +38,7 @@ class WinFrame(ttk.Frame):
         self.show_param_frame = ttk.Frame(self.main_frame, padding="0 0 0 0")
         self.last_frame = tk.LabelFrame(
             self, labelanchor=tk.S, bd=1, relief='groove', padx=0, pady=0, font=lr_vars.DefaultFont)
+        return
 
     def on_closing(self) -> None:
         """не выходить, при открытых action.c окнах"""
@@ -46,8 +47,10 @@ class WinFrame(ttk.Frame):
                     a=', '.join(map(str, self.action_windows)))):
             self.destroy()
             lr_vars.Tk.destroy()
+        return
 
     def clip_add(self, text: str) -> None:
         """буфер обмена"""
         self.clipboard_clear()
         self.clipboard_append(text)
+        return

@@ -19,6 +19,7 @@ class ActBackup(lr_lib.gui.action.act_block.ActBlock):
 
         self.backup_entry = tk.Entry(self.file_bar, font=lr_vars.DefaultFont, width=5, justify='center')
         self.backup_entry.insert('1', lr_vars.BackupActionFile)
+        return
 
     def backup(self, errors='replace') -> None:
         """сделать action.c бэкап"""
@@ -36,10 +37,12 @@ class ActBackup(lr_lib.gui.action.act_block.ActBlock):
             f.write(self.tk_text.get(1.0, tk.END))
 
         lr_vars.Logger.debug('{} = {} byte'.format(b_name, os.path.getsize(b_name)))
+        return
 
     def backup_name(self) -> str:
         """имя backup-файла"""
-        return os.path.join(lr_vars.BackupFolder, lr_vars.BackupName.format(i=self.id_, ind=self._backup_index))
+        i = os.path.join(lr_vars.BackupFolder, lr_vars.BackupName.format(i=self.id_, ind=self._backup_index))
+        return i
 
     def destroy(self):
         """выход"""

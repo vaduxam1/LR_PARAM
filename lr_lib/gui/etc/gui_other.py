@@ -59,3 +59,5 @@ def get_transaction(text: str) -> iter((str,)):
         if line.startswith('lr_') and line.endswith(');') and ('_transaction("' in line):
             t_name = line.rsplit('"', 1)[0]
             yield t_name[3:]
+        continue
+    return

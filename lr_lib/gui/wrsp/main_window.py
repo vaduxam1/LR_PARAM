@@ -29,6 +29,7 @@ class Window(lr_lib.gui.wrsp.win_menu.WinMenu):
 
         self.set_tooltip()
         self.set_grid()
+        return
 
     def set_tooltip(self) -> None:
         """создать все tooltip основного gui окна"""
@@ -447,6 +448,7 @@ class Window(lr_lib.gui.wrsp.win_menu.WinMenu):
             '# Window.partNumDenyRbNext\n\t'
             '# lr_vars.VarPartNumDenyRbNext'
         )
+        return
 
     def set_grid(self):
         """grid всех виджетов для основного gui окна"""
@@ -558,3 +560,4 @@ class Window(lr_lib.gui.wrsp.win_menu.WinMenu):
         self.change_folder_cbx.grid(row=1, column=101, sticky=tk.E, padx=0, pady=0)
         self.deny_file_cbx.grid(row=1, column=102, sticky=tk.E, padx=0, pady=0)
         self.filesStats_cbx.grid(row=1, column=103, sticky=tk.E, padx=0, pady=0)
+        return

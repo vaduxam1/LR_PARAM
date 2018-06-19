@@ -37,6 +37,7 @@ class POOL:
 
         self.pool = None  # текущий инстанс пула
         self.reset()
+        return
 
     def __getattr__(self, item: str):
         """перенаправление вызовов в self.pool"""
@@ -63,6 +64,7 @@ class POOL:
                 self.set_pool(n, s, parent=self)
             else:
                 self.set_pool(n, processes=s)
+        return
 
     def set_pool(self, name: str, *args, **kwargs):
         """создать пул"""
@@ -77,6 +79,7 @@ class POOL:
             self.pool.close()
         with contextlib.suppress(ex):
             self.shutdown(wait=False)
+        return
 
 
 @contextlib.contextmanager
@@ -90,3 +93,4 @@ def init() -> iter((POOL, POOL), ):
     finally:
         lr_vars.M_POOL.pool_exit()
         lr_vars.T_POOL.pool_exit()
+    return

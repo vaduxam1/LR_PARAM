@@ -70,6 +70,7 @@ class HighlightText(tk.Text):
         # кдасс подсветки текста
         self.highlight_lines = self.init()
         self.set_tegs()
+        return
 
     def init(self) -> lr_lib.gui.widj.highlight.HighlightLines:
         """пересоздать self.highlight_lines"""
@@ -112,6 +113,7 @@ class HighlightText(tk.Text):
             for tag in self.tag_names():
                 if any(tag.startswith(g) for g in ground):
                     self.tag_delete(tag)
+                continue
             return
 
         if parent is None:
@@ -126,6 +128,8 @@ class HighlightText(tk.Text):
         for g in ground:
             for color in tegs:
                 self.tag_config(g + color, **{g: color, 'font': fnt, })
+                continue
+            continue
         return
 
     def reset_highlight(self, highlight=True) -> None:
@@ -174,6 +178,9 @@ class HighlightText(tk.Text):
                         tegs_names[tag].add(task)
                     except (KeyError, AttributeError):
                         tegs_names[tag] = {task}
+                    continue
+                continue
+            continue
 
         wrsp_all = tuple(self.action.web_action.get_web_reg_save_param_all())
         ps = self.action.web_action.websReport.param_statistic
@@ -181,9 +188,11 @@ class HighlightText(tk.Text):
             n = wr.name
             if (n in ps) and (not all(ps[n].values())):
                 self.highlight_mode(wr.name, option='background', color=lr_vars.color_warn_wrsp)
+            continue
 
         for n in self.action.web_action.transactions.names:
             self.highlight_mode(n, option='foreground', color=lr_vars.color_transactions_names)
+            continue
 
         return tegs_names
 
@@ -193,6 +202,7 @@ class HighlightText(tk.Text):
 
         for line in web_.comments.split('\n'):
             self.highlight_mode(line.strip())
+            continue
 
         if isinstance(web_, lr_lib.core.action.web_.WebRegSaveParam):
             m = lr_vars.web_reg_highlight_len
@@ -201,6 +211,7 @@ class HighlightText(tk.Text):
             self.highlight_mode(web_.param, option='foreground', color=lr_vars.wrsp_color2)
             for line in web_.lines_list[1:]:
                 self.highlight_mode(line.strip())
+                continue
         else:
             self.highlight_mode(web_.name)
         return
@@ -222,6 +233,7 @@ class TextLineNumbers(tk.Canvas):
         self.linenum = -1
 
         self.tk_text = tk_text
+        return
 
     def redraw(self, *args, __restart=False) -> None:
         """redraw line numbers"""
@@ -238,5 +250,6 @@ class TextLineNumbers(tk.Canvas):
             self.linenum = str(i).split(".", 1)[0]
             self.create_text(2, y, anchor="nw", text=self.linenum)
             i = self.tk_text.index("%s+1line" % i)
+            continue
 
         return

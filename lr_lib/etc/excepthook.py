@@ -24,6 +24,7 @@ def excepthook(*args) -> None:
     if lr_vars.Window:
         lr_vars.MainThreadUpdater.submit(lambda: lr_vars.Window.err_to_widgts(exc_type, exc_val, exc_tb, ern))
     lr_vars.Logger.critical(get_tb(exc_type, exc_val, exc_tb, ern))
+    return
 
 
 def full_tb_write(*args):
@@ -62,6 +63,7 @@ def get_tb(exc_type, exc_val, exc_tb, err_name: str) -> str:
         for line in reversed(exc_lines):
             if lib in line:
                 break
+            continue
         try:
             fileName = line.split('"')[1]
             lineNum = int(line.split(',')[1].split('line')[-1])
@@ -74,6 +76,7 @@ def get_tb(exc_type, exc_val, exc_tb, err_name: str) -> str:
                     left.append(line)
                     if len(left) == lr_vars.EHOME:
                         break
+                continue
             _, f = os.path.split(fileName)
             left[0] = '\n!!! {e} [ {f} : строка {l} ]\n{line}\n'.format(e=err_name, line=left[0], f=f, l=lineNum)
             left.reverse()
@@ -84,6 +87,7 @@ def get_tb(exc_type, exc_val, exc_tb, err_name: str) -> str:
                     right.append(line)
                     if len(right) == lr_vars.EEND:
                         break
+                continue
 
             code = '{l}\n{r}'.format(l='\n'.join(left), r='\n'.join(right))
             return code

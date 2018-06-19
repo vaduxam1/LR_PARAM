@@ -20,6 +20,7 @@ class WinBlock(lr_lib.gui.wrsp.win_act.WinAct):
         lr_lib.gui.wrsp.win_act.WinAct.__init__(self)
 
         self._block_ = None  # принудительно блокировать виджеты
+        return
 
     @contextlib.contextmanager
     def block(self, w=AllowWidj, force=False) -> iter:
@@ -39,6 +40,7 @@ class WinBlock(lr_lib.gui.wrsp.win_act.WinAct):
 
             if not self._block_:
                 lr_vars.MainThreadUpdater.submit(lambda: self._block(False, w=w))
+        return
 
     def _block(self, bl: bool, w=()) -> None:
         """заблокировать/разблокировать виджеты в gui"""
@@ -48,5 +50,7 @@ class WinBlock(lr_lib.gui.wrsp.win_act.WinAct):
             if (not attr.startswith('_')) and (attr not in w):
                 with contextlib.suppress(AttributeError, tk.TclError):
                     getattr(self, attr).configure(state=state)
+            continue
 
         self.update()
+        return

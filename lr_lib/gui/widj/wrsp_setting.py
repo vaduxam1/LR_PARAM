@@ -67,6 +67,7 @@ class WrspSettingWindow(tk.Toplevel):
                 VarWRSPStatsTransacNames.config(state='normal')
             else:
                 VarWRSPStatsTransacNames.config(state='disabled')
+            return
 
         set_WRSPStatsTransac()
         VarWRSPStatsTransac = tk.Checkbutton(laf, text=tt_wrsp_transac, font='Arial 7', justify='left',
@@ -181,6 +182,7 @@ class WrspSettingWindow(tk.Toplevel):
         _lab7.grid(row=7, column=3)
 
         lr_lib.gui.etc.gui_other.center_widget(self)
+        return
 
     @lr_vars.T_POOL_decorator
     def all_wrsp_rename(self, *args) -> None:
@@ -205,6 +207,8 @@ class WrspSettingWindow(tk.Toplevel):
                     text = text.replace(lr_lib.core.wrsp.param.param_bounds_setter(old), lr_lib.core.wrsp.param.param_bounds_setter(new))
                     text = text.replace(lr_lib.core.wrsp.param.param_bounds_setter(old, start='"', end='"'),
                                         lr_lib.core.wrsp.param.param_bounds_setter(new, start='"', end='"'))
+                    continue
 
                 self.parent.web_action.set_text_list(text, websReport=True)
                 self.parent.web_action_to_tk_text(websReport=False)
+        return

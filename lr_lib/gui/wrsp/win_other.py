@@ -87,16 +87,19 @@ class WinOther(lr_lib.gui.wrsp.win_filesort.WinFileSort):
         self.cbxPopupWindow = tk.Checkbutton(
             self.last_frame, variable=lr_vars.VarShowPopupWindow, text='Win', padx=0, pady=0, background='orange',
             font=lr_vars.DefaultFont + ' italic bold')
+        return
 
     def force_unblock(self, *args) -> None:
         self._block_ = False
         self._block(False)
+        return
 
     @lr_vars.T_POOL_decorator
     def param_file_editor(self, *args):
         """открыть param файл в editor"""
-        return subprocess.Popen(
-            [lr_vars.EDITOR['exe'], lr_lib.core.wrsp.files.get_file_with_kwargs(lr_vars.FilesWithParam)['File']['FullName']])
+        p = subprocess.Popen([lr_vars.EDITOR['exe'],
+                              lr_lib.core.wrsp.files.get_file_with_kwargs(lr_vars.FilesWithParam)['File']['FullName']])
+        return p
 
     def clear(self) -> None:
         """очистить поля ввода"""
@@ -118,6 +121,7 @@ class WinOther(lr_lib.gui.wrsp.win_filesort.WinFileSort):
         self.last_frame_text_set()
 
         lr_vars.Tk.title(lr_vars.VERSION)
+        return
 
     def last_frame_text_set(self) -> None:
         """отображение всякой информации"""
@@ -127,6 +131,7 @@ class WinOther(lr_lib.gui.wrsp.win_filesort.WinFileSort):
             p_size=lr_vars.M_POOL._size, tpool=lr_vars.T_POOL._name)
 
         self.last_frame['text'] = t
+        return
 
     def err_to_widgts(self, exc_type, exc_val, exc_tb, ern) -> None:
         """отображение ошибки"""
@@ -134,3 +139,4 @@ class WinOther(lr_lib.gui.wrsp.win_filesort.WinFileSort):
         lr_vars.Tk.title('{e} | {v}'.format(e=err, v=lr_vars.VERSION))
         self.last_frame.config(text='\n'.join(err.split('\n')[:5])[:500])
         # lr_tooltip.createToolTip(self.comboFiles, '\n'.join(lr_other._chunks(str(exc_val), 60)))
+        return

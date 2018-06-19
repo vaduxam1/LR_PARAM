@@ -23,11 +23,13 @@ class WinMaxMin(lr_lib.gui.wrsp.win_widj.WinWidj):
 
         self.max_inf.bind("<<ComboboxSelected>>", self._min_max_set)
         self.min_inf.bind("<<ComboboxSelected>>", self._min_max_set)
+        return
 
     def _min_max_set(self, *args) -> None:
         """max/min_inf"""
         if lr_vars.FilesWithParam:
             self.get_files()
+        return
 
     def set_maxmin_inf(self, files):
         """установка виджетов min_inf max_inf"""
@@ -37,3 +39,4 @@ class WinMaxMin(lr_lib.gui.wrsp.win_widj.WinWidj):
 
         self.max_inf.set(max(infs or [-1]))
         self.min_inf.set(min(infs or [-1]))
+        return

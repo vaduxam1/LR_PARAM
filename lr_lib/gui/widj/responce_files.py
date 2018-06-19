@@ -29,6 +29,7 @@ class RespFiles(tk.Toplevel):
         self.resp_widj = []
         self.response_widj_creator(folder_record, desc='файлы при записи', side='top')
         self.response_widj_creator(folder_response, desc='файлы при воспроизведении', side='bottom')
+        return
 
     def combo_select(self, ent: tk.Entry, folder: str, cbx_var: tk.BooleanVar):
         full_name = os.path.join(folder, ent.get())
@@ -41,6 +42,7 @@ class RespFiles(tk.Toplevel):
         del file_dt['Snapshot']
 
         lr_lib.gui.widj.tooltip.createToolTip(ent, lr_lib.core.etc.other.file_string(file_dt))
+        return
 
     def response_widj_creator(self, folder: str, desc='', side='bottom', w1=30, w2=100) -> None:
         """виджеты для окна файлов snapshot"""
@@ -60,6 +62,7 @@ class RespFiles(tk.Toplevel):
             if deny_cbx_var.get():  # отбраковать "вероятно ненужные" файлы
                 files = list(filter(lr_lib.core.wrsp.files.is_responce_file, files))
             files_cmb['values'] = files
+            return
 
         deny_cbx_var = tk.BooleanVar(value=True)
         deny_cbx = tk.Checkbutton(lab, text='', variable=deny_cbx_var, command=files_cmb_set, font='Arial 7')
@@ -77,12 +80,15 @@ class RespFiles(tk.Toplevel):
                 num = lr_lib.core.wrsp.files.get_inf_file_num(file)
                 if num:
                     yield file
+                continue
+            return
 
         def set_inf(*a) -> None:
             """новый snapshot"""
             self.i_num = int(''.join(filter(str.isnumeric, inf_var.get())))
             RespFiles(self.widget, self.i_num, self.folder_record, self.folder_response)
             inf_var.set(self.inf_file)
+            return
 
         inf_var = tk.StringVar(value=self.inf_file)
         inf_cmb = ttk.Combobox(lab, background=lr_vars.Background, font='Arial 7', textvariable=inf_var)
@@ -110,6 +116,8 @@ class RespFiles(tk.Toplevel):
             w = w2
         for i in range(len(self.resp_widj)):
             self.resp_widj[i][3].config(width=w)
+            continue
+        return
 
     def select_folder(self, folder: str) -> None:
         """ноавя директория snapshot"""
@@ -123,3 +131,4 @@ class RespFiles(tk.Toplevel):
             self.folder_record, self.folder_response = (self.folder_record, directory)
 
         RespFiles(self.widget, self.i_num, self.folder_record, self.folder_response)
+        return

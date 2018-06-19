@@ -17,6 +17,7 @@ class ActBlock(lr_lib.gui.action.act_scroll.ActScrollText):
 
         self.unblock = tk.Button(
             self.file_bar, text='unblock', font=lr_vars.DefaultFont + ' bold', command=lambda *a: self._block(False))
+        return
 
     @contextlib.contextmanager
     def block(self, w=('tk_text', 'unblock', 'search_entry', 'search_res_combo', 'toolbar',)) -> iter:
@@ -26,6 +27,7 @@ class ActBlock(lr_lib.gui.action.act_scroll.ActScrollText):
             yield
         finally:
             lr_vars.MainThreadUpdater.submit(lambda: self._block(False, w=w))
+        return
 
     def _block(self, bl: bool, w=()) -> None:
         """заблокировать/разблокировать виджеты в gui"""
@@ -35,5 +37,7 @@ class ActBlock(lr_lib.gui.action.act_scroll.ActScrollText):
             if (not attr.startswith('_')) and (attr not in w):
                 with contextlib.suppress(AttributeError, tk.TclError):
                     getattr(self, attr).configure(state=state)
+            continue
 
         self.update()
+        return

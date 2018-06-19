@@ -605,3 +605,6 @@ Excel
 miss
 launch
 own
+locale
+/api
+schema

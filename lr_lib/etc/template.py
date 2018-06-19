@@ -5,10 +5,10 @@
 def dummy_remove(web_: [str, ], mode=False) -> bool:
     """похожая web_submit_data или нет"""
     if mode == 'endswith':
-        return dummy_endswith_remove(web_)
+        r = dummy_endswith_remove(web_)
     else:
-        return (len(web_) == Dummy.dummy_len) and \
-               all(w.lstrip().startswith(d) for w, d in zip(web_, Dummy.web_dummy))
+        r = (len(web_) == Dummy.dummy_len) and all(w.lstrip().startswith(d) for w, d in zip(web_, Dummy.web_dummy))
+    return r
 
 
 class Dummy:
@@ -27,6 +27,7 @@ class Dummy:
         Dummy.web_len = len(Dummy.web_dummy_template)
         Dummy.web_dummy = tuple(filter(bool, map(str.strip, Dummy.web_dummy_template.split('\n'))))
         Dummy.dummy_len = len(Dummy.web_dummy)
+        return
 
 
 WebDummyTemplate_1 = '''
@@ -99,3 +100,4 @@ def dummy_endswith_remove(web_: [str, ]) -> bool:
             web_[-4].lstrip().startswith(WebDummyTemplate_Part_[-4]) and \
             (web_[-5].strip() == WebDummyTemplate_Part_[-5]):
         return True
+    return False

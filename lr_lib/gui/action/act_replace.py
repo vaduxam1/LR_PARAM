@@ -28,6 +28,7 @@ class ActReplaceRemove(lr_lib.gui.action.act_search.ActSearch):
         self.dummy_button = tk.Button(
             self.toolbar, text="Snapshot remove", font=lr_vars.DefaultFont + ' bold', background='orange',
             command=self.remove_web_dummy_template)
+        return
 
     @lr_vars.T_POOL_decorator
     def remove_web_dummy_template(self, *args, force=True) -> None:
@@ -39,6 +40,7 @@ class ActReplaceRemove(lr_lib.gui.action.act_search.ActSearch):
             lr_lib.etc.template.Dummy.setattrs(template)
             if ok:
                 ok = self.tk_text_dummy_remove(force=False)
+            continue
 
         del_all = yask = is_del = False
         for web in self.web_action.get_web_snapshot_all():
@@ -58,8 +60,10 @@ class ActReplaceRemove(lr_lib.gui.action.act_search.ActSearch):
                     is_del = True
                 elif yask == 'Выход':
                     break
+            continue
         if is_del:
             self.web_action_to_tk_text(websReport=True)
+        return
 
     def tk_text_dummy_remove(self, force=False, mode='') -> bool:
         with self.block():
@@ -81,6 +85,7 @@ class ActReplaceRemove(lr_lib.gui.action.act_search.ActSearch):
             if is_remove(web_.lines_list):
                 _web_action.webs_and_lines.remove(web_)
                 rem += 1
+            continue
 
         text_without_dummy = _web_action.to_str(websReport=True)
         dum_len = len(text)
@@ -141,6 +146,7 @@ class ActReplaceRemove(lr_lib.gui.action.act_search.ActSearch):
 
             if y in buttons[:2]:
                 return True
+        return
 
     def thinktime_remove(self, *args, word='lr_think_time') -> None:
         """удалить thinktime"""
@@ -153,15 +159,17 @@ class ActReplaceRemove(lr_lib.gui.action.act_search.ActSearch):
             for line in text.split('\n'):
                 if line.lstrip().startswith(word):
                     num += 1
-                    continue
                 else:
                     yield line
+                continue
+            return
 
         lines = list(filter_lines())
         if lines:
             if messagebox.askokcancel('thinktime', 'удалить thinktime из action?\n{} шт.'.format(num), parent=self):
                 self.backup()
                 self.tk_text_to_web_action('\n'.join(lines), websReport=True)
+        return
 
     @lr_vars.T_POOL_decorator
     def all_transaction_rename(self, *args) -> None:
@@ -184,7 +192,8 @@ class ActReplaceRemove(lr_lib.gui.action.act_search.ActSearch):
             for old, new in zip(transactions, new_transaction):
                 text = text.replace((st + old), (st + new))
                 text = text.replace((en + old), (en + new))
+                continue
 
             self.backup()
             self.tk_text_to_web_action(text, websReport=True)
-
+        return

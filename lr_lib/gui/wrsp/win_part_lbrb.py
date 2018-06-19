@@ -179,6 +179,7 @@ class WinPartsLbRb(lr_lib.gui.wrsp.win_text.WinText):
         self.comboParts.bind("<<ComboboxSelected>>", self.comboParts_change)
         self.comboParts['values'] = [0]
         self.comboParts.current(0)
+        return
 
     def comboParts_change(self, *args) -> None:
         """смена комбо(4)"""
@@ -187,6 +188,7 @@ class WinPartsLbRb(lr_lib.gui.wrsp.win_text.WinText):
         lr_vars.VarPartNum.set(int(self.comboParts.get()))
         lr_lib.gui.widj.lbrb5.LBRBText.set_LB_RB()
         self.show_frame_info_file()
+        return
 
     def show_frame_info_file(self) -> None:
         """отображение всякой информации"""
@@ -199,6 +201,7 @@ class WinPartsLbRb(lr_lib.gui.wrsp.win_text.WinText):
 
         self.main_frame['text'] = 'Snapshot{inf_nums}, Файл[{file_index}/{param_files}], ' \
                                   'Часть[{param_part}/{param_count}], {len} символов.'.format(**dt)
+        return
 
     def spl_cbx_cmd_lb(self, *a) -> None:
         """lb SplitList widj"""
@@ -214,6 +217,7 @@ class WinPartsLbRb(lr_lib.gui.wrsp.win_text.WinText):
             self.LbB2Cbx.configure(state='disabled')
 
         self.comboParts_change()
+        return
 
     def spl_cbx_cmd_rb(self, *a) -> None:
         """rb SplitList widj"""
@@ -229,8 +233,10 @@ class WinPartsLbRb(lr_lib.gui.wrsp.win_text.WinText):
             self.RbB2Cbx.configure(state='disabled')
 
         self.comboParts_change()
+        return
 
     @lr_vars.T_POOL_decorator
     def lr_note(self, ob) -> None:
         """открыть в блокноте"""
         lr_lib.core.etc.other.openTextInEditor(ob.get())
+        return

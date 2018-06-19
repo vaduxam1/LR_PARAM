@@ -19,6 +19,7 @@ def init() -> None:
     lr_vars.VarFileName.callback_set = _set_file_name
     lr_vars.VarFile.callback_set = _set_file
     lr_vars.VarPartNum.callback_set = set_part_num
+    return
 
 
 def _set_file_name(name: str) -> None:
@@ -26,6 +27,7 @@ def _set_file_name(name: str) -> None:
     file = lr_lib.core.wrsp.files.get_file_with_kwargs(lr_vars.FilesWithParam, Name=name)
     assert file, 'файл "{n}" ({tn}) ненайден. {tf} {f}'.format(n=name, tn=type(name), tf=type(file), f=file)
     lr_vars.VarFile.set(file)
+    return
 
 
 def _set_file(file: dict, errors='replace') -> None:
@@ -42,6 +44,7 @@ def _set_file(file: dict, errors='replace') -> None:
         # сохранить статистику в AllFiles
         file_from_allfiles = lr_lib.core.wrsp.files.get_file_with_kwargs(lr_vars.AllFiles, Name=ff['Name'])
         file_from_allfiles.update({k: file[k] for k in file if k != 'Param'})
+    return
 
 
 def _is_mutable_bound(st: str, b1: '{', b2: '}', a2=0) -> int:
@@ -54,12 +57,14 @@ def _is_mutable_bound(st: str, b1: '{', b2: '}', a2=0) -> int:
                 a2 -= 1
             else:
                 return e
+        continue
     return 0
 
 
 def is_mutable_bound(left: str, right: str, b1='{', b2='}') -> [int, int]:
     """находится ли внутри скобок"""
-    return [_is_mutable_bound(left[::-1], b2, b1), _is_mutable_bound(right, b1, b2)]
+    s = [_is_mutable_bound(left[::-1], b2, b1), _is_mutable_bound(right, b1, b2)]
+    return s
 
 
 def set_part_num(num=0) -> None:
@@ -123,6 +128,7 @@ def set_part_num(num=0) -> None:
 
     wrsp_dict = lr_lib.core.wrsp.param.wrsp_dict_creator()
     lr_vars.VarWrspDict.set(wrsp_dict)
+    return
 
 
 def lb_rb_split_end(lb: str, rb: str) -> (str, str):
@@ -133,6 +139,7 @@ def lb_rb_split_end(lb: str, rb: str) -> (str, str):
             for s in lr_vars.StripLBEnd1:
                 lb = lb.rsplit(s, 1)
                 lb = lb[1 if (len(lb) == 2) else 0]
+                continue
         if (llb > 2) and any(map(lb.startswith, lr_vars.StripLBEnd2)):
             lb = lb[2:].lstrip()
         elif (llb > 1) and any(map(lb.startswith, lr_vars.StripLBEnd3)):
@@ -143,6 +150,7 @@ def lb_rb_split_end(lb: str, rb: str) -> (str, str):
         if lrb < 5:
             for s in lr_vars.StripRBEnd1:
                 rb = rb.split(s, 1)[0]
+                continue
         if (lrb > 2) and any(map(rb.endswith, lr_vars.StripRBEnd2)):
             rb = rb[:-2].rstrip()
         elif (lrb > 1) and any(map(rb.endswith, lr_vars.StripRBEnd3)):
@@ -176,6 +184,7 @@ def lb_rb_split_list_set(__lb: str, __rb: str, lb: str, rb: str) -> (str, str):
             elif allow_2 and indx_2:
                 lr_vars.VarSplitListNumRB.set(3)
                 break
+            continue
 
     try:
         lb_combo = splitters_combo(lr_vars.Window.LBent_SplitList)
@@ -191,11 +200,13 @@ def lb_rb_split_list_set(__lb: str, __rb: str, lb: str, rb: str) -> (str, str):
         i_lb = lr_vars.VarSplitListNumLB.get()
         for word in lb_combo:
             lb = lb[:-i_lb].rsplit(word, 1)[-1] + lb[-i_lb:]
+            continue
 
     if lr_vars.VarSplitListRB.get():
         i_rb = lr_vars.VarSplitListNumRB.get()
         for word in rb_combo:
             rb = rb[:i_rb] + rb[i_rb:].split(word, 1)[0]
+            continue
 
     lr_vars.VarSplitListNumRB.set(VarSplitListNumRB)  # вернуть
     return lb, rb
@@ -205,6 +216,7 @@ def gui_updater_comboParts() -> None:
     """при изменении из ядра, менять gui comboParts"""
     if lr_vars.Window and not lr_vars.Window._block_:
         lr_vars.Window.comboParts.set(lr_vars.VarPartNum.get())
+    return
 
 
 def gui_updater_comboFiles() -> None:
@@ -212,6 +224,7 @@ def gui_updater_comboFiles() -> None:
     if lr_vars.Window and not lr_vars.Window._block_:  #
         lr_vars.Window.comboFiles.set(lr_vars.VarFileName.get())
         lr_vars.Window.comboPartsFill()
+    return
 
 
 def next_3_or_4_if_bad_or_enmpy_lb_rb(text='') -> None:

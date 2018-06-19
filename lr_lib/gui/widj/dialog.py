@@ -34,6 +34,7 @@ class YesNoCancel(tk.Toplevel):
             def enc(*a) -> None:
                 callback = self.combo_dict[self.combo_var.get()]
                 self.new_text(callback())
+                return
 
             self.combo.bind("<<ComboboxSelected>>", enc)
 
@@ -54,6 +55,7 @@ class YesNoCancel(tk.Toplevel):
             self.buttons[name].bind("<KeyRelease-Return>", cmd)
             self.buttons[name].grid(row=i, column=0, sticky=tk.NSEW, columnspan=2, padx=0, pady=0)
             i += 1
+            continue
 
         if self.combo_dict:
             self.combo.grid(row=(i + 1), column=0, padx=0, pady=0)
@@ -91,6 +93,7 @@ class YesNoCancel(tk.Toplevel):
         self.center_widget()
         if focus:
             focus.focus_set()
+        return
 
     def new_text(self, text: str) -> None:
         """стереть = новый текст в self.tk_text"""

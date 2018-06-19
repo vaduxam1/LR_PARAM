@@ -19,6 +19,7 @@ class ToolTip(object):
         self.tip = None
         self.x = 0
         self.y = 0
+        return
 
     def showtip(self, text: str) -> None:
         """Display text in tooltip"""
@@ -43,10 +44,12 @@ class ToolTip(object):
             self.tip.attributes('-topmost', True)
             tk.Label(self.tip, text=text, justify=tk.LEFT, background=lr_vars.Background, relief=tk.SOLID, borderwidth=1,
                      font=lr_vars.ToolTipFont).pack(ipadx=0, ipady=0)
+        return
 
     def hidetip(self) -> None:
         with contextlib.suppress(Exception):
             self.tip.destroy()
+        return
 
 
 def widget_values_counter(widget) -> (int, int):
@@ -73,9 +76,12 @@ def createToolTip(widget, text: str) -> None:
 
         toolTip.showtip('{t}{text}'.format(t=wlines, text=text.rstrip()))
         widget.after(int(lr_vars.VarToolTipTimeout.get()), toolTip.hidetip)  # тк иногда подсказки "зависают"
+        return
 
     def leave(event, toolTip=toolTip) -> None:
         toolTip.hidetip()
+        return
 
     widget.bind('<Enter>', enter)
     widget.bind('<Leave>', leave)
+    return

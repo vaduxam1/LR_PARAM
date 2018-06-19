@@ -88,18 +88,21 @@ class TopPoolSetting(tk.Toplevel):
             self.pool_state_updater()
 
         lr_lib.gui.etc.gui_other.center_widget(self)
+        return
 
     def set_pool(self, pool) -> None:
         """установить новый пул"""
         pool.reset()
         self.action.last_frame_text_set()
+        return
 
     @lr_vars.T_POOL_decorator
     def pool_state_updater(self) -> None:
         """SThreadPool(threading.Thread) текст состояния пула"""
         def pool_state_string(st=lambda i: '{0:<6} : {1}'.format(*i)) -> str:
             """инфо о потоках T_POOL"""
-            return '\n'.join((t.task.to_str() if t.task else 'sleep') for t in lr_vars.T_POOL.threads)
+            i = '\n'.join((t.task.to_str() if t.task else 'sleep') for t in lr_vars.T_POOL.threads)
+            return i
 
         def thread_info_updater(y: lr_lib.gui.widj.dialog.YesNoCancel) -> None:
             """перезапуск инфо"""
@@ -109,8 +112,10 @@ class TopPoolSetting(tk.Toplevel):
             y.new_text(pool_state_string())
             if y.alive_:
                 y.after(lr_vars._SThreadMonitorUpdate.get(), thread_info_updater, y)
+            return
 
         y = lr_lib.gui.widj.dialog.YesNoCancel(['выйти'], 'T_POOL\nмонитор', 'инфо о задачах, выполняющихся в SThread потоках',
                                                title=lr_vars.VERSION, parent=self.action, is_text=pool_state_string())
         y.after(100, thread_info_updater, y)
         y.ask()
+        return

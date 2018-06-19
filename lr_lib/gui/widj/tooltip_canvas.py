@@ -34,24 +34,29 @@ class CanvasTooltip:
         self.pad = pad
         self.id = None
         self.tw = None
+        return
 
     def onEnter(self, event=None):
         self.schedule()
+        return
 
     def onLeave(self, event=None):
         self.unschedule()
         self.hide()
+        return
 
     def schedule(self):
         self.unschedule()
         self.id = self.canvas.after(self.waittime, self.show)
         self.canvas.after(lr_vars.VarToolTipTimeout.get(), self.onLeave)
+        return
 
     def unschedule(self):
         id_ = self.id
         self.id = None
         if id_:
             self.canvas.after_cancel(id_)
+        return
 
     def show(self, event=None):
         def tip_pos_calculator(canvas, label, *, tip_delta=(10, 5), pad=(5, 3, 5, 3)):
@@ -126,11 +131,13 @@ class CanvasTooltip:
         x, y = tip_pos_calculator(canvas, label)
 
         self.tw.wm_geometry("+%d+%d" % (x, y))
+        return
 
     def hide(self):
         if self.tw:
             self.tw.destroy()
         self.tw = None
+        return
 
 
 if __name__ == '__main__':

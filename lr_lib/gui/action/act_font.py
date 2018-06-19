@@ -73,9 +73,11 @@ class ActFont(lr_lib.gui.action.act_replace.ActReplaceRemove):
         self.background_color_combo.bind("<KeyRelease-Return>", self.background_color_set)
         self.background_color_combo.bind("<<ComboboxSelected>>", self.background_color_set)
         self.config(background=self.background_color_combo.get())
+        return
 
     def bold_selection_set(self, *a) -> None:
         self.tk_text.set_tegs(parent=self)
+        return
 
     def background_color_set(self, *args, color='') -> None:
         """установить цвет фона"""
@@ -88,3 +90,4 @@ class ActFont(lr_lib.gui.action.act_replace.ActReplaceRemove):
         self.scroll_lab2.config(background=color)
         self.tk_text.config(background=color)
         self.tk_text.linenumbers.config(background=color)
+        return

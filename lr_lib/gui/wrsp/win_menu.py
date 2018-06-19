@@ -25,6 +25,7 @@ class WinMenu(lr_lib.gui.wrsp.win_folder.WinFolder):
         self.set_menu()
         self.set_comboFiles_width()
         self.set_rclick_menu()
+        return
 
     def set_menu(self) -> None:
         """menubar"""
@@ -48,12 +49,14 @@ class WinMenu(lr_lib.gui.wrsp.win_folder.WinFolder):
                              command=lr_vars.Tk.destroy)
 
         self.menubar.add_cascade(label="Menu", menu=filemenu)
+        return
 
     def _select_editor(self) -> None:
         """Select Editor"""
         __file = tk.filedialog.askopenfile()
         if __file:
             lr_vars.EDITOR['exe'] = __file.name
+        return
 
     def set_rclick_menu(self) -> None:
         """меню правой кнопки мыши"""
@@ -62,3 +65,5 @@ class WinMenu(lr_lib.gui.wrsp.win_folder.WinFolder):
             with contextlib.suppress(tk.TclError):
                 ob = getattr(self, widj)
                 self.bind_class(ob, sequence='<Button-3>', func=lr_lib.gui.etc.sub_menu.rClicker, add='')
+            continue
+        return

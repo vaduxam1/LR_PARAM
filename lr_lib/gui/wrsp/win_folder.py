@@ -30,6 +30,7 @@ class WinFolder(lr_lib.gui.wrsp.win_other.WinOther):
         self.filesStats_cbx = tk.Checkbutton(
             self.last_frame, variable=lr_vars.VarAllFilesStatistic, padx=0, pady=0, text='',
             font=lr_vars.DefaultFont + ' italic', command=self.set_folder)
+        return
 
     def set_folder(self) -> None:
         """установка folder"""
@@ -39,6 +40,7 @@ class WinFolder(lr_lib.gui.wrsp.win_other.WinOther):
 
         self.last_frame_text_set()
         self.setSortKey1()
+        return
 
     def change_folder_ask(self, *args) -> None:
         """смена директории поиска файлов"""
@@ -48,4 +50,4 @@ class WinFolder(lr_lib.gui.wrsp.win_other.WinOther):
             with self.block():
                 lr_lib.core.wrsp.files.init()
             self.clear()
-
+        return

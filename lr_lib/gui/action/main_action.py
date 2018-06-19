@@ -49,6 +49,7 @@ class ActionWindow(lr_lib.gui.action.act_win.ActWin):
         self.set_menu()
 
         lr_lib.gui.etc.gui_other.center_widget(self)
+        return
 
     def set_menu(self) -> None:
         """menubar"""
@@ -86,6 +87,7 @@ class ActionWindow(lr_lib.gui.action.act_win.ActWin):
         filemenu5.add_command(label="по Snapshot inf номерам", command=lambda: lr_lib.gui.etc.action_lib.snapshot_files(self.tk_text, i_num=1))
         filemenu5.add_command(label="подряд", command=lambda: lr_lib.gui.wrsp.top.top_allfiles.TopFolder(self))
         self.menubar.add_cascade(label="Файлы ответов", menu=filemenu5)
+        return
 
     def set_tooltip(self) -> None:
         """создать все tooltip action окна"""
@@ -388,6 +390,7 @@ class ActionWindow(lr_lib.gui.action.act_win.ActWin):
             'максимально близкого, к param-inf, те поиску с конца\n\t'
             '# add_inf_cbx'
         )
+        return
 
     def set_grid(self):
         """grid всех виджетов action.с окна"""
@@ -476,3 +479,4 @@ class ActionWindow(lr_lib.gui.action.act_win.ActWin):
         self.lr_report_B.grid(row=8, column=4, sticky=tk.NSEW)
         self.lr_report_A.grid(row=7, column=4, sticky=tk.NSEW)
         self.transaction_rename.grid(row=7, column=5, sticky=tk.NSEW, rowspan=2)
+        return

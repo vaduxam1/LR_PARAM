@@ -18,8 +18,10 @@ class ActToplevel(tk.Toplevel):
         self.grid_rowconfigure(0, weight=1)
         self.grid_columnconfigure(1, weight=1)
         self.geometry('{}x{}'.format(*lr_vars._Tk_ActionWIND_SIZE))
+        return
 
     def on_closing(self) -> None:
         """спросить, при закрытии окна"""
         if messagebox.askokcancel("Закрыть action.c", "Закрыть action.c ?", parent=self):
             self.destroy()
+        return

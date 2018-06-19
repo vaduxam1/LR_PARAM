@@ -30,10 +30,12 @@ class LBRBText(tk.Text):
         self.scrolly = ttk.Scrollbar(self.label_info, orient=tk.VERTICAL, command=self.yview)
         self.scrollx = ttk.Scrollbar(self.label_info, orient=tk.HORIZONTAL, command=self.xview)
         self.configure(yscrollcommand=self.scrolly.set, xscrollcommand=self.scrollx.set, bd=0, padx=0, pady=0)
+        return
 
     def get(self, index1=1.0, index2='end') -> str:
         """текущий LB/RB"""
-        return super().get(index1, index2)[:-1]  # [:-1] - '\n'
+        i = super().get(index1, index2)[:-1]  # [:-1] - '\n'
+        return i
 
     def set(self, text: str) -> None:
         """задать LB/RB"""
@@ -43,6 +45,7 @@ class LBRBText(tk.Text):
             self.label_info['text'] = self.info_text[self.name] % (len(text.split('\n')), len(text))
         except TypeError:
             self.label_info['text'] = self.info_text[self.name] % (len(text.decode().split('\n')), len(text))
+        return
 
     @classmethod
     def set_LB_RB(cls, *args) -> None:
@@ -62,13 +65,17 @@ class LBRBText(tk.Text):
         except Exception as ex:
             lr_vars.Logger.error('RB {}'.format(ex.args))
             cls.bounds['RB'].set(lb.encode(lr_vars.VarEncode.get(), errors='replace'))
+        return
 
     @classmethod
     def set_label_text(cls) -> None:
         """сброс label-текста"""
         for b in cls.info_text:
             cls.bounds[b].label_info['text'] = cls.info_text[b]
+            continue
+        return
 
     def set_height(self) -> None:
         """кол-во строк LB/RB"""
         self.configure(height=self.heightVar.get())
+        return

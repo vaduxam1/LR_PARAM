@@ -16,6 +16,7 @@ class ActAny(lr_lib.gui.action.act_goto.ActGoto):
 
     def __init__(self):
         lr_lib.gui.action.act_goto.ActGoto.__init__(self)
+        return
 
     def widj_reset(self) -> None:
         """обновить виджеты"""
@@ -26,15 +27,17 @@ class ActAny(lr_lib.gui.action.act_goto.ActGoto):
         self.toolbar['text'] = self.param_counter(all_param_info=False)
         self.set_title()
         self.set_combo_len()
+        return
 
     def param_counter(self, all_param_info=False) -> str:
         """подсчитать кол-во созданных web_reg_save_param"""
         self.wrsp_combo_set()
         self.param_combo_set()
-
         if all_param_info:
             lr_vars.Logger.debug(self.web_action.websReport.web_snapshot_param_in_count)
-        return 'всего web_reg_save_param : {w}'.format(w=len(self.web_action.websReport.wrsp_and_param_names))
+
+        i = 'всего web_reg_save_param : {w}'.format(w=len(self.web_action.websReport.wrsp_and_param_names))
+        return i
 
     def clear_text(self) -> None:
         """очистить tk_text"""
@@ -55,15 +58,19 @@ class ActAny(lr_lib.gui.action.act_goto.ActGoto):
             if isinstance(attr, ttk.Combobox):
                 m = max([len(str(f)) for f in attr['values']] or [min_len])
                 attr.configure(width=m if (min_len <= m <= max_len) else (min_len if (m < min_len) else max_len))
+            continue
 
         self.selection_font_combo.configure(width=20)
         self.font_combo.configure(width=20)
+        return
 
     def set_title(self) -> None:
         self.title('{} {} undo: ctrl-z / redo: ctrl-y)'.format(self._set_title(), lr_vars.VERSION))
+        return
 
     def _set_title(self) -> str:
-        return '{a} | {i} | backup={b} |'.format(a=self.action_file, b=self._backup_index, i=self.id_)
+        i = '{a} | {i} | backup={b} |'.format(a=self.action_file, b=self._backup_index, i=self.id_)
+        return i
 
     def _open_action_final(self, *args) -> None:
         """сообщения и действия, после открытия нового action файла"""
@@ -87,3 +94,4 @@ class ActAny(lr_lib.gui.action.act_goto.ActGoto):
 
         if info:
             lr_vars.Logger.info('\n\n'.join(info), parent=self)
+        return

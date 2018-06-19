@@ -28,6 +28,7 @@ class WebReport:
         self.bad_wrsp_in_usage = []  # ['P_6046_1__z_k62_0', ...]
         self._wrsp = {}  # {'P_6046_1__z_k62_0': <lr_lib.web_.WebRegSaveParam object at 0x09252770>, ...}
         self.all_in_one = {}
+        return
 
     def create(self):
         """создать статистику"""
@@ -49,6 +50,7 @@ class WebReport:
 
             self.wrsp_and_param_names[wr.name] = wr.param
             self._wrsp[wr.name] = wr
+            continue
 
         self.param_statistic = {}
         for k in self.wrsp_and_param_names:
@@ -60,6 +62,7 @@ class WebReport:
                 'transaction_names': [],
                 'transaction_count': 0,
             }
+            continue
 
         for web in self.ActionWebsAndLines.get_web_all():
             self.ActionWebsAndLines.action.tk_text.web_add_highlight(web)
@@ -84,6 +87,8 @@ class WebReport:
                     count = line.count(k)
                     if count:
                         self.google_webs.setdefault(snapshot, {})[k] = count
+                    continue
+                continue
 
             if snapshot < 1:
                 continue
@@ -104,10 +109,13 @@ class WebReport:
                     statistic['param_count'] += param_in_count
                     statistic['snapshots'].append(snapshot)
                     statistic['transaction_names'].append(transaction)
+                continue
+            continue
 
         for k in self.wrsp_and_param_names:
             psk = self.param_statistic[k]
             psk['transaction_names'] = sorted(set(psk['transaction_names']), key=self.web_transaction_sorted.index)
+            continue
 
         for wr_name in self.param_statistic:
             statistic = self.param_statistic[wr_name]
@@ -119,9 +127,11 @@ class WebReport:
 
             if (not statistic['param_count']) or (self._wrsp[wr_name].snapshot in snaps):
                 self.bad_wrsp_in_usage.append(wr_name)
+            continue
 
         for dt in self.web_transaction.values():
             dt['minmax_snapshots'] = snapshot_diapason_string(dt['snapshots'])  # для transac comment
+            continue
 
         web_snapshot_all = tuple(self.ActionWebsAndLines.get_web_snapshot_all())
 
@@ -130,6 +140,8 @@ class WebReport:
             for k in wps:
                 if k not in deny:
                     yield k, wps[k]
+                continue
+            return
 
         def web_reg(snapshot: int) -> iter((str, dict),):
             web = self.ActionWebsAndLines.get_web_by(web_snapshot_all, snapshot=snapshot)
@@ -138,17 +150,22 @@ class WebReport:
                 name = wrsp.name
                 pdt = {'param': wrsp.param, 'stats': dict(get_stats(name))}
                 yield name, pdt
+                continue
+            return
 
         for t in self.web_transaction:
             dtt = next(self.get_sub_transaction_dt(t, self.all_in_one))
             dtt.update(copy.deepcopy(self.web_transaction[t]))
             dtt['snapshots'] = {s: dict(web_reg(s)) for s in dtt['snapshots']}
+            continue
 
         dt = self.checker_warn()
         for lvl in dt:
             msgs = dt[lvl]
             if msgs:
                 getattr(lr_vars.Logger, lvl)('\n'.join(msgs))
+            continue
+        return
 
     def stats_in_web(self, snapshot: int) -> str:
         """'статистика по web_reg_save_param, используемых в теле web.snapshot"""
@@ -180,6 +197,7 @@ class WebReport:
             pss = '{p}(P:{p_all}|S:{snap}|T:{transac})'.format(
                 p=wr.param, p_all=ps['param_count'], snap=ps['minmax_snapshots'], transac=ps['transaction_count'])
             statistic.append(pss)
+            continue
 
         return '\n\t{c} OUT({n})-> {s}'.format(s=', '.join(statistic), c=lr_lib.core.wrsp.param.LR_COMENT, n=len(statistic))
 
@@ -212,6 +230,7 @@ class WebReport:
                 result['warning'].append('Отсутствует транзакция start_transaction("{}")'.format(t))
             if t not in self.ActionWebsAndLines.transactions.start_stop['stop']:
                 result['warning'].append('Отсутствует транзакция stop_transaction("{}")'.format(t))
+            continue
 
         return result
 
@@ -223,6 +242,8 @@ class WebReport:
             else:
                 for t in dt_obj:
                     yield from self.get_sub_transaction_dt(transaction, dt_obj[t])
+                    continue
+        return
 
 
 def snapshot_diapason_string(infs: [int, ]) -> str:

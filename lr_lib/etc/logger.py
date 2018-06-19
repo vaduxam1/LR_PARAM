@@ -22,10 +22,12 @@ class GuiHandler(logging.Handler):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.setFormatter(logging.Formatter(formatter, datefmt=datefmt))
+        return
 
     def emit(self, record: logging) -> None:
         if lr_vars.Window and lr_vars.MainThreadUpdater:
             lr_vars.Window.print(record.levelname, self.format(record))
+        return
 
 
 class ConsoleHandler(logging.StreamHandler):
@@ -33,6 +35,7 @@ class ConsoleHandler(logging.StreamHandler):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.setFormatter(logging.Formatter(formatter, datefmt=datefmt))
+        return
 
 
 class LogHandler(logging.FileHandler):
@@ -43,6 +46,7 @@ class LogHandler(logging.FileHandler):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.setFormatter(logging.Formatter(formatter, datefmt=datefmt))
+        return
 
 
 def _LoggerLevelCreator(level_num: int, level: str) -> None:
@@ -72,15 +76,19 @@ def _LoggerLevelCreator(level_num: int, level: str) -> None:
                     messagebox.showwarning(level.capitalize(), message, parent=parent)
                 else:
                     messagebox.showerror(level.upper(), message, parent=parent)
+            return
 
     logging_level.__name__ = level
     setattr(logging.getLoggerClass(), level, logging_level)  # создать
+    return
 
 
 def LoggerLevelCreator(levels: {str: int}) -> None:
     """создать logging.level"""
     for level in levels:
         _LoggerLevelCreator(levels[level], level)
+        continue
+    return
 
 
 @contextlib.contextmanager
@@ -96,6 +104,7 @@ def init(name='__main__', encoding='cp1251', levels=lr_vars.loggingLevels) -> it
     else:
         listener.stop()
         logging.shutdown()
+    return
 
 
 def LoggerCreator(name: str, encoding: str) -> logging.getLogger:
@@ -108,6 +117,10 @@ def LoggerCreator(name: str, encoding: str) -> logging.getLogger:
     Logger.addHandler(LoggerQueueListener)
 
     listener = logging.handlers.QueueListener(
-        LoggerQueue, GuiHandler(), ConsoleHandler(), LogHandler(lr_vars.logFullName, lr_vars.log_overdrive, encoding=encoding))
+        LoggerQueue,
+        GuiHandler(),
+        ConsoleHandler(),
+        LogHandler(lr_vars.logFullName, lr_vars.log_overdrive, encoding=encoding),
+    )
 
-    return (Logger, listener)
+    return Logger, listener

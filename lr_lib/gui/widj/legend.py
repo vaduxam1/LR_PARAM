@@ -64,6 +64,7 @@ class WebLegend(tk.Toplevel):
             """self.H.set по кнопке Enter, при ручном вводе"""
             self.H.set(int(self.h_entry.get()))
             self.print()
+            return
 
         self.h_entry.bind("<KeyRelease-Return>", enter_H)
         self.h_entry.pack()
@@ -79,10 +80,12 @@ class WebLegend(tk.Toplevel):
         lr_lib.gui.widj.tooltip.createToolTip(self.top_cbx, 'поверх других окон')
 
         lr_lib.gui.etc.gui_other.center_widget(self)
+        return
 
     def _set_on_top(self, *args) -> None:
         """поверх других окон"""
         self.attributes('-topmost', self.top_var.get())
+        return
 
     def _configure_interior(self, *args) -> None:
         """update the scrollbars to match the size of the inner frame"""
@@ -91,10 +94,13 @@ class WebLegend(tk.Toplevel):
         self.canvas.config(scrollregion='0 0 %s %s' % size)
         if self.interior.winfo_reqwidth() != self.canvas.winfo_width():
             self.canvas.config(width=self.interior.winfo_reqwidth())
+        return
 
     def add_web_canavs(self):
         for web_ in self.parent.web_action.get_web_snapshot_all():
             self.web_canavs[web_.snapshot] = {1: {}, 2: {}, 'enable': True, 'enable_in': True}
+            continue
+        return
 
     def print(self, *_, colors=Colors) -> None:
         self.canvas.delete("all")
@@ -145,15 +151,18 @@ class WebLegend(tk.Toplevel):
                 self.canvas.delete("all")
                 self.web_canavs[i]['enable'] = not self.web_canavs[i]['enable']
                 self.print(colors=colors)
+                return
 
             def onObjectClick3(event, i=i) -> None:
                 self.parent.search_in_action(word='Snapshot=t{i}.inf'.format(i=i), hist=False)
+                return
 
             def onObjectClick2(event, i=i, colors=colors) -> None:
                 """показать/удалить линии in"""
                 self.canvas.delete("all")
                 self.web_canavs[i]['enable_in'] = not self.web_canavs[i]['enable_in']
                 self.print(colors=colors)
+                return
 
             # 1
             if wdt[i].web_reg_save_param_list:  # пометить, что создает новые {param}
@@ -202,6 +211,7 @@ class WebLegend(tk.Toplevel):
             self.canvas.tag_bind(t2, '<ButtonPress-1>', onObjectClick2)
 
             sep += 70
+            continue
 
         x = 20  # create_line's
         for web_ in web_actions:
@@ -223,12 +233,17 @@ class WebLegend(tk.Toplevel):
 
                             def onObjectClick(event, word='"{}"'.format(name)) -> None:
                                 self.parent.search_in_action(word=word, hist=False)
+                                return
 
                             self.canvas.tag_bind(line, '<Button-3>', onObjectClick)
                             r = 'Snapshot=t{i}.inf\n{r}'.format(r='\n'.join(in_count), i=i)
                             lr_lib.gui.widj.tooltip_canvas.CanvasTooltip(self.canvas, line, text=r)
                             self.canvas.tag_bind(line, '<ButtonPress-1>',
                                                  lambda *a, r=r.replace('\n', ', '): self.title(r + self.ttl))
+                        continue
+                    continue
+            continue
+        return
 
     def show_transac(self, *args) -> None:
         """показать соответствие номеров(из окна легенды) и имен транзакций"""
@@ -253,3 +268,4 @@ class WebLegend(tk.Toplevel):
             tk_text.grid(row=0, column=0, sticky=tk.NSEW)
             text_scrolly.grid(row=0, column=1, sticky=tk.NSEW)
             text_scrollx.grid(row=1, column=0, sticky=tk.NSEW)
+            return

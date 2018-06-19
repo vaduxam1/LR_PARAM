@@ -22,6 +22,7 @@ def _system_info() -> (str, ):
         with contextlib.suppress(Exception):
             import psutil
             yield psutil, 'cpu_count, virtual_memory, users, '
+        return
 
     def create_obj_attrs_message(obj: object, attrs: str):
         """формирование сообщения для всех атрибутов объекта"""
@@ -33,16 +34,21 @@ def _system_info() -> (str, ):
                 result = result()
 
             yield '{}.{} = {}'.format(n, atr, result).translate(replace_dt)
+            continue
+        return
 
     def get_messages():
         """все сообщения для вывода"""
         for ob, at in attrs_from_all_objs():
             yield from create_obj_attrs_message(ob, at)
+            continue
         with contextlib.suppress(Exception):
             import psutil
             yield 'psutil.disk_usage = {}'.format(psutil.disk_usage('/'))
+        return
 
     yield from get_messages()
+    return
 
 
 def _separator(msg: (str, ), max_len: int) -> (str, ):
@@ -53,6 +59,8 @@ def _separator(msg: (str, ), max_len: int) -> (str, ):
             yield msg[i] + ' ' * (max_len-l)
         else:
             yield msg[i]
+        continue
+    return
 
 
 def str_separator(message: str, s_width='#', s_height='#', t='  ', max_=70, n=5) -> str:
@@ -62,7 +70,10 @@ def str_separator(message: str, s_width='#', s_height='#', t='  ', max_=70, n=5)
             if len(st) > max_:
                 yield st[:max_]
                 yield from len_split([' ' * n + st[max_:]])
-            else: yield st
+            else:
+                yield st
+            continue
+        return
 
     msg = tuple(len_split(message.split('\n')))
     ml = max(len(a) for a in msg)

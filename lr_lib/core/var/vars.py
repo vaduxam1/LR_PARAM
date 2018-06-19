@@ -18,7 +18,7 @@ from lr_lib.etc.help import (COLORS, HEX, )
 #####################################
 # главные переменные
 
-VERSION = 'v10.5.5'
+VERSION = 'v10.6'
 lib_folder = 'lr_lib'
 Tk = tk.Tk()  # tkinter
 original_callback_exception = Tk.report_callback_exception
@@ -483,4 +483,6 @@ def clearVars() -> None:
     v = (VarParam, VarFileName, VarFile, VarPartNum, VarLB, VarRB, VarFileText, VarWrspDict, VarFileSortKey1, VarFileSortKey2, )
     for var in v:
         var.set(var.default_value, callback=False)
+        continue
     FilesWithParam.clear()
+    return

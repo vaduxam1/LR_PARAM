@@ -25,9 +25,11 @@ def keyboard_listener() -> None:
         keyboard.add_hotkey(lr_vars.FIND_PARAM_HOTKEY, get_param_clipboard_hotkey)
         yield
         keyboard.clear_all_hotkeys()
+    return
 
 
 def get_param_clipboard_hotkey() -> None:
     """найти {param} из clipboard, по хоткей"""
     param = lr_vars.Tk.clipboard_get()
     lr_vars.Window.get_files(param=param, clipb=True)
+    return

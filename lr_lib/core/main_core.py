@@ -44,6 +44,7 @@ def _console_vars_setter(c_args: dict) -> None:
         lr_vars.VarEncode.set(c_args['encoding'])
     lr_vars.VarFileNamesNumsShow.set(c_args['file_names'])
     lr_vars.VarAllFilesStatistic.set(c_args['statistic'])
+    return
 
 
 def _console_argument_parser() -> {str: str}:

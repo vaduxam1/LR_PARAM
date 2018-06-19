@@ -22,6 +22,7 @@ class ActionWebsAndLines:
         self.action_infs = []  # номера inf в action
         self.drop_infs = set()  # отсутствующие номера inf в action
         self.drop_files = []  # файлы из отсутствующих inf
+        return
 
     def drop_file_none_inf_num_in_action(self) -> None:
         """в LoadRunner могут быть inf-файлы, которых нету в action.c(например удалили лишний код),
@@ -40,15 +41,20 @@ class ActionWebsAndLines:
                     check = True
                 else:
                     self.drop_infs.add(inf)
+                continue
 
             if not check:
                 self.drop_files.append(file['File']['Name'])
+            continue
+        return
 
     def get_web_all(self) -> iter((lr_lib.core.action.web_.WebAny,)):
         """все объекты"""
         for web in self.webs_and_lines:
             if not isinstance(web, str):
                 yield web
+            continue
+        return
 
     def get_web_by(self, webs: (lr_lib.core.action.web_.WebAny, ), **kwargs) -> iter((lr_lib.core.action.web_.WebAny,)):
         """объекты по kwargs условию: kwargs={'abc': [123]} -> web's.abc == [123]"""
@@ -56,27 +62,36 @@ class ActionWebsAndLines:
         for web in webs:
             if all((getattr(web, attr) == value) for (attr, value) in attrs):
                 yield web
+            continue
+        return
 
     def get_web_snapshot_all(self) -> iter((lr_lib.core.action.web_.WebSnapshot,)):
         """snapshot объекты"""
         for web in self.get_web_all():
             if web.snapshot:
                 yield web
+            continue
+        return
 
     def get_web_snapshot_by(self, **kwargs) -> iter((lr_lib.core.action.web_.WebSnapshot,)):
         """snapshot объекты по kwargs условию"""
         for web in self.get_web_by(self.get_web_snapshot_all(), **kwargs):
             yield web
+        return
 
     def get_web_reg_save_param_all(self) -> iter((lr_lib.core.action.web_.WebRegSaveParam,)):
         """web_reg_save_param объекты"""
         for web in self.get_web_snapshot_all():
             yield from web.web_reg_save_param_list
+            continue
+        return
 
     def get_web_reg_save_param_by(self, **kwargs) -> iter((lr_lib.core.action.web_.WebRegSaveParam,)):
         """web_reg_save_param объекты по kwargs условию"""
         for web_wrsp in self.get_web_by(self.get_web_reg_save_param_all(), **kwargs):
             yield web_wrsp
+            continue
+        return
 
     def replace_bodys(self, replace_list: [(str, str), ], is_wrsp=True) -> None:
         """заменить группу param, во всех web_ body"""
@@ -89,8 +104,11 @@ class ActionWebsAndLines:
 
             for (search, replace) in replace_list:
                 body = lr_lib.core.action.web_.body_replace(body, search, replace, is_wrsp=is_wrsp)
+                continue
 
             web_.set_body(body)
+            continue
+        return
 
     def replace_bodys_iter(self, web_actions: (lr_lib.core.action.web_.WebAny, ), is_wrsp=True) -> None:
         """заменить группу param, во всех web_ body - сопрограмма"""
@@ -103,8 +121,11 @@ class ActionWebsAndLines:
                 new_body = lr_lib.core.action.web_.body_replace(body, search, replace, is_wrsp=is_wrsp)
                 if body != new_body:
                     web_.set_body(new_body)
+                continue
 
             search_replace = yield
+            continue
+        return
 
     def _add_to_text_list(self, element: (str or lr_lib.core.action.web_.WebAny)) -> None:
         """объединять строки, идущие подряд"""
@@ -127,6 +148,7 @@ class ActionWebsAndLines:
         if websReport:  # статистика использования WRSP
             self.websReport.create()
         self.drop_file_none_inf_num_in_action()
+        return
 
     def _set_text_list(self, iter_lines: (str, )) -> None:
         """создать все web_action объекты"""
@@ -217,6 +239,7 @@ class ActionWebsAndLines:
 
                 self._add_to_text_list(LINE)
                 continue
+            continue
 
         # на всякий, но ничего не должно остатся
         if COMMENT:
@@ -228,6 +251,7 @@ class ActionWebsAndLines:
                 '\n\n'.join(map(lr_lib.core.action.web_.WebRegSaveParam.to_str, RegParamList))))
             lr_vars.Logger.critical('Ненайден web_* запрос, которому принадлежат web_reg_save_param:\n{}'.format(
                 [w.name for w in RegParamList]))
+        return
 
     def set_transaction_name(self, strip_line: str) -> (str or None):
         """проверить линию, сохранить имя transaction"""
@@ -241,6 +265,7 @@ class ActionWebsAndLines:
                 transac = strip_line.split('"', 2)
                 transac = transac[1]
                 self.transactions.stop_transaction(transac)
+        return
 
     def web_reg_save_param_insert(self, wrsp_dict_or_snapshot: (dict or int), wrsp='') -> lr_lib.core.action.web_.WebRegSaveParam:
         """вставить web_reg_save_param"""
@@ -286,7 +311,8 @@ class ActionWebsAndLines:
                     replace_list = [(wn, param), ]
 
                     self.replace_bodys(replace_list, is_wrsp=is_wrsp)  # удалить из всех web
-
+                continue
+            continue
         return param
 
     def to_str(self, websReport=False) -> str:
@@ -310,3 +336,5 @@ class ActionWebsAndLines:
                 yield '\n{}'.format(line.to_str())
 
             sep = is_str
+            continue
+        return

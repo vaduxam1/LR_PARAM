@@ -15,10 +15,12 @@ class MainThreadUpdater:
     def __init__(self):
         self.working = None
         self.queue_in = queue.Queue()  # очередь выполнения callback
+        return
 
     def submit(self, callback: callable) -> None:
         """добавить в очередь выполнения"""
         self.queue_in.put(callback)
+        return
 
     @contextlib.contextmanager
     def init(self) -> iter:
@@ -29,6 +31,7 @@ class MainThreadUpdater:
             yield self
         finally:  # запретить перезапуск _queue_listener
             self.working = False
+        return
 
     def _queue_listener(self) -> None:
         """выполнять из очереди, пока есть, затем перезапустить"""
@@ -38,10 +41,11 @@ class MainThreadUpdater:
                 callback()
             except Exception:
                 lr_lib.etc.excepthook.excepthook(*sys.exc_info())
-                continue
+            continue
 
         if self.working:
             lr_vars.Tk.after(lr_vars.MainThreadUpdateTime.get(), self._queue_listener)  # перезапуск
+        return
 
 
 class NoPool:
@@ -49,6 +53,7 @@ class NoPool:
     @staticmethod
     def map(fn: callable, args: tuple) -> iter:
         yield from map(fn, args)
+        return
 
     def submit(self, func: callable, *args, **kwargs):
         return func(*args, **kwargs)
@@ -64,6 +69,7 @@ class AsyncPool:
     """acync пул, для POOL_"""
     def __init__(self):
         self.loop = asyncio.get_event_loop()
+        return
 
     def map(self, fn: callable, args: list):
         return self.loop.run_until_complete(self.async_map(fn, args))

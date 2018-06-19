@@ -24,6 +24,7 @@ class WinFileSort(lr_lib.gui.wrsp.win_maxmin.WinMaxMin):
 
         self.sortKey1.bind("<<ComboboxSelected>>", self.setSortKey1)
         self.sortKey2.bind("<<ComboboxSelected>>", self.setSortKey2)
+        return
 
     def setSortKeys(self) -> None:
         """задать комбо(1/2) сортировки"""
@@ -33,6 +34,7 @@ class WinFileSort(lr_lib.gui.wrsp.win_maxmin.WinMaxMin):
         self.setSortKey1()
 
         self.sortKey2.set(lr_vars.VarFileSortKey2.get())
+        return
 
     def setSortKey1(self, *args) -> None:
         """комбо сортировки 1"""
@@ -42,9 +44,11 @@ class WinFileSort(lr_lib.gui.wrsp.win_maxmin.WinMaxMin):
 
         self.sortKey2['values'] = list(s)
         self.sortKey2.set('')
+        return
 
     def setSortKey2(self, *args) -> None:
         """комбо сортировки файлов"""
         lr_vars.VarFileSortKey2.set(self.sortKey2.get())
         if lr_vars.FilesWithParam:
             self.get_files()  # сортировка при поиске
+        return

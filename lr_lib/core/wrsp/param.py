@@ -186,6 +186,7 @@ def wrsp_name_creator(param: str, Lb: str, Rb: str, snapshot: int) -> str:
                 lbn[-1] += b
             elif lbn[-1]:
                 lbn.append('')
+            continue
         lbn = [b for b in filter(bool, lbn) if (b not in lr_vars.LRB_rep_list)]
         lb_name = '_'.join(sorted(set(lbn), key=lbn.index))[-MaxLbWrspName:]
     else:
@@ -198,6 +199,7 @@ def wrsp_name_creator(param: str, Lb: str, Rb: str, snapshot: int) -> str:
                 rbn[-1] += b
             elif rbn[-1]:
                 rbn.append('')
+            continue
         rbn = [b for b in filter(bool, rbn) if (b not in lr_vars.LRB_rep_list)]
         rb_name = '_'.join(sorted(set(rbn), key=rbn.index))[:MaxRbWrspName]
     else:
@@ -236,6 +238,7 @@ def wrsp_name_creator(param: str, Lb: str, Rb: str, snapshot: int) -> str:
     wrsp_name = str.translate(wrsp_name, wrsp_deny_punctuation).rstrip('_')
     while '___' in wrsp_name:
         wrsp_name = wrsp_name.replace('___', '__')
+        continue
 
     return wrsp_name
 
@@ -256,6 +259,7 @@ def _search_param_in_file(file: dict) -> dict:
         if count:
             Param['Count'] = count
             return file
+    return
 
 
 def search_param_in_file(file: dict) -> (dict or None):
@@ -279,11 +283,13 @@ def search_param_in_file(file: dict) -> (dict or None):
             right = split_line[indx]
             if lr_lib.core.etc.lbrb_checker.check_bound_lb_rb(left, right):
                 Param['Count_indexs'].append(i)
+            continue
 
     if Param['Count_indexs']:
         Param['Count'] = indx
         Param['Count_indexs_len'] = len(Param['Count_indexs'])
         return file
+    return
 
 
 def create_files_with_search_data(files: (dict,), search_data: dict, action=None, action_infs=()) -> iter((dict,)):
@@ -318,6 +324,8 @@ def create_files_with_search_data(files: (dict,), search_data: dict, action=None
                 file[data].update(search_data[data])
 
             yield file
+        continue
+    return
 
 
 def set_param_in_action_inf(action, param: str) -> iter((int, )):
@@ -326,6 +334,7 @@ def set_param_in_action_inf(action, param: str) -> iter((int, )):
         allow, deny = web_.param_find_replace(param)
         if allow:
             yield web_.snapshot
+        continue
     return 0
 
 
@@ -371,6 +380,7 @@ def get_files_with_param(param: str, action=None, set_file=True) -> None:
         for f in lr_vars.FilesWithParam:  # z_k620
             s = f['Snapshot']['Nums'][0]
             (warn_inf if (s == mai) else files_list).append(f)
+            continue
         files_list.extend(warn_inf)
         lr_vars.FilesWithParam = files_list
 
@@ -381,6 +391,7 @@ def get_files_with_param(param: str, action=None, set_file=True) -> None:
 
     if lr_vars.VarFileNamesNumsShow.get():
         lr_vars.Logger.info(lr_lib.core.etc.other.param_files_info())
+    return
 
 
 def param_not_found_err_text(action, files: [dict, ], search_data: dict, param: str) -> str:
@@ -462,6 +473,8 @@ def new_find_param_ord() -> (int, int):
             Ord += 1
             if part.startswith(param_rb):
                 return Ord, index
+        continue
+    return
 
 
 def old_find_param_ord() -> (int, int):
@@ -485,3 +498,5 @@ def old_find_param_ord() -> (int, int):
             if part.startswith(param_rb):
                 _param_text_index = text.index(lb + param_rb) + len(lb)
                 return Ord, _param_text_index
+        continue
+    return

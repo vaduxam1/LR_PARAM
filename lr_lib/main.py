@@ -36,6 +36,7 @@ def init(excepthook=True):
                 with _start(excepthook=excepthook) as ex:
                     if any(ex):  # выход - в теле with работа уже окончена
                         lr_lib.etc.excepthook.full_tb_write(*ex)
+    return
 
 
 @contextlib.contextmanager
@@ -62,3 +63,4 @@ def _start(excepthook=True, console_args=sys.argv) -> iter(((None, None, None), 
     finally:
         if excepthook:
             lr_vars.Tk.report_callback_exception = lr_vars.original_callback_exception
+    return

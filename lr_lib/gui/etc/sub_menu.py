@@ -13,6 +13,7 @@ def rClicker(event) -> str:
     """ right click context menu for all Tk Entry and Text widgets"""
     with contextlib.suppress(tk.TclError):
         event.widget.focus()
+
         try:
             selection = event.widget.selection_get()
         except:
@@ -94,6 +95,7 @@ def rClicker(event) -> str:
         ]
         for (txt, cmd) in nclst:
             rmenu.add_command(label=txt, command=cmd)
+            continue
 
         dt = lr_vars.VarWrspDict.get()
         web_reg_name = dt.get('web_reg_name')
@@ -109,9 +111,10 @@ def rClicker(event) -> str:
                     event.widget.action.search_entry.set(_search)
                     event.widget.action.search_in_action(event.widget.action.search_entry.get())
                     event.widget.action.tk_text_see()
+                return
 
             if web_reg_name:
-                n = '{%s}' % web_reg_name
+                n = ('{%s}' % web_reg_name)
                 cmd = lambda e=event, n=n: action_goto(e, n)
                 submenu_goto.add_cascade(label=n, underline=0, command=cmd)
 
@@ -147,12 +150,15 @@ def rClicker(event) -> str:
                     sub = tk.Menu(vSub, tearoff=False)
                     vSub.add_cascade(label=option, menu=sub, underline=0)
                     for color in colors:
-                        def cmd(e=event, o=option, c=color, v=val, f=True):
-                            return lr_lib.gui.etc.action_lib.rClick_add_highlight(e, o, c, v, find=f)
+                        def cmd(e=event, o=option, c=color, v=val, f=True) -> None:
+                            lr_lib.gui.etc.action_lib.rClick_add_highlight(e, o, c, v, find=f)
+                            return
                         sub.add_command(label=color, command=cmd)
+                        continue
+                    continue
+                continue
 
             submenu_other.add_cascade(label=' подсветка', menu=submenu, underline=0)
-
         rmenu.tk_popup(event.x_root + 40, event.y_root + 10, entry="0")
     return "break"
 
@@ -161,3 +167,5 @@ def rClickbinder(widget, wdg=('Text', 'Entry', 'Listbox', 'Label')) -> None:
     with contextlib.suppress(tk.TclError):
         for b in wdg:
             widget.bind_class(b, sequence='<Button-3>', func=rClicker, add='')
+            continue
+    return

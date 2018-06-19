@@ -53,23 +53,28 @@ class Tooltip:
         self.pad = pad
         self.id = None
         self.tw = None
+        return
 
     def onEnter(self, event=None):
         self.schedule()
+        return
 
     def onLeave(self, event=None):
         self.unschedule()
         self.hide()
+        return
 
     def schedule(self):
         self.unschedule()
         self.id = self.widget.after(self.waittime, self.show)
+        return
 
     def unschedule(self):
         id_ = self.id
         self.id = None
         if id_:
             self.widget.after_cancel(id_)
+        return
 
     def show(self):
         def tip_pos_calculator(widget, label,
@@ -147,12 +152,14 @@ class Tooltip:
         x, y = tip_pos_calculator(widget, label)
 
         self.tw.wm_geometry("+%d+%d" % (x, y))
+        return
 
     def hide(self):
         tw = self.tw
         if tw:
             tw.destroy()
         self.tw = None
+        return
 
 
 if __name__ == '__main__':

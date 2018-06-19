@@ -20,6 +20,7 @@ def read_web_type(first_line: str, s1='("', s2='(') -> str:
 def _body_replace(body_split: [str, ], len_body_split: int, search: str, replace: str, is_wrsp=True) -> iter((str, )):
     """замена search в body"""
     yield body_split[0]
+
     if is_wrsp:
         replace = lr_lib.core.wrsp.param.param_bounds_setter(replace)
 
@@ -30,6 +31,8 @@ def _body_replace(body_split: [str, ], len_body_split: int, search: str, replace
             yield replace + right
         else:
             yield search + right
+        continue
+    return
 
 
 def body_replace(body: str, search: str, replace: str, is_wrsp=True) -> str:
@@ -49,6 +52,8 @@ def bodys_replace(replace_args: ({int: str}, [(str, str), ]), is_wrsp=True) -> [
     for i in body_portion:
         for search, replace in replace_list:
             body_portion[i] = body_replace(body_portion[i], search, replace, is_wrsp=is_wrsp)
+            continue
+        continue
     return body_portion
 
 
@@ -75,6 +80,7 @@ class WebAny:
             self.comments = '\n{}'.format(self.comments)
 
         # print('\n{w}({n}):\n\tSnap={sn}, lines={l}, symb={s}, {t}'.format(w=self.type, n=self.name, l=len(self.lines_list), s=len(tuple(itertools.chain(*self.lines_list))), sn=self.snapshot, t=self.transaction))
+        return
 
     def _read_snapshot(self) -> int:
         """Snapshot inf номер"""
@@ -88,6 +94,7 @@ class WebAny:
                     inf_num = inf_num[0]
                     assert all(map(str.isnumeric, inf_num))
                     return int(inf_num)
+                continue
         return 0
 
     def to_str(self, _all_stat=False) -> str:
@@ -120,6 +127,7 @@ class WebAny:
                 if len(sline) == 2:
                     name = sline[1].split('"', 1)[0]
                     break
+                continue
 
         return name
 
@@ -159,10 +167,12 @@ class WebAny:
             action.search_in_action(word=param.join(body_split[:indx]), hist=False)
             if self.ask_replace(param, replace, left, right, ask_dict):
                 chunk_indxs.append(indx)
+            return
 
         def normal_replace(indx: int, left: str, right: str, ask=(not action.no_var.get())) -> None:
             if lr_lib.core.etc.lbrb_checker.check_bound_lb_rb(left, right) or (ask and self.ask_replace(param, replace, left, right, ask_dict)):
                 chunk_indxs.append(indx)
+            return
 
         add_index = (force_ask_replace if action.force_ask_var.get() else normal_replace)
         for indx in range(1, len_body_split):
@@ -170,6 +180,7 @@ class WebAny:
             right = body_split[indx]
             if left and right:
                 add_index(indx, left, right)
+            continue
 
         if chunk_indxs and replace:
             replace = lr_lib.core.wrsp.param.param_bounds_setter(replace)
@@ -179,6 +190,7 @@ class WebAny:
             for (indx, body_chunk) in enumerate(body_split, start=1):
                 splitter = (replace if contains(indx) else param)
                 body_chunks.append(splitter + body_chunk)
+                continue
 
             self.set_body(''.join(body_chunks))  # замена
 
@@ -193,6 +205,7 @@ class WebAny:
     def _set_body(self, body: str, a: int, b: int) -> None:
         """задать новое тело web_"""
         self.lines_list[a:b] = body.split('\n')
+        return
 
     def get_body(self, mx=2) -> str:
         """тело web_ - поиск и замену делать тут"""
@@ -221,7 +234,9 @@ class WebSnapshot(WebAny):
             self.web_reg_save_param_list = web_reg_save_param_list
             for wrsp in self.web_reg_save_param_list:
                 wrsp.snapshot = self.snapshot
+                continue
             # print('\tweb_reg_save_param={} шт'.format(len(self.web_reg_save_param_list)))
+        return
 
     def to_str(self, _all_stat=False) -> str:
         """весь текст web_"""
@@ -252,6 +267,7 @@ class WebSnapshot(WebAny):
             for w in self.web_reg_save_param_list:
                 if self.snapshot in self.ActionWebsAndLines.websReport.param_statistic[w.name]['snapshots']:
                     bad_wrsp.append(w.param)
+                continue
             if bad_wrsp:
                 text = '\t{c} WARNING: WrspInAndOutUsage: {lp}={p}\n{t}'.format(
                     t=text, c=lr_lib.core.wrsp.param.LR_COMENT, p=bad_wrsp, lp=len(bad_wrsp))
@@ -280,6 +296,7 @@ class WebRegSaveParam(WebAny):
 
         self.param = self._read_param()
         # print('\tparam:{}'.format(self.param))
+        return
 
     def _read_param(self, param='') -> str:
         try:
@@ -297,6 +314,7 @@ class WebRegSaveParam(WebAny):
                             line_list = line_list[1].rsplit('"', 1)
                             if len(line_list) > 1:
                                 param = line_list[0]
+                    continue
         except Exception as ex:
             lr_vars.Logger.debug('найти исходное имя param из {t}.\n{w}\n{e}\n{cm}'.format(
                 e=ex, w=self.name, t=self.type, cm=self.comments))
@@ -312,7 +330,8 @@ class WebRegSaveParam(WebAny):
             if not rep['param_count']:
                 comments += '\n{c} WARNING: NoWebRegSaveParamUsage?'.format(c=lr_lib.core.wrsp.param.LR_COMENT)
             elif self.snapshot >= min(filter(bool, rep['snapshots'])):
-                comments += '\n{c} WARNING: WrspInAndOutUsage wrsp.snapshot >= usage.snapshot'.format(c=lr_lib.core.wrsp.param.LR_COMENT)
+                comments += '\n{c} WARNING: WrspInAndOutUsage wrsp.snapshot >= usage.snapshot'.format(
+                    c=lr_lib.core.wrsp.param.LR_COMENT)
 
         if lr_vars.VarWRSPStatsTransac.get() or _all_stat:
             usage_string = self.usage_string(_all_stat=_all_stat)
@@ -335,6 +354,7 @@ class WebRegSaveParam(WebAny):
             tn = ''
 
         s = '{c} ({w_transac}: {t_snap}) -> Param:{p_all} | Snapshots:{snap} | Transactions={len_transac}:{transac_names}'.format(
-            wrsp_name=self.transaction, p_all=ps['param_count'], snap=ps['minmax_snapshots'], c=lr_lib.core.wrsp.param.LR_COMENT,
-            len_transac=ps['transaction_count'], transac_names=tn, w_transac=self.transaction, t_snap=t_snap)
+            wrsp_name=self.transaction, p_all=ps['param_count'], snap=ps['minmax_snapshots'],
+            c=lr_lib.core.wrsp.param.LR_COMENT, len_transac=ps['transaction_count'], transac_names=tn,
+            w_transac=self.transaction, t_snap=t_snap)
         return s

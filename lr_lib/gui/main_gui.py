@@ -9,6 +9,7 @@ def init(c_args=None) -> None:
     """создать gui"""
     print(c_args)
     lr_vars.Window = lr_lib.gui.wrsp.main_window.Window()  # main Gui
+    return
 
 
 def start(action=True, lock=True) -> None:
@@ -17,3 +18,4 @@ def start(action=True, lock=True) -> None:
         lr_vars.Window.new_action_window()  # lr_lib.gui.action.main_action.ActionWindow()
     if lock:  # main thread lock
         lr_vars.Tk.mainloop()
+    return

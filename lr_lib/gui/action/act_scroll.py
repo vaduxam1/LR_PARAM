@@ -35,16 +35,19 @@ class ActScrollText(lr_lib.gui.action.act_widj.ActWidj):
         self.highlight_After0.insert(0, lr_vars.HighlightAfter0)
         self.highlight_After1.insert(0, lr_vars.HighlightAfter1)
         self.highlight_After2.insert(0, lr_vars.HighlightAfter2)
+        return
 
     def report_position_X(self, *argv) -> None:
         """get (beginning of) first visible line"""
         self.text_scrollx.set(*argv)
         self.report_position()
+        return
 
     def report_position_Y(self, *argv) -> None:
         """get (beginning of) first visible line"""
         self.text_scrolly.set(*argv)
         self.report_position()
+        return
 
     def report_position(self) -> None:
         """при скролле tk.Text, вывести номера линий, запустить подсветку"""
@@ -53,8 +56,10 @@ class ActScrollText(lr_lib.gui.action.act_widj.ActWidj):
             int(self.tk_text.index("@0,%d" % self.tk_text.winfo_height()).split('.', 1)[0])
         )
         self.tk_text.highlight_lines.set_top_bottom(top_bottom)
+        return
 
     def resColor(self) -> None:
         """сбросить self.tk_text.highlight_dict настройки цветов"""
         if messagebox.askquestion('сброс', 'сбросить текст настройки цветов?', parent=self) == 'yes':
             self.tk_text.reset_highlight()
+        return

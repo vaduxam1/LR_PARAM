@@ -44,6 +44,7 @@ class ActVar(lr_lib.gui.action.act_toplevel.ActToplevel):
         self.underline_var = tk.BooleanVar(value=lr_vars.DefaultActionHighlightFontUnderline)
         self.slant_var = tk.BooleanVar(value=lr_vars.DefaultHighlightActionFontSlant)
         self.overstrike_var = tk.BooleanVar(value=lr_vars.DefaultHighlightActionFontOverstrike)
+        return
 
     def get_usr_file(self) -> configparser.ConfigParser:
         """result_folder = self.get_usr_file()['General']['LastResultDir']"""

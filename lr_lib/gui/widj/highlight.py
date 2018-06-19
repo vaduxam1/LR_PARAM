@@ -35,6 +35,7 @@ class HighlightLines:
         # признак необходимости подсветить линии на экране
         self.highlight_need = True
         self.after = self.tk_text.after
+        return
 
     def set_thread_attrs(self) -> None:
         """взять настройки подсветки, из виджетов"""
@@ -73,6 +74,7 @@ class HighlightLines:
         (top, bottom) = on_sreen_line_nums
         for line_num in (range(top, (bottom + 1)) & self.on_screen_lines.keys()):
             self.after(self.HighlightAfter2, self._line_tegs_add, line_num, on_sreen_line_nums)  # подсветить
+            continue
         return
 
     def _line_tegs_add(self, line_num: int, on_sreen_line_nums: (int, int), XY='{}.{}'.format) -> None:
@@ -97,10 +99,12 @@ class HighlightLines:
 
             if teg.startswith(lr_vars.ColorMainTegStartswith):
                 bg_indxs.update(indxs)
+            continue
 
         for teg in line_indxs:  # удалить все background индексы, из не-background тегов
             if not teg.startswith(lr_vars.ColorMainTegStartswith):
                 line_indxs[teg] -= bg_indxs
+            continue
 
         if lr_vars.OliveChildTeg in line_indxs:  # удалить из Olive тега все индексы, принадлежищие любому другому тегу
             other_tegs = (line_indxs.keys() - lr_vars.minus_teg)
@@ -113,6 +117,8 @@ class HighlightLines:
             if indxs:
                 for (i_start, i_end) in join_indxs(*sorted(indxs)):
                     tag_add(teg, XY(line_num, i_start), XY(line_num, i_end))
+                    continue
+            continue
         return
 
 
@@ -130,8 +136,10 @@ def join_indxs(index: int, *indxs: sorted) -> iter((int, int),):
             i_start = index
 
         i_end = index
+        continue
     else:
         yield i_start, (i_end + 1)
+    return
 
 
 def generate_line_tags_names_indxs(line: str, setdefault: callable, teg_names: {str: {(str, int)}}) -> None:
@@ -154,6 +162,9 @@ def generate_line_tags_names_indxs(line: str, setdefault: callable, teg_names: {
                     olive_callback(i)
                 else:
                     teg_callback(i)
+                continue
+            continue
+        continue
     return
 
 
@@ -173,4 +184,5 @@ def genetate_line_tags_purct_etc_indxs(line: str, setdefault: callable) -> None:
             punct_digit_callback(index)
         else:
             rus_callback(index)
+        continue
     return

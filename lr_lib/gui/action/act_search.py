@@ -56,6 +56,7 @@ class ActSearch(lr_lib.gui.action.act_serializ.TkTextWebSerialization):
 
         self.SearchReplace_button = tk.Button(
             self.toolbar, text='> замена >', font=lr_vars.DefaultFont, command=self._replace_button_set)
+        return
 
     def search_down(self, *a) -> None:
         """поиск вниз, по тексту action.c"""
@@ -74,8 +75,10 @@ class ActSearch(lr_lib.gui.action.act_serializ.TkTextWebSerialization):
                 self.tk_text_see()
             # next(bhl)
             # next(bhl, None)
+            return
 
         lr_vars.MainThreadUpdater.submit(func)
+        return
 
     def search_up(self, *a) -> None:
         """поиск вверх, по тексту action.c"""
@@ -93,8 +96,10 @@ class ActSearch(lr_lib.gui.action.act_serializ.TkTextWebSerialization):
 
             # next(bhl)
             # next(bhl, None)
+            return
 
         lr_vars.MainThreadUpdater.submit(func)
+        return
 
     def search_in_action(self, *a, word=None, hist=True) -> None:
         """поиск в tk_text"""
@@ -138,8 +143,10 @@ class ActSearch(lr_lib.gui.action.act_serializ.TkTextWebSerialization):
 
             # next(bhl)
             # next(bhl, None)
+            return
 
         lr_vars.MainThreadUpdater.submit(func)
+        return
 
     def tk_text_see(self, *args) -> None:
         """перейти на позицию в тексте"""
@@ -156,8 +163,10 @@ class ActSearch(lr_lib.gui.action.act_serializ.TkTextWebSerialization):
             self.tk_text.see("insert")
             _, a, b = lr_lib.gui.widj.tooltip.widget_values_counter(self.search_res_combo)
             self.up_search_button.config(text=self._uptext % '{0}/{1}'.format(a, b))
+            return
 
         lr_vars.MainThreadUpdater.submit(callback)
+        return
 
     def _search_text(self, *a, word=None, pos='1.0', coord='{i}+{w}c') -> [str, ]:
         """поиск в tk_text"""
@@ -174,6 +183,7 @@ class ActSearch(lr_lib.gui.action.act_serializ.TkTextWebSerialization):
                     break
                 pos = coord.format(i=idx, w=len_word)
                 word_pos.append(pos)
+                continue
             return word_pos
         else:
             return []
@@ -193,6 +203,7 @@ class ActSearch(lr_lib.gui.action.act_serializ.TkTextWebSerialization):
             self.up_search_button.config(background='orange')
             self.search_res_combo.config(font='Arial 7 bold')
             self.update()
+            return
 
         def restore() -> None:
             """вернуть"""
@@ -202,13 +213,14 @@ class ActSearch(lr_lib.gui.action.act_serializ.TkTextWebSerialization):
             _, a, b = lr_lib.gui.widj.tooltip.widget_values_counter(self.search_res_combo)
             self.up_search_button.config(text=self._uptext % '{0}/{1}'.format(a, b), background='lightgrey')
             self.update()
+            return
 
         try:
             lr_vars.Window.after(20, change)
             yield
         finally:
             lr_vars.Window.after(50, restore)
-            return
+        return
 
     def _replace_button_set(self, *args) -> None:
         """кнопка замены(обычной как в блокноте) текста"""
@@ -218,4 +230,4 @@ class ActSearch(lr_lib.gui.action.act_serializ.TkTextWebSerialization):
             text = self.tk_text.get(1.0, tk.END)
             text = text.replace(self.SearchReplace_searchVar.get(), self.SearchReplace_replaceVar.get())
             self.tk_text_to_web_action(text, websReport=True)
-
+        return

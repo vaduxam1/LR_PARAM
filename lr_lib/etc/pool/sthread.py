@@ -57,6 +57,7 @@ class SThreadIOQueue:
     def __init__(self, queue_in: PriorityQueue):
         self.queue_in = queue_in
         self.priority = 0  # -= 1 для поведения как de-queue
+        return
 
     def submit(self, target: callable, *args, **kwargs) -> None:
         """выполнить target, последняя зашедшая, выполнится первой"""
@@ -64,6 +65,7 @@ class SThreadIOQueue:
         self.priority -= 1  # отрицательные - для поведения как dequeue
         self.queue_in.put((self.priority, Task(target, args, kwargs)))
         QLOCK.release()
+        return
 
 
 class _NoPool:
@@ -88,6 +90,7 @@ class SThread(threading.Thread, SThreadIOQueue):
 
         threading.Thread.__init__(self)
         self.setDaemon(True)
+        return
 
     def run(self) -> None:
         """worker-поток, выполнять task из queue_in, при простое выйти"""
@@ -100,7 +103,6 @@ class SThread(threading.Thread, SThreadIOQueue):
                 except Empty:  # таймаут бездействия
                     if self.pool.size > self.size_min:
                         return
-                    continue
                 except Exception:
                     return lr_lib.etc.excepthook.excepthook(*sys.exc_info())
 
@@ -116,8 +118,10 @@ class SThread(threading.Thread, SThreadIOQueue):
 
                     finally:  # поток свободен
                         self.task = self.queue_in.task_done()
+                continue
         finally:  # выход потока
             self.task = self.pool._remove_thread(th=self)
+        return
 
     def __bool__(self) -> bool:
         """поток свободен/занят"""
@@ -142,6 +146,7 @@ class SThreadPool(SThreadIOQueue):
 
         self._auto_size(timeout=lr_vars.SThreadAutoSizeTimeOut.get(), pmax=lr_vars.SThreadPoolSizeMax.get(),
                         max_th=lr_vars.SThreadPooMaxAddThread.get(), qmin=lr_vars.SThreadPoolAddMinQSize.get())
+        return
 
     def thread_create(self, th_count=1) -> None:
         """создать, сохранить и запустить worker-поток"""
@@ -152,6 +157,8 @@ class SThreadPool(SThreadIOQueue):
             self._set_pool_size()
             DLOCK.release()
             th.start()
+            continue
+        return
 
     def _create_thread(self) -> SThread:
         """создать worker-поток"""
@@ -167,15 +174,19 @@ class SThreadPool(SThreadIOQueue):
         self._set_pool_size()
         # print(' - del {}, from: {}'.format(th.name, threading.current_thread().name))
         DLOCK.release()
+        return
 
     def _set_pool_size(self) -> None:
         """сохранить размер пула"""
         self.parent._size = self.size = len(self.threads)
+        return
 
     def close(self) -> None:
         self.working = False
         for _ in range(lr_vars.SThreadPoolSizeMax.get()):
             self.queue_in.put((0, None))
+            continue
+        return
 
     def _auto_size(self, timeout: int, pmax: int, max_th: int, qmin: int) -> None:
         """создать новый поток, если есть очередь, недостигнут maxsize, и все потоки заняты"""
@@ -198,3 +209,4 @@ class SThreadPool(SThreadIOQueue):
 
         if self.working:  # перезапуск auto_size_SThreadPool
             lr_vars.Tk.after(timeout, self._auto_size, timeout, pmax, max_th, qmin)
+        return

@@ -104,6 +104,7 @@ def group_param(event, widget=None, params=None, ask=True) -> None:
 
         wrsp_dict = None  # выход progressbar
         widget.action.show_hide_bar_1()
+    return
 
 
 def _group_param_iter(params: [str, ], action: 'lr_lib.gui.action.main_action.ActionWindow') -> iter((int, dict, str, [str, ]),):
@@ -127,8 +128,10 @@ def _group_param_iter(params: [str, ], action: 'lr_lib.gui.action.main_action.Ac
             with contextlib.suppress(UserWarning, AssertionError):  # продолжать при raise
                 action.param_inf_checker(wrsp_dict, wrsp)  # проверка(popup окно) inf запроса <= inf web_reg_save_param
             yield (counter, wrsp_dict, wrsp, unsuccess)  # для progressbar
+            continue
     finally:
         action.web_action_to_tk_text(websReport=True)  # вставить в action.c
+    return
 
 
 @lr_vars.T_POOL_decorator
@@ -141,8 +144,10 @@ def _thread_wrsp_dict_creator(wrsp_dicts: queue.Queue, params: [str, ], unsucces
         except Exception:
             unsuccess.append(param)
             lr_lib.etc.excepthook.excepthook(*sys.exc_info())
+        continue
 
     wrsp_dicts.put_nowait(None)  # exit
+    return
 
 
 @lr_vars.T_POOL_decorator
@@ -159,6 +164,8 @@ def auto_param_creator(action: 'lr_lib.gui.action.main_action.ActionWindow') -> 
         for part in param_parts:
             for param in group_param_search(action, part):
                 params.add(param)  # поиск по началу имени
+                continue
+            continue
 
         params = [p for p in params if ((p not in lr_vars.DENY_PARAMS) and (
             not (len(p) > 2 and p.startswith('on') and p[2].isupper())))]
@@ -171,6 +178,7 @@ def auto_param_creator(action: 'lr_lib.gui.action.main_action.ActionWindow') -> 
         if ans == 'Создать':
             params = list(filter(bool, map(str.strip, y.text.split('\n'))))
             group_param(None, widget=action.tk_text, params=params, ask=False)
+    return
 
 
 def session_params(action: 'lr_lib.gui.action.main_action.ActionWindow', lb_list=None, ask=True) -> list:
@@ -196,8 +204,10 @@ def session_params(action: 'lr_lib.gui.action.main_action.ActionWindow', lb_list
     params = []
     for p in filter(bool, lb_list):
         params.extend(_group_param_search(action, p, part_mode=False))
+        continue
 
-    return list(reversed(sorted(p for p in set(params) if p not in lr_vars.DENY_PARAMS)))
+    i = list(reversed(sorted(p for p in set(params) if p not in lr_vars.DENY_PARAMS)))
+    return i
 
 
 def group_param_search(action: 'lr_lib.gui.action.main_action.ActionWindow', param_part: "zkau_") -> ["zkau_5650", "zkau_5680", ]:
@@ -224,12 +234,16 @@ def _group_param_search(action: 'lr_lib.gui.action.main_action.ActionWindow', pa
                         param.append(s)
                     else:
                         break
+                    continue
 
                 if param:
                     param = ''.join(param)
                     if part_mode:  # param_part или по LB
                         param = param_part + param
                     yield param  # "zkau_5680"
+            continue
+        continue
+    return
 
 
 @lr_vars.T_POOL_decorator
@@ -255,14 +269,18 @@ def re_auto_param_creator(action: 'lr_lib.gui.action.main_action.ActionWindow') 
                     if p.startswith(a):
                         check = not all(map(str.isnumeric, (p.split(a, 1)[1])))
                         break
+                    continue
                 if check:
                     yield p
+            continue
+        return
 
     params = []
     for r in regexps:
         prs = list(set(group_param_search_quotes(action, r=r)))
         prs = list(deny_params(prs))
         params.extend(prs)
+        continue
 
     params = list(set(params))
     if params:
@@ -275,6 +293,7 @@ def re_auto_param_creator(action: 'lr_lib.gui.action.main_action.ActionWindow') 
         if ans == 'создать':
             params = list(filter(bool, map(str.strip, y.text.split('\n'))))
             group_param(None, widget=action.tk_text, params=params, ask=False)
+    return
 
 
 def group_param_search_quotes(action: 'lr_lib.gui.action.main_action.ActionWindow', r=r'=(.+?)\"') -> iter((str,)):
@@ -284,7 +303,11 @@ def group_param_search_quotes(action: 'lr_lib.gui.action.main_action.ActionWindo
         for web_ in action.web_action.get_web_snapshot_all():
             params = re.findall(r, web_.get_body())
             yield from filter(bool, map(str.strip, params))
+            continue
+        return
 
     for param in get_params():
         if all(map(lr_lib.core.wrsp.param.wrsp_allow_symb.__contains__, param)):  # не содержит неподходящих символов
             yield param
+        continue
+    return

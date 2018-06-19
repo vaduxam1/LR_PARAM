@@ -77,6 +77,7 @@ class ActWin(lr_lib.gui.action.act_any.ActAny):
 
         # запускать в конце
         self.post_init()
+        return
 
     def post_init(self):
         """выполнять после создания всех виджетов"""
@@ -85,8 +86,10 @@ class ActWin(lr_lib.gui.action.act_any.ActAny):
         for w in widjs:
             with contextlib.suppress(Exception):  # виджетам доступно меню мыши
                 self.bind_class(w, sequence='<Button-3>', func=lr_lib.gui.etc.sub_menu.rClicker, add='')
+            continue
 
         self.widj_reset()
+        return
 
     def open_action(self, file=None, errors='replace', callback=None) -> None:
         """сформировать action.c"""
@@ -123,6 +126,7 @@ class ActWin(lr_lib.gui.action.act_any.ActAny):
                         raise
                     else:
                         lr_vars.Logger.info('{q}\n\n{e}'.format(e=ex, q=qb))
+        return
 
     def SearchAndReplace(self, search: str, replace='', wrsp_dict=None, wrsp=None, backup=False, is_wrsp=True,
                          replace_callback=None, rep_stat=False) -> None:
@@ -149,11 +153,13 @@ class ActWin(lr_lib.gui.action.act_any.ActAny):
         elif lr_vars.ReplaceParamDialogWindow:  # заменять с диалоговыми окнами, но без пула
             ask_dict = {}
             stats = {}
+
             for web_ in self.web_action.get_web_snapshot_all():
                 res = web_.param_find_replace(search, replace, ask_dict)
-
                 if rep_stat and any(res):
                     stats[web_.snapshot] = res
+                continue
+
             if rep_stat:
                 lr_vars.Logger.debug(search + ':\n' + '\n'.join('{} inf: заменено [да|нет] раз: [{}|{}]'.format(
                     k, *stats[k]) for k in sorted(stats)))
@@ -165,6 +171,7 @@ class ActWin(lr_lib.gui.action.act_any.ActAny):
 
         if not replace_callback:
             self.web_action_to_tk_text(websReport=True)
+        return
 
     def get_result_folder(self, file='Results.xml') -> str:
         """директория файлов ответов"""
@@ -173,22 +180,24 @@ class ActWin(lr_lib.gui.action.act_any.ActAny):
         file = os.path.join(folder, file)
         with open(file) as f:
             text = f.read()
-            text = text.rsplit('.inf]]></Path>', 1)
-            text = text[0]
-            text = text.rsplit('t', 1)
-            rdir = text[0].rsplit('\\', 2)
-            rdir = rdir[1]
-            return os.path.join(folder, rdir)
+        text = text.rsplit('.inf]]></Path>', 1)
+        text = text[0]
+        text = text.rsplit('t', 1)
+        rdir = text[0].rsplit('\\', 2)
+        rdir = rdir[1]
+        return os.path.join(folder, rdir)
 
     def no_var_cmd(self, *args) -> None:
         """force_ask_var"""
         if self.no_var.get():
             self.force_ask_var.set(0)
+        return
 
     def force_ask_cmd(self, *args) -> None:
         """no_var"""
         if self.force_ask_var.get():
             self.no_var.set(0)
+        return
 
     def max_inf_set(self, *args) -> None:
         """max_inf_cbx_var вкл/выкл"""
@@ -196,12 +205,14 @@ class ActWin(lr_lib.gui.action.act_any.ActAny):
             self.add_inf_cbx.configure(state='normal')
         else:
             self.add_inf_cbx.configure(state='disabled')
+        return
 
     def legend(self) -> None:
         """окно легенды"""
         t = lr_lib.gui.widj.legend.WebLegend(self)
         t.add_web_canavs()
         t.print()
+        return
 
     def _start_auto_update_action_info_lab(self):
         """автообновление self.scroll_lab2"""
@@ -210,3 +221,4 @@ class ActWin(lr_lib.gui.action.act_any.ActAny):
             timeout=lr_vars.InfoLabelUpdateTime.get(), check_run=lr_vars.Window.action_windows.__contains__,
             title=self.title, _set_title=self._set_title,
         )
+        return

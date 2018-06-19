@@ -21,6 +21,8 @@ def _chunks(iterable: list, chunk_size: int) -> iter([iter,]):
     for i in range(0, len(iterable), chunk_size):
         val = iterable[i:(i + chunk_size)]
         yield val
+        continue
+    return
 
 
 def chunks(iterable: iter, chunk_size: int) -> iter((iter,)):
@@ -30,14 +32,18 @@ def chunks(iterable: iter, chunk_size: int) -> iter((iter,)):
         for i in iterable:
             val = tuple(itertools.chain([i], _chunks_range(chunk_range, iterable)))
             yield val
+            continue
     else:
         yield from _chunks(iterable, chunk_size)
+    return
 
 
 def _chunks_range(chunk_range: (int, ), iterable):
     with contextlib.suppress(StopIteration):
         for _ in chunk_range:
             yield next(iterable)
+            continue
+    return
 
 
 def numericalSort(value: str, numbers=re.compile(r'(\d+)')) -> list:
@@ -51,7 +57,7 @@ def numericalSort(value: str, numbers=re.compile(r'(\d+)')) -> list:
 def _snapshot_file_name(name: str) -> str:
     """корректная сортировка snapshot файлов"""
     if name.startswith('snapshot') and '_' in name:
-        nam, num = name.split('_', 1)
+        (nam, num) = name.split('_', 1)
         return 't{num}_{nam}'.format(num=num, nam=nam)
     return name
 
@@ -66,6 +72,7 @@ def sort_files(file: dict):
             if isinstance(value, str):
                 value = numericalSort(value)
             return value
+    return
 
 
 def file_string(file=None, deny=(), min_width=25, max_width=50) -> str:
@@ -95,7 +102,8 @@ def file_string(file=None, deny=(), min_width=25, max_width=50) -> str:
 
 def not_printable(s: str, printable=set(string.printable).__contains__) -> int:
     """кол-во непечатных символов строки"""
-    return len(s) - len(tuple(filter(printable, s)))
+    ls = (len(s) - len(tuple(filter(printable, s))))
+    return ls
 
 
 def all_files_info() -> str:
@@ -143,6 +151,7 @@ def param_files_info() -> str:
 def get_files_infs(files: [dict, ]) -> iter({int, }):
     """inf-номера файлов"""
     yield from sorted(set(n for file in files for n in file['Snapshot']['Nums']))
+    return
 
 
 def only_ascii_symbols(item: (str, ), allow=set(string.printable).__contains__) -> iter:
@@ -151,6 +160,8 @@ def only_ascii_symbols(item: (str, ), allow=set(string.printable).__contains__) 
             yield s
         else:
             break
+        continue
+    return
 
 
 def iter_to_list(item: iter) -> list:
@@ -163,7 +174,8 @@ def iter_to_list(item: iter) -> list:
 
 def _openTextInEditor(file: str):
     """открытие файл в Блокноте"""
-    return subprocess.Popen([lr_vars.EDITOR['exe'], file])
+    s = subprocess.Popen([lr_vars.EDITOR['exe'], file])
+    return s
 
 
 def openTextInEditor(text: str) -> None:
@@ -173,6 +185,7 @@ def openTextInEditor(text: str) -> None:
             tf.write(text)
         _openTextInEditor(f.name)
         f.close()
+    return
 
 
 def exec_time(func: callable) -> callable:
@@ -203,11 +216,13 @@ def get_files_names(folder: str, i_num: int, file_key='File', file_mask='t{}.inf
                 key, value = s_line
                 if (file_key in key) and (value != 'NONE'):
                     yield value
+            continue
+    return
 
 
 def get_json(obj, indent=5):
     """удобно-смотримый вид"""
     try:
-        return json.dumps(obj, indent=indent)
+        return json.dumps(obj, indent=indent, ensure_ascii=False)
     except Exception:
         return obj

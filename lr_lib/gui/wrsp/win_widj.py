@@ -60,6 +60,7 @@ class WinWidj(lr_lib.gui.wrsp.win_part_lbrb.WinPartsLbRb):
         self.comboFiles.bind("<<ComboboxSelected>>", self.comboFiles_change)
         self.comboFiles['values'] = [self.no_files_text]
         self.comboFiles.current(0)
+        return
 
     def get_files(self, *args, param=None, clipb=False, callback=None, action=None) -> None:
         """получить файлы с {param} (2)"""
@@ -90,6 +91,7 @@ class WinWidj(lr_lib.gui.wrsp.win_part_lbrb.WinPartsLbRb):
                                   'поиск[{param_inf_min}:{param_inf_max}]={search_inf_len}->' \
                                   'найдено[{_param_inf_min}:{_param_inf_max}]={_param_inf_all}) | ' \
                                   'Найдено {param_all} param.'.format(**lr_vars.VarWrspDict.get())
+        return
 
     def firstOrLastFile(self, *args) -> None:
         """выбрать первый/последный файл в (3)"""
@@ -98,6 +100,7 @@ class WinWidj(lr_lib.gui.wrsp.win_part_lbrb.WinPartsLbRb):
         # i = (len(self.comboFiles['values']) - 1) if lr_vars.VarFirstLastFile.get() else 0
         self.comboFiles.current(0)
         self.comboFiles_change()
+        return
 
     def comboFiles_change(self, *args) -> None:
         """при смене комбо(3), читать файл, записать комбо(4), выбрать файл по умолчанию (3)"""
@@ -109,6 +112,7 @@ class WinWidj(lr_lib.gui.wrsp.win_part_lbrb.WinPartsLbRb):
         self.comboParts_change()
         lr_lib.gui.widj.tooltip.createToolTip(self.comboFiles, lr_lib.core.etc.other.file_string(lr_lib.core.wrsp.files.get_file_with_kwargs(
             lr_vars.FilesWithParam, Name=name)))
+        return
 
     def comboPartsFill(self) -> None:
         """заполнить комбобокс (4)"""
@@ -120,6 +124,7 @@ class WinWidj(lr_lib.gui.wrsp.win_part_lbrb.WinPartsLbRb):
         lr_lib.gui.widj.tooltip.createToolTip(
             lr_vars.Window.comboFiles, lr_lib.core.etc.other.file_string(lr_lib.core.wrsp.files.get_file_with_kwargs(
                 lr_vars.FilesWithParam, Name=file['File']['Name'])))
+        return
 
     def show_LR_Param(self, callback=None) -> str:
         """показать web_reg_save_param (6)"""
@@ -145,6 +150,7 @@ class WinWidj(lr_lib.gui.wrsp.win_part_lbrb.WinPartsLbRb):
         mf = max(len(f) for f in self.comboFiles['values'])
         mw = lr_vars.VarMaxComboFilesWidth.get()
         self.comboFiles.configure(width=mf if mf < mw else mw)
+        return
 
     def clear_before_find_param_files(self) -> None:
         """очистка виджетов перед поиском"""
@@ -157,10 +163,11 @@ class WinWidj(lr_lib.gui.wrsp.win_part_lbrb.WinPartsLbRb):
         self.comboParts.current(0)
         lr_vars.VarLB.set('')
         lr_vars.VarRB.set('')
+        return
 
     def show_frame_info_working(self) -> None:
         """отображение всякой информации"""
         self.main_frame['text'] = '{} | {} | ParamClipBoardSearchHotKey[{}]'.format(
             lr_vars.VarEncode.get(), time.strftime('%H:%M:%S'), lr_vars.FIND_PARAM_HOTKEY)
         self.last_frame['text'] = 'working ... %s' % lr_vars.VarFilesFolder.get()
-
+        return
