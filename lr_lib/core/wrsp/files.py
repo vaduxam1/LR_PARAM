@@ -16,7 +16,7 @@ import lr_lib.core.var.vars as lr_vars
 
 def is_responce_file(name: str) -> (str, str):
     """вернуть файлы ответов, отбраковать "вероятно ненужные" файлы"""
-    n, ext = os.path.splitext(name)
+    (n, ext) = os.path.splitext(name)
     if (name in lr_vars.DENY_FILES) or (ext in lr_vars.DENY_EXT) or any((p in n) for p in lr_vars.DENY_PART_NAME):
         return
     else:
@@ -32,7 +32,7 @@ def file_dict_creator(name: str, full_name: str, inf_num: int, enc: str, inf_key
 
     if file:  # файл уже есть, те пришел из другого inf
         file['Snapshot']['Nums'].add(inf_num)
-        return
+
     else:  # новый файл
         is_responce = is_responce_file(name)
         if deny or is_responce:
@@ -80,6 +80,7 @@ def file_dict_creator(name: str, full_name: str, inf_num: int, enc: str, inf_key
             if stats:
                 set_file_statistic(file)
             return file
+    return
 
 
 def get_inf_file_num(file: str) -> int:

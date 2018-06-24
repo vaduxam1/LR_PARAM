@@ -322,8 +322,10 @@ def create_files_with_search_data(files: (dict,), search_data: dict, action=None
             file['Snapshot']['Nums'] = sorted(inf_list)
             for data in search_data:  # обновить(не заменить) ключи
                 file[data].update(search_data[data])
+                continue
 
             yield file
+            continue
         continue
     return
 
@@ -468,7 +470,7 @@ def new_find_param_ord() -> (int, int):
         if add_index < param_rb_len:
             add_index = param_rb_len
 
-        part = text[index:index + add_index]  # text[текущий : следующий] LB index
+        part = text[index:(index + add_index)]  # text[текущий : следующий] LB index
         if rb in part:
             Ord += 1
             if part.startswith(param_rb):

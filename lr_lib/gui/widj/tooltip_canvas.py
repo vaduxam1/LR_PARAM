@@ -216,6 +216,7 @@ if __name__ == '__main__':
 
         def clear(self):
             self.delete('rectangle')
+            return
 
         def draw(self):
             width, height = int(self['width']), int(self['height'])
@@ -242,10 +243,13 @@ if __name__ == '__main__':
                 tooltip = CanvasTooltip(self, id_, text=text)
 
                 self.tooltips.append(tooltip)
+                continue
+            return
 
         def redraw(self, event):
             self.clear()
             self.draw()
+            return
 
         def onClick(self, event):
             coords = self.canvasx(event.x, 1), self.canvasy(event.y, 1)
@@ -258,6 +262,7 @@ if __name__ == '__main__':
 
             else:
                 self.target, self.drag_x, self.drag_y = None, None, None
+            return
 
         def onDrag(self, event):
             if self.target is None:
@@ -270,9 +275,11 @@ if __name__ == '__main__':
                       coords[1] - self.drag_y)
 
             self.drag_x, self.drag_y = coords
+            return
 
         def onRelease(self, event):
             self.target, self.drag_x, self.drag_y = None, None, None
+            return
 
 
     def main():
@@ -289,6 +296,7 @@ if __name__ == '__main__':
 
         frame.grid()
         root.mainloop()
+        return
 
 
     main()

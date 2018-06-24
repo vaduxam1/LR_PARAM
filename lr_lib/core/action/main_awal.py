@@ -77,6 +77,7 @@ class ActionWebsAndLines:
         """snapshot объекты по kwargs условию"""
         for web in self.get_web_by(self.get_web_snapshot_all(), **kwargs):
             yield web
+            continue
         return
 
     def get_web_reg_save_param_all(self) -> iter((lr_lib.core.action.web_.WebRegSaveParam,)):
@@ -178,14 +179,12 @@ class ActionWebsAndLines:
                 if SLINE.startswith('*/') or SLINE.endswith('*/'):
                     COMMENT = comment_format(COMMENT, '\n'.join(MultiLine_COMMENT))
                     MultiLine_COMMENT = []
-                continue
 
             elif SLINE.startswith(lr_lib.core.wrsp.param.LR_COMENT) and (not SLINE.startswith(_OldPComment)):
                 continue
 
             elif SLINE.startswith('//'):
                 COMMENT = comment_format(COMMENT, LINE)
-                continue
 
             elif SLINE.startswith(lr_lib.core.wrsp.param._block_startswith):  # начало блока web_
                 web_list = [LINE]  # web_ текст Snapshot запроса
@@ -197,6 +196,7 @@ class ActionWebsAndLines:
                         web_list.append(web_line)
                         if any(map(web_line.endswith, lw_end)):
                             break
+                        continue
 
                     transaction = self.transactions._current()
 
@@ -216,19 +216,16 @@ class ActionWebsAndLines:
                             self._add_to_text_list(web_)
 
                     COMMENT = ''
-                    continue
 
                 elif any(map(SLINE.endswith, lw_end)):  # однострочные web_
                     web_ = lr_lib.core.action.web_.WebAny(self, web_list, COMMENT, transaction=self.transactions._current(), _type=w_type)
                     self._add_to_text_list(web_)
                     COMMENT = ''
-                    continue
 
                 else:
                     lr_vars.Logger.critical('вероятно ошибка распознавания\n{line}\n{lwl}\n{web_list}'.format(
                         line=LINE, lwl=len(web_list), web_list=web_list))
                     self._add_to_text_list(LINE)
-                    continue
 
             elif SLINE:  # не web_ текст
                 self.set_transaction_name(SLINE)
@@ -238,7 +235,7 @@ class ActionWebsAndLines:
                     COMMENT = ''
 
                 self._add_to_text_list(LINE)
-                continue
+
             continue
 
         # на всякий, но ничего не должно остатся

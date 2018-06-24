@@ -269,18 +269,22 @@ if __name__ == '__main__':
         for i in (0, 2):
             frame.rowconfigure(i, weight=1)
             frame.columnconfigure(i, weight=1)
+            continue
 
         root.rowconfigure(0, weight=1)
         root.columnconfigure(0, weight=1)
 
         root.title('Tooltip wraplength = {}'.format(wraplength))
         root.mainloop()
+        return
 
     def main():
         print('Trying out three different wraplengths:')
-        for i, wl in enumerate((200, 250, 400), 1):
+        for (i, wl) in enumerate((200, 250, 400), 1):
             print(' ', i)
             main_01(wl)
+            continue
         print('Done.')
+        return
 
     main()

@@ -30,6 +30,7 @@ class ToolTip(object):
                         tip.hidetip()
                     with contextlib.suppress(Exception):
                         self.toolTips.remove(tip)
+                    continue
 
         with self.lock:
             self.toolTips.append(self)

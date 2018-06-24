@@ -220,6 +220,7 @@ AddAllowParamSymb = '_!-'
 allow_symbols = string.punctuation + string.whitespace
 for s in AddAllowParamSymb:
     allow_symbols = allow_symbols.replace(s, '')
+    continue
 allow_symbols = set(allow_symbols)
 
 #####################################
@@ -301,11 +302,14 @@ for file in next(os.walk(highlight_words_folder))[2]:
                 ls = lr.strip()
                 if ls and not ls.startswith('#'):
                     highlight_words.add(lr)
+                continue
+    continue
 
 highlight_words.update(COLORS.keys())
 highlight_words.update(HEX)
 for s in string.digits:
     highlight_words.add('Value={\\"\\":%s' % s)
+    continue
 
 tnrvf = set('\\{}'.format(s) for s in 'tnrvf')
 highlight_words.update(tnrvf)

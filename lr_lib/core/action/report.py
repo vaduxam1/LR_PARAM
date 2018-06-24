@@ -74,6 +74,7 @@ class WebReport:
                 for wrsp in web.web_reg_save_param_list:
                     wrsp.snapshot = web.snapshot
                     wrsp.parent_snapshot = web
+                    continue
 
             if transaction not in self.web_transaction_sorted:
                 self.web_transaction_sorted.append(transaction)
