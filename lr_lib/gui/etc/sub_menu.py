@@ -164,7 +164,7 @@ def rClicker(event) -> str:
 
 
 def rClickbinder(widget, wdg=('Text', 'Entry', 'Listbox', 'Label')) -> None:
-    for b in wdg:
+    for b in wdg: #
         with contextlib.suppress(tk.TclError):
             widget.bind_class(b, sequence='<Button-3>', func=rClicker, add='')
         continue
