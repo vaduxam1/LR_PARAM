@@ -85,7 +85,7 @@ class SThread(threading.Thread, SThreadIOQueue):
         self.size_min = lr_vars.SThreadPoolSizeMin.get()
 
         SThreadIOQueue.__init__(self, queue_in)
-        self.pool = pool or _NoPool()
+        self.pool = (pool or _NoPool())
         self.task = None  # свободен/занят
 
         threading.Thread.__init__(self)

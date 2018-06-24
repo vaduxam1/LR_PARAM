@@ -61,20 +61,19 @@ class CanvasTooltip:
     def show(self, event=None):
         def tip_pos_calculator(canvas, label, *, tip_delta=(10, 5), pad=(5, 3, 5, 3)):
             c = canvas
-            s_width, s_height = c.winfo_screenwidth(), c.winfo_screenheight()
+            (s_width, s_height) = (c.winfo_screenwidth(), c.winfo_screenheight())
 
-            width, height = (pad[0] + label.winfo_reqwidth() + pad[2],
-                             pad[1] + label.winfo_reqheight() + pad[3])
+            (width, height) = ((pad[0] + label.winfo_reqwidth() + pad[2]), (pad[1] + label.winfo_reqheight() + pad[3]))
 
-            mouse_x, mouse_y = c.winfo_pointerxy()
+            (mouse_x, mouse_y) = c.winfo_pointerxy()
 
-            x1, y1 = mouse_x + tip_delta[0], mouse_y + tip_delta[1]
-            x2, y2 = x1 + width, y1 + height
+            (x1, y1) = ((mouse_x + tip_delta[0]), (mouse_y + tip_delta[1]))
+            (x2, y2) = ((x1 + width), (y1 + height))
 
-            x_delta = x2 - s_width
+            x_delta = (x2 - s_width)
             if x_delta < 0:
                 x_delta = 0
-            y_delta = y2 - s_height
+            y_delta = (y2 - s_height)
             if y_delta < 0:
                 y_delta = 0
 
@@ -83,12 +82,12 @@ class CanvasTooltip:
             if offscreen:
 
                 if x_delta:
-                    x1 = mouse_x - tip_delta[0] - width
+                    x1 = (mouse_x - tip_delta[0] - width)
 
                 if y_delta:
-                    y1 = mouse_y - tip_delta[1] - height
+                    y1 = (mouse_y - tip_delta[1] - height)
 
-            offscreen_again = y1 < 0  # out on the top
+            offscreen_again = (y1 < 0)  # out on the top
 
             if offscreen_again:
                 # No further checks will be done.
@@ -128,7 +127,7 @@ class CanvasTooltip:
                    sticky=tk.NSEW)
         win.grid()
 
-        x, y = tip_pos_calculator(canvas, label)
+        (x, y) = tip_pos_calculator(canvas, label)
 
         self.tw.wm_geometry("+%d+%d" % (x, y))
         return
@@ -229,13 +228,13 @@ if __name__ == '__main__':
 
             mask = '{} rectangle #{}.\n'
             for i in range(20):
-                x, y = random.randint(0, width - 1), random.randint(0, height - 1)
-                w, h = random.randint(5, 100), random.randint(5, 100)
+                (x, y) = (random.randint(0, width - 1), random.randint(0, height - 1))
+                (w, h) = (random.randint(5, 100), random.randint(5, 100))
                 tag = 'R{}'.format(i)
                 color = random.choice(colors)
                 text = mask.format(color.capitalize(), tag[1:]) + further_text()
 
-                id_ = self.create_rectangle(x, y, x + w, y + h,
+                id_ = self.create_rectangle(x, y, (x + w), (y + h),
                                             fill=color,
                                             activefill='yellow',
                                             tags=('rectangle', tag))
@@ -252,33 +251,33 @@ if __name__ == '__main__':
             return
 
         def onClick(self, event):
-            coords = self.canvasx(event.x, 1), self.canvasy(event.y, 1)
+            coords = (self.canvasx(event.x, 1), self.canvasy(event.y, 1))
             found = self.find_closest(*coords)[0]
 
             if found:
                 self.target = found
-                self.drag_x, self.drag_y = coords
+                (self.drag_x, self.drag_y) = coords
                 self.tag_raise(found)
 
             else:
-                self.target, self.drag_x, self.drag_y = None, None, None
+                (self.target, self.drag_x, self.drag_y) = (None, None, None)
             return
 
         def onDrag(self, event):
             if self.target is None:
                 return
 
-            coords = self.canvasx(event.x, 1), self.canvasy(event.y, 1)
+            coords = (self.canvasx(event.x, 1), self.canvasy(event.y, 1))
 
             self.move(self.target,
                       coords[0] - self.drag_x,
                       coords[1] - self.drag_y)
 
-            self.drag_x, self.drag_y = coords
+            (self.drag_x, self.drag_y) = coords
             return
 
         def onRelease(self, event):
-            self.target, self.drag_x, self.drag_y = None, None, None
+            (self.target, self.drag_x, self.drag_y) = (None, None, None)
             return
 
 

@@ -241,7 +241,7 @@ VarToolTipTimeout = tk.StringVar(value=9000)  # время жизни всплы
 ToolTipFont = ('Arial', '7', 'bold italic')  # всплывающие подсказки
 DefaultFont = 'Arial 7'  # шрифт кнопок и тд
 DefaultLBRBFont = 'Arial 8 bold'  # шрифт LB/RB(5)
-InfoLabelUpdateTime = tk.IntVar(value=1000)  # (мс) обновление action.label с процентами и пулом
+InfoLabelUpdateTime = tk.IntVar(value=1500)  # (мс) обновление action.label с процентами и пулом
 
 DefaultActionHighlightFont = 'Eras Medium ITC'  # шрифт подсвеченного текста action
 DefaultActionHighlightFontSize = 9  # размер подсвеченного шрифта текста action
@@ -265,7 +265,7 @@ var_bar_3 = False  # show/hide info bar
 # подсветка
 
 HighlightOn = True  # включить подсветку
-HighlightAfter0 = 500  # задержка(мс), перед перезапуском проверки необходимости подсветки
+HighlightAfter0 = 1500  # задержка(мс), перед перезапуском проверки необходимости подсветки
 HighlightAfter1 = 250  # задержка(мс), перед стартом подсветки всех линий, отображенных на экране
 HighlightAfter2 = 250  # задержка(мс), перед подсветкой одной линии
 Background = 'khaki'
@@ -437,7 +437,7 @@ ENCODE_LIST = list(sorted(ENCODE_LIST))
 # пулы
 
 MainThreadUpdater = None  # выполнять callback из main потока # lr_lib.etc.pool.other.MainThreadUpdater
-MainThreadUpdateTime = tk.IntVar(value=500)  # интервал(мс) проверки очереди, callback(из потоков) + скорость обновления подсветки
+MainThreadUpdateTime = tk.IntVar(value=1500)  # интервал(мс) проверки очереди, callback(из потоков) + скорость обновления подсветки
 
 M_POOL = None  # пул процессов  # lr_lib.etc.pool.main_pool.POOL
 M_POOL_NAME = 'multiprocessing.Pool'  # тип основной пул
@@ -454,7 +454,7 @@ SThreadPoolSizeMax = tk.IntVar(value=10)  # SThreadPool max size (int>=2)
 SThreadExitTimeout = tk.IntVar(value=5)  # таймаут(сек) выхода, бездействующих потоков(до SThreadPoolSizeMin)
 SThreadPoolAddMinQSize = tk.IntVar(value=100)  # мин длина очереди, для добавления, более чем одного потока, за раз
 SThreadPooMaxAddThread = tk.IntVar(value=2)  # max число потоков, для добавления за один раз(до SThreadPoolSizeMax
-SThreadAutoSizeTimeOut = tk.IntVar(value=1000)  # отзывчивость(мсек) - период опроса, для изменения размера пула
+SThreadAutoSizeTimeOut = tk.IntVar(value=1500)  # отзывчивость(мсек) - период опроса, для изменения размера пула
 _SThreadMonitorUpdate = tk.IntVar(value=1000)  # мс, время обновления окна Window.pool_wind для текста состояния пула
 
 #####################################
