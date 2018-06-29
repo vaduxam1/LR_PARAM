@@ -159,7 +159,7 @@ class ActionWebsAndLines:
         RegParamList = []  # web_reg_save_param's, для добавления в web_.web_reg_save_param_list
         COMMENT = ''  # //
         MultiLine_COMMENT = []  # // /**/
-        _OldPComment = lr_lib.core.wrsp.param.LR_COMENT + ' PARAM'
+        _OldPComment = (lr_lib.core.wrsp.param.LR_COMENT + ' PARAM')
         lw_end = (lr_lib.core.wrsp.param.Web_LAST, lr_lib.core.wrsp.param._block_endswith3,)
         comment_format = '{}\n{}'.format
 
@@ -284,8 +284,8 @@ class ActionWebsAndLines:
         # разделить каменты и web текст
         ws = wrsp.split(lr_lib.core.wrsp.param.wrsp_lr_start, 1)
         if len(ws) == 2:
-            comments, w_lines = ws
-            w_lines = lr_lib.core.wrsp.param.wrsp_lr_start + w_lines
+            (comments, w_lines) = ws
+            w_lines = (lr_lib.core.wrsp.param.wrsp_lr_start + w_lines)
         else:
             comments = ''
             w_lines = wrsp

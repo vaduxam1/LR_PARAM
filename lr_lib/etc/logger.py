@@ -76,7 +76,7 @@ def _LoggerLevelCreator(level_num: int, level: str) -> None:
                     messagebox.showwarning(level.capitalize(), message, parent=parent)
                 else:
                     messagebox.showerror(level.upper(), message, parent=parent)
-            return
+        return
 
     logging_level.__name__ = level
     setattr(logging.getLoggerClass(), level, logging_level)  # создать

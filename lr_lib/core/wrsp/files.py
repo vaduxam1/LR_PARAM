@@ -156,7 +156,7 @@ def _create_files_from_inf(args: [(str, str, bool, bool), (str, int)]) -> iter((
 
             for line in lines:  # создать файлы из ключей файла t75.inf
                 if any(map(line.startswith, lr_vars.FileOptionsStartswith)):
-                    key_from_inf, file_name = line.split('=', 1)
+                    (key_from_inf, file_name) = line.split('=', 1)
                     full_name = os.path.join(folder, file_name)
                     if os.path.isfile(full_name):
                         f = file_dict_creator(file_name, full_name, num, enc, key_from_inf, allow_deny, statistic)

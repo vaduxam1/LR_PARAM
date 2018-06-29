@@ -300,7 +300,7 @@ for file in next(os.walk(highlight_words_folder))[2]:
             for line in hws:
                 lr = line.rstrip('\n')
                 ls = lr.strip()
-                if ls and not ls.startswith('#'):
+                if ls and (not ls.startswith('#')):
                     highlight_words.add(lr)
                 continue
     continue

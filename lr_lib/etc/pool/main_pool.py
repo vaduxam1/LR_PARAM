@@ -41,9 +41,9 @@ class POOL:
 
     def __getattr__(self, item: str):
         """перенаправление вызовов в self.pool"""
-        if (item == 'imap_unordered') and not hasattr(self.pool, 'imap_unordered'):
+        if (item == 'imap_unordered') and (not hasattr(self.pool, 'imap_unordered')):
             item = 'imap'
-        if item == 'imap' and not hasattr(self.pool, 'imap'):
+        if (item == 'imap') and (not hasattr(self.pool, 'imap')):
             item = 'map'
         return getattr(self.pool, item)
 
@@ -52,12 +52,13 @@ class POOL:
         n = self.name.get()
         s = self.size.get()
 
-        if not (self._size == s) or not (self._name == n):
+        if (not (self._size == s)) or (not (self._name == n)):
             self.pool_exit()
-            self._name, self._size = n, s
+            (self._name, self._size) = (n, s)
 
             if 'concurrent.futures.' in n:
-                self.set_pool(n, max_workers=(s or None))
+                m = (s or None)
+                self.set_pool(n, max_workers=m)
             elif n in ['NoPool', 'AsyncPool']:
                 self.set_pool(n)
             elif n == 'SThreadPool(threading.Thread)':
@@ -88,7 +89,6 @@ def init() -> iter((POOL, POOL), ):
     try:
         M_POOL = POOL(lr_vars.M_POOL_NAME, lr_vars.M_POOL_Size)
         T_POOL = POOL(lr_vars.T_POOL_NAME, lr_vars.T_POOL_Size)
-
         yield M_POOL, T_POOL
     finally:
         lr_vars.M_POOL.pool_exit()

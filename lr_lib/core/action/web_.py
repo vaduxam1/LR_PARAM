@@ -28,9 +28,10 @@ def _body_replace(body_split: [str, ], len_body_split: int, search: str, replace
         left = body_split[indx - 1]
         right = body_split[indx]
         if lr_lib.core.etc.lbrb_checker.check_bound_lb_rb(left, right):
-            yield replace + right
+            s = (replace + right)
         else:
-            yield search + right
+            s = (search + right)
+        yield s
         continue
     return
 
@@ -43,14 +44,15 @@ def body_replace(body: str, search: str, replace: str, is_wrsp=True) -> str:
     if len_body_split < 2:
         return body
     else:
-        return ''.join(_body_replace(body_split, len_body_split, search, replace, is_wrsp=is_wrsp))
+        b = _body_replace(body_split, len_body_split, search, replace, is_wrsp=is_wrsp)
+        return ''.join(b)
 
 
 def bodys_replace(replace_args: ({int: str}, [(str, str), ]), is_wrsp=True) -> [str, ]:
     """замена param's в body's"""
-    body_portion, replace_list = replace_args
+    (body_portion, replace_list) = replace_args
     for i in body_portion:
-        for search, replace in replace_list:
+        for (search, replace) in replace_list:
             body_portion[i] = body_replace(body_portion[i], search, replace, is_wrsp=is_wrsp)
             continue
         continue

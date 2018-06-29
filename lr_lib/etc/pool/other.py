@@ -39,8 +39,8 @@ class MainThreadUpdater:
             try:  # получить и выполнить callback
                 callback = self.queue_in.get()
                 callback()
-            except Exception:
-                lr_lib.etc.excepthook.excepthook(*sys.exc_info())
+            except Exception as ex:
+                lr_lib.etc.excepthook.excepthook(ex)
             continue
 
         if self.working:
@@ -75,8 +75,10 @@ class AsyncPool:
         return self.loop.run_until_complete(self.async_map(fn, args))
 
     def submit(self, fn: callable, *args, **kwargs) -> None:
-        callback = lambda *_, a=args, kw=kwargs: fn(*a, **kw)
-        return self.loop.run_until_complete(self.async_map(callback, [None]))
+        def callback(*_, a=args, kw=kwargs):
+            return fn(*a, **kw)
+        f = self.async_map(callback, [None])
+        return self.loop.run_until_complete(f)
 
     @asyncio.coroutine
     def async_map(self, fn: callable, args: list):

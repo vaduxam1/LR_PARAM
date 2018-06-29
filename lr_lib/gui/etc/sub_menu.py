@@ -72,11 +72,13 @@ def rClicker(event) -> str:
 
             submenu_param.add_cascade(
                 label='* готовый -> пересоздать, с измененными LB/RB', underline=0,
-                command=lambda e=event: lr_lib.gui.etc.action_lib.rClick_web_reg_save_param_regenerate(e, new_lb_rb=True))
+                command=lambda e=event: lr_lib.gui.etc.action_lib.rClick_web_reg_save_param_regenerate(e, new_lb_rb=True),
+            )
 
             submenu_param.add_cascade(
                 label='готовый -> пересоздать, с оригинальными LB/RB', underline=0,
-                command=lambda e=event: lr_lib.gui.etc.action_lib.rClick_web_reg_save_param_regenerate(e, new_lb_rb=False))
+                command=lambda e=event: lr_lib.gui.etc.action_lib.rClick_web_reg_save_param_regenerate(e, new_lb_rb=False),
+            )
 
             submenu_param.add_cascade(
                 label='одиночный -> найти и подсветить', underline=0,
@@ -135,15 +137,25 @@ def rClicker(event) -> str:
 
             # maxmin
             submenu_maxmin = tk.Menu(submenu_other, tearoff=False)
-            submenu_maxmin.add_cascade(label='min', underline=0, command=lambda e=event: lr_lib.gui.etc.action_lib.rClick_min_inf(e))
-            submenu_maxmin.add_cascade(label='max', underline=0, command=lambda e=event: lr_lib.gui.etc.action_lib.rClick_max_inf(e))
-            submenu_other.add_cascade(label=' Snapshot-min/max (номер из любых цифр выделения)', menu=submenu_maxmin, underline=0)
+            submenu_maxmin.add_cascade(
+                label='min', underline=0, command=lambda e=event: lr_lib.gui.etc.action_lib.rClick_min_inf(e),
+            )
+            submenu_maxmin.add_cascade(
+                label='max', underline=0, command=lambda e=event: lr_lib.gui.etc.action_lib.rClick_max_inf(e),
+            )
+            submenu_other.add_cascade(
+                label=' Snapshot-min/max (номер из любых цифр выделения)', menu=submenu_maxmin, underline=0,
+            )
 
             submenu = tk.Menu(submenu_other, tearoff=False)
             colors = lr_vars.VarColorTeg.get()
-            submenu.add_cascade(label='сорх в файл', underline=0, command=lambda e=event: lr_lib.gui.etc.action_lib.add_highlight_words_to_file(e))
+            submenu.add_cascade(
+                label='сорх в файл', underline=0,
+                command=lambda e=event: lr_lib.gui.etc.action_lib.add_highlight_words_to_file(e),
+            )
 
-            for val in ['добавить', 'удалить']:
+            vl = ['добавить', 'удалить']
+            for val in vl:
                 vSub = tk.Menu(submenu, tearoff=False)
                 submenu.add_cascade(label=val, menu=vSub, underline=0)
                 for option in lr_vars.VarDefaultColorTeg:
@@ -160,6 +172,7 @@ def rClicker(event) -> str:
 
             submenu_other.add_cascade(label=' подсветка', menu=submenu, underline=0)
         rmenu.tk_popup(event.x_root + 40, event.y_root + 10, entry="0")
+
     return "break"
 
 

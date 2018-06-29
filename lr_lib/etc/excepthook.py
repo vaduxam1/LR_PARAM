@@ -11,6 +11,7 @@ import lr_lib.core.var.vars as lr_vars
 def excepthook(*args) -> None:
     """обработка raise: сокращенный стектрейс + исходный код"""
     len_args = len(args)
+
     if len_args == 1:
         exc_type, exc_val, exc_tb = type(args[0]), args[0], args[0].__traceback__
     elif len_args == 3:
@@ -23,7 +24,9 @@ def excepthook(*args) -> None:
     ern = exc_type.__name__
     if lr_vars.Window:
         lr_vars.MainThreadUpdater.submit(lambda: lr_vars.Window.err_to_widgts(exc_type, exc_val, exc_tb, ern))
-    lr_vars.Logger.critical(get_tb(exc_type, exc_val, exc_tb, ern))
+
+    e = get_tb(exc_type, exc_val, exc_tb, ern)
+    lr_vars.Logger.critical(e)
     return
 
 

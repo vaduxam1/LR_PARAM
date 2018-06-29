@@ -7,7 +7,7 @@ def dummy_remove(web_: [str, ], mode=False) -> bool:
     if mode == 'endswith':
         r = dummy_endswith_remove(web_)
     else:
-        r = (len(web_) == Dummy.dummy_len) and all(w.lstrip().startswith(d) for w, d in zip(web_, Dummy.web_dummy))
+        r = ((len(web_) == Dummy.dummy_len) and all(w.lstrip().startswith(d) for (w, d) in zip(web_, Dummy.web_dummy)))
     return r
 
 

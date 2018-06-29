@@ -58,6 +58,9 @@ def _start(excepthook=True, console_args=sys.argv) -> iter(((None, None, None), 
                 lr_lib.gui.main_gui.start(action=True, lock=True)
 
         yield sys.exc_info()
+    except Exception as ex:
+        lr_lib.etc.excepthook.excepthook(ex)
+    else:
         lr_vars.Logger.trace('Exit\nas_console={c}\nconsole_args={cas}\nc_args={ca}'.format(
             c=as_console, cas=console_args, ca=c_args))
     finally:

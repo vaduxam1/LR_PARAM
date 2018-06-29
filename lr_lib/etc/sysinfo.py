@@ -28,7 +28,8 @@ def _system_info() -> (str, ):
         """формирование сообщения для всех атрибутов объекта"""
         # yield '\n{}'.format(obj)
         n = obj.__name__
-        for atr in sorted(filter(bool, attrs.replace(' ', '').split(','))):
+        ats = attrs.replace(' ', '').split(',')
+        for atr in sorted(filter(bool, ats)):
             result = getattr(obj, atr)
             if callable(result):
                 result = result()
@@ -54,11 +55,12 @@ def _system_info() -> (str, ):
 def _separator(msg: (str, ), max_len: int) -> (str, ):
     """выравнивание пробелами для сообщения в рамки"""
     for i in range(len(msg)):
-        l = len(msg[i])
-        if l < max_len:
-            yield msg[i] + ' ' * (max_len-l)
+        lm = len(msg[i])
+        if lm < max_len:
+            m = (msg[i] + (' ' * (max_len - lm)))
         else:
-            yield msg[i]
+            m = msg[i]
+        yield m
         continue
     return
 
@@ -69,7 +71,8 @@ def str_separator(message: str, s_width='#', s_height='#', t='  ', max_=70, n=5)
         for st in _m:
             if len(st) > max_:
                 yield st[:max_]
-                yield from len_split([' ' * n + st[max_:]])
+                m = ((' ' * n) + st[max_:])
+                yield from len_split([m])
             else:
                 yield st
             continue
@@ -82,4 +85,5 @@ def str_separator(message: str, s_width='#', s_height='#', t='  ', max_=70, n=5)
     s_ = s1.format(s_height, s_width * ml, t=t)
     m1 = s % (' ', ' ')
     m_ = '\n'.join(m1.format(s_height, m, t=t) for m in _separator(msg, ml))
-    return '{0}\n{1}\n{0}'.format(s_, m_)
+    i = '{0}\n{1}\n{0}'.format(s_, m_)
+    return i

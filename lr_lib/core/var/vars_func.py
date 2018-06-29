@@ -43,13 +43,13 @@ def _set_file(file: dict, errors='replace') -> None:
         lr_lib.core.wrsp.files.set_file_statistic(file, as_text=True)
         # сохранить статистику в AllFiles
         file_from_allfiles = lr_lib.core.wrsp.files.get_file_with_kwargs(lr_vars.AllFiles, Name=ff['Name'])
-        file_from_allfiles.update({k: file[k] for k in file if k != 'Param'})
+        file_from_allfiles.update({k: file[k] for k in file if (k != 'Param')})
     return
 
 
 def _is_mutable_bound(st: str, b1: '{', b2: '}', a2=0) -> int:
     """находится ли внутри скобок {...}"""
-    for e, s in enumerate(st, start=1):
+    for (e, s) in enumerate(st, start=1):
         if s == b1:
             a2 += 1
         elif s == b2:
@@ -104,8 +104,8 @@ def set_part_num(num=0) -> None:
     if lr_vars.VarRusRB.get():
         rb = ''.join(lr_lib.core.etc.other.only_ascii_symbols(rb))
 
-    lb, rb = lb_rb_split_list_set(__lb, __rb, lb, rb)
-    lb, rb = lb_rb_split_end(lb, rb)
+    (lb, rb) = lb_rb_split_list_set(__lb, __rb, lb, rb)
+    (lb, rb) = lb_rb_split_end(lb, rb)
 
     if lr_vars.VarLbLstrip.get():
         lb = lb.lstrip()
@@ -199,13 +199,13 @@ def lb_rb_split_list_set(__lb: str, __rb: str, lb: str, rb: str) -> (str, str):
     if lr_vars.VarSplitListLB.get():
         i_lb = lr_vars.VarSplitListNumLB.get()
         for word in lb_combo:
-            lb = lb[:-i_lb].rsplit(word, 1)[-1] + lb[-i_lb:]
+            lb = (lb[:-i_lb].rsplit(word, 1)[-1] + lb[-i_lb:])
             continue
 
     if lr_vars.VarSplitListRB.get():
         i_rb = lr_vars.VarSplitListNumRB.get()
         for word in rb_combo:
-            rb = rb[:i_rb] + rb[i_rb:].split(word, 1)[0]
+            rb = (rb[:i_rb] + rb[i_rb:].split(word, 1)[0])
             continue
 
     lr_vars.VarSplitListNumRB.set(VarSplitListNumRB)  # вернуть
@@ -214,14 +214,14 @@ def lb_rb_split_list_set(__lb: str, __rb: str, lb: str, rb: str) -> (str, str):
 
 def gui_updater_comboParts() -> None:
     """при изменении из ядра, менять gui comboParts"""
-    if lr_vars.Window and not lr_vars.Window._block_:
+    if lr_vars.Window and (not lr_vars.Window._block_):
         lr_vars.Window.comboParts.set(lr_vars.VarPartNum.get())
     return
 
 
 def gui_updater_comboFiles() -> None:
     """при изменении из ядра, менять gui comboFiles"""
-    if lr_vars.Window and not lr_vars.Window._block_:  #
+    if lr_vars.Window and (not lr_vars.Window._block_):
         lr_vars.Window.comboFiles.set(lr_vars.VarFileName.get())
         lr_vars.Window.comboPartsFill()
     return
@@ -232,7 +232,7 @@ def next_3_or_4_if_bad_or_enmpy_lb_rb(text='') -> None:
     len_files = len(lr_vars.FilesWithParam)
     lf = (len_files - 1)  # нумерация с 0
     num = lr_vars.VarPartNum.get()
-    n = num + 1
+    n = (num + 1)
     file = lr_vars.VarFile.get()
 
     if n < file['Param']['Count']:  # вхождение(4)
@@ -269,4 +269,5 @@ def splitters_combo(combo) -> [str, ]:
     if splitter not in all_splitters:
         combo['values'] = list(reversed(all_splitters + [splitter]))
 
-    return eval(splitter)
+    e = eval(splitter)
+    return e

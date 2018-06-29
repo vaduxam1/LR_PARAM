@@ -139,7 +139,7 @@ def param_files_info() -> str:
         m = 25
     elif m < 10:
         m = 10
-    s = '{:<%s} | {:<%s} | {:<%s}' % (m, m, m)
+    s = ('{:<%s} | {:<%s} | {:<%s}' % (m, m, m))
 
     i = '\n'.join(map(str, chunks(tuple(get_files_infs(lr_vars.FilesWithParam)), 15)))
     r = '"{p}" Snapshots{i}:\n{sep}\n{t}\n{res}\n{sep}'.format(
@@ -195,7 +195,7 @@ def exec_time(func: callable) -> callable:
         t = time.time()
         lr_vars.Logger.trace('-> {f}'.format(f=func))
         out = func(*args, **kwargs)
-        t = time.time() - t
+        t = (time.time() - t)
         lr_vars.Logger.trace('<- {t} сек: {f}'.format(f=func, t=round(t, 1)))
         return out
     return wrap
@@ -213,7 +213,7 @@ def get_files_names(folder: str, i_num: int, file_key='File', file_mask='t{}.inf
         for line in inf:
             s_line = line.strip().split('=', 1)
             if len(s_line) == 2:
-                key, value = s_line
+                (key, value) = s_line
                 if (file_key in key) and (value != 'NONE'):
                     yield value
             continue
@@ -223,6 +223,8 @@ def get_files_names(folder: str, i_num: int, file_key='File', file_mask='t{}.inf
 def get_json(obj, indent=5):
     """удобно-смотримый вид"""
     try:
-        return json.dumps(obj, indent=indent, ensure_ascii=False)
+        j = json.dumps(obj, indent=indent, ensure_ascii=False)
     except Exception:
         return obj
+    else:
+        return j
