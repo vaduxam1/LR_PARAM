@@ -77,21 +77,16 @@ class CanvasTooltip:
             if y_delta < 0:
                 y_delta = 0
 
-            offscreen = (x_delta, y_delta) != (0, 0)
-
+            offscreen = ((x_delta, y_delta) != (0, 0))
             if offscreen:
-
                 if x_delta:
                     x1 = (mouse_x - tip_delta[0] - width)
-
                 if y_delta:
                     y1 = (mouse_y - tip_delta[1] - height)
-
             offscreen_again = (y1 < 0)  # out on the top
 
             if offscreen_again:
                 # No further checks will be done.
-
                 # TIP:
                 # A further mod might automagically augment the
                 # wraplength when the tooltip is too high to be
@@ -218,12 +213,8 @@ if __name__ == '__main__':
             return
 
         def draw(self):
-            width, height = int(self['width']), int(self['height'])
-
-            colors = ('blue', 'green', 'red',
-                      'brown', 'cyan', 'magenta',
-                      'violet', 'black', 'white')
-
+            (width, height) = (int(self['width']), int(self['height']))
+            colors = ('blue', 'green', 'red', 'brown', 'cyan', 'magenta', 'violet', 'black', 'white')
             self.tooltips = []
 
             mask = '{} rectangle #{}.\n'
@@ -240,7 +231,6 @@ if __name__ == '__main__':
                                             tags=('rectangle', tag))
 
                 tooltip = CanvasTooltip(self, id_, text=text)
-
                 self.tooltips.append(tooltip)
                 continue
             return
@@ -269,9 +259,7 @@ if __name__ == '__main__':
 
             coords = (self.canvasx(event.x, 1), self.canvasy(event.y, 1))
 
-            self.move(self.target,
-                      coords[0] - self.drag_x,
-                      coords[1] - self.drag_y)
+            self.move(self.target, (coords[0] - self.drag_x), (coords[1] - self.drag_y))
 
             (self.drag_x, self.drag_y) = coords
             return

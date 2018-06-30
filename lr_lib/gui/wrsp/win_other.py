@@ -97,8 +97,8 @@ class WinOther(lr_lib.gui.wrsp.win_filesort.WinFileSort):
     @lr_vars.T_POOL_decorator
     def param_file_editor(self, *args):
         """открыть param файл в editor"""
-        p = subprocess.Popen([lr_vars.EDITOR['exe'],
-                              lr_lib.core.wrsp.files.get_file_with_kwargs(lr_vars.FilesWithParam)['File']['FullName']])
+        f = lr_lib.core.wrsp.files.get_file_with_kwargs(lr_vars.FilesWithParam)['File']['FullName']
+        p = subprocess.Popen([lr_vars.EDITOR['exe'], f])
         return p
 
     def clear(self) -> None:

@@ -190,15 +190,14 @@ class WrspSettingWindow(tk.Toplevel):
         _wrsps = tuple(self.parent.web_action.get_web_reg_save_param_all())
         wrsps = tuple(w.name for w in _wrsps)
         mx = max(map(len, wrsps or ['']))
-        m = '"{:<%s}" -> "{}"' % mx
+        m = ('"{:<%s}" -> "{}"' % mx)
         all_wrsps = '\n'.join(m.format(old, new) for (old, new) in zip(wrsps, wrsps))
         y = lr_lib.gui.widj.dialog.YesNoCancel(['Переименовать', 'Отмена'], 'Переименовать wrsp слева',
-                                  'в wrsp справа', 'wrsp',
-                                               parent=self, is_text=all_wrsps)
+                                  'в wrsp справа', 'wrsp', parent=self, is_text=all_wrsps)
 
         if y.ask() == 'Переименовать':
             new_wrsps = [t.split('-> "', 1)[1].split('"', 1)[0].strip() for t in y.text.strip().split('\n')]
-            assert len(wrsps) == len(new_wrsps)
+            assert (len(wrsps) == len(new_wrsps))
             with self.parent.block():
                 self.parent.backup()
                 text = self.parent.tk_text.get('1.0', tk.END)

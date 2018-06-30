@@ -127,7 +127,7 @@ class HighlightText(tk.Text):
 
         for g in ground:
             for color in tegs:
-                self.tag_config(g + color, **{g: color, 'font': fnt, })
+                self.tag_config((g + color), **{g: color, 'font': fnt, })
                 continue
             continue
         return
@@ -143,7 +143,7 @@ class HighlightText(tk.Text):
     def set_font(self, *a, size=None) -> None:
         if size is None:
             size = self.size_var.get()
-        w, s, u, o = self._text_checkbox()
+        (w, s, u, o) = self._text_checkbox()
         self.configure(font=Font(family=self.font_var.get(), size=size, weight=w, slant=s, underline=u, overstrike=o))
         return
 

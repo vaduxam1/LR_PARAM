@@ -36,9 +36,9 @@ class ToolTip(object):
             self.toolTips.append(self)
 
         with contextlib.suppress(Exception):
-            x, y, cx, cy = self.widget.bbox("insert")
-            x += self.widget.winfo_rootx() + 25
-            y += self.widget.winfo_rooty() + 20
+            (x, y, cx, cy) = self.widget.bbox("insert")
+            x += (self.widget.winfo_rootx() + 25)
+            y += (self.widget.winfo_rooty() + 20)
             self.tip = tk.Toplevel(self.widget)
             self.tip.wm_overrideredirect(1)
             self.tip.wm_geometry("+%d+%d" % (x, y))
@@ -56,10 +56,9 @@ class ToolTip(object):
 def widget_values_counter(widget) -> (int, int):
     """кол-во строк/индекс текущей строки виджета"""
     i = li = 0
-
     with contextlib.suppress(Exception):
         _i = list(widget['values'])
-        i = _i.index(widget.get()) + 1
+        i = (_i.index(widget.get()) + 1)
     with contextlib.suppress(Exception):
         li = len(widget['values'])
 

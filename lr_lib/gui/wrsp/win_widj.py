@@ -77,7 +77,7 @@ class WinWidj(lr_lib.gui.wrsp.win_part_lbrb.WinPartsLbRb):
         with self.block():
             lr_vars.VarParam.set(param, set_file=False, action=action)  # получить файлы с {param}
 
-        self.comboFiles['values'] = [f['File']['Name'] for f in lr_vars.FilesWithParam] or [self.no_files_text]
+        self.comboFiles['values'] = ([f['File']['Name'] for f in lr_vars.FilesWithParam] or [self.no_files_text])
         self.set_comboFiles_width()
         self.firstOrLastFile()
 
@@ -149,7 +149,7 @@ class WinWidj(lr_lib.gui.wrsp.win_part_lbrb.WinPartsLbRb):
         """установка макс ширины комбо файлов(3)"""
         mf = max(len(f) for f in self.comboFiles['values'])
         mw = lr_vars.VarMaxComboFilesWidth.get()
-        self.comboFiles.configure(width=mf if mf < mw else mw)
+        self.comboFiles.configure(width=(mf if (mf < mw) else mw), )
         return
 
     def clear_before_find_param_files(self) -> None:
@@ -169,5 +169,5 @@ class WinWidj(lr_lib.gui.wrsp.win_part_lbrb.WinPartsLbRb):
         """отображение всякой информации"""
         self.main_frame['text'] = '{} | {} | ParamClipBoardSearchHotKey[{}]'.format(
             lr_vars.VarEncode.get(), time.strftime('%H:%M:%S'), lr_vars.FIND_PARAM_HOTKEY)
-        self.last_frame['text'] = 'working ... %s' % lr_vars.VarFilesFolder.get()
+        self.last_frame['text'] = 'working ... {}'.format(lr_vars.VarFilesFolder.get())
         return

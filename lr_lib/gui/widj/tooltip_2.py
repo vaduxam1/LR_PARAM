@@ -77,44 +77,32 @@ class Tooltip:
         return
 
     def show(self):
-        def tip_pos_calculator(widget, label,
-                               *,
-                               tip_delta=(10, 5), pad=(5, 3, 5, 3)):
-
+        def tip_pos_calculator(widget, label, *, tip_delta=(10, 5), pad=(5, 3, 5, 3)):
             w = widget
+            (s_width, s_height) = (w.winfo_screenwidth(), w.winfo_screenheight())
+            (width, height) = ((pad[0] + label.winfo_reqwidth() + pad[2]), (pad[1] + label.winfo_reqheight() + pad[3]))
+            (mouse_x, mouse_y) = w.winfo_pointerxy()
+            (x1, y1) = ((mouse_x + tip_delta[0]), (mouse_y + tip_delta[1]))
+            (x2, y2) = ((x1 + width), (y1 + height))
 
-            s_width, s_height = w.winfo_screenwidth(), w.winfo_screenheight()
-
-            width, height = (pad[0] + label.winfo_reqwidth() + pad[2],
-                             pad[1] + label.winfo_reqheight() + pad[3])
-
-            mouse_x, mouse_y = w.winfo_pointerxy()
-
-            x1, y1 = mouse_x + tip_delta[0], mouse_y + tip_delta[1]
-            x2, y2 = x1 + width, y1 + height
-
-            x_delta = x2 - s_width
+            x_delta = (x2 - s_width)
             if x_delta < 0:
                 x_delta = 0
-            y_delta = y2 - s_height
+            y_delta = (y2 - s_height)
             if y_delta < 0:
                 y_delta = 0
 
-            offscreen = (x_delta, y_delta) != (0, 0)
-
+            offscreen = ((x_delta, y_delta) != (0, 0))
             if offscreen:
-
                 if x_delta:
-                    x1 = mouse_x - tip_delta[0] - width
-
+                    x1 = (mouse_x - tip_delta[0] - width)
                 if y_delta:
-                    y1 = mouse_y - tip_delta[1] - height
+                    y1 = (mouse_y - tip_delta[1] - height)
 
-            offscreen_again = y1 < 0  # out on the top
+            offscreen_again = (y1 < 0)  # out on the top
 
             if offscreen_again:
                 # No further checks will be done.
-
                 # TIP:
                 # A further mod might automagically augment the
                 # wraplength when the tooltip is too high to be
@@ -144,12 +132,10 @@ class Tooltip:
                           borderwidth=0,
                           wraplength=self.wraplength)
 
-        label.grid(padx=(pad[0], pad[2]),
-                   pady=(pad[1], pad[3]),
-                   sticky=tk.NSEW)
+        label.grid(padx=(pad[0], pad[2]), pady=(pad[1], pad[3]), sticky=tk.NSEW)
         win.grid()
 
-        x, y = tip_pos_calculator(widget, label)
+        (x, y) = tip_pos_calculator(widget, label)
 
         self.tw.wm_geometry("+%d+%d" % (x, y))
         return
@@ -256,8 +242,7 @@ if __name__ == '__main__':
 
         r += 1
         btn_w.grid(row=r, column=c + 0, padx=pad, pady=pad, sticky=tk.W)
-        btn_center.grid(row=r, column=c + 1, padx=pad, pady=pad,
-                    sticky=tk.NSEW)
+        btn_center.grid(row=r, column=c + 1, padx=pad, pady=pad, sticky=tk.NSEW)
         btn_e.grid(row=r, column=c + 2, padx=pad, pady=pad, sticky=tk.E)
 
         r += 1

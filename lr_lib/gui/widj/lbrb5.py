@@ -16,7 +16,7 @@ class LBRBText(tk.Text):
     def __init__(self, name: str, parent: 'lr_lib.gui.wrsp.main_window.Window'):
         self.heightVar = tk.IntVar(value=lr_vars.DEFAULT_LB_RB_MIN_HEIGHT)
 
-        self.label_info = tk.LabelFrame(parent, text=self.info_text[name], font=lr_vars.DefaultFont + ' bold italic',
+        self.label_info = tk.LabelFrame(parent, text=self.info_text[name], font=(lr_vars.DefaultFont + ' bold italic'),
                                         padx=0, pady=0, relief='groove', labelanchor=tk.N, bd=4)
         self.label_info.grid_rowconfigure(0, weight=1)
         self.label_info.grid_columnconfigure(0, weight=1)
@@ -42,9 +42,9 @@ class LBRBText(tk.Text):
         self.delete(1.0, 'end')
         self.insert(1.0, text)
         try:
-            self.label_info['text'] = self.info_text[self.name] % (len(text.split('\n')), len(text))
+            self.label_info['text'] = (self.info_text[self.name] % (len(text.split('\n')), len(text)))
         except TypeError:
-            self.label_info['text'] = self.info_text[self.name] % (len(text.decode().split('\n')), len(text))
+            self.label_info['text'] = (self.info_text[self.name] % (len(text.decode().split('\n')), len(text)))
         return
 
     @classmethod
@@ -57,21 +57,24 @@ class LBRBText(tk.Text):
             cls.bounds['LB'].set(lb)
         except Exception as ex:
             lr_vars.Logger.error('LB {}'.format(ex.args))
-            cls.bounds['LB'].set(lb.encode(lr_vars.VarEncode.get(), errors='replace'))
+            r = lb.encode(lr_vars.VarEncode.get(), errors='replace')
+            cls.bounds['LB'].set(r)
 
         rb = lr_vars.VarRB.get()
         try:
             cls.bounds['RB'].set(rb)
         except Exception as ex:
             lr_vars.Logger.error('RB {}'.format(ex.args))
-            cls.bounds['RB'].set(lb.encode(lr_vars.VarEncode.get(), errors='replace'))
+            r = lb.encode(lr_vars.VarEncode.get(), errors='replace')
+            cls.bounds['RB'].set(r)
         return
 
     @classmethod
     def set_label_text(cls) -> None:
         """сброс label-текста"""
         for b in cls.info_text:
-            cls.bounds[b].label_info['text'] = cls.info_text[b]
+            r = cls.info_text[b]
+            cls.bounds[b].label_info['text'] = r
             continue
         return
 

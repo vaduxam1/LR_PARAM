@@ -90,8 +90,8 @@ class WebLegend(tk.Toplevel):
     def _configure_interior(self, *args) -> None:
         """update the scrollbars to match the size of the inner frame"""
         size = (max(self.interior.winfo_reqwidth(), self.minimal_canvas_size[0]),
-                max(self.interior.winfo_reqheight(), self.minimal_canvas_size[1]))
-        self.canvas.config(scrollregion='0 0 %s %s' % size)
+                max(self.interior.winfo_reqheight(), self.minimal_canvas_size[1]), )
+        self.canvas.config(scrollregion=('0 0 %s %s' % size), )
         if self.interior.winfo_reqwidth() != self.canvas.winfo_width():
             self.canvas.config(width=self.interior.winfo_reqwidth())
         return
@@ -110,7 +110,7 @@ class WebLegend(tk.Toplevel):
         width = 40
         height = 35
         wdt = {w.snapshot: w for w in web_actions}
-        self.minimal_canvas_size[0] = lr_vars.Legend_scroll_len_modificator * len(wdt)
+        self.minimal_canvas_size[0] = (lr_vars.Legend_scroll_len_modificator * len(wdt))
         self._configure_interior()
         _transaction = None
         self.tr.clear()
@@ -119,6 +119,7 @@ class WebLegend(tk.Toplevel):
         lcolor = 'black'
         rep_param = self.parent.web_action.websReport.param_statistic
         colrs = clrs()
+        color = ''
 
         for i in self.web_canavs:
             transaction = wdt[i].transaction
@@ -149,7 +150,7 @@ class WebLegend(tk.Toplevel):
             def onObjectClick1(event, i=i, colors=colors) -> None:
                 """показать/удалить линии out"""
                 self.canvas.delete("all")
-                self.web_canavs[i]['enable'] = not self.web_canavs[i]['enable']
+                self.web_canavs[i]['enable'] = (not self.web_canavs[i]['enable'])
                 self.print(colors=colors)
                 return
 
@@ -175,7 +176,7 @@ class WebLegend(tk.Toplevel):
                 onObjectClick2 = lambda event, i=i, cl=cl: onObjectClick2(event, i=i, colors=iter(itertools.cycle(cl)))
             else:
                 cmd = self.canvas.create_rectangle
-            xy1 = lcolor, sep, 20, (width + sep + w_), (20 + height)
+            xy1 = (lcolor, sep, 20, (width + sep + w_), (20 + height), )
 
             shape_1 = cmd(*xy1[1:], fill=color, width=2)
 
@@ -197,7 +198,7 @@ class WebLegend(tk.Toplevel):
                 cmd = self.canvas.create_oval
             else:  # пометить, что внутри не используются {param}
                 cmd = self.canvas.create_rectangle
-            xy2 = sep, H, (width + sep + w_), (H + height)
+            xy2 = (sep, H, (width + sep + w_), (H + height), )
 
             shape_2 = cmd(*xy2, fill=color, width=2)
 

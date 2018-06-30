@@ -33,7 +33,8 @@ class YesNoCancel(tk.Toplevel):
 
             def enc(*a) -> None:
                 callback = self.combo_dict[self.combo_var.get()]
-                self.new_text(callback())
+                out = callback()
+                self.new_text(out)
                 return
 
             self.combo.bind("<<ComboboxSelected>>", enc)
@@ -49,7 +50,9 @@ class YesNoCancel(tk.Toplevel):
         i = 10
 
         for name in buttons:
-            cmd = lambda *a, n=name: self.queue.put_nowait(n)
+            def cmd(*a, n=name) -> None:
+                self.queue.put(n)
+                return
             self.buttons[name] = tk.Button(
                 self, text=name, command=cmd, width=width, font='Arial 9 bold', padx=0, pady=0)
             self.buttons[name].bind("<KeyRelease-Return>", cmd)
@@ -77,7 +80,7 @@ class YesNoCancel(tk.Toplevel):
             self.tk_text.insert(1.0, is_text)
             self.text_scrolly = ttk.Scrollbar(self, orient=tk.VERTICAL, command=self.tk_text.yview)
             self.text_scrollx = ttk.Scrollbar(self, orient=tk.HORIZONTAL, command=self.tk_text.xview)
-            self.tk_text.configure(yscrollcommand=self.text_scrolly.set, xscrollcommand=self.text_scrollx.set, padx=0, pady=0)
+            self.tk_text.configure(yscrollcommand=self.text_scrolly.set, xscrollcommand=self.text_scrollx.set)
             self.tk_text.grid(row=0, column=0, sticky=tk.NSEW, padx=0, pady=0)
             self.text_scrollx.grid(row=1, column=0, sticky=tk.NSEW, columnspan=2, padx=0, pady=0)
             self.text_scrolly.grid(row=0, column=1, sticky=tk.NSEW, padx=0, pady=0)
@@ -117,7 +120,7 @@ class YesNoCancel(tk.Toplevel):
             return self.queue.get()
         finally:
             self.alive_ = False
-            self.text = self.tk_text.get(1.0, tk.END) + '\n'
+            self.text = '\n{}'.format(self.tk_text.get(1.0, tk.END))
             self.destroy()
             self.parent.focus_set()
 

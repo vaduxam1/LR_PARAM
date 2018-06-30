@@ -98,7 +98,7 @@ class RespFiles(tk.Toplevel):
         inf = os.path.join(folder, self.inf_file)
         if os.path.isfile(inf):
             with open(inf) as f:
-                lr_lib.gui.widj.tooltip.createToolTip(inf_cmb, 'сменить snapshot\n' + f.read())
+                lr_lib.gui.widj.tooltip.createToolTip(inf_cmb, 'сменить snapshot\n{}'.format(f.read()), )
 
         lab.pack(side=side)
         files_cmb.pack(side='top')
@@ -126,9 +126,9 @@ class RespFiles(tk.Toplevel):
             return
 
         if self.folder_record == folder:
-            self.folder_record, self.folder_response = (directory, self.folder_response)
+            (self.folder_record, self.folder_response) = (directory, self.folder_response)
         else:
-            self.folder_record, self.folder_response = (self.folder_record, directory)
+            (self.folder_record, self.folder_response) = (self.folder_record, directory)
 
         RespFiles(self.widget, self.i_num, self.folder_record, self.folder_response)
         return
