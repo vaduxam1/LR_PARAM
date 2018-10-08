@@ -39,10 +39,12 @@ def chunks(iterable: iter, chunk_size: int) -> iter((iter,)):
 
 
 def _chunks_range(chunk_range: (int, ), iterable):
-    with contextlib.suppress(StopIteration):
+    try:
         for _ in chunk_range:
             yield next(iterable)
             continue
+    except Exception as ex:
+        pass
     return
 
 

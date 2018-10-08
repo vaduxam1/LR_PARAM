@@ -2,7 +2,7 @@
 # примеры разных пулов потоков + (запуск подсветки линий tk_text в MainThreadUpdater)
 
 import contextlib
-import asyncio
+# import asyncio
 import queue
 import sys
 
@@ -59,29 +59,29 @@ class NoPool:
         return func(*args, **kwargs)
 
 
-@asyncio.coroutine
-def async_worker(executor: callable, fn: callable, args: tuple, e=None):
-    result = yield from executor(e, fn, args)
-    return result
-
-
-class AsyncPool:
-    """acync пул, для POOL_"""
-    def __init__(self):
-        self.loop = asyncio.get_event_loop()
-        return
-
-    def map(self, fn: callable, args: list):
-        return self.loop.run_until_complete(self.async_map(fn, args))
-
-    def submit(self, fn: callable, *args, **kwargs) -> None:
-        def callback(*_, a=args, kw=kwargs):
-            return fn(*a, **kw)
-        f = self.async_map(callback, [None])
-        return self.loop.run_until_complete(f)
-
-    @asyncio.coroutine
-    def async_map(self, fn: callable, args: list):
-        workers = [asyncio.ensure_future(async_worker(self.loop.run_in_executor, fn, a), loop=self.loop) for a in args]
-        result = yield from asyncio.gather(*workers, loop=self.loop)
-        return result
+# @asyncio.coroutine
+# def async_worker(executor: callable, fn: callable, args: tuple, e=None):
+#     result = yield from executor(e, fn, args)
+#     return result
+#
+#
+# class AsyncPool:
+#     """acync пул, для POOL_"""
+#     def __init__(self):
+#         self.loop = asyncio.get_event_loop()
+#         return
+#
+#     def map(self, fn: callable, args: list):
+#         return self.loop.run_until_complete(self.async_map(fn, args))
+#
+#     def submit(self, fn: callable, *args, **kwargs) -> None:
+#         def callback(*_, a=args, kw=kwargs):
+#             return fn(*a, **kw)
+#         f = self.async_map(callback, [None])
+#         return self.loop.run_until_complete(f)
+#
+#     @asyncio.coroutine
+#     def async_map(self, fn: callable, args: list):
+#         workers = [asyncio.ensure_future(async_worker(self.loop.run_in_executor, fn, a), loop=self.loop) for a in args]
+#         result = yield from asyncio.gather(*workers, loop=self.loop)
+#         return result

@@ -19,9 +19,11 @@ def _system_info() -> (str, ):
                    'getfilesystemencoding, getwindowsversion, implementation, platform, exc_info, '
         import platform
         yield platform, '_sys_version, architecture, uname, win32_ver, '
-        with contextlib.suppress(Exception):
+        try:
             import psutil
             yield psutil, 'cpu_count, virtual_memory, users, '
+        except Exception as xe:
+            pass
         return
 
     def create_obj_attrs_message(obj: object, attrs: str):
@@ -43,9 +45,11 @@ def _system_info() -> (str, ):
         for ob, at in attrs_from_all_objs():
             yield from create_obj_attrs_message(ob, at)
             continue
-        with contextlib.suppress(Exception):
+        try:
             import psutil
             yield 'psutil.disk_usage = {}'.format(psutil.disk_usage('/'))
+        except Exception as xe:
+            pass
         return
 
     yield from get_messages()

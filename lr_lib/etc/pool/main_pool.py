@@ -15,7 +15,7 @@ import lr_lib.core.var.vars as lr_vars
 class POOL:
     """пул потоков, с возможностью выбора его типа"""
     pools = {
-        'AsyncPool': lr_lib.etc.pool.other.AsyncPool,
+        # 'AsyncPool': lr_lib.etc.pool.other.AsyncPool,
         'NoPool': lr_lib.etc.pool.other.NoPool,
         'SThreadPool(threading.Thread)': lr_lib.etc.pool.sthread.SThreadPool,
         'concurrent.futures.ThreadPoolExecutor': concurrent.futures.ThreadPoolExecutor,
@@ -74,12 +74,18 @@ class POOL:
 
     def pool_exit(self, ex=Exception) -> None:
         """закрыть пул"""
-        with contextlib.suppress(ex):
+        try:
             self.pool.shutdown()
-        with contextlib.suppress(ex):
+        except Exception as ex:
+            pass
+        try:
             self.pool.close()
-        with contextlib.suppress(ex):
+        except Exception as ex:
+            pass
+        try:
             self.shutdown(wait=False)
+        except Exception as ex:
+            pass
         return
 
 
