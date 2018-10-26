@@ -509,7 +509,7 @@ def wrsp_text_from_selection(event) -> object:
 
 @lr_vars.T_POOL_decorator
 def all_wrsp_auto_rename(action: 'lr_lib.core.action.main_awal.ActionWebsAndLines', *a, _l='"LB=', _r='"RB=') -> None:
-    """переименавать все wrsp, автоматически, с учетом всех настроек"""
+    """переименовать все wrsp, автоматически, с учетом всех настроек"""
     _wrsps = tuple(action.web_action.get_web_reg_save_param_all())
     wrsps = tuple(w.name for w in _wrsps)
 
