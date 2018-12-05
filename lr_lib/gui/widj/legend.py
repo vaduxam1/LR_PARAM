@@ -2,6 +2,7 @@
 # web_ леленда
 
 import itertools
+import collections
 
 import tkinter as tk
 import tkinter.ttk as ttk
@@ -30,7 +31,7 @@ class WebLegend(tk.Toplevel):
         self.title(self.ttl)
         self.attributes('-topmost', True)
 
-        self.web_canavs = {}
+        self.web_canavs = collections.OrderedDict()
 
         self.parent = parent
         self.minimal_canvas_size = list(lr_vars.Legend_minimal_canvas_size)
@@ -217,7 +218,7 @@ class WebLegend(tk.Toplevel):
         x = 20  # create_line's
         for web_ in web_actions:
             if self.web_canavs[web_.snapshot]['enable']:
-                color, *xy1 = self.web_canavs[web_.snapshot][1]
+                (color, *xy1) = self.web_canavs[web_.snapshot][1]
                 wn = [w.name for w in web_.web_reg_save_param_list]
                 for w in web_.web_reg_save_param_list:
                     name = w.name
