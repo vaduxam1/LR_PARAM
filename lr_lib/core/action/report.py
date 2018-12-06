@@ -157,10 +157,7 @@ class WebReport:
         for t in self.web_transaction:
             dtt = next(self.get_sub_transaction_dt(t, self.all_in_one))
             dtt.update(copy.deepcopy(self.web_transaction[t]))
-            try:
-                dtt['snapshots'] = {s: dict(web_reg(s)) for s in dtt['snapshots']}
-            except Exception as ex:
-                a=1
+            dtt['snapshots'] = {s: dict(web_reg(s)) for s in dtt['snapshots']}
             continue
 
         dt = self.checker_warn()
