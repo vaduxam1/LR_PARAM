@@ -134,7 +134,12 @@ def _create_files_from_inf(args: [(str, str, bool, bool), (str, int)]) -> iter((
         for sect in config.sections():
             for opt in config.options(sect):
                 if any(map(opt.startswith, lr_vars.FileOptionsStartswith)):
-                    file_name = config[sect][opt]
+                    file_name = config[sect]
+                    try:
+                        file_name = file_name[opt]
+                    except Exception as ex:
+                        print('ERROR!!! files.py', str([ex, ex.args]))
+                        continue
                     full_name = os.path.join(folder, file_name)
                     if os.path.isfile(full_name):
                         f = file_dict_creator(file_name, full_name, num, enc, opt, allow_deny, statistic)

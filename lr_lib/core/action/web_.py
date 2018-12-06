@@ -14,8 +14,18 @@ class Snapshot:
         1) оригинальный номер inf - для связи с файлами ответов
         2) новый порядковый номер - для определения порядка снапшотов в скрипте
     """
-    def __init__(self):
+    SERIAL = 0  # порядковый номер Snapshot, для автонумеровки
 
+    def __init__(self, inf: int, serial=None):
+        # порядковый Snapshot номер
+        if serial is None:
+            Snapshot.SERIAL += 1
+            self.serial = Snapshot.SERIAL
+        else:  # вручную, например для замены
+            self.serial = inf
+
+        # оригинальный Snapshot номер
+        self.inf = inf
         return
 
 
@@ -87,7 +97,9 @@ class WebAny:
         self.transaction = transaction
         self.type = _type or read_web_type(self.lines_list[0])
         self.name = self._read_name()
-        self.snapshot = self._read_snapshot()
+
+        snapshot = self._read_snapshot()
+        self.snapshot = Snapshot(snapshot)
 
         self.comments = comments.lstrip('\n').rstrip()
         if self.comments:
@@ -116,9 +128,9 @@ class WebAny:
         comments = self.comments
 
         if lr_vars.VarWebStatsWarn.get() or _all_stat:
-            if self.snapshot in self.ActionWebsAndLines.websReport.rus_webs:
+            if self.snapshot.inf in self.ActionWebsAndLines.websReport.rus_webs:
                 comments += '\n\t{} WARNING: NO ASCII Symbols(rus?)'.format(lr_lib.core.wrsp.param.LR_COMENT)
-            if (len(self.lines_list) > 2) and (not self.snapshot):
+            if (len(self.lines_list) > 2) and (not self.snapshot.inf):
                 comments += '\n\t{} WARNING: no "Snapshot=t.inf" (del?)'.format(lr_lib.core.wrsp.param.LR_COMENT)
 
         text = '{coment}\n{snap_text}'.format(coment=comments, snap_text='\n'.join(self.lines_list))
@@ -260,12 +272,12 @@ class WebSnapshot(WebAny):
             _tr = ''
 
         if lr_vars.VarWebStatsOut.get() or _all_stat:
-            _out = self.ActionWebsAndLines.websReport.stats_out_web(self.snapshot)
+            _out = self.ActionWebsAndLines.websReport.stats_out_web(self.snapshot.inf)
         else:
             _out = ''
 
         if lr_vars.VarWebStatsIn.get() or _all_stat:
-            _in = self.ActionWebsAndLines.websReport.stats_in_web(self.snapshot)
+            _in = self.ActionWebsAndLines.websReport.stats_in_web(self.snapshot.inf)
         else:
             _in = ''
 
@@ -279,7 +291,7 @@ class WebSnapshot(WebAny):
         if lr_vars.VarWebStatsWarn.get() or _all_stat:
             bad_wrsp = []
             for w in self.web_reg_save_param_list:
-                if self.snapshot in self.ActionWebsAndLines.websReport.param_statistic[w.name]['snapshots']:
+                if self.snapshot.inf in self.ActionWebsAndLines.websReport.param_statistic[w.name]['snapshots']:
                     bad_wrsp.append(w.param)
                 continue
             if bad_wrsp:
@@ -343,7 +355,7 @@ class WebRegSaveParam(WebAny):
             rep = self.ActionWebsAndLines.websReport.param_statistic[self.name]
             if not rep['param_count']:
                 comments += '\n{c} WARNING: NoWebRegSaveParamUsage?'.format(c=lr_lib.core.wrsp.param.LR_COMENT)
-            elif self.snapshot >= min(filter(bool, rep['snapshots'])):
+            elif self.snapshot.inf >= min(filter(bool, rep['snapshots'])):
                 comments += '\n{c} WARNING: WrspInAndOutUsage wrsp.snapshot >= usage.snapshot'.format(
                     c=lr_lib.core.wrsp.param.LR_COMENT)
 

@@ -31,7 +31,7 @@ class ActionWebsAndLines:
         self.drop_infs.clear()
         self.drop_files.clear()
 
-        self.action_infs.extend(a.snapshot for a in self.get_web_snapshot_all())
+        self.action_infs.extend(a.snapshot.inf for a in self.get_web_snapshot_all())
 
         for file in lr_vars.AllFiles:
             check = False
@@ -58,9 +58,12 @@ class ActionWebsAndLines:
 
     def get_web_by(self, webs: (lr_lib.core.action.web_.WebAny, ), **kwargs) -> iter((lr_lib.core.action.web_.WebAny,)):
         """объекты по kwargs условию: kwargs={'abc': [123]} -> web's.abc == [123]"""
+        snapshot = kwargs.pop('snapshot', None)
         attrs = kwargs.items()
         for web in webs:
             if all((getattr(web, attr) == value) for (attr, value) in attrs):
+                if snapshot and (getattr(web, 'snapshot').inf != snapshot):
+                    continue
                 yield web
             continue
         return
@@ -68,7 +71,7 @@ class ActionWebsAndLines:
     def get_web_snapshot_all(self) -> iter((lr_lib.core.action.web_.WebSnapshot,)):
         """snapshot объекты"""
         for web in self.get_web_all():
-            if web.snapshot:
+            if web.snapshot.inf:
                 yield web
             continue
         return

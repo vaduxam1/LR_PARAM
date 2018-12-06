@@ -44,11 +44,11 @@ class ActReplaceRemove(lr_lib.gui.action.act_search.ActSearch):
 
         del_all = yask = is_del = False
         for web in self.web_action.get_web_snapshot_all():
-            if web.snapshot in self.web_action.websReport.google_webs:
+            if web.snapshot.inf in self.web_action.websReport.google_webs:
                 if not del_all:
                     gws = str(self.web_action.websReport.google_webs)[:50]
                     wt = ''.join(web.to_str())
-                    sn = '"Snapshot=t{}.inf"'.format(web.snapshot)
+                    sn = '"Snapshot=t{}.inf"'.format(web.snapshot.inf)
                     yask = lr_lib.gui.widj.dialog.YesNoCancel(
                         ['Удалить текущий', "Удалить все Snapshot's {}".format(gws), 'Пропустить', 'Выход'],
                         "удалить {sn} содержащий {d}".format(d={k: wt.count(k) for k in lr_vars.DENY_WEB_}, sn=sn),

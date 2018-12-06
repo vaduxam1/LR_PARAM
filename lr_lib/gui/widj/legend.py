@@ -99,7 +99,7 @@ class WebLegend(tk.Toplevel):
 
     def add_web_canavs(self):
         for web_ in self.parent.web_action.get_web_snapshot_all():
-            self.web_canavs[web_.snapshot] = {1: {}, 2: {}, 'enable': True, 'enable_in': True}
+            self.web_canavs[web_.snapshot.inf] = {1: {}, 2: {}, 'enable': True, 'enable_in': True}
             continue
         return
 
@@ -110,7 +110,7 @@ class WebLegend(tk.Toplevel):
         w_ = 30
         width = 40
         height = 35
-        wdt = {w.snapshot: w for w in web_actions}
+        wdt = {w.snapshot.inf: w for w in web_actions}
         self.minimal_canvas_size[0] = (lr_vars.Legend_scroll_len_modificator * len(wdt))
         self._configure_interior()
         _transaction = None
@@ -217,8 +217,8 @@ class WebLegend(tk.Toplevel):
 
         x = 20  # create_line's
         for web_ in web_actions:
-            if self.web_canavs[web_.snapshot]['enable']:
-                (color, *xy1) = self.web_canavs[web_.snapshot][1]
+            if self.web_canavs[web_.snapshot.inf]['enable']:
+                (color, *xy1) = self.web_canavs[web_.snapshot.inf][1]
                 wn = [w.name for w in web_.web_reg_save_param_list]
                 for w in web_.web_reg_save_param_list:
                     name = w.name

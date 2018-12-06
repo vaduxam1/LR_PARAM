@@ -157,7 +157,7 @@ class ActWin(lr_lib.gui.action.act_any.ActAny):
             for web_ in self.web_action.get_web_snapshot_all():
                 res = web_.param_find_replace(search, replace, ask_dict)
                 if rep_stat and any(res):
-                    stats[web_.snapshot] = res
+                    stats[web_.snapshot.inf] = res
                 continue
 
             if rep_stat:

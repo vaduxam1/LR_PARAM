@@ -18,7 +18,7 @@ from lr_lib.etc.help import (COLORS, HEX, )
 #####################################
 # главные переменные
 
-VERSION = 'v10.6'
+VERSION = 'v10.7'
 lib_folder = 'lr_lib'
 Tk = tk.Tk()  # tkinter
 original_callback_exception = Tk.report_callback_exception
@@ -393,16 +393,20 @@ loggingLevels = {
 logger_level = 1  # loggingLevels
 
 VarWindowLogger = tk.StringVar(value='INFO')  # минимальный уровень вывода сообщений в gui
-EHOME, EEND = [3, 1]  # при ошибке, показать строк выше/ниже, строки в файле-кода
+EHE = (EHOME, EEND) = [3, 1]  # при ошибке, показать строк выше/ниже, строки в файле-кода
 
 #####################################
 # поиск файлов ответов, при старте
 
 DEFAULT_FILES_FOLDER = 'data'  # каталог поиска
 DEFAULT_FILES_FOLDER = os.path.realpath(DEFAULT_FILES_FOLDER) if os.path.isdir(DEFAULT_FILES_FOLDER) else os.getcwd()
-FileOptionsStartswith = {s.lower() for s in (
-    'FileName', 'ResponseHeaderFile', 'SnapshotXmlFile',
-)}  # секции в inf-файле, c файлами-ответов
+
+_FileOptions = (
+    'FileName',
+    'ResponseHeaderFile',
+    'SnapshotXmlFile',
+)
+FileOptionsStartswith = set(map(str.lower, _FileOptions))  # секции в inf-файле, c файлами-ответов
 
 # файлы, исключенные из поиска param
 DENY_FILES = {
@@ -484,7 +488,10 @@ def T_POOL_decorator(func: callable):
 
 def clearVars() -> None:
     """очистка Var's"""
-    v = (VarParam, VarFileName, VarFile, VarPartNum, VarLB, VarRB, VarFileText, VarWrspDict, VarFileSortKey1, VarFileSortKey2, )
+    v = (
+        VarParam, VarFileName, VarFile, VarPartNum, VarLB, VarRB, VarFileText, VarWrspDict,
+        VarFileSortKey1, VarFileSortKey2,
+    )
     for var in v:
         var.set(var.default_value, callback=False)
         continue

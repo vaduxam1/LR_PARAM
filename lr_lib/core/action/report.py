@@ -67,7 +67,7 @@ class WebReport:
         for web in self.ActionWebsAndLines.get_web_all():
             self.ActionWebsAndLines.action.tk_text.web_add_highlight(web)
 
-            snapshot = web.snapshot
+            snapshot = web.snapshot.inf
             transaction = web.transaction
 
             if isinstance(web, lr_lib.core.action.web_.WebSnapshot):  # проставить родителя wrsp объекта
@@ -126,7 +126,7 @@ class WebReport:
             statistic['transaction_count'] = len(statistic['transaction_names'])
             statistic['minmax_snapshots'] = snapshot_diapason_string(snaps)  # для in/out comment
 
-            if (not statistic['param_count']) or (self._wrsp[wr_name].snapshot in snaps):
+            if (not statistic['param_count']) or (self._wrsp[wr_name].snapshot.inf in snaps):
                 self.bad_wrsp_in_usage.append(wr_name)
             continue
 
@@ -157,7 +157,10 @@ class WebReport:
         for t in self.web_transaction:
             dtt = next(self.get_sub_transaction_dt(t, self.all_in_one))
             dtt.update(copy.deepcopy(self.web_transaction[t]))
-            dtt['snapshots'] = {s: dict(web_reg(s)) for s in dtt['snapshots']}
+            try:
+                dtt['snapshots'] = {s: dict(web_reg(s)) for s in dtt['snapshots']}
+            except Exception as ex:
+                a=1
             continue
 
         dt = self.checker_warn()
@@ -182,7 +185,8 @@ class WebReport:
 
         statistic = (get(wr_name) for wr_name in sorted(params_in, key=len))
         s = '\n\t{c} IN({i})<-[{ui}]: {st}'.format(
-            st=', '.join(statistic), c=lr_lib.core.wrsp.param.LR_COMENT, i=sum(params_in[w] for w in params_in), ui=len(params_in))
+            st=', '.join(statistic), c=lr_lib.core.wrsp.param.LR_COMENT, i=sum(params_in[w] for w in params_in),
+            ui=len(params_in), )
         return s
 
     def stats_out_web(self, snapshot: int) -> str:
@@ -207,7 +211,10 @@ class WebReport:
         transaction = web.transaction
         mm = self.web_transaction[transaction]['minmax_snapshots']
         if isinstance(web, lr_lib.core.action.web_.WebSnapshot):
-            m = self.web_transaction[transaction]['snapshots'].index(web.snapshot) + 1
+            t = self.web_transaction[transaction]
+            s = web.snapshot.inf
+            m = t['snapshots'].index(s)
+            m += 1
             mm = '{m}/{mm}'.format(mm=mm, m=m)
 
         if transaction:

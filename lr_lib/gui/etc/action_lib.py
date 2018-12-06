@@ -524,7 +524,7 @@ def all_wrsp_auto_rename(action: 'lr_lib.core.action.main_awal.ActionWebsAndLine
                 rb = line.split(_r, 1)[1].rsplit('",', 1)[0]
             continue
         assert lb, rb
-        new_name = lr_lib.core.wrsp.param.wrsp_name_creator(w.param, lb, rb, w.snapshot)
+        new_name = lr_lib.core.wrsp.param.wrsp_name_creator(w.param, lb, rb, w.snapshot.inf)
         wrsps_new.append(new_name)
         continue
 

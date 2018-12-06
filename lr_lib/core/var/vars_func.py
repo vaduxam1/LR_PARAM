@@ -4,7 +4,7 @@
 # VarParam ->> VarFileName -> VarFile -> VarFileText ->> VarPartNum ->> VarLB/VarRB -> VarWrspDict ->>
 #                                                                                       ->> lr_param.web_reg_save_param
 
-import string  # используется в eval splitters_combo(), не удалять !
+import string  # через gui, используется в eval splitters_combo(), не удалять !
 
 import lr_lib
 import lr_lib.core.var.vars as lr_vars
@@ -63,8 +63,9 @@ def _is_mutable_bound(st: str, b1: '{', b2: '}', a2=0) -> int:
 
 def is_mutable_bound(left: str, right: str, b1='{', b2='}') -> [int, int]:
     """находится ли внутри скобок"""
-    s = [_is_mutable_bound(left[::-1], b2, b1), _is_mutable_bound(right, b1, b2)]
-    return s
+    ml = _is_mutable_bound(left[::-1], b2, b1)
+    mr = _is_mutable_bound(right, b1, b2)
+    return [ml, mr]
 
 
 def set_part_num(num=0) -> None:
@@ -88,9 +89,11 @@ def set_part_num(num=0) -> None:
 
     # next (3) либо (4), при пустом LB/RB(5)
     if lr_vars.VarPartNumEmptyLbNext.get() and (not lb):
-        return next_3_or_4_if_bad_or_enmpy_lb_rb('пустом[LB]')
+        next_3_or_4_if_bad_or_enmpy_lb_rb('пустом[LB]')
+        return
     elif lr_vars.VarPartNumEmptyRbNext.get() and (not rb):
-        return next_3_or_4_if_bad_or_enmpy_lb_rb('пустом[RB]')
+        next_3_or_4_if_bad_or_enmpy_lb_rb('пустом[RB]')
+        return
 
     # обрезать по \n
     if lr_vars.VarReturnLB.get():
@@ -114,13 +117,17 @@ def set_part_num(num=0) -> None:
 
     # next (3) либо (4), при некорректном LB/RB(5)
     if lr_vars.VarPartNumEmptyLbNext.get() and not lb.strip():
-        return next_3_or_4_if_bad_or_enmpy_lb_rb('пустом[LB]')
+        next_3_or_4_if_bad_or_enmpy_lb_rb('пустом[LB]')
+        return
     elif lr_vars.VarPartNumEmptyRbNext.get() and not rb.strip():
-        return next_3_or_4_if_bad_or_enmpy_lb_rb('пустом[RB]')
+        next_3_or_4_if_bad_or_enmpy_lb_rb('пустом[RB]')
+        return
     if lr_vars.VarPartNumDenyLbNext.get() and not lr_lib.core.etc.lbrb_checker.check_bound_lb(__lb):
-        return next_3_or_4_if_bad_or_enmpy_lb_rb('недопустимом[LB]')
+        next_3_or_4_if_bad_or_enmpy_lb_rb('недопустимом[LB]')
+        return
     if lr_vars.VarPartNumDenyRbNext.get() and (not lr_lib.core.etc.lbrb_checker.check_bound_rb(__rb)):
-        return next_3_or_4_if_bad_or_enmpy_lb_rb('недопустимом[RB]')
+        next_3_or_4_if_bad_or_enmpy_lb_rb('недопустимом[RB]')
+        return
 
     # сохранить
     lr_vars.VarLB.set(lb)
@@ -166,12 +173,14 @@ def lb_rb_split_list_set(__lb: str, __rb: str, lb: str, rb: str) -> (str, str):
     vlb2 = lr_vars.VarLbB2.get()
     vrb1 = lr_vars.VarRbB1.get()
     vrb2 = lr_vars.VarRbB2.get()
-    _l = __lb if (vlb1 or vrb1) else ''
-    _r = __rb if (vlb2 or vrb2) else ''
+    _l = (__lb if (vlb1 or vrb1) else '')
+    _r = (__rb if (vlb2 or vrb2) else '')
+
     if _l or _r:
         bound1 = is_mutable_bound(_l, _r, b1='{', b2='}')
         bound2 = is_mutable_bound(_l, _r, b1='[', b2=']')
         for (indx_1, indx_2, allow_1, allow_2) in zip(bound1, bound2, [vlb1, vrb1], [vlb2, vrb2]):
+
             if allow_1 and indx_1:
                 if indx_2:
                     if indx_1 < indx_2:
@@ -184,6 +193,7 @@ def lb_rb_split_list_set(__lb: str, __rb: str, lb: str, rb: str) -> (str, str):
             elif allow_2 and indx_2:
                 lr_vars.VarSplitListNumRB.set(3)
                 break
+
             continue
 
     try:
@@ -222,43 +232,52 @@ def gui_updater_comboParts() -> None:
 def gui_updater_comboFiles() -> None:
     """при изменении из ядра, менять gui comboFiles"""
     if lr_vars.Window and (not lr_vars.Window._block_):
-        lr_vars.Window.comboFiles.set(lr_vars.VarFileName.get())
+        f = lr_vars.VarFileName.get()
+        lr_vars.Window.comboFiles.set(f)
         lr_vars.Window.comboPartsFill()
     return
 
 
+NF3 = ('%s\nNEXT файл(3), при {text} в (5):\n {indx}-> {ni}/{len_files} : {f} -> {next_file}' % ('_'*50))
+NP4 = ' next вхождение(4), при {text} в (5):\n\t\t[ {num}-> {n}/{pc} ] : {f}'
+UW = '''
+Все возможные LB/RB(5), для формирования param "{p}", пустые/недопустимые.
+'Снятие чекбокса "deny" или "strip", вероятно поможет. 
+Если требуется, переход к месту замены в тексте, снять чекбоскс "NoAsk", либо установить "forceAsk".
+'''
+
+
 def next_3_or_4_if_bad_or_enmpy_lb_rb(text='') -> None:
     """увеличить(3) либо (4)"""
-    len_files = len(lr_vars.FilesWithParam)
-    lf = (len_files - 1)  # нумерация с 0
-    num = lr_vars.VarPartNum.get()
-    n = (num + 1)
     file = lr_vars.VarFile.get()
+    name = file['File']['Name']
 
-    if n < file['Param']['Count']:  # вхождение(4)
-        lr_vars.VarPartNum.set(n)
-
+    count_n = file['Param']['Count']
+    old_n = lr_vars.VarPartNum.get()
+    new_n = (old_n + 1)
+    if new_n < count_n:  # вхождение(4)
         lr_vars.MainThreadUpdater.submit(gui_updater_comboParts)
-        lr_vars.Logger.trace('next вхождение(4), при {text} в (5)\n\t{num}->{n}/{pc} : {f} | {p}'.format(
-            num=num, n=n, pc=(file['Param']['Count'] - 1), f=file['File']['Name'], text=text, p=lr_vars.VarParam.get()))
+        lr_vars.Logger.trace(NP4.format(num=(old_n + 1), n=(new_n + 1), pc=count_n, f=name, text=text, p=''))
+        lr_vars.VarPartNum.set(new_n)
         return
 
-    elif lf > 0:  # файл(3)
-        indx = lr_vars.FilesWithParam.index(file)
-        if indx < lf:
-            i = indx + 1
-            next_file = lr_vars.FilesWithParam[i]
-            file_name = next_file['File']['Name']
-            lr_vars.VarFileName.set(file_name)
-
+    else:  # файл(3)
+        index = lr_vars.FilesWithParam.index(file)
+        new_i = (index + 1)
+        try:
+            file_new = lr_vars.FilesWithParam[new_i]
+        except IndexError:
+            pass
+        else:
+            nf = file_new['File']['Name']
             lr_vars.MainThreadUpdater.submit(gui_updater_comboFiles)
-            lr_vars.Logger.trace('next файл(3), при {text} в (5)\n\t{indx}->{ni}/{len_files} : {f} -> {next_file} | {p}'.format(
-                len_files=len_files, indx=indx, ni=i, f=file['File']['Name'], next_file=file_name, text=text, p=lr_vars.VarParam.get()))
+            lr_vars.Logger.trace(NF3.format(len_files=len(lr_vars.FilesWithParam), indx=(index + 1), ni=(new_i + 1),
+                                            f=name, next_file=nf, text=text, ))
+            lr_vars.Logger.trace(NP4.format(num=1, n=1, pc=file_new['Param']['Count'], f=nf, text=text,))
+            lr_vars.VarFileName.set(nf)
             return
 
-    raise UserWarning('Все возможные LB/RB(5), для формирования param "{p}", пустые/недопустимые.\n'
-                      'Снятие чекбокса "deny" или "strip", вероятно поможет. Если требуется, переход к месту замены '
-                      'в тексте, снять чекбоскс "NoAsk", либо установить "forceAsk".'.format(p=lr_vars.VarParam.get()))
+    raise UserWarning(UW.format(p=lr_vars.VarParam.get()))
 
 
 def splitters_combo(combo) -> [str, ]:
@@ -271,3 +290,4 @@ def splitters_combo(combo) -> [str, ]:
 
     e = eval(splitter)
     return e
+

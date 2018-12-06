@@ -335,7 +335,7 @@ def set_param_in_action_inf(action, param: str) -> iter((int, )):
     for web_ in action.web_action.get_web_snapshot_all():
         (allow, deny) = web_.param_find_replace(param)
         if allow:
-            yield web_.snapshot
+            yield web_.snapshot.inf
         continue
     return 0
 
