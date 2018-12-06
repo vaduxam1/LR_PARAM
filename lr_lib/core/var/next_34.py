@@ -1,4 +1,5 @@
 ﻿# -*- coding: UTF-8 -*-
+# не используется, как пример смены VarPartNum и VarFile
 
 import lr_lib
 import lr_lib.core.var.vars as lr_vars
@@ -8,7 +9,6 @@ def next_part_or_file(_work=True):
     yield
     while _work:
         if _next_part():
-            lr_vars.MainThreadUpdater.submit(gui_updater_comboParts)
             yield
         elif _next_file():
             yield
