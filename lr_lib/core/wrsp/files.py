@@ -28,59 +28,54 @@ default = -1
 
 def file_dict_creator(name: str, full_name: str, inf_num: int, enc: str, inf_key: str, deny: bool, stats: bool) -> dict:
     """создать словарь файла"""
-    file = (get_file_with_kwargs(lr_vars.AllFiles, Name=name) if inf_num else None)
+    is_responce = is_responce_file(name)
+    if not (deny or is_responce):
+        return
 
-    if file:  # файл уже есть, те пришел из другого inf
-        file['Snapshot']['Nums'].add(inf_num)
+    if is_responce is None:  # из lr_lib.gui.widj.responce_files
+        (name_, _ext) = os.path.splitext(name)
+    else:
+        (name_, _ext) = is_responce
 
-    else:  # новый файл
-        is_responce = is_responce_file(name)
-        if deny or is_responce:
-            if is_responce is None:  # из lr_lib.gui.widj.responce_files
-                (name_, _ext) = os.path.splitext(name)
-            else:
-                (name_, _ext) = is_responce
+    file = dict(
+        File=dict(
+            Name=name,
+            FullName=full_name,
+            _ext=_ext,
+            name_=name_,
+            encoding=enc,
+            len=default,
+            NotPrintable=default,
+            ascii_letters=default,
+            digits=default,
+            whitespace=default,
+            punctuation=default,
+            Size=default,
+            Lines=default,
+            timeCreate='',
+        ),
+        Snapshot=dict(
+            Nums={inf_num},
+            len=default,
+            inf_key=inf_key
+        ),
+        Param=dict(
+            Name='',
+            Count=default,
+            Count_indexs=[],
+            Count_indexs_len=[],
+            NotPrintable=default,
+            len=default,
+            inf_max=default,
+            inf_min=default,
+            max_action_inf=default,
+            action_id=default,
+        ),
+    )
 
-            file = dict(
-                File=dict(
-                    Name=name,
-                    FullName=full_name,
-                    _ext=_ext,
-                    name_=name_,
-                    encoding=enc,
-                    len=default,
-                    NotPrintable=default,
-                    ascii_letters=default,
-                    digits=default,
-                    whitespace=default,
-                    punctuation=default,
-                    Size=default,
-                    Lines=default,
-                    timeCreate='',
-                ),
-                Snapshot=dict(
-                    Nums={inf_num},
-                    len=default,
-                    inf_key=inf_key
-                ),
-                Param=dict(
-                    Name='',
-                    Count=default,
-                    Count_indexs=[],
-                    Count_indexs_len=[],
-                    NotPrintable=default,
-                    len=default,
-                    inf_max=default,
-                    inf_min=default,
-                    max_action_inf=default,
-                    action_id=default,
-                ),
-            )
-
-            if stats:
-                set_file_statistic(file)
-            return file
-    return
+    if stats:
+        set_file_statistic(file)
+    return file
 
 
 def get_inf_file_num(file: str) -> int:
@@ -110,7 +105,13 @@ def create_files_from_infs(folder: str, enc: str, allow_deny: bool, statistic: b
 
     # создать файлы ответов
     for chunk_files in executer(get_files_portions, chunks):
-        yield from filter(bool, chunk_files)
+        for new_file in filter(bool, chunk_files):
+            file = get_file_with_kwargs(lr_vars.AllFiles, Name=new_file['File']['Name'])
+            if file:  # файл уже есть, те пришел из другого inf
+                file['Snapshot']['Nums'].update(new_file['Snapshot']['Nums'])
+            else:
+                lr_vars.AllFiles.append(new_file)
+            continue
         continue
     return
 
@@ -135,11 +136,14 @@ def _create_files_from_inf(args: [(str, str, bool, bool), (str, int)]) -> iter((
             for opt in config.options(sect):
                 if any(map(opt.startswith, lr_vars.FileOptionsStartswith)):
                     file_name = config[sect]
+
                     try:
                         file_name = file_name[opt]
                     except Exception as ex:
-                        print('ERROR!!! files.py', str([ex, ex.args]))
+                        # InterpolationSyntaxError '%' must be followed by '%' or '(', found: '%20Federation.png',
+                        print('ERROR!!! files.py', str([ex.__class__, ex, ex.args]))
                         continue
+
                     full_name = os.path.join(folder, file_name)
                     if os.path.isfile(full_name):
                         f = file_dict_creator(file_name, full_name, num, enc, opt, allow_deny, statistic)
@@ -182,16 +186,18 @@ def init() -> None:
     statistic = lr_vars.VarAllFilesStatistic.get()
 
     if lr_vars.VarIsSnapshotFiles.get():    # файлы ответов  из LoadRunner inf
-        files = create_files_from_infs(folder, enc, allow_deny, statistic)
-        lr_vars.AllFiles = lr_lib.core.etc.other.iter_to_list(files)
+        create_files_from_infs(folder, enc, allow_deny, statistic)
 
     else:  # все файлы каталога
         for (e, name) in enumerate(os.listdir(folder)):
             full_name = os.path.join(folder, name)
             if os.path.isfile(full_name):
-                file = file_dict_creator(name, full_name, 0, enc, '', allow_deny, statistic)
-                if file:
-                    lr_vars.AllFiles.append(file)
+                new_file = file_dict_creator(name, full_name, 0, enc, '', allow_deny, statistic)
+                file = get_file_with_kwargs(lr_vars.AllFiles, Name=new_file['File']['Name'])
+                if file:  # файл уже есть, те пришел из другого inf
+                    file['Snapshot']['Nums'].update(new_file['Snapshot']['Nums'])
+                else:
+                    lr_vars.AllFiles.append(new_file)
             continue
 
     if not lr_vars.AllFiles:

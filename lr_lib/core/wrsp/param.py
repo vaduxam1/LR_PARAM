@@ -368,7 +368,8 @@ def get_files_with_param(param: str, action=None, set_file=True) -> None:
     param_searcher = (search_param_in_file if lr_vars.VarStrongSearchInFile.get() else _search_param_in_file)
     execute = (lr_vars.M_POOL.imap_unordered if lr_vars.FindParamPOOLEnable else map)
 
-    lr_vars.FilesWithParam = sorted(filter(bool, execute(param_searcher, files)), key=lr_lib.core.etc.other.sort_files)  # (2) поиск
+    # (2) поиск
+    lr_vars.FilesWithParam = sorted(filter(bool, execute(param_searcher, files)), key=lr_lib.core.etc.other.sort_files)
     if not lr_vars.FilesWithParam:
         raise UserWarning(param_not_found_err_text(action, files, search_data, param))
 
