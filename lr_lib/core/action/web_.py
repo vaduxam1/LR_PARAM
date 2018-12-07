@@ -22,7 +22,7 @@ class Snapshot:
             Snapshot.SERIAL += 1
             self.serial = Snapshot.SERIAL
         else:  # вручную, например для замены
-            self.serial = inf
+            self.serial = serial
 
         # оригинальный Snapshot номер
         self.inf = inf
