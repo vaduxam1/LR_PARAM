@@ -185,7 +185,7 @@ def init() -> None:
     allow_deny = lr_vars.VarAllowDenyFiles.get()
     statistic = lr_vars.VarAllFilesStatistic.get()
 
-    if lr_vars.VarIsSnapshotFiles.get():    # файлы ответов  из LoadRunner inf
+    if lr_vars.VarIsSnapshotFiles.get():  # файлы ответов из LoadRunner inf
         create_files_from_infs(folder, enc, allow_deny, statistic)
 
     else:  # все файлы каталога
