@@ -257,7 +257,7 @@ def next_3_or_4_if_bad_or_enmpy_lb_rb(text='') -> None:
     new_n = (old_n + 1)
     if new_n < count_n:  # вхождение(4)
         lr_vars.MainThreadUpdater.submit(gui_updater_comboParts)
-        lr_vars.Logger.trace(NP4.format(num=(old_n + 1), n=(new_n + 1), pc=count_n, f=name, text=text, p=''))
+        lr_vars.Logger.trace(NP4.format(num=(old_n + 1), n=(new_n + 1), pc=count_n, f=name, text=text, p='', ))
         lr_vars.VarPartNum.set(new_n)
         return
 
@@ -273,11 +273,12 @@ def next_3_or_4_if_bad_or_enmpy_lb_rb(text='') -> None:
             lr_vars.MainThreadUpdater.submit(gui_updater_comboFiles)
             lr_vars.Logger.trace(NF3.format(len_files=len(lr_vars.FilesWithParam), indx=(index + 1), ni=(new_i + 1),
                                             f=name, next_file=nf, text=text, ))
-            lr_vars.Logger.trace(NP4.format(num=1, n=1, pc=file_new['Param']['Count'], f=nf, text=text,))
+            lr_vars.Logger.trace(NP4.format(num=1, n=1, pc=file_new['Param']['Count'], f=nf, text=text, ))
             lr_vars.VarFileName.set(nf)
             return
 
-    raise UserWarning(UW.format(p=lr_vars.VarParam.get()))
+    # UserWarning - признак окончания для action_lib._all_wrsp_dict_web_reg_save_param()
+    raise UserWarning(UW.format(p=lr_vars.VarParam.get(), ))
 
 
 def splitters_combo(combo) -> [str, ]:
