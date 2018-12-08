@@ -125,19 +125,19 @@ def all_wrsp_dict_web_reg_save_param(event, wrsp_web_=None) -> None:
     return
 
 
-def _wrsp_dubl(wrsp: str, split='",') -> str:
+def _wrsp_text_delta_remove(wr: (dict, str), ) -> str:
     """убрать 'вариативную' часть wrsp текста"""
-    ws = wrsp.split(split, 1)
-    if len(ws) == 2:
-        return ws[1]
-    return wrsp
+    (wrsp_dict, wrsp) = wr
+    delta = wrsp_dict['web_reg_name']
+    without_delta = wrsp.replace(delta, '').strip()
+    return without_delta
 
 
-def _check_wrsp_dubl(wrsp: str) -> bool:
+def _check_wrsp_duplicate(wr: (dict, str), ) -> bool:
     """проверить, не создан ли ранее, такой же wrsp. True - создан, те дубликат."""
-    _wrsp = _wrsp_dubl(wrsp)
-    is_dubl = any((_wrsp == _wrsp_dubl(w[1])) for w in lr_vars.VarWrspDictList)
-    return is_dubl
+    wrsp = _wrsp_text_delta_remove(wr)
+    duplicate = any((wrsp == w) for w in map(_wrsp_text_delta_remove, lr_vars.VarWrspDictList))
+    return duplicate
 
 
 def _all_wrsp_dict_web_reg_save_param(action: 'lr_lib.gui.action.main_action.ActionWindow',
@@ -165,11 +165,10 @@ def _all_wrsp_dict_web_reg_save_param(action: 'lr_lib.gui.action.main_action.Act
             lr_lib.core.var.vars_func.next_3_or_4_if_bad_or_enmpy_lb_rb('поиск всех возможных wrsp_dict')
             wrsp_dict = lr_lib.core.wrsp.param.wrsp_dict_creator()
             if wrsp_dict:
-                wrsp_ = lr_lib.core.wrsp.param.create_web_reg_save_param(wrsp_dict)
-                if _check_wrsp_dubl(wrsp_):
+                wr = (wrsp_dict, lr_lib.core.wrsp.param.create_web_reg_save_param(wrsp_dict))
+                if _check_wrsp_duplicate(wr):
                     continue
-                dt = [wrsp_dict, wrsp_]
-                lr_vars.VarWrspDictList.append(dt)
+                lr_vars.VarWrspDictList.append(wr)
         except UserWarning:
             break
         except Exception:
