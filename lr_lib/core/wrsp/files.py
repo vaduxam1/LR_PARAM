@@ -4,7 +4,6 @@
 import os
 import time
 import string
-import contextlib
 import configparser
 import collections
 
@@ -239,9 +238,11 @@ def get_files_with_kwargs(files: (dict,), key='File', **kwargs) -> iter((dict,))
     """найти файлы, содержащие kwargs"""
     for file in files:
         f = file[key]
-        with contextlib.suppress(KeyError):
+        try:
             if all((kwargs[k] == f[k]) for k in kwargs):
                 yield file
+        except Exception as ex:
+            pass
         continue
     return
 

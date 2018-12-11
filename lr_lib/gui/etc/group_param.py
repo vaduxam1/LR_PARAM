@@ -4,7 +4,6 @@
 import re
 import sys
 import queue
-import contextlib
 
 import tkinter as tk
 
@@ -125,8 +124,10 @@ def _group_param_iter(params: [str, ], action: 'lr_lib.gui.action.main_action.Ac
             # заменить param на web_reg_save_param
             replace.send((wrsp_dict['param'], wrsp_dict['web_reg_name']))
 
-            with contextlib.suppress(UserWarning, AssertionError):  # продолжать при raise
+            try:  # продолжать при raise
                 action.param_inf_checker(wrsp_dict, wrsp)  # проверка(popup окно) inf запроса <= inf web_reg_save_param
+            except (UserWarning, AssertionError) as ex:
+                pass
             yield (counter, wrsp_dict, wrsp, unsuccess)  # для progressbar
             continue
     finally:

@@ -2,7 +2,6 @@
 # всплывающие подсказки
 
 import threading
-import contextlib
 
 import tkinter as tk
 
@@ -26,16 +25,20 @@ class ToolTip(object):
         if self.toolTips:
             with self.lock:
                 for tip in self.toolTips:
-                    with contextlib.suppress(Exception):
+                    try:
                         tip.hidetip()
-                    with contextlib.suppress(Exception):
+                    except Exception as ex:
+                        pass
+                    try:
                         self.toolTips.remove(tip)
+                    except Exception as ex:
+                        pass
                     continue
 
         with self.lock:
             self.toolTips.append(self)
 
-        with contextlib.suppress(Exception):
+        try:
             (x, y, cx, cy) = self.widget.bbox("insert")
             x += (self.widget.winfo_rootx() + 25)
             y += (self.widget.winfo_rooty() + 20)
@@ -45,22 +48,30 @@ class ToolTip(object):
             self.tip.attributes('-topmost', True)
             tk.Label(self.tip, text=text, justify=tk.LEFT, background=lr_vars.Background, relief=tk.SOLID, borderwidth=1,
                      font=lr_vars.ToolTipFont).pack(ipadx=0, ipady=0)
+        except Exception as ex:
+            pass
         return
 
     def hidetip(self) -> None:
-        with contextlib.suppress(Exception):
+        try:
             self.tip.destroy()
+        except Exception as ex:
+            pass
         return
 
 
 def widget_values_counter(widget) -> (int, int):
     """кол-во строк/индекс текущей строки виджета"""
     i = li = 0
-    with contextlib.suppress(Exception):
+    try:
         _i = list(widget['values'])
         i = (_i.index(widget.get()) + 1)
-    with contextlib.suppress(Exception):
+    except Exception as ex:
+        pass
+    try:
         li = len(widget['values'])
+    except Exception as ex:
+        pass
 
     return widget.widgetName, i, li
 

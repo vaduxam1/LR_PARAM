@@ -5,7 +5,6 @@ import os
 import re
 import html
 import codecs
-import contextlib
 import urllib.parse
 
 import tkinter as tk
@@ -143,10 +142,12 @@ def _check_wrsp_duplicate(wr: (dict, str), ) -> bool:
 def _all_wrsp_dict_web_reg_save_param(action: 'lr_lib.gui.action.main_action.ActionWindow',
                                       selection: str) -> iter((lr_lib.core.action.web_.WebRegSaveParam,)):
     """все варианты создания web_reg_save_param"""
-    with contextlib.suppress(AttributeError):
+    try:
         wrsp_and_param = action.web_action.websReport.wrsp_and_param_names
         if selection in wrsp_and_param:  # сменить wrsp-имя в ориг. имя param
             selection = wrsp_and_param[selection]
+    except AttributeError as ex:
+        pass
 
     lr_vars.VarParam.set(selection, action=action, set_file=True)
     lr_vars.VarWrspDictList.clear()
@@ -307,8 +308,10 @@ def rClick_web_reg_save_param_regenerate(event, new_lb_rb=True, selection=None, 
         else:
             action.backup()
             action.web_action.web_reg_save_param_remove(param)  # удалить(при замене)
-            with contextlib.suppress(Exception):
+            try:
                 action.param_inf_checker(wrsp_dict, web_reg_save_param)
+            except Exception as ex:
+                pass
 
             wrsp_name = wrsp_dict['web_reg_name']
             action.web_action.web_reg_save_param_insert(wrsp_dict, web_reg_save_param)  # сохр web_reg_save_param в web
@@ -339,8 +342,10 @@ def rClick_min_inf(event) -> None:
 def rClick_Search(event) -> None:
     """поиск выделения в тексте, меню правой кнопки мыши"""
     selection = event.widget.selection_get()
-    with contextlib.suppress(AttributeError):
+    try:
         event.widget.action.search_in_action(word=selection)
+    except AttributeError as ex:
+        pass
     return
 
 
@@ -354,8 +359,10 @@ def rename_transaction(event, parent=None, s='lr_start_transaction("', e='lr_end
         old_name = selection.split(e, 1)[1].split('"', 1)[0]
 
     if not parent:
-        with contextlib.suppress(AttributeError):
+        try:
             parent = event.widget.action
+        except AttributeError as ex:
+            pass
 
     y = lr_lib.gui.widj.dialog.YesNoCancel(['Переименовать', 'Отмена'], 'Переименовать выделенную(линию) transaction',
                               'указать только новое имя transaction', 'transaction', parent=parent, is_text=old_name)
@@ -386,8 +393,10 @@ def encoder(event, action=None) -> None:
     except AttributeError:
         widget = event
     if not action:
-        with contextlib.suppress(AttributeError):
+        try:
             action = widget.action
+        except AttributeError as ex:
+            pass
 
     selection = widget.selection_get().strip()
 
@@ -396,7 +405,7 @@ def encoder(event, action=None) -> None:
         'utf-8': lambda: selection.encode('utf-8').decode(errors='replace'),
         'unquote': lambda: urllib.parse.unquote(selection),
         'unescape': lambda: html.unescape(selection),
-        'unicode_escape': lambda: codecs.decode(selection, 'unicode_escape', errors='replace'),
+        'unicode_escape': lambda: codecs.decode(selection, 'unicode_escape', 'replace'),
     }
 
     parent = (action or widget)
@@ -444,8 +453,10 @@ def rClick_add_highlight(event, option: str, color: str, val: str, find=False) -
     if val == 'добавить':
         event.widget.action.tk_text.highlight_mode(selection, option, color)
     else:
-        with contextlib.suppress(KeyError):
+        try:
             hd[option][color].remove(selection)
+        except KeyError as ex:
+            pass
 
     event.widget.action.save_action_file(file_name=False)
     if find:
@@ -560,7 +571,8 @@ def all_wrsp_auto_rename(action: 'lr_lib.core.action.main_awal.ActionWebsAndLine
             text = action.tk_text.get('1.0', tk.END)
 
             for (old, new) in zip(wrsps, new_wrsps):
-                text = text.replace(lr_lib.core.wrsp.param.param_bounds_setter(old), lr_lib.core.wrsp.param.param_bounds_setter(new))
+                text = text.replace(lr_lib.core.wrsp.param.param_bounds_setter(old),
+                                    lr_lib.core.wrsp.param.param_bounds_setter(new))
                 text = text.replace(lr_lib.core.wrsp.param.param_bounds_setter(old, start='"', end='"'),
                                     lr_lib.core.wrsp.param.param_bounds_setter(new, start='"', end='"'))
                 continue

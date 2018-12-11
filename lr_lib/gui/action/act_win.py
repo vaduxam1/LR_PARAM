@@ -2,7 +2,6 @@
 # action.с окно - родитель lr_lib.gui.action.main_action.ActionWindow
 
 import os
-import contextlib
 
 import tkinter as tk
 
@@ -84,8 +83,10 @@ class ActWin(lr_lib.gui.action.act_any.ActAny):
         widjs = (self.search_res_combo, self.SearchReplace_searchCombo, self.SearchReplace_replaceCombo,
                  self.search_entry,)
         for w in widjs:
-            with contextlib.suppress(Exception):  # виджетам доступно меню мыши
+            try:  # виджетам доступно меню мыши
                 self.bind_class(w, sequence='<Button-3>', func=lr_lib.gui.etc.sub_menu.rClicker, add='')
+            except Exception as ex:
+                pass
             continue
 
         self.widj_reset()

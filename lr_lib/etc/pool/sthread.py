@@ -2,7 +2,6 @@
 # SThread - пул потоков с авторазмером
 
 import sys
-import contextlib
 import threading
 
 from queue import Empty, PriorityQueue
@@ -169,8 +168,10 @@ class SThreadPool(SThreadIOQueue):
     def _remove_thread(self, th: SThread) -> None:
         """удалить поток"""
         DLOCK.acquire()
-        with contextlib.suppress(ValueError):
+        try:
             self.threads.remove(th)
+        except ValueError as ex:
+            pass
         self._set_pool_size()
         # print(' - del {}, from: {}'.format(th.name, threading.current_thread().name))
         DLOCK.release()

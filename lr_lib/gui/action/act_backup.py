@@ -2,7 +2,6 @@
 # action.с окно - бекап
 
 import os
-import contextlib
 
 import tkinter as tk
 
@@ -46,10 +45,14 @@ class ActBackup(lr_lib.gui.action.act_block.ActBlock):
 
     def destroy(self):
         """выход"""
-        with contextlib.suppress(AttributeError):
+        try:
             self.backup()
-        with contextlib.suppress(KeyError):
+        except AttributeError as ex:
+            pass
+        try:
             del lr_vars.Window.action_windows[self.id_]
+        except KeyError as ex:
+            pass
 
         return super().destroy()
 

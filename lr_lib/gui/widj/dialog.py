@@ -3,7 +3,6 @@
 
 import codecs
 import queue
-import contextlib
 
 import tkinter as tk
 import tkinter.ttk as ttk
@@ -67,16 +66,18 @@ class YesNoCancel(tk.Toplevel):
         self.tk_text = tk.Text(self, wrap="none", padx=0, pady=0)
 
         if is_text is not None:
-            with contextlib.suppress(Exception):
+            try:
                 height = len(is_text.split('\n'))
                 if height > 25:
                     height = 25
                 elif height < 5:
                     height = 5
                 self.tk_text.configure(height=height, width=100)
+            except Exception as ex:
+                pass
 
             if t_enc:
-                is_text = codecs.decode(is_text, 'unicode_escape', errors='replace')
+                is_text = codecs.decode(is_text, 'unicode_escape', 'replace')
             self.tk_text.insert(1.0, is_text)
             self.text_scrolly = ttk.Scrollbar(self, orient=tk.VERTICAL, command=self.tk_text.yview)
             self.text_scrollx = ttk.Scrollbar(self, orient=tk.HORIZONTAL, command=self.tk_text.xview)

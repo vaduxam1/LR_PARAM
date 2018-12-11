@@ -48,8 +48,10 @@ class WinBlock(lr_lib.gui.wrsp.win_act.WinAct):
 
         for attr in dir(self):
             if (not attr.startswith('_')) and (attr not in w):
-                with contextlib.suppress(AttributeError, tk.TclError):
+                try:
                     getattr(self, attr).configure(state=state)
+                except (AttributeError, tk.TclError) as ex:
+                    pass
             continue
 
         self.update()

@@ -1,8 +1,6 @@
 # -*- coding: UTF-8 -*-
 # action.с окно - виджеты перехода по тексту
 
-import contextlib
-
 import tkinter as tk
 import tkinter.ttk as ttk
 
@@ -35,23 +33,31 @@ class ActGoto(lr_lib.gui.action.act_font.ActFont):
         return
 
     def goto_inf(self, *args) -> None:
-        with contextlib.suppress(tk.TclError):
+        try:
             self.search_in_action(word=lr_lib.core.wrsp.param.Snap.format(num=self.inf_combo.get().strip()), hist=False)
+        except tk.TclError as ex:
+            pass
         return
 
     def goto_transaction(self, *args) -> None:
-        with contextlib.suppress(tk.TclError):
+        try:
             self.search_in_action(word=self.transaction_combo.get(), hist=False)
+        except tk.TclError as ex:
+            pass
         return
 
     def goto_param(self, *args) -> None:
-        with contextlib.suppress(tk.TclError):
+        try:
             self.search_in_action(word=self.param_combo.get(), hist=False)
+        except tk.TclError as ex:
+            pass
         return
 
     def goto_wrsp(self, *args) -> None:
-        with contextlib.suppress(tk.TclError):
+        try:
             self.search_in_action(word=self.wrsp_combo.get(), hist=False)
+        except tk.TclError as ex:
+            pass
         return
 
     def inf_combo_set(self) -> None:
@@ -65,8 +71,10 @@ class ActGoto(lr_lib.gui.action.act_font.ActFont):
         return
 
     def param_combo_set(self) -> None:
-        with contextlib.suppress(Exception):
+        try:
             self.param_combo['values'] = list(self.web_action.websReport.wrsp_and_param_names.values())
+        except Exception as ex:
+            pass
         return
 
     def transaction_combo_set(self) -> None:

@@ -1,8 +1,6 @@
 # -*- coding: UTF-8 -*-
 # меню gui окна
 
-import contextlib
-
 import tkinter as tk
 
 from tkinter import filedialog
@@ -62,8 +60,10 @@ class WinMenu(lr_lib.gui.wrsp.win_folder.WinFolder):
         """меню правой кнопки мыши"""
         lr_lib.gui.etc.sub_menu.rClickbinder(self)  # все tk
         for widj in dir(self):
-            with contextlib.suppress(tk.TclError):
+            try:
                 ob = getattr(self, widj)
                 self.bind_class(ob, sequence='<Button-3>', func=lr_lib.gui.etc.sub_menu.rClicker, add='')
+            except tk.TclError as ex:
+                pass
             continue
         return

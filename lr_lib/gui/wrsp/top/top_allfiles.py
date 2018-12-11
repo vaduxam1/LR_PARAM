@@ -1,7 +1,6 @@
 # -*- coding: UTF-8 -*-
 # Toplevel окно файлов
 
-import contextlib
 import subprocess
 
 import tkinter as tk
@@ -36,11 +35,13 @@ class TopFolder(tk.Toplevel):
 
         files = list(f['File']['FullName'] for f in lr_vars.AllFiles)
         comboAllFilesFolder['values'] = files
-        with contextlib.suppress(Exception):
+        try:
             m = max(len(f) for f in files)
             if m < mx:
                 mx = m
             comboAllFilesFolder.configure(width=mx)
+        except Exception as ex:
+            pass
 
         buttonAllFilesFolder.pack()
         comboAllFilesFolder.pack()

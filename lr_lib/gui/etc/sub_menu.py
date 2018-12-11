@@ -1,8 +1,6 @@
 # -*- coding: UTF-8 -*-
 # меню мыши
 
-import contextlib
-
 import tkinter as tk
 
 import lr_lib
@@ -11,7 +9,7 @@ import lr_lib.core.var.vars as lr_vars
 
 def rClicker(event) -> str:
     """ right click context menu for all Tk Entry and Text widgets"""
-    with contextlib.suppress(tk.TclError):
+    try:
         event.widget.focus()
 
         try:
@@ -109,10 +107,12 @@ def rClicker(event) -> str:
 
             def action_goto(e, _search: str) -> None:
                 """перейти к _search обрасти в action.c"""
-                with contextlib.suppress(AttributeError, tk.TclError):
+                try:
                     event.widget.action.search_entry.set(_search)
                     event.widget.action.search_in_action(event.widget.action.search_entry.get())
                     event.widget.action.tk_text_see()
+                except (AttributeError, tk.TclError) as ex:
+                    pass
                 return
 
             if web_reg_name:
@@ -173,12 +173,16 @@ def rClicker(event) -> str:
             submenu_other.add_cascade(label=' подсветка', menu=submenu, underline=0)
         rmenu.tk_popup(event.x_root + 40, event.y_root + 10, entry="0")
 
+    except tk.TclError as ex:
+        pass
     return "break"
 
 
 def rClickbinder(widget, wdg=('Text', 'Entry', 'Listbox', 'Label')) -> None:
     for b in wdg: #
-        with contextlib.suppress(tk.TclError):
+        try:
             widget.bind_class(b, sequence='<Button-3>', func=rClicker, add='')
+        except tk.TclError as ex:
+            pass
         continue
     return

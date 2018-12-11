@@ -7,7 +7,6 @@ import json
 import types
 import string
 import itertools
-import contextlib
 import time
 import tempfile
 import subprocess

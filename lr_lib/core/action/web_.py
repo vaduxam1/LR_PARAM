@@ -1,8 +1,6 @@
 # -*- coding: UTF-8 -*-
 # классы lr web_ запросов
 
-import contextlib
-
 import lr_lib
 import lr_lib.core.var.vars as lr_vars
 
@@ -110,7 +108,7 @@ class WebAny:
 
     def _read_snapshot(self) -> int:
         """Snapshot inf номер"""
-        with contextlib.suppress(Exception):
+        try:
             for line in self.lines_list[1:-1]:
                 strip_line = line.strip()
                 if strip_line.startswith(lr_lib.core.wrsp.param.Snap1) and strip_line.endswith(lr_lib.core.wrsp.param.Snap2):
@@ -121,6 +119,8 @@ class WebAny:
                     assert all(map(str.isnumeric, inf_num))
                     return int(inf_num)
                 continue
+        except Exception as ex:
+            pass
         return 0
 
     def to_str(self, _all_stat=False) -> str:
