@@ -543,7 +543,7 @@ def all_wrsp_auto_rename(gui: 'lr_lib.gui.action.main_action.ActionWindow', *a, 
     например "JSESSIONID5" -> "P_6725_1__jsessionid__uJeCvxe"
     """
     _wrsps = tuple(gui.web_action.get_web_reg_save_param_all())
-    wrsps = tuple(w.name for w in _wrsps)
+    wrsps = [w.name for w in _wrsps]
 
     get_bound = lambda line, spl: line.split(spl, 1)[1].rsplit('",', 1)[0]
     bounds = [('"LB=', '"RB='), ('"LB/IC=', '"RB/IC=')]
@@ -568,6 +568,8 @@ def all_wrsp_auto_rename(gui: 'lr_lib.gui.action.main_action.ActionWindow', *a, 
             continue
 
         if not (lb and rb):
+            i = wrsps.index(w.name)
+            del wrsps[i]
             continue
         new_name = lr_lib.core.wrsp.param.wrsp_name_creator(w.param, lb, rb, w.snapshot.inf)
         wrsps_new.append(new_name)
