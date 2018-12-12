@@ -5,6 +5,9 @@ import tkinter as tk
 
 import lr_lib
 import lr_lib.core.var.vars as lr_vars
+import lr_lib.gui.etc.action_lib
+import lr_lib.gui.etc.all_wrsp
+import lr_lib.gui.etc.rename
 
 
 def rClicker(event) -> str:
@@ -21,7 +24,7 @@ def rClicker(event) -> str:
         if selection:
             rmenu.add_cascade(
                 label='Web_Reg_Save_Param - все варианты', underline=0,
-                command=lambda e=event: lr_lib.gui.etc.action_lib.all_wrsp_dict_web_reg_save_param(e))
+                command=lambda e=event: lr_lib.gui.etc.all_wrsp.all_wrsp_dict_web_reg_save_param(e))
             rmenu.add_cascade(
                 label='Encoding : "РџРµСЂРІ" -> "Перв"', underline=0,
                 command=lambda e=event: lr_lib.gui.etc.action_lib.encoder(e))
@@ -130,7 +133,7 @@ def rClicker(event) -> str:
             rmenu.add_cascade(label='Разное', menu=submenu_other, underline=0)
             submenu_other.add_cascade(
                 label='Переименовать транзакцию (выделить линию целиком)', underline=0,
-                command=lambda e=event: lr_lib.gui.etc.action_lib.rename_transaction(e))
+                command=lambda e=event: lr_lib.gui.etc.rename.rename_transaction(e))
             submenu_other.add_cascade(
                 label='Файлы-ответов Snapshot (выделить номер)', underline=0,
                 command=lambda e=event: lr_lib.gui.etc.action_lib.snapshot_files(e.widget))
