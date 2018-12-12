@@ -9,7 +9,7 @@ from lr_lib.core.var import vars as lr_vars
 ABounds = [
     ('"LB=', '"RB='),
     ('"LB/IC=', '"RB/IC='),
-]  # переименавать все wrsp, содержащие LB/RB вида
+]  # переименовать все wrsp, содержащие LB/RB вида
 
 _M0 = '"'
 _M1 = (' -> ' + _M0)
@@ -19,7 +19,7 @@ M = (_M0 + '{:<%s}' + _M0 + _M1 + '{}' + _M0)  # "старое имя" -> "но�
 @lr_vars.T_POOL_decorator
 def all_wrsp_auto_rename(gui: 'lr_lib.gui.action.main_action.ActionWindow', *args, ) -> None:
     """
-    переименавать все wrsp, автоматически, с учетом всех настроек, для wrsp, содержащих LB/RB вида:
+    переименовать все wrsp, автоматически, с учетом всех настроек, для wrsp, содержащих LB/RB вида:
         ('"LB=', '"RB='), ('"LB/IC=', '"RB/IC=')
     например "JSESSIONID5" -> "P_6725_1__jsessionid__uJeCvxe"
     """
@@ -43,10 +43,10 @@ def all_wrsp_auto_rename(gui: 'lr_lib.gui.action.main_action.ActionWindow', *arg
 
 def _lbrb_wrsps(wrsps: ('lr_lib.core.action.web_.WebRegSaveParam',)) -> iter((str, )):
     """для всех wrsps, найти LR/RB из wrsp текста, и сформировать новое имя wrsp"""
-    for w in wrsps:
+    for wr in wrsps:
         lb = rb = ''
 
-        for line in map(str.strip, w.lines_list):
+        for line in filter(bool, map(str.strip, wr.lines_list)):
             for (l_, r_) in ABounds:
                 if line.startswith(l_):
                     lb = _get_bound(line, l_)
@@ -63,7 +63,7 @@ def _lbrb_wrsps(wrsps: ('lr_lib.core.action.web_.WebRegSaveParam',)) -> iter((st
         if not rb:
             rb = '_'
 
-        new_name = lr_lib.core.wrsp.param.wrsp_name_creator(w.param, lb, rb, w.snapshot.inf)
+        new_name = lr_lib.core.wrsp.param.wrsp_name_creator(wr.param, lb, rb, wr.snapshot.inf)
         yield new_name
         continue
     return
@@ -98,7 +98,7 @@ def _split_rename(text: str) -> iter((str,)):
 def _rename_wrsp(wrsps_text: str,
                  wrsps: ('lr_lib.core.action.web_.WebRegSaveParam',),
                  gui: 'lr_lib.gui.action.main_action.ActionWindow') -> None:
-    """автоматически переименавать все wrsp"""
+    """автоматически переименовать все wrsp"""
     new_wrsps = list(_split_rename(wrsps_text))
     assert len(wrsps) == len(new_wrsps)
 
