@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# команды из меню мыши
+# все варианты создания web_reg_save_param
 
 import lr_lib
 import lr_lib.core

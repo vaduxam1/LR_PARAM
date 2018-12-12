@@ -11,7 +11,9 @@ ABounds = [
     ('"LB/IC=', '"RB/IC='),
 ]  # переименавать все wrsp, содержащие LB/RB вида
 
-M = '"{:<%s}" -> "{}"'  # "старое имя" -> "новое имя"
+_M0 = '"'
+_M1 = (' -> ' + _M0)
+M = (_M0 + '{:<%s}' + _M0 + _M1 + '{}' + _M0)  # "старое имя" -> "новое имя"
 
 
 @lr_vars.T_POOL_decorator
@@ -85,18 +87,19 @@ def _split_rename(text: str) -> iter((str,)):
     "P_6725_1__jsessionid__OLD" -> "P_6725_1__jsessionid__NEW"
     """
     for line in filter(str.strip, text.split('\n')):
-        s = line.split('-> "', 1)
-        s = s[1].split('"', 1)
+        s = line.split(_M1, 1)
+        s = s[1].split(_M0, 1)
         new_name = s[0].strip()
         yield new_name
         continue
     return
 
 
-def _rename_wrsp(text: str, wrsps: ('lr_lib.core.action.web_.WebRegSaveParam',),
-            gui: 'lr_lib.gui.action.main_action.ActionWindow') -> None:
+def _rename_wrsp(wrsps_text: str,
+                 wrsps: ('lr_lib.core.action.web_.WebRegSaveParam',),
+                 gui: 'lr_lib.gui.action.main_action.ActionWindow') -> None:
     """автоматически переименавать все wrsp"""
-    new_wrsps = list(_split_rename(text))
+    new_wrsps = list(_split_rename(wrsps_text))
     assert len(wrsps) == len(new_wrsps)
 
     gui.backup()
