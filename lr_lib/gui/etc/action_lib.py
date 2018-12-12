@@ -536,22 +536,39 @@ def wrsp_text_from_selection(event) -> object:
 
 
 @lr_vars.T_POOL_decorator
-def all_wrsp_auto_rename(action: 'lr_lib.core.action.main_awal.ActionWebsAndLines', *a, _l='"LB=', _r='"RB=') -> None:
-    """переименавать все wrsp, автоматически, с учетом всех настроек"""
-    _wrsps = tuple(action.web_action.get_web_reg_save_param_all())
+def all_wrsp_auto_rename(gui: 'lr_lib.gui.action.main_action.ActionWindow', *a, ) -> None:
+    """
+    переименавать все wrsp, автоматически, с учетом всех настроек, для wrsp, содержащих LB/RB вида:
+        ('"LB=', '"RB='), ('"LB/IC=', '"RB/IC=')
+    например "JSESSIONID5" -> "P_6725_1__jsessionid__uJeCvxe"
+    """
+    _wrsps = tuple(gui.web_action.get_web_reg_save_param_all())
     wrsps = tuple(w.name for w in _wrsps)
+
+    get_bound = lambda line, spl: line.split(spl, 1)[1].rsplit('",', 1)[0]
+    bounds = [('"LB=', '"RB='), ('"LB/IC=', '"RB/IC=')]
 
     wrsps_new = []
     lb = rb = ''
+
+    # найти LR/RB из wrsp текста
     for w in _wrsps:
         for line in w.lines_list:
             line = line.strip()
-            if line.startswith(_l):
-                lb = line.split(_l, 1)[1].rsplit('",', 1)[0]
-            elif line.startswith(_r):
-                rb = line.split(_r, 1)[1].rsplit('",', 1)[0]
+
+            for (l_, r_) in bounds:
+                if line.startswith(l_):
+                    lb = get_bound(line, l_)
+                elif line.startswith(r_):
+                    rb = get_bound(line, r_)
+
+                if lb and rb:
+                    break
+                continue
             continue
-        assert lb, rb
+
+        if not (lb and rb):
+            continue
         new_name = lr_lib.core.wrsp.param.wrsp_name_creator(w.param, lb, rb, w.snapshot.inf)
         wrsps_new.append(new_name)
         continue
@@ -561,14 +578,14 @@ def all_wrsp_auto_rename(action: 'lr_lib.core.action.main_awal.ActionWebsAndLine
     all_wrsps = '\n'.join(m.format(old, new) for (old, new) in zip(wrsps, wrsps_new))
     y = lr_lib.gui.widj.dialog.YesNoCancel(['Переименовать', 'Отмена'], 'Переименовать wrsp слева',
                               'в wrsp справа', 'wrsp',
-                                           parent=action, is_text=all_wrsps)
+                                           parent=gui, is_text=all_wrsps)
 
     if y.ask() == 'Переименовать':
         new_wrsps = [t.split('-> "', 1)[1].split('"', 1)[0].strip() for t in y.text.strip().split('\n')]
         assert len(wrsps) == len(new_wrsps)
-        with action.block():
-            action.backup()
-            text = action.tk_text.get('1.0', tk.END)
+        with gui.block():
+            gui.backup()
+            text = gui.tk_text.get('1.0', tk.END)
 
             for (old, new) in zip(wrsps, new_wrsps):
                 text = text.replace(lr_lib.core.wrsp.param.param_bounds_setter(old),
@@ -577,7 +594,7 @@ def all_wrsp_auto_rename(action: 'lr_lib.core.action.main_awal.ActionWebsAndLine
                                     lr_lib.core.wrsp.param.param_bounds_setter(new, start='"', end='"'))
                 continue
 
-            action.web_action.set_text_list(text, websReport=True)
-            action.web_action_to_tk_text(websReport=False)
+            gui.web_action.set_text_list(text, websReport=True)
+            gui.web_action_to_tk_text(websReport=False)
     return
 
