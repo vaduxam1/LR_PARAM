@@ -204,7 +204,8 @@ class WrspSettingWindow(tk.Toplevel):
                 text = self.parent.tk_text.get('1.0', tk.END)
 
                 for (old, new) in zip(wrsps, new_wrsps):
-                    text = text.replace(lr_lib.core.wrsp.param.param_bounds_setter(old), lr_lib.core.wrsp.param.param_bounds_setter(new))
+                    text = text.replace(lr_lib.core.wrsp.param.param_bounds_setter(old),
+                                        lr_lib.core.wrsp.param.param_bounds_setter(new))
                     text = text.replace(lr_lib.core.wrsp.param.param_bounds_setter(old, start='"', end='"'),
                                         lr_lib.core.wrsp.param.param_bounds_setter(new, start='"', end='"'))
                     continue

@@ -6,6 +6,38 @@ import tkinter as tk
 import lr_lib
 from lr_lib.core.var import vars as lr_vars
 
+ABounds = [
+    ('"LB=', '"RB='),
+    ('"LB/IC=', '"RB/IC='),
+]  # переименавать все wrsp, содержащие LB/RB вида
+
+M = '"{:<%s}" -> "{}"'  # "старое имя" -> "новое имя"
+
+
+@lr_vars.T_POOL_decorator
+def all_wrsp_auto_rename(gui: 'lr_lib.gui.action.main_action.ActionWindow', *args, ) -> None:
+    """
+    переименавать все wrsp, автоматически, с учетом всех настроек, для wrsp, содержащих LB/RB вида:
+        ('"LB=', '"RB='), ('"LB/IC=', '"RB/IC=')
+    например "JSESSIONID5" -> "P_6725_1__jsessionid__uJeCvxe"
+    """
+    _wrsps = tuple(gui.web_action.get_web_reg_save_param_all())
+    wrsps = [w.name for w in _wrsps]
+    wrsps_new = list(_lbrb_wrsps(_wrsps))
+
+    m = max(map(len, (wrsps or [''])))
+    m = (M % m)
+    all_wrsps = '\n'.join(m.format(old, new) for (old, new) in zip(wrsps, wrsps_new))
+
+    y = lr_lib.gui.widj.dialog.YesNoCancel(
+        ['Переименовать', 'Отмена'], 'Переименовать wrsp слева', 'в wrsp справа', 'wrsp',
+        parent=gui, is_text=all_wrsps, )
+
+    if y.ask() == 'Переименовать':
+        with gui.block():
+            _rename_wrsp(y.text, wrsps, gui)
+    return
+
 
 def _lbrb_wrsps(wrsps: ('lr_lib.core.action.web_.WebRegSaveParam',)) -> iter((str, )):
     """для всех wrsps, найти LR/RB из wrsp текста, и сформировать новое имя wrsp"""
@@ -48,50 +80,45 @@ def _get_bound(line, spl, _s='",') -> str:
     return ln[0]
 
 
-ABounds = [('"LB=', '"RB='), ('"LB/IC=', '"RB/IC='), ]
-
-
-@lr_vars.T_POOL_decorator
-def all_wrsp_auto_rename(gui: 'lr_lib.gui.action.main_action.ActionWindow', *a, ) -> None:
+def _split_rename(text: str) -> iter((str,)):
     """
-    переименавать все wrsp, автоматически, с учетом всех настроек, для wrsp, содержащих LB/RB вида:
-        ('"LB=', '"RB='), ('"LB/IC=', '"RB/IC=')
-    например "JSESSIONID5" -> "P_6725_1__jsessionid__uJeCvxe"
+    "P_6725_1__jsessionid__OLD" -> "P_6725_1__jsessionid__NEW"
     """
-    _wrsps = tuple(gui.web_action.get_web_reg_save_param_all())
-    wrsps = [w.name for w in _wrsps]
-    wrsps_new = list(_lbrb_wrsps(_wrsps))
+    for line in filter(str.strip, text.split('\n')):
+        s = line.split('-> "', 1)
+        s = s[1].split('"', 1)
+        new_name = s[0].strip()
+        yield new_name
+        continue
+    return
 
-    mx = max(map(len, wrsps or ['']))
-    m = '"{:<%s}" -> "{}"' % mx
-    all_wrsps = '\n'.join(m.format(old, new) for (old, new) in zip(wrsps, wrsps_new))
-    y = lr_lib.gui.widj.dialog.YesNoCancel(
-        ['Переименовать', 'Отмена'], 'Переименовать wrsp слева', 'в wrsp справа', 'wrsp',
-        parent=gui, is_text=all_wrsps, )
 
-    if y.ask() == 'Переименовать':
-        new_wrsps = [t.split('-> "', 1)[1].split('"', 1)[0].strip() for t in y.text.strip().split('\n')]
-        assert len(wrsps) == len(new_wrsps)
+def _rename_wrsp(text: str, wrsps: ('lr_lib.core.action.web_.WebRegSaveParam',),
+            gui: 'lr_lib.gui.action.main_action.ActionWindow') -> None:
+    """автоматически переименавать все wrsp"""
+    new_wrsps = list(_split_rename(text))
+    assert len(wrsps) == len(new_wrsps)
 
-        with gui.block():
-            gui.backup()
-            text = gui.tk_text.get('1.0', tk.END)
+    gui.backup()
+    text = gui.tk_text.get('1.0', tk.END)
 
-            for (old, new) in zip(wrsps, new_wrsps):
-                text = text.replace(lr_lib.core.wrsp.param.param_bounds_setter(old),
-                                    lr_lib.core.wrsp.param.param_bounds_setter(new))
-                text = text.replace(lr_lib.core.wrsp.param.param_bounds_setter(old, start='"', end='"'),
-                                    lr_lib.core.wrsp.param.param_bounds_setter(new, start='"', end='"'))
-                continue
+    for (old, new) in zip(wrsps, new_wrsps):
+        text = text.replace(lr_lib.core.wrsp.param.param_bounds_setter(old),
+                            lr_lib.core.wrsp.param.param_bounds_setter(new))
+        text = text.replace(lr_lib.core.wrsp.param.param_bounds_setter(old, start='"', end='"'),
+                            lr_lib.core.wrsp.param.param_bounds_setter(new, start='"', end='"'))
+        continue
 
-            gui.web_action.set_text_list(text, websReport=True)
-            gui.web_action_to_tk_text(websReport=False)
+    gui.web_action.set_text_list(text, websReport=True)
+    gui.web_action_to_tk_text(websReport=False)
     return
 
 
 @lr_vars.T_POOL_decorator
 def rename_transaction(event, parent=None, s='lr_start_transaction("', e='lr_end_transaction("') -> None:
-    """переименование транзакции - необходимо выделять всю линию с транзакцией"""
+    """
+    переименование транзакции - необходимо выделять всю линию с транзакцией
+    """
     selection = event.widget.selection_get().strip()
     try:
         old_name = selection.split(s, 1)[1].split('"', 1)[0]
@@ -104,17 +131,19 @@ def rename_transaction(event, parent=None, s='lr_start_transaction("', e='lr_end
         except AttributeError as ex:
             pass
 
-    y = lr_lib.gui.widj.dialog.YesNoCancel(['Переименовать', 'Отмена'], 'Переименовать выделенную(линию) transaction',
-                              'указать только новое имя transaction', 'transaction', parent=parent, is_text=old_name)
+    y = lr_lib.gui.widj.dialog.YesNoCancel(
+        ['Переименовать', 'Отмена'], 'Переименовать выделенную(линию) transaction',
+        'указать только новое имя transaction', 'transaction', parent=parent, is_text=old_name,
+    )
     s1 = s + old_name
     s2 = e + old_name
 
     if y.ask() == 'Переименовать':
         new_name = y.text.strip()
         lit = event.widget.action.tk_text.get(1.0, tk.END).split('\n')
-        for e, line in enumerate(lit):
-            l = line.lstrip()
-            if l.startswith(s1) or l.startswith(s2):
+        for (e, line) in enumerate(lit):
+            ln = line.lstrip()
+            if ln.startswith(s1) or ln.startswith(s2):
                 lit[e] = line.replace(old_name, new_name)
             continue
 
