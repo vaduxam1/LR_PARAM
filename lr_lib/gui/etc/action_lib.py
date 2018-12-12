@@ -568,9 +568,8 @@ def all_wrsp_auto_rename(gui: 'lr_lib.gui.action.main_action.ActionWindow', *a, 
             continue
 
         if not (lb and rb):
-            i = wrsps.index(w.name)
-            del wrsps[i]
-            continue
+            lb = rb = '_'
+
         new_name = lr_lib.core.wrsp.param.wrsp_name_creator(w.param, lb, rb, w.snapshot.inf)
         wrsps_new.append(new_name)
         continue
