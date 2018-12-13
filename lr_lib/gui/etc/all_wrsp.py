@@ -30,12 +30,27 @@ def all_wrsp_dict_web_reg_save_param(event, wrsp_web_=None) -> None:
     return
 
 
-def _wrsp_text_delta_remove(wr: (dict, str), ) -> str:
-    """убрать 'вариативную' часть wrsp текста"""
-    (wrsp_dict, wrsp) = wr
-    delta = wrsp_dict['web_reg_name']
-    without_delta = wrsp.replace(delta, '').strip()
-    return without_delta
+def _all_wrsp_dict_web_reg_save_param(action: 'lr_lib.gui.action.main_action.ActionWindow', selection: str) -> None:
+    """все варианты создания web_reg_save_param"""
+    try:
+        wrsp_and_param = action.web_action.websReport.wrsp_and_param_names
+    except AttributeError as ex:
+        pass
+    else:
+        if selection in wrsp_and_param:  # сменить wrsp-имя в ориг. имя param
+            selection = wrsp_and_param[selection]
+
+    lr_vars.VarParam.set(selection, action=action, set_file=True)
+
+    lr_vars.VarWrspDictList.clear()
+    lr_vars.VarWrspDictList.extend(filter(_check_wrsp_duplicate, _all_wrsp(action)))
+    assert lr_vars.VarWrspDictList, 'Ничего не найдено'
+
+    param = lr_vars.VarWrspDictList[0][0]['param']
+    answ_text = _ask_wrsp_create(selection, param, action)
+    if isinstance(answ_text, str):
+        _create_wrsp_web_(answ_text, param, selection, action)
+    return
 
 
 def _check_wrsp_duplicate(wr: (dict, str), dups=None) -> bool:
@@ -48,12 +63,29 @@ def _check_wrsp_duplicate(wr: (dict, str), dups=None) -> bool:
     return not duplicate
 
 
-def _wr_create() -> [dict, str]:
-    """создание wrsp"""
-    wrsp_dict = lr_lib.core.wrsp.param.wrsp_dict_creator()
-    wrsp_text = lr_lib.core.wrsp.param.create_web_reg_save_param(wrsp_dict)
-    wr = [wrsp_dict, wrsp_text]
-    return wr
+def _wrsp_text_delta_remove(wr: (dict, str), ) -> str:
+    """убрать 'вариативную' часть wrsp текста"""
+    (wrsp_dict, wrsp) = wr
+    delta = wrsp_dict['web_reg_name']
+    without_delta = wrsp.replace(delta, '').strip()
+    return without_delta
+
+
+def _all_wrsp(action: 'lr_lib.gui.action.main_action.ActionWindow'):
+    """поиск всех возможных wrsp"""
+    color_change = lambda: action.background_color_set(color=None)
+    try:
+        wr = _wr_create()  # первый/текущий wrsp
+        while wr:
+            lr_vars.MainThreadUpdater.submit(color_change)  # action цвет по кругу
+
+            yield wr
+            wr = _next_wrsp()  # остальные wrsp
+
+            continue
+    finally:
+        lr_vars.MainThreadUpdater.submit(lambda: action.background_color_set(color=''))  # action оригинальный цвет
+    return
 
 
 def _next_wrsp() -> 'iter([dict, str]) or None':
@@ -67,14 +99,12 @@ def _next_wrsp() -> 'iter([dict, str]) or None':
     return wr
 
 
-def _all_wrsp():
-    """поиск всех возможных wrsp"""
-    wr = _wr_create()  # первый/текущий wrsp
-    while wr:
-        yield wr
-        wr = _next_wrsp()  # остальные wrsp
-        continue
-    return
+def _wr_create() -> [dict, str]:
+    """создание wrsp"""
+    wrsp_dict = lr_lib.core.wrsp.param.wrsp_dict_creator()
+    wrsp_text = lr_lib.core.wrsp.param.create_web_reg_save_param(wrsp_dict)
+    wr = [wrsp_dict, wrsp_text]
+    return wr
 
 
 text_after = '''Либо оставить только один web_reg_save_param, удалив остальные.
@@ -86,29 +116,6 @@ text_before = '''"{p}" используется {s} раз, в диапазон�
 snapshot первого использования "{p}".'''
 
 Title = '"{s}":len={l} | Найдено {f} вариантов создания web_reg_save_param.'
-
-
-def _all_wrsp_dict_web_reg_save_param(action: 'lr_lib.gui.action.main_action.ActionWindow',
-                                      selection: str) -> None:
-    """все варианты создания web_reg_save_param"""
-    try:
-        wrsp_and_param = action.web_action.websReport.wrsp_and_param_names
-        if selection in wrsp_and_param:  # сменить wrsp-имя в ориг. имя param
-            selection = wrsp_and_param[selection]
-    except AttributeError as ex:
-        pass
-
-    lr_vars.VarParam.set(selection, action=action, set_file=True)
-
-    lr_vars.VarWrspDictList.clear()
-    lr_vars.VarWrspDictList.extend(filter(_check_wrsp_duplicate, _all_wrsp()))
-    assert lr_vars.VarWrspDictList, 'Ничего не найдено'
-
-    param = lr_vars.VarWrspDictList[0][0]['param']
-    answ_text = _ask_wrsp_create(selection, param, action)
-    if isinstance(answ_text, str):
-        _create_wrsp_web_(answ_text, param, selection, action)
-    return
 
 
 def _ask_wrsp_create(selection: str, param: str,
