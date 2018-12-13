@@ -80,7 +80,12 @@ class ActFont(lr_lib.gui.action.act_replace.ActReplaceRemove):
         return
 
     def background_color_set(self, *args, color='') -> None:
-        """установить цвет фона"""
+        """
+        установить цвет фона:
+            None - следующий цвет
+            "" - изначальный цвет
+            "red" - имя цвета
+        """
         if color is None:  # смена по кругу
             color = next(lr_vars.ColorIterator)
         if not color:  # выбранный

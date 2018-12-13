@@ -25,7 +25,6 @@ def all_wrsp_dict_web_reg_save_param(event, wrsp_web_=None) -> None:
             action.max_inf_cbx_var.set(m)
 
         if wrsp_web_:
-            # action.tk_text_to_web_action(websReport=False)
             action.search_in_action(word=wrsp_web_.to_str())
     return
 
@@ -38,18 +37,20 @@ def _all_wrsp_dict_web_reg_save_param(action: 'lr_lib.gui.action.main_action.Act
         pass
     else:
         if selection in wrsp_and_param:  # сменить wrsp-имя в ориг. имя param
-            selection = wrsp_and_param[selection]
+            param = wrsp_and_param[selection]
+        else:
+            param = selection
 
-    lr_vars.VarParam.set(selection, action=action, set_file=True)
+    lr_vars.VarParam.set(param, action=action, set_file=True)
 
     lr_vars.VarWrspDictList.clear()
     lr_vars.VarWrspDictList.extend(filter(_check_wrsp_duplicate, _all_wrsp(action)))
     assert lr_vars.VarWrspDictList, 'Ничего не найдено'
 
     param = lr_vars.VarWrspDictList[0][0]['param']
-    answ_text = _ask_wrsp_create(selection, param, action)
+    answ_text = _ask_wrsp_create(param, action)
     if isinstance(answ_text, str):
-        _create_wrsp_web_(answ_text, param, selection, action)
+        _create_wrsp_web_(answ_text, param, action)
     return
 
 
@@ -71,20 +72,61 @@ def _wrsp_text_delta_remove(wr: (dict, str), ) -> str:
     return without_delta
 
 
-def _all_wrsp(action: 'lr_lib.gui.action.main_action.ActionWindow'):
+import queue
+import threading
+
+
+class ColorProgress:
+    """
+    менять цвет action.c окна при "работе" поиска всех вариантов создания web_reg_save_param
+    """
+    def __init__(self, action: 'lr_lib.gui.action.main_action.ActionWindow', start=False):
+        self.is_work = [True]
+        self.action = action
+
+        if start:
+            self.start(wait=0)
+        return
+
+    def stop(self) -> None:
+        """остановка"""
+        self.is_work.clear()
+        return
+
+    def start(self, wait=lr_vars._MTUT) -> None:
+        """циклическая смена цвета"""
+        t = threading.Timer(wait, self._start)
+        t.start()
+        return
+
+    def _start(self) -> None:
+        """циклическая смена цвета"""
+        if self.is_work:
+            self.color_change(None)  # смена
+            self.start()  # рекурсия
+            return
+        else:
+            self.color_change('')  # оригинальный цвет
+        return
+
+    def color_change(self, color: 'None or ""') -> None:
+        """смена цвета"""
+        fn = lambda: self.action.background_color_set(color=color)
+        lr_vars.MainThreadUpdater.submit(fn)  # action цвет
+        return
+
+
+def _all_wrsp(action: 'lr_lib.gui.action.main_action.ActionWindow') -> None:
     """поиск всех возможных wrsp"""
-    color_change = lambda: action.background_color_set(color=None)
+    colors = ColorProgress(action, start=True)
     try:
         wr = _wr_create()  # первый/текущий wrsp
         while wr:
-            lr_vars.MainThreadUpdater.submit(color_change)  # action цвет по кругу
-
             yield wr
             wr = _next_wrsp()  # остальные wrsp
-
             continue
     finally:
-        lr_vars.MainThreadUpdater.submit(lambda: action.background_color_set(color=''))  # action оригинальный цвет
+        colors.stop()
     return
 
 
@@ -118,28 +160,27 @@ snapshot первого использования "{p}".'''
 Title = '"{s}":len={l} | Найдено {f} вариантов создания web_reg_save_param.'
 
 
-def _ask_wrsp_create(selection: str, param: str,
-                     action: 'lr_lib.gui.action.main_action.ActionWindow', ) -> 'str or None':
+def _ask_wrsp_create(param: str, action: 'lr_lib.gui.action.main_action.ActionWindow', ) -> 'str or None':
     """вопрос о создании wrsp, -> str создать, None - нет"""
     len_dl = len(lr_vars.VarWrspDictList)
-    fl = list(lr_lib.core.wrsp.param.set_param_in_action_inf(action, param))
-    if not fl:
+    infs = list(lr_lib.core.wrsp.param.set_param_in_action_inf(action, param))
+    if not infs:
         wrsp_and_param = action.web_action.websReport.wrsp_and_param_names
         if param in wrsp_and_param:  # сменить wrsp-имя в ориг. имя param
-            fl = list(lr_lib.core.wrsp.param.set_param_in_action_inf(action, wrsp_and_param[param]))
+            infs = list(lr_lib.core.wrsp.param.set_param_in_action_inf(action, wrsp_and_param[param]))
         else:
             wp = {wrsp_and_param[k]: k for k in wrsp_and_param}
             if param in wp:
-                fl = list(lr_lib.core.wrsp.param.set_param_in_action_inf(action, wp[param]))
-    if not fl:
-        fl = [-1]
+                infs = list(lr_lib.core.wrsp.param.set_param_in_action_inf(action, wp[param]))
+    if not infs:
+        infs = [-1]
 
     is_true_ask = 'Создать'
     y = lr_lib.gui.widj.dialog.YesNoCancel(
         buttons=[is_true_ask, 'Выйти'], text_after=text_after, default_key='Выйти',
-        text_before=text_before.format(s=len(fl), p=selection, mi=min(fl), ma=max(fl)),
+        text_before=text_before.format(s=len(infs), p=param, mi=min(infs), ma=max(infs)),
         is_text='\n\n'.join(w[1] for w in lr_vars.VarWrspDictList),
-        title=Title.format(s=selection, l=len(selection), f=len_dl), parent=action,
+        title=Title.format(s=param, l=len(param), f=len_dl), parent=action,
     )
     ask = y.ask()
 
@@ -148,20 +189,21 @@ def _ask_wrsp_create(selection: str, param: str,
     return None
 
 
-def _create_wrsp_web_(text: str, param: str, selection: str,
-                      action: 'lr_lib.gui.action.main_action.ActionWindow') -> None:
+Word = 'LAST);'
+
+
+def _create_wrsp_web_(text: str, param: str, action: 'lr_lib.gui.action.main_action.ActionWindow') -> None:
     """создать в action web_reg_save_param"""
     action.backup()
-    word = 'LAST);'
     first_only = True  # если создается несколько wrsp_web_
     first_name = ''
 
-    for part in text.split(word):
+    for part in text.split(Word):
         part = part.lstrip()
         if not part.rstrip():
             continue
 
-        wrsp = (part + word)
+        wrsp = (part + Word)
         # брать snapshot из камента
         s = wrsp.split(lr_lib.core.wrsp.param.SnapInComentS, 1)[1]
         s = s.split(lr_lib.core.wrsp.param.SnapInComentE, 1)[0]
@@ -169,7 +211,7 @@ def _create_wrsp_web_(text: str, param: str, selection: str,
         snap = int(s)
 
         if first_only:
-            action.web_action.web_reg_save_param_remove(selection)  # удалить старый wrsp
+            action.web_action.web_reg_save_param_remove(param)  # удалить старый wrsp
         else:
             wrsp = _wrsp_name_replace(wrsp, first_name)
 
@@ -177,7 +219,8 @@ def _create_wrsp_web_(text: str, param: str, selection: str,
         wrsp_web_ = action.web_action.web_reg_save_param_insert(snap, wrsp)
 
         if first_only:
-            action.web_action.replace_bodys([(param, wrsp_web_.name)])  # заменить в телах web's
+            p = (param, wrsp_web_.name)
+            action.web_action.replace_bodys([p])  # заменить в телах web's
             first_name = wrsp_web_.name
             first_only = False
 

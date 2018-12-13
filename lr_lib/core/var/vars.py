@@ -441,7 +441,8 @@ ENCODE_LIST = list(sorted(ENCODE_LIST))
 # пулы
 
 MainThreadUpdater = None  # выполнять callback из main потока # lr_lib.etc.pool.other.MainThreadUpdater
-MainThreadUpdateTime = tk.IntVar(value=1500)  # интервал(мс) проверки очереди, callback(из потоков) + скорость обновления подсветки
+_MTUT = 1.5  # сек
+MainThreadUpdateTime = tk.IntVar(value=(_MTUT * 1000))  # интервал(мс) проверки очереди, callback(из потоков) + скорость обновления подсветки
 
 M_POOL = None  # пул процессов  # lr_lib.etc.pool.main_pool.POOL
 M_POOL_NAME = 'multiprocessing.Pool'  # тип основной пул
