@@ -2,6 +2,7 @@
 # все варианты создания web_reg_save_param
 
 import threading
+import time
 
 import lr_lib
 import lr_lib.core
@@ -83,7 +84,7 @@ class ColorProgress:
         self.action = action
 
         if start:
-            self.start(wait=0)
+            self.start()
         return
 
     def stop(self) -> None:
@@ -91,26 +92,26 @@ class ColorProgress:
         self.is_work.clear()
         return
 
-    def start(self, wait=lr_vars._MTUT) -> None:
+    def start(self) -> None:
         """циклическая смена цвета"""
-        t = threading.Timer(wait, self._start)
+        t = threading.Thread(target=self._start)
         t.start()
         return
 
     def _start(self) -> None:
         """циклическая смена цвета"""
-        if self.is_work:
-            self.color_change(None)  # смена
-            self.start()  # рекурсия
-            return
-        else:
-            self.color_change('')  # оригинальный цвет
+        while self.is_work:
+            self.color_change(None)  # смена цвета
+            time.sleep(lr_vars._MTUT)
+            continue
+
+        self.color_change('')  # оригинальный цвет
         return
 
     def color_change(self, color: 'None or ""') -> None:
         """смена цвета"""
-        fn = lambda: self.action.background_color_set(color=color)
-        lr_vars.MainThreadUpdater.submit(fn)  # action цвет
+        callback = lambda: self.action.background_color_set(color=color)
+        lr_vars.MainThreadUpdater.submit(callback)  # action цвет
         return
 
 
