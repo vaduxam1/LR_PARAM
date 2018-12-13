@@ -41,10 +41,13 @@ class HighlightLines:
         """взять настройки подсветки, из виджетов"""
         def set() -> None:
             """lr_vars.MainThreadUpdater.submit(set)"""
-            self.highlight_enable = self.tk_text.highlight_var.get()
-            self.HighlightAfter0 = int(self.tk_text.action.highlight_After0.get())
-            self.HighlightAfter1 = int(self.tk_text.action.highlight_After1.get())
-            self.HighlightAfter2 = int(self.tk_text.action.highlight_After2.get())
+            try:
+                self.highlight_enable = self.tk_text.highlight_var.get()
+                self.HighlightAfter0 = int(self.tk_text.action.highlight_After0.get())
+                self.HighlightAfter1 = int(self.tk_text.action.highlight_After1.get())
+                self.HighlightAfter2 = int(self.tk_text.action.highlight_After2.get())
+            except tk.TclError as ex:
+                return  # закрытие action окна
             return
 
         lr_vars.MainThreadUpdater.submit(set)

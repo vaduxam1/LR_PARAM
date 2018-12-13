@@ -79,7 +79,10 @@ class HighlightText(tk.Text):
 
     def after_callback(self) -> None:
         """подсветить все линии на экране, и перезапустить"""
-        self.cursor_position = self.index(tk.INSERT)
+        try:
+            self.cursor_position = self.index(tk.INSERT)
+        except tk.TclError as ex:
+            return  # закрытие action окна
 
         if self.action.id_ in lr_vars.Window.action_windows:  # перезапустить
             self.highlight_lines.highlight_callback()

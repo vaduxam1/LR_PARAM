@@ -95,7 +95,7 @@ class WinWidj(lr_lib.gui.wrsp.win_part_lbrb.WinPartsLbRb):
 
     def firstOrLastFile(self, *args) -> None:
         """выбрать первый/последный файл в (3)"""
-        if not lr_vars.FilesWithParam:
+        if (not lr_vars.FilesWithParam) or (not self.comboParam.get()):
             return
         # i = (len(self.comboFiles['values']) - 1) if lr_vars.VarFirstLastFile.get() else 0
         self.comboFiles.current(0)
