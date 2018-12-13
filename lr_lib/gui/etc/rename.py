@@ -138,8 +138,8 @@ def rename_transaction(event, parent=None, s='lr_start_transaction("', e='lr_end
         ['Переименовать', 'Отмена'], 'Переименовать выделенную(линию) transaction',
         'указать только новое имя transaction', 'transaction', parent=parent, is_text=old_name,
     )
-    s1 = s + old_name
-    s2 = e + old_name
+    s1 = (s + old_name)
+    s2 = (e + old_name)
 
     if y.ask() == 'Переименовать':
         new_name = y.text.strip()
