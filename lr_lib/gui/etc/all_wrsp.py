@@ -1,6 +1,8 @@
 # -*- coding: UTF-8 -*-
 # все варианты создания web_reg_save_param
 
+import threading
+
 import lr_lib
 import lr_lib.core
 import lr_lib.etc.excepthook
@@ -10,7 +12,9 @@ from lr_lib.gui.etc.action_lib import event_action_getter
 
 @lr_vars.T_POOL_decorator
 def all_wrsp_dict_web_reg_save_param(event, wrsp_web_=None) -> None:
-    """все варианты создания web_reg_save_param, искать не ограничивая верхний номер Snapshot"""
+    """
+    все варианты создания web_reg_save_param, искать не ограничивая верхний номер Snapshot
+    """
     action = event_action_getter(event)
     m = action.max_inf_cbx_var.get()
     action.max_inf_cbx_var.set(0)
@@ -31,6 +35,7 @@ def all_wrsp_dict_web_reg_save_param(event, wrsp_web_=None) -> None:
 
 def _all_wrsp_dict_web_reg_save_param(action: 'lr_lib.gui.action.main_action.ActionWindow', selection: str) -> None:
     """все варианты создания web_reg_save_param"""
+    param = selection
     try:
         wrsp_and_param = action.web_action.websReport.wrsp_and_param_names
     except AttributeError as ex:
@@ -38,8 +43,6 @@ def _all_wrsp_dict_web_reg_save_param(action: 'lr_lib.gui.action.main_action.Act
     else:
         if selection in wrsp_and_param:  # сменить wrsp-имя в ориг. имя param
             param = wrsp_and_param[selection]
-        else:
-            param = selection
 
     lr_vars.VarParam.set(param, action=action, set_file=True)
 
@@ -47,7 +50,6 @@ def _all_wrsp_dict_web_reg_save_param(action: 'lr_lib.gui.action.main_action.Act
     lr_vars.VarWrspDictList.extend(filter(_check_wrsp_duplicate, _all_wrsp(action)))
     assert lr_vars.VarWrspDictList, 'Ничего не найдено'
 
-    param = lr_vars.VarWrspDictList[0][0]['param']
     answ_text = _ask_wrsp_create(param, action)
     if isinstance(answ_text, str):
         _create_wrsp_web_(answ_text, param, action)
@@ -70,10 +72,6 @@ def _wrsp_text_delta_remove(wr: (dict, str), ) -> str:
     delta = wrsp_dict['web_reg_name']
     without_delta = wrsp.replace(delta, '').strip()
     return without_delta
-
-
-import queue
-import threading
 
 
 class ColorProgress:
