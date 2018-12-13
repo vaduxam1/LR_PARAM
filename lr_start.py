@@ -7,5 +7,5 @@ import lr_lib.main
 
 
 if __name__ == '__main__':
-    ex = lr_lib.main.init(excepthook=False)
+    ex = lr_lib.main.init(excepthook=True)
     sys.exit(ex)
