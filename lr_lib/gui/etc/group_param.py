@@ -21,21 +21,20 @@ def group_param(event, widget=None, params=None, ask=True) -> None:
     """gui - нахождение и замена для группы web_reg_save_param's"""
     if widget is None:
         widget = event.widget
-
+    # если не передали, найти params
     params = _find_params(widget, params=params)
     if not params:
         lr_vars.Logger.warning('param не найдены! %s' % params, parent=widget.action)
         return
-
-    len_params = _ask_params(params, widget.action, ask=ask)
+    # пользовательское редактирование params
+    (len_params, params) = _ask_params(params, widget.action, ask=ask)
     if not len_params:
         return
-
     # заменить params
+    widget.action.backup()
     with lr_vars.Window.block(force=True), widget.action.block(), ProgressBar(len_params, widget) as progress_bar:
-        widget.action.backup()
-        for item in _group_param_iter(params, widget.action):  # заменить
-            progress_bar(item)
+        for item in _group_param_iter(params, widget.action):
+            progress_bar.update(item)
             continue
     return
 
@@ -54,7 +53,7 @@ class ProgressBar:
     def __enter__(self) -> 'callable':
         self.widget.action.show_hide_bar_1(force_show=True)
         self.start()
-        return self.update
+        return self
 
     def __exit__(self, exc_type, exc_val, exc_tb) -> tuple:
         self.stop()
@@ -119,8 +118,8 @@ class ProgressBar:
         return
 
 
-def _find_params(widget, params: '(False or None)') -> [str, ]:
-    """определить params из widget"""
+def _find_params(widget, params: '([str, ] or False or None)') -> [str, ]:
+    """при params == False or None - найти params в widget"""
     if params is None:  # поиск только по началу имени
         params = group_param_search(widget.action, widget.selection_get())
     elif params is False:  # поиск только по LB=
@@ -128,7 +127,7 @@ def _find_params(widget, params: '(False or None)') -> [str, ]:
     return params
 
 
-def _ask_params(params: [str, ], action: 'lr_lib.gui.action.main_action.ActionWindow', ask=True) -> int:
+def _ask_params(params: [str, ], action: 'lr_lib.gui.action.main_action.ActionWindow', ask=True) -> (int, [str, ]):
     """спросить о создании params, -> 0 - не создавать"""
     old_len_params = len(params)
     if ask:
@@ -148,7 +147,9 @@ def _ask_params(params: [str, ], action: 'lr_lib.gui.action.main_action.ActionWi
     new_len_params = len(params)
     lr_vars.Logger.info('Имеется {l} ранее созданных param.\nДля создания выбрано/найдено {p}/{_p} param.\n'.format(
         _p=old_len_params, p=new_len_params, l=len(action.web_action.websReport.wrsp_and_param_names)))
-    return new_len_params
+
+    it = (new_len_params, params)
+    return it
 
 
 def _group_param_iter(params: [str, ],
