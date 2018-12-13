@@ -172,7 +172,7 @@ class WebLegend(tk.Toplevel):
                 c = colrs.index(color)
                 if c:
                     c -= 1
-                cl = colrs[c:] + colrs[:c]
+                cl = (colrs[c:] + colrs[:c])
                 onObjectClick1 = lambda event, i=i, cl=cl: onObjectClick1(event, i=i, colors=iter(itertools.cycle(cl)))
                 onObjectClick2 = lambda event, i=i, cl=cl: onObjectClick2(event, i=i, colors=iter(itertools.cycle(cl)))
             else:
@@ -186,7 +186,7 @@ class WebLegend(tk.Toplevel):
             self.canvas.tag_bind(shape_1, '<Button-3>', onObjectClick3)
             self.web_canavs[i][1] = list(xy1)
 
-            t1 = self.canvas.create_text(sep + w_, 35, text=st)
+            t1 = self.canvas.create_text((sep + w_), 35, text=st)
             self.canvas.tag_bind(t1, '<ButtonPress-1>', onObjectClick1)
             self.canvas.tag_bind(t1, '<Button-3>', onObjectClick3)
             if transaction != _transaction:
@@ -227,11 +227,11 @@ class WebLegend(tk.Toplevel):
                     for i in r_param['snapshots']:
                         if self.web_canavs[i]['enable_in']:
                             in_count = self.parent.web_action.websReport.web_snapshot_param_in_count[i]
-                            in_count = {k: in_count[k] for k in in_count if k in wn}
+                            in_count = {k: in_count[k] for k in in_count if (k in wn)}
 
                             xy2 = self.web_canavs[i][2]
                             line = self.canvas.create_line(
-                                xy1[2]-x, xy1[3], xy2[0]+x, xy2[1], fill=color, arrow=tk.LAST, width=2)
+                                (xy1[2]-x), xy1[3], (xy2[0]+x), xy2[1], fill=color, arrow=tk.LAST, width=2)
 
                             def onObjectClick(event, word='"{}"'.format(name)) -> None:
                                 self.parent.search_in_action(word=word, hist=False)

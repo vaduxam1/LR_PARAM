@@ -31,8 +31,8 @@ def group_param(event, widget=None, params=None, ask=True) -> None:
     if not len_params:
         return
     # заменить params
-    widget.action.backup()
     with lr_vars.Window.block(force=True), widget.action.block(), ProgressBar(len_params, widget) as progress_bar:
+        widget.action.backup()
         for item in _group_param_iter(params, widget.action):
             progress_bar.update(item)
             continue
