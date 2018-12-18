@@ -294,22 +294,25 @@ def search_param_in_file(file: dict) -> (dict or None):
 
 def create_files_with_search_data(files: (dict,), search_data: dict, action=None, action_infs=()) -> iter((dict,)):
     """с учетом inf - создать копию файла и обновить search_data"""
-    d = search_data['Param']
-    inf_min = d['inf_min']
-    inf_max = d['inf_max']
+    dt = search_data['Param']
+    inf_min = dt['inf_min']
+    inf_max = dt['inf_max']
 
     if action:
-        d['action_id'] = action.id_
+        dt['action_id'] = action.id_
         action_infs = action.web_action.action_infs
 
-        inf_min = d['inf_min'] = min(action_infs or [-1])
-        inf_max = d['inf_max'] = max(action_infs or [-1])
-        d['max_action_inf'] = param_inf = next(set_param_in_action_inf(action, d['Name']), -1)
+        inf_min = dt['inf_min'] = min(action_infs or [-1])
+        inf_max = dt['inf_max'] = max(action_infs or [-1])
+        dt['max_action_inf'] = param_inf = next(set_param_in_action_inf(action, dt['Name']), -1)
+
         ai = action.add_inf_cbx_var.get()
         if (not ai) and (param_inf > 1):
             param_inf -= 1  # inf, педшествующий номеру inf, где первый раз встречается pram
-        if (param_inf > 0) and action.max_inf_cbx_var.get() and param_inf and (inf_max > param_inf):
-            inf_max = d['inf_max'] = param_inf
+
+        mi = action.max_inf_cbx_var.get()
+        if mi and param_inf and (param_inf > 0) and (inf_max > param_inf):
+            inf_max = dt['inf_max'] = param_inf
 
     for __file in files:
         inf_list = []

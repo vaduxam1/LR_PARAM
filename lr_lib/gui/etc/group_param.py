@@ -225,7 +225,7 @@ def auto_param_creator(action: 'lr_lib.gui.action.main_action.ActionWindow') -> 
             continue
 
         params = [p for p in params if ((p not in lr_vars.DENY_PARAMS) and (
-            not (len(p) > 2 and p.startswith('on') and p[2].isupper())))]
+            not ((len(p) > 2) and p.startswith('on') and p[2].isupper())))]
         params.sort(key=lambda param: len(param), reverse=True)
 
         y = lr_lib.gui.widj.dialog.YesNoCancel(
@@ -265,7 +265,7 @@ def session_params(action: 'lr_lib.gui.action.main_action.ActionWindow', lb_list
         params.extend(_group_param_search(action, p, part_mode=False))
         continue
 
-    i = list(reversed(sorted(p for p in set(params) if p not in lr_vars.DENY_PARAMS)))
+    i = list(reversed(sorted(p for p in set(params) if (p not in lr_vars.DENY_PARAMS))))
     return i
 
 
@@ -291,8 +291,12 @@ def _group_param_search(action: 'lr_lib.gui.action.main_action.ActionWindow', pa
             right = right.split('\n', 1)
             right = right[0].rstrip()
 
-            if lr_lib.core.etc.lbrb_checker.check_bound_lb(left) if part_mode else (
-                    right[0] in lr_lib.core.wrsp.param.wrsp_allow_symb):
+            if part_mode:
+                st = lr_lib.core.etc.lbrb_checker.check_bound_lb(left)
+            else:
+                st = (right[0] in lr_lib.core.wrsp.param.wrsp_allow_symb)
+
+            if st:
                 param = []  # "5680"
 
                 for s in right:
@@ -305,7 +309,8 @@ def _group_param_search(action: 'lr_lib.gui.action.main_action.ActionWindow', pa
                 if param:
                     param = ''.join(param)
                     if part_mode:  # param_part или по LB
-                        param = param_part + param
+                        param = (param_part + param)
+
                     yield param  # "zkau_5680"
             continue
         continue
@@ -326,19 +331,27 @@ def re_auto_param_creator(action: 'lr_lib.gui.action.main_action.ActionWindow') 
     else:
         return
 
-    def deny_params(lst: list) -> [str, ]:
+    def deny_params(lst: list, min_param_len=3, ) -> [str, ]:
         """удалить не param-слова"""
-        for p in lst:
-            check = ((p not in lr_vars.DENY_PARAMS) and (
-                not (len(p) > 2 and p.startswith('on') and p[2].isupper()))) and (len(p) > 2)
+        for param in lst:
+            if len(param) < min_param_len:
+                continue
+
+            p1 = (param not in lr_vars.DENY_PARAMS)
+            p2 = (param.startswith('on') and param[2].isupper())  # 'onScrean'
+            check = (p1 and (not p2))
+
+            for a in lr_vars.DENY_Startswitch_PARAMS:
+                if param.startswith(a):
+                    ps = param.split(a, 1)
+                    ps = map(str.isnumeric, ps[1])
+
+                    check = (not all(ps))
+                    break
+                continue
+
             if check:
-                for a in lr_vars.DENY_Startswitch_PARAMS:
-                    if p.startswith(a):
-                        check = not all(map(str.isnumeric, (p.split(a, 1)[1])))
-                        break
-                    continue
-                if check:
-                    yield p
+                yield param
             continue
         return
 
