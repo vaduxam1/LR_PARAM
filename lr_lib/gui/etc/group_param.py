@@ -21,11 +21,11 @@ def group_param(event, widget=None, params=None, ask=True) -> None:
     """gui - нахождение и замена для группы web_reg_save_param's"""
     if widget is None:
         widget = event.widget
-    # если не передали, найти params
-    params = _find_params(widget, params=params)
     if not params:
-        lr_vars.Logger.warning('param не найдены! %s' % params, parent=widget.action)
-        return
+        params = _find_params(widget, params=params)
+        if not params:
+            lr_vars.Logger.warning('param не найдены! {}'.format(params), parent=widget.action)
+            return
     # пользовательское редактирование params
     (len_params, params) = _ask_params(params, widget.action, ask=ask)
     if not len_params:
@@ -165,7 +165,7 @@ def _group_param_iter(params: [str, ],
     try:
 
         for (counter, wrsp_dict) in enumerate(iter(wrsp_dict_queue.get, None), start=1):
-            wrsp = lr_lib.core.wrsp.param.create_web_reg_save_param(wrsp_dict)
+            wrsp = lr_lib.core.wrsp.param.create_web_reg_save_param(wrsp_dict)  # wrsp
 
             # вставить web_reg_save_param перед web
             action.web_action.web_reg_save_param_insert(wrsp_dict, wrsp)
@@ -194,7 +194,8 @@ def _thread_wrsp_dict_creator(wrsp_dicts: queue.Queue, params: [str, ], unsucces
     for param in params:
         try:
             lr_vars.VarParam.set(param, action=action, set_file=True)  # найти param, создать wrsp_dict
-            wrsp_dicts.put_nowait(lr_vars.VarWrspDict.get())  # вернуть wrsp_dict
+            dt = lr_vars.VarWrspDict.get()
+            wrsp_dicts.put(dt)  # вернуть wrsp_dict
         except Exception:
             unsuccess.append(param)
             lr_lib.etc.excepthook.excepthook(*sys.exc_info())

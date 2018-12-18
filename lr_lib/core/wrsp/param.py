@@ -305,7 +305,8 @@ def create_files_with_search_data(files: (dict,), search_data: dict, action=None
         inf_min = d['inf_min'] = min(action_infs or [-1])
         inf_max = d['inf_max'] = max(action_infs or [-1])
         d['max_action_inf'] = param_inf = next(set_param_in_action_inf(action, d['Name']), -1)
-        if not action.add_inf_cbx_var.get():
+        ai = action.add_inf_cbx_var.get()
+        if (not ai) and (param_inf > 1):
             param_inf -= 1  # inf, педшествующий номеру inf, где первый раз встречается pram
         if (param_inf > 0) and action.max_inf_cbx_var.get() and param_inf and (inf_max > param_inf):
             inf_max = d['inf_max'] = param_inf
@@ -388,7 +389,7 @@ def get_files_with_param(param: str, action=None, set_file=True) -> None:
         files_list.extend(warn_inf)
         lr_vars.FilesWithParam = files_list
 
-    if set_file:
+    if set_file:  # VarFileName.set
         file = lr_vars.FilesWithParam[0]
         assert isinstance(file, dict), len(lr_vars.FilesWithParam)
         lr_vars.VarFileName.set(file['File']['Name'])  # (3)
