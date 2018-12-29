@@ -376,6 +376,12 @@ class ActionWindow(lr_lib.gui.action.act_win.ActWin):
             '# transaction_rename'
         )
         lr_lib.gui.widj.tooltip.createToolTip(
+            self.secondary_param_spin,
+            'для всех найденных param, взять n первых символов,\n'
+            'и использовать их для повторного поиска param по началу имени.\n\t'
+            '# secondary_param_spin'
+        )
+        lr_lib.gui.widj.tooltip.createToolTip(
             self.max_inf_cbx,
             'ограничить диапазон поиска param - максимальный номер inf\n'
             'Это номер inf, в action.c, где первый раз встречается pram\n\t'
@@ -479,5 +485,6 @@ class ActionWindow(lr_lib.gui.action.act_win.ActWin):
         self.lr_think_time.grid(row=8, column=13, sticky=tk.NSEW)
         self.lr_report_B.grid(row=8, column=4, sticky=tk.NSEW)
         self.lr_report_A.grid(row=7, column=4, sticky=tk.NSEW)
-        self.transaction_rename.grid(row=7, column=5, sticky=tk.NSEW, rowspan=2)
+        self.transaction_rename.grid(row=7, column=5, sticky=tk.NSEW, rowspan=1)
+        self.secondary_param_spin.grid(row=8, column=5, sticky=tk.NSEW, rowspan=1)
         return

@@ -74,6 +74,12 @@ class ActWin(lr_lib.gui.action.act_any.ActAny):
             self.toolbar, text='все файлы', font=lr_vars.DefaultFont,
             command=lambda *a: lr_lib.gui.wrsp.top.top_allfiles.TopFolder(self))
 
+        #
+        self.secondary_param_spin = tk.Spinbox(
+            self.toolbar, width=2, justify='center', from_=0, to=99, textvariable=lr_vars.SecondaryParamLen,
+            font=lr_vars.DefaultFont,
+        )  # command=self.search_secondary_param,
+
         # запускать в конце
         self.post_init()
         return

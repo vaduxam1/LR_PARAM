@@ -18,7 +18,7 @@ from lr_lib.etc.help import (COLORS, HEX, )
 #####################################
 # главные переменные
 
-VERSION = 'v10.9'
+VERSION = 'v11.0'
 lib_folder = 'lr_lib'
 Tk = tk.Tk()  # tkinter
 original_callback_exception = Tk.report_callback_exception
@@ -114,6 +114,8 @@ REGEXP_PARAMS = [
     '=(.+?)\"',
     '=(.+?)\'',
 ]  # поиск param, на основе регулярных выражений re.findall(regexp, text)
+
+SecondaryParamLen = tk.IntVar(value=3)  # число первых символов, взятых из param, для использования их при поиске одноименных param
 
 FindParamPOOLEnable = True  # использовать M_POOL, для поиска param, в файлах ответов
 VarStrongSearchInFile = tk.IntVar(value=True)  # принудительно использовать контроль LB/RB(на недопустимые символы), при поиске param, в файлах ответов

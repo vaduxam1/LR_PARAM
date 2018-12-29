@@ -224,9 +224,19 @@ def auto_param_creator(action: 'lr_lib.gui.action.main_action.ActionWindow') -> 
                 continue
             continue
 
-        params = [p for p in params if ((p not in lr_vars.DENY_PARAMS) and (
-            not ((len(p) > 2) and p.startswith('on') and p[2].isupper())))]
-        params.sort(key=lambda param: len(param), reverse=True)
+        params = set(p for p in params if ((p not in lr_vars.DENY_PARAMS) and (
+            not ((len(p) > 2) and p.startswith('on') and p[2].isupper()))))
+
+        param_spin = lr_vars.SecondaryParamLen.get()
+        if param_spin:  # взять n первых символов для повторного поиска param по началу имени
+            for p in list(filter(bool, params)):
+                part = p[:param_spin]
+                ap = group_param_search(action, part)
+                if ap:
+                    params.update(ap)
+                continue
+
+        params = sorted(params, key=lambda param: len(param), reverse=True)
 
         y = lr_lib.gui.widj.dialog.YesNoCancel(
             ['Создать', 'Отменить'], is_text='\n'.join(params), parent=action,
