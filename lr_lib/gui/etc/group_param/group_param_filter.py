@@ -46,7 +46,7 @@ def filter_deny_onUpper(param: str, n=2, s='on', ) -> bool:
     try:
         letter = param[n]
     except IndexError:
-        return True
+        return False  # не onScreen разрешить, при большом n
 
     state = letter.isupper()
     if state:
