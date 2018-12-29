@@ -224,9 +224,7 @@ def auto_param_creator(action: 'lr_lib.gui.action.main_action.ActionWindow') -> 
                 continue
             continue
 
-        params = set(p for p in params if ((p not in lr_vars.DENY_PARAMS) and (
-            not ((len(p) > 2) and p.startswith('on') and p[2].isupper()))))
-
+        params = set(param_filter(params))
         param_spin = lr_vars.SecondaryParamLen.get()
         if param_spin:  # взять n первых символов для повторного поиска param по началу имени
             for p in list(filter(bool, params)):
@@ -236,7 +234,7 @@ def auto_param_creator(action: 'lr_lib.gui.action.main_action.ActionWindow') -> 
                     params.update(ap)
                 continue
 
-        params = sorted(params, key=lambda param: len(param), reverse=True)
+        params = param_sort(params)
 
         y = lr_lib.gui.widj.dialog.YesNoCancel(
             ['Создать', 'Отменить'], is_text='\n'.join(params), parent=action,
@@ -246,7 +244,35 @@ def auto_param_creator(action: 'lr_lib.gui.action.main_action.ActionWindow') -> 
         ans = y.ask()
         if ans == 'Создать':
             params = list(filter(bool, map(str.strip, y.text.split('\n'))))
+            params = param_sort(params)
             group_param(None, widget=action.tk_text, params=params, ask=False)
+    return
+
+
+def param_sort(params: [str, ], key=lambda pm: len(pm), reverse=True, ) -> [str, ]:
+    """
+    отсортировать param по длине, тк если имеются похожие имена, лучше сначала заменять самые длинные,
+    тк иначе например заменяя "zkau_1" - можно ошибочно заменить и для "zkau_11"
+    """
+    pp = param_filter(params)
+    params = sorted(pp, key=key, reverse=reverse)
+    return params
+
+
+def param_filter(params: [str, ], mpl=lr_vars.MinParamLen) -> iter((str,)):
+    """отфильтровать лишние param"""
+    sp = set(params)
+    for pm in sp:
+        if pm in lr_vars.DENY_PARAMS:
+            continue
+        else:
+            lnp = len(pm)
+            if lnp > mpl:
+                if pm[mpl].isupper() and pm.startswith('on'):
+                    continue  # "onScreen"
+
+                yield pm
+        continue
     return
 
 
