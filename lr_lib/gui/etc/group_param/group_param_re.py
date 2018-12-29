@@ -5,8 +5,8 @@ import re
 
 import lr_lib
 from lr_lib.core.var import vars as lr_vars
-from lr_lib.gui.etc.group_param.group_param import group_param, param_filter, param_sort
-
+from lr_lib.gui.etc.group_param.group_param import group_param
+from lr_lib.gui.etc.group_param.group_param_filter import param_sort, param_filter
 
 K_FIND = 'Найти'
 K_CREATE = 'Создать'

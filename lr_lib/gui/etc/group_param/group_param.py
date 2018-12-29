@@ -8,6 +8,7 @@ import tkinter as tk
 import lr_lib
 from lr_lib.core.etc.lbrb_checker import check_bound_lb
 from lr_lib.core.var import vars as lr_vars
+from lr_lib.gui.etc.group_param.group_param_filter import param_sort
 from lr_lib.gui.etc.group_param.group_progress import ProgressBar
 
 
@@ -232,35 +233,3 @@ def session_params(action: 'lr_lib.gui.action.main_action.ActionWindow', lb_list
 
     params = param_sort(params)
     return params
-
-
-def param_sort(params: [str, ], reverse=True, _filter=True, deny_param_filter=True, ) -> [str, ]:
-    """
-    отсортировать param по длине, тк если имеются похожие имена, лучше сначала заменять самые длинные,
-    тк иначе например заменяя "zkau_1" - можно ошибочно заменить и для "zkau_11"
-    """
-    if _filter:
-        params = param_filter(params, deny_param_filter=deny_param_filter, )
-    params = sorted(params, key=len, reverse=reverse)
-    return params
-
-
-def param_filter(params: [str, ], len_p_min=lr_vars.MinParamLen, deny=lr_vars.DENY_PARAMS,
-                 deny_param_filter=True, ) -> iter((str,)):
-    """отфильтровать лишние param"""
-    params = set(filter(str.strip, params))
-    if deny_param_filter:
-        for param in params:
-            if param in deny:
-                continue
-            else:
-                len_p = len(param)
-                if len_p > len_p_min:
-                    if param[len_p_min].isupper() and param.startswith('on'):
-                        continue  # "onScreen"
-
-                    yield param
-            continue
-    else:
-        yield from params
-    return
