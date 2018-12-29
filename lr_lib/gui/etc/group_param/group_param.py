@@ -75,7 +75,7 @@ def _ask_params(params: [str, ], action: 'lr_lib.gui.action.main_action.ActionWi
         if ask == K_FIND:
             yt = y.text.split('\n')
             ys = map(str.strip, yt)
-            params = param_sort(ys)
+            params = param_sort(ys, deny_param_filter=False)
         elif ask == K_SKIP:
             params = []
         else:
@@ -223,8 +223,8 @@ def session_params(action: 'lr_lib.gui.action.main_action.ActionWindow', lb_list
             return []
 
     params = []
-    for p in filter(bool, lb_list):
-        ps = _group_param_search(action, p, part_mode=False)
+    for lb_in_action in filter(bool, lb_list):
+        ps = _group_param_search(action, lb_in_action, part_mode=False)
         params.extend(ps)
         continue
 
@@ -232,28 +232,33 @@ def session_params(action: 'lr_lib.gui.action.main_action.ActionWindow', lb_list
     return params
 
 
-def param_sort(params: [str, ], reverse=True, ) -> [str, ]:
+def param_sort(params: [str, ], reverse=True, _filter=True, deny_param_filter=True, ) -> [str, ]:
     """
     отсортировать param по длине, тк если имеются похожие имена, лучше сначала заменять самые длинные,
     тк иначе например заменяя "zkau_1" - можно ошибочно заменить и для "zkau_11"
     """
-    pp = param_filter(params)
-    params = sorted(pp, key=len, reverse=reverse)
+    if _filter:
+        params = param_filter(params, deny_param_filter=deny_param_filter, )
+    params = sorted(params, key=len, reverse=reverse)
     return params
 
 
-def param_filter(params: [str, ], mpl=lr_vars.MinParamLen, deny=lr_vars.DENY_PARAMS, ) -> iter((str,)):
+def param_filter(params: [str, ], len_p_min=lr_vars.MinParamLen, deny=lr_vars.DENY_PARAMS,
+                 deny_param_filter=True, ) -> iter((str,)):
     """отфильтровать лишние param"""
-    sp = set(params)
-    for pm in filter(bool, sp):
-        if pm in deny:
-            continue
-        else:
-            lnp = len(pm)
-            if lnp > mpl:
-                if pm[mpl].isupper() and pm.startswith('on'):
-                    continue  # "onScreen"
+    params = set(filter(bool, params))
+    if deny_param_filter:
+        for param in params:
+            if param in deny:
+                continue
+            else:
+                len_p = len(param)
+                if len_p > len_p_min:
+                    if param[len_p_min].isupper() and param.startswith('on'):
+                        continue  # "onScreen"
 
-                yield pm
-        continue
+                    yield param
+            continue
+    else:
+        yield from params
     return

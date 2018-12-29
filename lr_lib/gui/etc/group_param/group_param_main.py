@@ -44,21 +44,21 @@ def auto_param_creator(action: 'lr_lib.gui.action.main_action.ActionWindow') -> 
         # поиск по началу имени - взять n первых символов для повторного поиска param по началу имени
         param_spin = lr_vars.SecondaryParamLen.get()
         if param_spin:
-            for p in list(filter(bool, params)):
+            for p in params.copy():  # params.update
                 part = p[:param_spin]
                 ap = group_param_search(action, part)
-                if ap:
-                    params.update(ap)
+                params.update(ap)
                 continue
 
         params = param_sort(params)
+        lp = len(params)
 
         y = lr_lib.gui.widj.dialog.YesNoCancel(
             [K_CREATE, K_CANCEL],
             default_key=K_CANCEL,
             title='Имена param',
             is_text='\n'.join(params),
-            text_before='создание + автозамена. {} шт'.format(len(params)),
+            text_before='создание + автозамена. {} шт'.format(lp),
             text_after='При необходимости - добавить/удалить',
             parent=action,
         )
@@ -67,7 +67,7 @@ def auto_param_creator(action: 'lr_lib.gui.action.main_action.ActionWindow') -> 
         # создание переданных param
         if ans == K_CREATE:
             params = list(filter(bool, map(str.strip, y.text.split('\n'))))
-            params = param_sort(params)
+            params = param_sort(params, deny_param_filter=False)
             # создание
             group_param(None, widget=action.tk_text, params=params, ask=False)
     return
