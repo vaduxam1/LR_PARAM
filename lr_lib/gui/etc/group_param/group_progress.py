@@ -28,7 +28,7 @@ class ProgressBar:
         self.widget.action.show_hide_bar_1()
         return exc_type, exc_val, exc_tb
 
-    def update(self, item: (int, dict, str, list)):
+    def update(self, item: (int, dict, str, list)) -> None:
         """добавить данные для progressbar"""
         self.item0[:] = [item]
         return

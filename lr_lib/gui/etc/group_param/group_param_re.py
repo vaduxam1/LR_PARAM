@@ -5,30 +5,34 @@ import re
 
 import lr_lib
 from lr_lib.core.var import vars as lr_vars
-from lr_lib.gui.etc.group_param.group_param import group_param
+from lr_lib.gui.etc.group_param.group_param import group_param, param_filter, param_sort
 
 
-def _param_filter(lst: list, min_param_len=lr_vars.MinParamLen, ) -> [str, ]:
+def _param_filter(params: [str, ], min_param_len=lr_vars.MinParamLen,
+                  deny=lr_vars.DENY_Startswitch_PARAMS, ) -> [str, ]:
     """удалить не param-слова"""
-    for param in lst:
+    params = param_filter(params)
+    for param in params:
         if len(param) < min_param_len:
             continue
 
-        p1 = (param not in lr_vars.DENY_PARAMS)
-        p2 = (param.startswith('on') and param[2].isupper())  # 'onScrean'
-        check = (p1 and (not p2))
-
-        for a in lr_vars.DENY_Startswitch_PARAMS:
-            if param.startswith(a):
-                ps = param.split(a, 1)
-                ps = map(str.isnumeric, ps[1])
-
-                check = (not all(ps))
+        check = True
+        for dp in deny:
+            if param.startswith(dp):  # "uuid_1" - "статичный" параметр, не требующий парамертизации
+                ps = param.split(dp, 2)
+                lps = len(ps)
+                if lps == 2:
+                    p1 = ps[1]
+                    numeric = map(str.isnumeric, p1)
+                    check = (not all(numeric))
+                elif lps < 2:
+                    check = False
                 break
             continue
 
         if check:
             yield param
+
         continue
     return
 
@@ -49,20 +53,19 @@ def re_auto_param_creator(action: 'lr_lib.gui.action.main_action.ActionWindow', 
     ans = y.ask()
     if ans == 'Найти':
         yt = y.text.split('\n')
-        regexps = list(filter(bool, map(str.strip, yt)))
+        regexps = param_filter(map(str.strip, yt))
     else:
         return
 
     params = []
     for rx in regexps:
         prs = group_param_search_quotes(action, regexp=rx)
-        prs = list(_param_filter(prs))
+        prs = _param_filter(prs)
         params.extend(prs)
         continue
 
-    params = list(set(params))
+    params = param_sort(params)
     if params:
-        params.sort(key=lambda param: len(param), reverse=True)
         y = lr_lib.gui.widj.dialog.YesNoCancel(
             ['создать', 'Отменить'],
             is_text='\n'.join(params),
@@ -73,7 +76,9 @@ def re_auto_param_creator(action: 'lr_lib.gui.action.main_action.ActionWindow', 
         )
         ans = y.ask()
         if ans == 'создать':
-            params = list(filter(bool, map(str.strip, y.text.split('\n'))))
+            params = y.text.split('\n')
+            params = map(str.strip, params)
+            params = param_sort(params)
             group_param(None, widget=action.tk_text, params=params, ask=False)
     return
 
@@ -85,6 +90,7 @@ RegExp = r'=(.+?)\"'  # re.findall по умолчанию
 def group_param_search_quotes(action: 'lr_lib.gui.action.main_action.ActionWindow', regexp=RegExp, ) -> iter((str,)):
     """фильтр поиск param, внутри кавычек"""
     params = _get_params(action, regexp=regexp)
+    params = filter(bool, map(str.strip, params))
     for param in params:
         if all(map(Filter, param)):
             yield param  # не содержит неподходящих символов
@@ -95,8 +101,8 @@ def group_param_search_quotes(action: 'lr_lib.gui.action.main_action.ActionWindo
 def _get_params(action: 'lr_lib.gui.action.main_action.ActionWindow', regexp=RegExp, ) -> iter((str,)):
     """поиск param, внутри кавычек"""
     for web_ in action.web_action.get_web_snapshot_all():
-        params = re.findall(regexp, web_.get_body())
-        params = filter(bool, map(str.strip, params))
+        body = web_.get_body()
+        params = re.findall(regexp, body)
         yield from params
         continue
     return

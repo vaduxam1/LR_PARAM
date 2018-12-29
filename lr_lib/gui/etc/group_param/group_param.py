@@ -6,8 +6,9 @@ import queue
 import tkinter as tk
 
 import lr_lib
-import lr_lib.core.etc.lbrb_checker
+from lr_lib.core.etc.lbrb_checker import check_bound_lb
 import lr_lib.core.var.vars as lr_vars
+from lr_lib.core.var import vars as lr_vars
 from lr_lib.gui.etc.group_param.group_progress import ProgressBar
 
 
@@ -60,7 +61,9 @@ def _ask_params(params: [str, ], action: 'lr_lib.gui.action.main_action.ActionWi
         ask = y.ask()
 
         if ask == 'Найти':
-            params = sorted(filter(bool, y.text.split('\n')), key=len, reverse=True)
+            yt = y.text.split('\n')
+            ys = map(str.strip, yt)
+            params = param_sort(ys)
         elif ask == 'Пропуск':
             params = []
         else:
@@ -136,7 +139,8 @@ def group_param_search(action: 'lr_lib.gui.action.main_action.ActionWindow',
 
 
 def _group_param_search(action: 'lr_lib.gui.action.main_action.ActionWindow', param_part: "zkau_",
-                        part_mode=True) -> iter(("zkau_5650", "zkau_5680",)):
+                        part_mode=True, allow=lr_lib.core.wrsp.param.wrsp_allow_symb,
+                        ) -> iter(("zkau_5650", "zkau_5680",)):
     """поиск в action.c, всех param, в имени которых есть param_part / или по LB"""
     for web_ in action.web_action.get_web_snapshot_all():
         split_text = web_.get_body().split(param_part)
@@ -150,15 +154,15 @@ def _group_param_search(action: 'lr_lib.gui.action.main_action.ActionWindow', pa
             right = right[0].rstrip()
 
             if part_mode:
-                st = lr_lib.core.etc.lbrb_checker.check_bound_lb(left)
+                st = check_bound_lb(left)
             else:
-                st = (right[0] in lr_lib.core.wrsp.param.wrsp_allow_symb)
+                st = (right[0] in allow)
 
             if st:
                 param = []  # "5680"
 
                 for s in right:
-                    if s in lr_lib.core.wrsp.param.wrsp_allow_symb:
+                    if s in allow:
                         param.append(s)
                     else:
                         break
@@ -175,7 +179,7 @@ def _group_param_search(action: 'lr_lib.gui.action.main_action.ActionWindow', pa
     return
 
 
-def session_params(action: 'lr_lib.gui.action.main_action.ActionWindow', lb_list=None, ask=True) -> list:
+def session_params(action: 'lr_lib.gui.action.main_action.ActionWindow', lb_list=None, ask=True, ) -> list:
     """поиск param в action, по LB="""
     if lb_list is None:
         lb_list = lr_vars.LB_PARAM_FIND_LIST
@@ -185,7 +189,8 @@ def session_params(action: 'lr_lib.gui.action.main_action.ActionWindow', lb_list
         lb_uuid = re.findall(r'uuid_\d=', text)
         lb_col_count = re.findall(r'p_p_col_count=\d&', text)
 
-        text = '\n'.join(set(lb_list + lb_uuid + lb_col_count))
+        ts = set(lb_list + lb_uuid + lb_col_count)
+        text = '\n'.join(ts)
         y = lr_lib.gui.widj.dialog.YesNoCancel(
             buttons=['Найти', 'Пропуск'],
             is_text=text,
@@ -202,8 +207,36 @@ def session_params(action: 'lr_lib.gui.action.main_action.ActionWindow', lb_list
 
     params = []
     for p in filter(bool, lb_list):
-        params.extend(_group_param_search(action, p, part_mode=False))
+        ps = _group_param_search(action, p, part_mode=False)
+        params.extend(ps)
         continue
 
-    i = list(reversed(sorted(p for p in set(params) if (p not in lr_vars.DENY_PARAMS))))
-    return i
+    params = param_sort(params)
+    return params
+
+
+def param_sort(params: [str, ], reverse=True, ) -> [str, ]:
+    """
+    отсортировать param по длине, тк если имеются похожие имена, лучше сначала заменять самые длинные,
+    тк иначе например заменяя "zkau_1" - можно ошибочно заменить и для "zkau_11"
+    """
+    pp = param_filter(params)
+    params = sorted(pp, key=len, reverse=reverse)
+    return params
+
+
+def param_filter(params: [str, ], mpl=lr_vars.MinParamLen, deny=lr_vars.DENY_PARAMS, ) -> iter((str,)):
+    """отфильтровать лишние param"""
+    sp = set(params)
+    for pm in filter(bool, sp):
+        if pm in deny:
+            continue
+        else:
+            lnp = len(pm)
+            if lnp > mpl:
+                if pm[mpl].isupper() and pm.startswith('on'):
+                    continue  # "onScreen"
+
+                yield pm
+        continue
+    return
