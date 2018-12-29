@@ -249,13 +249,13 @@ def auto_param_creator(action: 'lr_lib.gui.action.main_action.ActionWindow') -> 
     return
 
 
-def param_sort(params: [str, ], key=lambda pm: len(pm), reverse=True, ) -> [str, ]:
+def param_sort(params: [str, ], reverse=True, ) -> [str, ]:
     """
     отсортировать param по длине, тк если имеются похожие имена, лучше сначала заменять самые длинные,
     тк иначе например заменяя "zkau_1" - можно ошибочно заменить и для "zkau_11"
     """
     pp = param_filter(params)
-    params = sorted(pp, key=key, reverse=reverse)
+    params = sorted(pp, key=len, reverse=reverse)
     return params
 
 
