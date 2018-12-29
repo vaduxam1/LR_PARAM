@@ -82,7 +82,6 @@ def re_auto_param_creator(action: 'lr_lib.gui.action.main_action.ActionWindow', 
         ans = y.ask()
         if ans == K_CREATE:
             params = y.text.split('\n')
-            params = map(str.strip, params)
             params = param_sort(params, deny_param_filter=False)
             group_param(None, widget=action.tk_text, params=params, ask=False)
     return
@@ -95,7 +94,7 @@ RegExp = r'=(.+?)\"'  # re.findall по умолчанию
 def group_param_search_quotes(action: 'lr_lib.gui.action.main_action.ActionWindow', regexp=RegExp, ) -> iter((str,)):
     """фильтр поиск param, внутри кавычек"""
     params = _get_params(action, regexp=regexp)
-    params = filter(bool, map(str.strip, params))
+    params = filter(str.strip, params)
     for param in params:
         if all(map(Filter, param)):
             yield param  # не содержит неподходящих символов

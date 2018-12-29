@@ -28,12 +28,11 @@ def auto_param_creator(action: 'lr_lib.gui.action.main_action.ActionWindow') -> 
     )
     ans = y.ask()
     if ans == K_FIND:
-        param_parts = list(filter(bool, map(str.strip, y.text.split('\n'))))
-
         # поиск по LB=
         params = set(session_params(action))
 
         # поиск по началу имени
+        param_parts = set(filter(str.strip, y.text.split('\n')))
         for part in param_parts:
             ps = group_param_search(action, part)
             params.update(ps)
@@ -66,7 +65,7 @@ def auto_param_creator(action: 'lr_lib.gui.action.main_action.ActionWindow') -> 
 
         # создание переданных param
         if ans == K_CREATE:
-            params = list(filter(bool, map(str.strip, y.text.split('\n'))))
+            params = y.text.split('\n')
             params = param_sort(params, deny_param_filter=False)
             # создание
             group_param(None, widget=action.tk_text, params=params, ask=False)

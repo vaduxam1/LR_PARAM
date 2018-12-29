@@ -74,8 +74,7 @@ def _ask_params(params: [str, ], action: 'lr_lib.gui.action.main_action.ActionWi
 
         if ask == K_FIND:
             yt = y.text.split('\n')
-            ys = map(str.strip, yt)
-            params = param_sort(ys, deny_param_filter=False)
+            params = param_sort(yt, deny_param_filter=False)
         elif ask == K_SKIP:
             params = []
         else:
@@ -203,6 +202,8 @@ def session_params(action: 'lr_lib.gui.action.main_action.ActionWindow', lb_list
 
     if ask:
         text = action.tk_text.get(1.0, tk.END)
+
+        # что за param?
         lb_uuid = re.findall(r'uuid_\d=', text)
         lb_col_count = re.findall(r'p_p_col_count=\d&', text)
 
@@ -223,7 +224,7 @@ def session_params(action: 'lr_lib.gui.action.main_action.ActionWindow', lb_list
             return []
 
     params = []
-    for lb_in_action in filter(bool, lb_list):
+    for lb_in_action in filter(str.strip, lb_list):
         ps = _group_param_search(action, lb_in_action, part_mode=False)
         params.extend(ps)
         continue
@@ -246,7 +247,7 @@ def param_sort(params: [str, ], reverse=True, _filter=True, deny_param_filter=Tr
 def param_filter(params: [str, ], len_p_min=lr_vars.MinParamLen, deny=lr_vars.DENY_PARAMS,
                  deny_param_filter=True, ) -> iter((str,)):
     """отфильтровать лишние param"""
-    params = set(filter(bool, params))
+    params = set(filter(str.strip, params))
     if deny_param_filter:
         for param in params:
             if param in deny:
