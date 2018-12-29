@@ -78,14 +78,15 @@ def _ask_params(params: [str, ], action: 'lr_lib.gui.action.main_action.ActionWi
         elif ask == K_SKIP:
             params = []
         else:
-            return (0, [])
+            item = (0, [])
+            return item
 
     new_len_params = len(params)
     lr_vars.Logger.info('Имеется {l} ранее созданных param.\nДля создания выбрано/найдено {p}/{_p} param.\n'.format(
         _p=old_len_params, p=new_len_params, l=len(action.web_action.websReport.wrsp_and_param_names)))
 
-    it = (new_len_params, params)
-    return it
+    item = (new_len_params, params)
+    return item
 
 
 def _group_param_iter(params: [str, ],
