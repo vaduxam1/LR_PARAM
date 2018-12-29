@@ -7,9 +7,13 @@ import tkinter as tk
 
 import lr_lib
 from lr_lib.core.etc.lbrb_checker import check_bound_lb
-import lr_lib.core.var.vars as lr_vars
 from lr_lib.core.var import vars as lr_vars
 from lr_lib.gui.etc.group_param.group_progress import ProgressBar
+
+
+K_FIND = 'Найти'
+K_SKIP = 'Пропуск'
+K_CANCEL = 'Отменить'
 
 
 @lr_vars.T_POOL_decorator
@@ -23,24 +27,32 @@ def group_param(event, widget=None, params=None, ask=True) -> None:
             lr_vars.Logger.warning('param не найдены! {}'.format(params), parent=widget.action)
             return
     # пользовательское редактирование params
-    (len_params, params) = _ask_params(params, widget.action, ask=ask)
+    ap = _ask_params(params, widget.action, ask=ask)
+    (len_params, params) = ap
     if not len_params:
         return
     # заменить params
-    with lr_vars.Window.block(force=True), widget.action.block(), ProgressBar(len_params, widget) as progress_bar:
-        widget.action.backup()
-        for item in _group_param_iter(params, widget.action):
-            progress_bar.update(item)
-            continue
+    with lr_vars.Window.block(force=True):
+        with widget.action.block():
+            widget.action.backup()
+            with ProgressBar(len_params, widget) as progress_bar:
+                # создание
+                create_iterator = _group_param_iter(params, widget.action)
+                # прогресс
+                for item in create_iterator:
+                    progress_bar.update(item)
+                    continue
     return
 
 
 def _find_params(widget, params: '([str, ] or False or None)') -> [str, ]:
     """при params == False or None - найти params в widget"""
     if params is None:  # поиск только по началу имени
-        params = group_param_search(widget.action, widget.selection_get())
+        selection = widget.selection_get()
+        params = group_param_search(widget.action, selection)
     elif params is False:  # поиск только по LB=
-        params = session_params(widget.action, lb_list=[widget.selection_get()], ask=False)
+        selection = widget.selection_get()
+        params = session_params(widget.action, lb_list=[selection], ask=False)
     return params
 
 
@@ -50,24 +62,24 @@ def _ask_params(params: [str, ], action: 'lr_lib.gui.action.main_action.ActionWi
     if ask:
         pc = '{0} шт.'.format(old_len_params)
         y = lr_lib.gui.widj.dialog.YesNoCancel(
-            buttons=['Найти', 'Отменить', 'Пропуск'],
+            buttons=[K_FIND, K_CANCEL, K_SKIP],
+            default_key=K_FIND,
+            title=pc,
             is_text='\n'.join(params),
             text_before='найти group param',
             text_after=pc,
-            title=pc,
             parent=action,
-            default_key='Найти',
         )
         ask = y.ask()
 
-        if ask == 'Найти':
+        if ask == K_FIND:
             yt = y.text.split('\n')
             ys = map(str.strip, yt)
             params = param_sort(ys)
-        elif ask == 'Пропуск':
+        elif ask == K_SKIP:
             params = []
         else:
-            return 0
+            return (0, [])
 
     new_len_params = len(params)
     lr_vars.Logger.info('Имеется {l} ранее созданных param.\nДля создания выбрано/найдено {p}/{_p} param.\n'.format(
@@ -78,11 +90,16 @@ def _ask_params(params: [str, ], action: 'lr_lib.gui.action.main_action.ActionWi
 
 
 def _group_param_iter(params: [str, ],
-                      action: 'lr_lib.gui.action.main_action.ActionWindow') -> iter((int, dict, str, [str, ]),):
-    """ядро - найти и заменить группу web_reg_save_param"""
-    unsuccess = []  # params, обработанные с ошибкой
+                      action: 'lr_lib.gui.action.main_action.ActionWindow',
+                      ) -> iter((int, dict, str, [str, ]),):
+    """
+    ядро - найти и заменить группу web_reg_save_param
+    """
     wrsp_dict_queue = queue.Queue()
-    _thread_wrsp_dict_creator(wrsp_dict_queue, params, unsuccess, action)  # для param's, в фоне, создавать wrsp_dict's
+    unsuccess = []  # params, обработанные с ошибкой
+
+    # запуск потока для создания wrsp_dict's param's в фоне
+    _thread_wrsp_dict_creator(wrsp_dict_queue, params, unsuccess, action)
 
     web_actions = tuple(action.web_action.get_web_snapshot_all())
     replace = action.web_action.replace_bodys_iter(web_actions)  # сопрограмма-заменить
@@ -133,8 +150,8 @@ def _thread_wrsp_dict_creator(wrsp_dicts: queue.Queue, params: [str, ], unsucces
 def group_param_search(action: 'lr_lib.gui.action.main_action.ActionWindow',
                        param_part: "zkau_") -> ["zkau_5650", "zkau_5680", ]:
     """поиск в action.c, всех уникальных param, в имени которых есть param_part"""
-    params = list(set(_group_param_search(action, param_part)))  # уникальных
-    params.sort(key=lambda param: len(param), reverse=True)
+    params = _group_param_search(action, param_part)
+    params = param_sort(params)
     return params
 
 
@@ -192,15 +209,15 @@ def session_params(action: 'lr_lib.gui.action.main_action.ActionWindow', lb_list
         ts = set(lb_list + lb_uuid + lb_col_count)
         text = '\n'.join(ts)
         y = lr_lib.gui.widj.dialog.YesNoCancel(
-            buttons=['Найти', 'Пропуск'],
+            buttons=[K_FIND, K_SKIP],
+            default_key=K_FIND,
+            title='автозамена по LB=',
             is_text=text,
             text_before='найти param по LB=',
             text_after='указать LB, с новой строки',
-            title='автозамена по LB=',
             parent=action,
-            default_key='Найти',
         )
-        if y.ask() == 'Найти':
+        if y.ask() == K_FIND:
             lb_list = y.text.split('\n')
         else:
             return []

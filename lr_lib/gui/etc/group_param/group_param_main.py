@@ -7,33 +7,43 @@ from lr_lib.gui.etc.group_param.group_param import group_param, group_param_sear
     param_filter
 
 
+K_FIND = 'Найти'
+K_CREATE = 'Создать'
+K_CANCEL = 'Отменить'
+
+
 @lr_vars.T_POOL_decorator
 def auto_param_creator(action: 'lr_lib.gui.action.main_action.ActionWindow') -> None:
     """
     group params по кнопке PARAM - по LB + по началу имени
     """
     y = lr_lib.gui.widj.dialog.YesNoCancel(
-        ['Найти', 'Отменить'],
+        [K_FIND, K_CANCEL],
+        default_key=K_CANCEL,
+        title='начало param-имен',
         is_text='\n'.join(lr_vars.Params_names),
         text_before='Будет произведен поиск param, имя которых начинается на указанные имена.',
         text_after='При необходимости - добавить/удалить',
-        title='начало param-имен',
         parent=action,
     )
     ans = y.ask()
-    if ans == 'Найти':
+    if ans == K_FIND:
         param_parts = list(filter(bool, map(str.strip, y.text.split('\n'))))
 
-        params = set(session_params(action))  # поиск по LB=
+        # поиск по LB=
+        params = set(session_params(action))
+
+        # поиск по началу имени
         for part in param_parts:
-            for param in group_param_search(action, part):
-                params.add(param)  # поиск по началу имени
-                continue
+            ps = group_param_search(action, part)
+            params.update(ps)
             continue
 
         params = set(param_filter(params))
+
+        # поиск по началу имени - взять n первых символов для повторного поиска param по началу имени
         param_spin = lr_vars.SecondaryParamLen.get()
-        if param_spin:  # взять n первых символов для повторного поиска param по началу имени
+        if param_spin:
             for p in list(filter(bool, params)):
                 part = p[:param_spin]
                 ap = group_param_search(action, part)
@@ -44,16 +54,20 @@ def auto_param_creator(action: 'lr_lib.gui.action.main_action.ActionWindow') -> 
         params = param_sort(params)
 
         y = lr_lib.gui.widj.dialog.YesNoCancel(
-            ['Создать', 'Отменить'],
+            [K_CREATE, K_CANCEL],
+            default_key=K_CANCEL,
+            title='Имена param',
             is_text='\n'.join(params),
             text_before='создание + автозамена. {} шт'.format(len(params)),
             text_after='При необходимости - добавить/удалить',
-            title='Имена param',
             parent=action,
         )
         ans = y.ask()
-        if ans == 'Создать':
+
+        # создание переданных param
+        if ans == K_CREATE:
             params = list(filter(bool, map(str.strip, y.text.split('\n'))))
             params = param_sort(params)
+            # создание
             group_param(None, widget=action.tk_text, params=params, ask=False)
     return

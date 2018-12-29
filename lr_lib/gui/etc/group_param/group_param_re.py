@@ -8,6 +8,11 @@ from lr_lib.core.var import vars as lr_vars
 from lr_lib.gui.etc.group_param.group_param import group_param, param_filter, param_sort
 
 
+K_FIND = 'Найти'
+K_CREATE = 'Создать'
+K_CANCEL = 'Отменить'
+
+
 def _param_filter(params: [str, ], min_param_len=lr_vars.MinParamLen,
                   deny=lr_vars.DENY_Startswitch_PARAMS, ) -> [str, ]:
     """удалить не param-слова"""
@@ -43,15 +48,15 @@ def re_auto_param_creator(action: 'lr_lib.gui.action.main_action.ActionWindow', 
     group params поиск, на основе регулярных выражений
     """
     y = lr_lib.gui.widj.dialog.YesNoCancel(
-        ['Найти', 'Отменить'],
+        [K_FIND, K_CANCEL],
+        title='regexp {} шт.'.format(len(lr_vars.REGEXP_PARAMS)),
         is_text='\n'.join(lr_vars.REGEXP_PARAMS),
         text_before='Будет произведен поиск param: re.findall(regexp, action_text)',
         text_after='При необходимости - добавить/удалить',
-        title='regexp {} шт.'.format(len(lr_vars.REGEXP_PARAMS)),
         parent=action,
     )
     ans = y.ask()
-    if ans == 'Найти':
+    if ans == K_FIND:
         yt = y.text.split('\n')
         regexps = param_filter(map(str.strip, yt))
     else:
@@ -67,15 +72,15 @@ def re_auto_param_creator(action: 'lr_lib.gui.action.main_action.ActionWindow', 
     params = param_sort(params)
     if params:
         y = lr_lib.gui.widj.dialog.YesNoCancel(
-            ['создать', 'Отменить'],
+            [K_CREATE, K_CANCEL],
+            title='param {} шт.'.format(len(params)),
             is_text='\n'.join(params),
             text_before='Будет произведено создание param',
             text_after='При необходимости - добавить/удалить',
-            title='param {} шт.'.format(len(params)),
             parent=action,
         )
         ans = y.ask()
-        if ans == 'создать':
+        if ans == K_CREATE:
             params = y.text.split('\n')
             params = map(str.strip, params)
             params = param_sort(params)
