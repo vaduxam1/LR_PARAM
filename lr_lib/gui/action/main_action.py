@@ -7,11 +7,13 @@ import tkinter as tk
 
 import lr_lib
 import lr_lib.gui.action.act_win
+import lr_lib.gui.etc.group_param.group_param_main
+import lr_lib.gui.etc.group_param.group_param_re
 import lr_lib.gui.etc.rename
 import lr_lib.gui.widj.tooltip
 import lr_lib.gui.wrsp.top.top_allfiles
 import lr_lib.gui.etc.gui_other
-import lr_lib.gui.etc.group_param
+import lr_lib.gui.etc.group_param.group_param
 import lr_lib.gui.widj.wrsp_setting
 import lr_lib.gui.etc.action_lib
 import lr_lib.core.var.vars as lr_vars
@@ -80,8 +82,8 @@ class ActionWindow(lr_lib.gui.action.act_win.ActWin):
         self.menubar.add_cascade(label="Remove/Rename", menu=filemenu3)
 
         filemenu4 = tk.Menu(self.menubar, tearoff=0)
-        filemenu4.add_command(label="Найти и Создать WRSP", command=lambda: lr_lib.gui.etc.group_param.auto_param_creator(self))
-        filemenu4.add_command(label="regexp: найти и создать WRSP", command=lambda: lr_lib.gui.etc.group_param.re_auto_param_creator(self))
+        filemenu4.add_command(label="Найти и Создать WRSP", command=lambda: lr_lib.gui.etc.group_param.group_param_main.auto_param_creator(self))
+        filemenu4.add_command(label="regexp: найти и создать WRSP", command=lambda: lr_lib.gui.etc.group_param.group_param_re.re_auto_param_creator(self))
         self.menubar.add_cascade(label="Запуск", menu=filemenu4)
 
         filemenu5 = tk.Menu(self.menubar, tearoff=0)

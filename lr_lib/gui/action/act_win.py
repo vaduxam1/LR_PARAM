@@ -7,11 +7,13 @@ import tkinter as tk
 
 import lr_lib
 import lr_lib.gui.action.act_any
+import lr_lib.gui.etc.group_param.group_param_main
+import lr_lib.gui.etc.group_param.group_param_re
 import lr_lib.gui.widj.legend
 import lr_lib.gui.widj.dialog
 import lr_lib.gui.widj.wrsp_setting
 import lr_lib.gui.etc.sub_menu
-import lr_lib.gui.etc.group_param
+import lr_lib.gui.etc.group_param.group_param
 import lr_lib.gui.wrsp.top.top_allfiles
 import lr_lib.gui.etc.action_lib
 import lr_lib.gui.etc.gui_other
@@ -30,11 +32,11 @@ class ActWin(lr_lib.gui.action.act_any.ActAny):
 
         self.auto_param_creator_button = tk.Button(
             self.toolbar, text='Найти param LB=', background='orange', font=lr_vars.DefaultFont + ' bold',
-            command=lambda: lr_lib.gui.etc.group_param.auto_param_creator(self))
+            command=lambda: lr_lib.gui.etc.group_param.group_param_main.auto_param_creator(self))
 
         self.re_auto_param_creator_button = tk.Button(
             self.toolbar, text='Найти param RegExp', font=lr_vars.DefaultFont + ' bold',
-            command=lambda: lr_lib.gui.etc.group_param.re_auto_param_creator(self))
+            command=lambda: lr_lib.gui.etc.group_param.group_param_re.re_auto_param_creator(self))
 
         self.final_wnd_cbx = tk.Checkbutton(
             self.toolbar, text='final', font=lr_vars.DefaultFont, variable=self.final_wnd_var)

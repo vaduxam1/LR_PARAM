@@ -65,11 +65,11 @@ def rClicker(event) -> str:
 
             submenu_param.add_cascade(
                 label='группа(найти по налалу имени) -> найти и заменить', underline=0,
-                command=lambda e=event: lr_lib.gui.etc.group_param.group_param(e, params=None))
+                command=lambda e=event: lr_lib.gui.etc.group_param.group_param.group_param(e, params=None))
 
             submenu_param.add_cascade(
                 label='* группа(найти по LB=") -> найти и заменить', underline=0,
-                command=lambda e=event: lr_lib.gui.etc.group_param.group_param(e, params=False))
+                command=lambda e=event: lr_lib.gui.etc.group_param.group_param.group_param(e, params=False))
 
             submenu_param.add_cascade(
                 label='* готовый -> пересоздать, с измененными LB/RB', underline=0,
