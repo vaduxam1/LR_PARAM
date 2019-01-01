@@ -4,13 +4,9 @@
 import lr_lib
 import lr_lib.gui.widj.dialog
 from lr_lib.core.etc.lbrb_checker import check_bound_lb
-from lr_lib.gui.etc.group_param.group_param_filter import param_sort
+from lr_lib.gui.etc.group_param.gp_filter import param_sort
 from lr_lib.core.var import vars as lr_vars
-
-
-K_FIND = 'Найти'
-K_CANCEL = 'Отменить'
-K_SKIP = 'Пропустить'
+from lr_lib.gui.etc.group_param.gp_var import K_FIND, K_SKIP, K_CANCEL
 
 
 def group_param_search(action: 'lr_lib.gui.action.main_action.ActionWindow') -> ["zkau_5650", "zkau_5680", ]:

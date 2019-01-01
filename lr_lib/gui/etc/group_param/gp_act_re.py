@@ -5,12 +5,9 @@ import re
 
 import lr_lib
 from lr_lib.core.var import vars as lr_vars
-from lr_lib.gui.etc.group_param.group_param import group_param
-from lr_lib.gui.etc.group_param.group_param_filter import param_sort, param_filter
-
-K_FIND = 'Найти'
-K_CREATE = 'Найти/Создать'
-K_CANCEL = 'Отменить'
+from lr_lib.gui.etc.group_param.core_gp import group_param
+from lr_lib.gui.etc.group_param.gp_filter import param_sort, param_filter
+from lr_lib.gui.etc.group_param.gp_var import K_FIND, K_CREATE, K_CANCEL
 
 
 def _param_filter(params: [str, ], min_param_len=lr_vars.MinParamLen,

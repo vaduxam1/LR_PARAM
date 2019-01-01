@@ -1,20 +1,17 @@
 # -*- coding: UTF-8 -*-
-# нахождение и замена group_param
+# ядро - нахождение и замена group_param
+
 import sys
 import queue
 
 import lr_lib
 from lr_lib.core.etc.lbrb_checker import check_bound_lb
 from lr_lib.core.var import vars as lr_vars
-from lr_lib.gui.etc.group_param.group_param_act_lb import session_params
-from lr_lib.gui.etc.group_param.group_param_filter import param_sort
-from lr_lib.gui.etc.group_param.group_param_part import _group_param_search
-from lr_lib.gui.etc.group_param.group_progress import ProgressBar
-
-
-K_FIND = 'Найти'
-K_SKIP = 'Пропуск'
-K_CANCEL = 'Отменить'
+from lr_lib.gui.etc.group_param.gp_act_lb import session_params
+from lr_lib.gui.etc.group_param.gp_filter import param_sort
+from lr_lib.gui.etc.group_param.gp_act_startswith import _group_param_search
+from lr_lib.gui.etc.group_param.gp_progress import ProgressBar
+from lr_lib.gui.etc.group_param.gp_var import K_FIND, K_SKIP, K_CANCEL
 
 
 @lr_vars.T_POOL_decorator

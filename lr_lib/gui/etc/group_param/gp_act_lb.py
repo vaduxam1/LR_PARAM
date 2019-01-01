@@ -5,11 +5,12 @@ import tkinter as tk
 
 import lr_lib
 from lr_lib.core.var import vars as lr_vars
-from lr_lib.gui.etc.group_param.group_param_filter import param_sort
-from lr_lib.gui.etc.group_param.group_param_part import _group_param_search
+from lr_lib.gui.etc.group_param.gp_filter import param_sort
+from lr_lib.gui.etc.group_param.gp_act_startswith import _group_param_search
+from lr_lib.gui.etc.group_param.gp_var import K_FIND, K_SKIP
 
-K_FIND = 'Найти'
-K_SKIP = 'Пропуск'
+F1 = r'uuid_\d='
+F2 = r'p_p_col_count=\d&'
 
 
 def session_params(action: 'lr_lib.gui.action.main_action.ActionWindow', lb_list=None, ask=True, ) -> list:
@@ -21,8 +22,8 @@ def session_params(action: 'lr_lib.gui.action.main_action.ActionWindow', lb_list
         text = action.tk_text.get(1.0, tk.END)
 
         # что за param?
-        lb_uuid = re.findall(r'uuid_\d=', text)
-        lb_col_count = re.findall(r'p_p_col_count=\d&', text)
+        lb_uuid = re.findall(F1, text)
+        lb_col_count = re.findall(F2, text)
 
         ts = set(lb_list + lb_uuid + lb_col_count)
         text = '\n'.join(ts)
@@ -31,8 +32,8 @@ def session_params(action: 'lr_lib.gui.action.main_action.ActionWindow', lb_list
             default_key=K_FIND,
             title='поиск param в action, используя action-LB',
             is_text=text,
-            text_before='Найти param в action.c, используя action-LB - символы слева от param, в action.c тексте.',
-            text_after='добавить/удалить action-LB, с новой строки',
+            text_before='Найти param в action.c, используя LB символы, именно action.c тексте, а не файлах ответов',
+            text_after='добавить/удалить',
             parent=action,
         )
         if y.ask() == K_FIND:

@@ -9,12 +9,9 @@ import lr_lib
 import lr_lib.etc.excepthook
 import lr_lib.gui.action._other
 import lr_lib.core.etc.lbrb_checker
-from lr_lib.gui.etc.group_param.group_param_filter import param_sort
+from lr_lib.gui.etc.group_param.gp_filter import param_sort
 from lr_lib.core.var import vars as lr_vars
-
-
-K_FIND = 'Найти'
-K_SKIP = 'Пропуск'
+from lr_lib.gui.etc.group_param.gp_var import K_FIND, K_SKIP
 
 
 def param_from_str_1(stri: str) -> (str, str):
