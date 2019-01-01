@@ -8,7 +8,7 @@ import lr_lib
 import lr_lib.core
 import lr_lib.etc.excepthook
 from lr_lib.core.var import vars as lr_vars
-from lr_lib.gui.etc.action_lib import event_action_getter
+from lr_lib.core_gui.action_lib import event_action_getter
 
 
 @lr_vars.T_POOL_decorator

@@ -4,9 +4,9 @@
 import lr_lib
 import lr_lib.gui.widj.dialog
 from lr_lib.core.etc.lbrb_checker import check_bound_lb
-from lr_lib.gui.etc.group_param.gp_filter import param_sort
+from lr_lib.core_gui.group_param.gp_filter import param_sort
 from lr_lib.core.var import vars as lr_vars
-from lr_lib.gui.etc.group_param.gp_var import K_FIND, K_SKIP, K_CANCEL
+from lr_lib.core_gui.group_param.gp_var import K_FIND, K_SKIP, K_CANCEL
 
 
 def group_param_search(action: 'lr_lib.gui.action.main_action.ActionWindow') -> ["zkau_5650", "zkau_5680", ]:
@@ -14,9 +14,9 @@ def group_param_search(action: 'lr_lib.gui.action.main_action.ActionWindow') -> 
     y = lr_lib.gui.widj.dialog.YesNoCancel(
         [K_FIND, K_CANCEL],
         default_key=K_CANCEL,
-        title='поиск param в action, используя начало param имен',
+        title='1.1) запрос: поиск param в action, используя начало param имен',
         is_text='\n'.join(lr_vars.Params_names),
-        text_before='В action.c тексте, будет произведен поиск param, имя которых начинается на указанные имена.',
+        text_before='1) В action.c тексте, будет произведен поиск param, имя которых начинается на указанные имена.',
         text_after='добавить/удалить',
         parent=action,
     )
@@ -39,9 +39,9 @@ def group_param_search(action: 'lr_lib.gui.action.main_action.ActionWindow') -> 
     y = lr_lib.gui.widj.dialog.YesNoCancel(
         [K_FIND, K_SKIP],
         default_key=K_FIND,
-        title='Имена param',
+        title='1.2) ответ',
         is_text='\n'.join(params),
-        text_before='найдено {} шт'.format(len(params)),
+        text_before='1) найдено {} шт'.format(len(params)),
         text_after='добавить/удалить',
         parent=action,
         color=lr_vars.PopUpWindColor1,
@@ -116,9 +116,9 @@ def run_in_end_param_from_param(action: 'lr_lib.gui.action.main_action.ActionWin
     y = lr_lib.gui.widj.dialog.YesNoCancel(
         [K_FIND, K_SKIP],
         default_key=K_FIND,
-        title='Имена param, поиск в action.c',
+        title='5) запрос/ответ: Имена param, поиск в action.c',
         is_text='\n'.join(params),
-        text_before='поиск в action.c, по началу имени - взять n первых символов '
+        text_before='5) поиск в action.c, по началу имени - взять n первых символов '
                     'для повторного поиска param по началу имени\nнайдено {} шт'.format(len(params)),
         text_after='добавить/удалить',
         parent=action,

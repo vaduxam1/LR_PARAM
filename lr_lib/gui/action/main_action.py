@@ -7,15 +7,15 @@ import tkinter as tk
 
 import lr_lib
 import lr_lib.gui.action.act_win
-import lr_lib.gui.etc.group_param.main_gp
-import lr_lib.gui.etc.group_param.gp_act_re
-import lr_lib.gui.etc.rename
+import lr_lib.core_gui.group_param.main_gp
+import lr_lib.core_gui.group_param.gp_act_re
+import lr_lib.core_gui.rename
 import lr_lib.gui.widj.tooltip
 import lr_lib.gui.wrsp.top.top_allfiles
 import lr_lib.gui.etc.gui_other
-import lr_lib.gui.etc.group_param.core_gp
+import lr_lib.core_gui.group_param.core_gp
 import lr_lib.gui.widj.wrsp_setting
-import lr_lib.gui.etc.action_lib
+import lr_lib.core_gui.action_lib
 import lr_lib.core.var.vars as lr_vars
 
 
@@ -84,23 +84,23 @@ class ActionWindow(lr_lib.gui.action.act_win.ActWin):
         filemenu3.add_command(label="Remove dummy", command=self.remove_web_dummy_template)
         filemenu3.add_command(label="Remove thinktime", command=self.thinktime_remove)
         filemenu3.add_command(label="Rename transaction", command=self.all_transaction_rename)
-        filemenu3.add_command(label="Rename WRSP", command=lambda: lr_lib.gui.etc.rename.all_wrsp_auto_rename(self))
+        filemenu3.add_command(label="Rename WRSP", command=lambda: lr_lib.core_gui.rename.all_wrsp_auto_rename(self))
         self.menubar.add_cascade(label="Remove/Rename", menu=filemenu3)
 
         filemenu4 = tk.Menu(self.menubar, tearoff=0)
         filemenu4.add_command(
             label="Найти и Создать WRSP",
-            command=lambda: lr_lib.gui.etc.group_param.main_gp.auto_param_creator(self))
+            command=lambda: lr_lib.core_gui.group_param.main_gp.auto_param_creator(self))
         filemenu4.add_command(
             label="regexp: найти и создать WRSP",
             command=lambda: lr_vars.T_POOL_decorator(
-                lr_lib.gui.etc.group_param.gp_act_re.re_auto_param_creator)(self))
+                lr_lib.core_gui.group_param.gp_act_re.re_auto_param_creator)(self))
         self.menubar.add_cascade(label="Запуск", menu=filemenu4)
 
         filemenu5 = tk.Menu(self.menubar, tearoff=0)
         filemenu5.add_command(
             label="по Snapshot inf номерам",
-            command=lambda: lr_lib.gui.etc.action_lib.snapshot_files(self.tk_text, i_num=1))
+            command=lambda: lr_lib.core_gui.action_lib.snapshot_files(self.tk_text, i_num=1))
         filemenu5.add_command(label="подряд", command=lambda: lr_lib.gui.wrsp.top.top_allfiles.TopFolder(self))
         self.menubar.add_cascade(label="Файлы ответов", menu=filemenu5)
         return

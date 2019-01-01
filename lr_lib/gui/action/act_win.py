@@ -7,15 +7,15 @@ import tkinter as tk
 
 import lr_lib
 import lr_lib.gui.action.act_any
-import lr_lib.gui.etc.group_param.main_gp
-import lr_lib.gui.etc.group_param.gp_act_re
+import lr_lib.core_gui.group_param.main_gp
+import lr_lib.core_gui.group_param.gp_act_re
 import lr_lib.gui.widj.legend
 import lr_lib.gui.widj.dialog
 import lr_lib.gui.widj.wrsp_setting
 import lr_lib.gui.etc.sub_menu
-import lr_lib.gui.etc.group_param.core_gp
+import lr_lib.core_gui.group_param.core_gp
 import lr_lib.gui.wrsp.top.top_allfiles
-import lr_lib.gui.etc.action_lib
+import lr_lib.core_gui.action_lib
 import lr_lib.gui.etc.gui_other
 import lr_lib.core.var.vars as lr_vars
 
@@ -32,12 +32,12 @@ class ActWin(lr_lib.gui.action.act_any.ActAny):
 
         self.auto_param_creator_button = tk.Button(
             self.toolbar, text='Найти param LB=', background='orange', font=lr_vars.DefaultFont + ' bold',
-            command=lambda: lr_lib.gui.etc.group_param.main_gp.auto_param_creator(self))
+            command=lambda: lr_lib.core_gui.group_param.main_gp.auto_param_creator(self))
 
         self.re_auto_param_creator_button = tk.Button(
             self.toolbar, text='Найти param RegExp', font=lr_vars.DefaultFont + ' bold',
             command=lambda: lr_vars.T_POOL_decorator(
-                lr_lib.gui.etc.group_param.gp_act_re.re_auto_param_creator)(self))
+                lr_lib.core_gui.group_param.gp_act_re.re_auto_param_creator)(self))
 
         self.final_wnd_cbx = tk.Checkbutton(
             self.toolbar, text='final', font=lr_vars.DefaultFont, variable=self.final_wnd_var)
@@ -48,7 +48,7 @@ class ActWin(lr_lib.gui.action.act_any.ActAny):
 
         self.resp_btn = tk.Button(
             self.toolbar, text='файлы ответов', font=lr_vars.DefaultFont,
-            command=lambda *a: lr_lib.gui.etc.action_lib.snapshot_files(self.tk_text, i_num=1))
+            command=lambda *a: lr_lib.core_gui.action_lib.snapshot_files(self.tk_text, i_num=1))
 
         #
         self.force_ask_cbx = tk.Checkbutton(

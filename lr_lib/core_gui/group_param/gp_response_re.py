@@ -9,9 +9,9 @@ import lr_lib
 import lr_lib.etc.excepthook
 import lr_lib.gui.action._other
 import lr_lib.core.etc.lbrb_checker
-from lr_lib.gui.etc.group_param.gp_filter import param_sort
+from lr_lib.core_gui.group_param.gp_filter import param_sort
 from lr_lib.core.var import vars as lr_vars
-from lr_lib.gui.etc.group_param.gp_var import K_FIND, K_SKIP
+from lr_lib.core_gui.group_param.gp_var import K_FIND, K_SKIP
 
 
 def param_from_str_1(stri: str) -> (str, str):
@@ -84,9 +84,9 @@ def re_r_auto_param_creator(action: 'lr_lib.gui.action.main_action.ActionWindow'
     y = lr_lib.gui.widj.dialog.YesNoCancel(
         buttons=[K_FIND, K_SKIP],
         default_key=K_FIND,
-        title='поиск param, в файлах ответов, на основе регулярных выражений, по LB/RB',
+        title='4) запрос/ответ: поиск param, в файлах ответов, на основе регулярных выражений, по LB/RB',
         is_text=text,
-        text_before='поиск param, в файлах ответов: найдено {} шт'.format(len(params)),
+        text_before='4) поиск param, в файлах ответов: найдено {} шт'.format(len(params)),
         text_after='добавить/удалить',
         parent=action,
         color=lr_vars.PopUpWindColor1,

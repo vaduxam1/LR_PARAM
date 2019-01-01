@@ -3,13 +3,13 @@
 
 import lr_lib
 from lr_lib.core.var import vars as lr_vars
-from lr_lib.gui.etc.group_param.core_gp import group_param
-from lr_lib.gui.etc.group_param.gp_act_lb import session_params
-from lr_lib.gui.etc.group_param.gp_filter import param_sort
-from lr_lib.gui.etc.group_param.gp_act_startswith import group_param_search, run_in_end_param_from_param
-from lr_lib.gui.etc.group_param.gp_response_re import re_r_auto_param_creator
-from lr_lib.gui.etc.group_param.gp_act_re import re_auto_param_creator
-from lr_lib.gui.etc.group_param.gp_var import K_CREATE, K_CANCEL
+from lr_lib.core_gui.group_param.core_gp import group_param
+from lr_lib.core_gui.group_param.gp_act_lb import session_params
+from lr_lib.core_gui.group_param.gp_filter import param_sort
+from lr_lib.core_gui.group_param.gp_act_startswith import group_param_search, run_in_end_param_from_param
+from lr_lib.core_gui.group_param.gp_response_re import re_r_auto_param_creator
+from lr_lib.core_gui.group_param.gp_act_re import re_auto_param_creator
+from lr_lib.core_gui.group_param.gp_var import K_CREATE, K_CANCEL
 
 
 @lr_vars.T_POOL_decorator
@@ -45,11 +45,12 @@ def auto_param_creator(action: 'lr_lib.gui.action.main_action.ActionWindow') -> 
     y = lr_lib.gui.widj.dialog.YesNoCancel(
         [K_CREATE, K_CANCEL],
         default_key=K_CANCEL,
-        title='Имена param',
+        title='Финальное окно',
         is_text='\n'.join(params),
         text_before='создание + автозамена. {} шт'.format(lp),
         text_after='добавить/удалить',
         parent=action,
+        color='Orange'
     )
     ans = y.ask()
 
