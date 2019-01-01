@@ -33,6 +33,7 @@ Regxp = [
     ("dtid=\w+&", param_from_str_2),
     ('jsessionid=\w+"', param_from_str_2),
 ]
+Regxp.extend(('{0}\w+"'.format(r), param_from_str_2) for r in lr_vars.LB_PARAM_FIND_LIST if ('\\' not in r))
 
 
 def re_r_auto_param_creator(action: 'lr_lib.gui.action.main_action.ActionWindow', encoding='utf-8', errors='replace'):
@@ -75,6 +76,8 @@ def re_r_auto_param_creator(action: 'lr_lib.gui.action.main_action.ActionWindow'
                 break
             continue
         continue
+
+    in_action_param_only = param_sort(in_action_param_only)
 
     inf = '\n'.join(str([stri, len(params[stri]), params[stri]]) for stri in sorted(params))
     inf = 'in_action_param_only/all: {}/{}\n{}'.format(len(in_action_param_only), len(all_p), inf)
