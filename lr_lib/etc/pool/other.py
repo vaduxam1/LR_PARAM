@@ -2,9 +2,7 @@
 # примеры разных пулов потоков + (запуск подсветки линий tk_text в MainThreadUpdater)
 
 import contextlib
-# import asyncio
 import queue
-import sys
 
 import lr_lib
 import lr_lib.core.var.vars as lr_vars
@@ -35,16 +33,20 @@ class MainThreadUpdater:
 
     def _queue_listener(self) -> None:
         """выполнять из очереди, пока есть, затем перезапустить"""
-        while self.queue_in.qsize():
-            try:  # получить и выполнить callback
-                callback = self.queue_in.get()
+        while self.working:
+            try:  # получить callback
+                callback = self.queue_in.get_nowait()
+            except queue.Empty:
+                break
+            try:  # выполнить callback
                 callback()
             except Exception as ex:
                 lr_lib.etc.excepthook.excepthook(ex)
             continue
+        else:
+            return
 
-        if self.working:
-            lr_vars.Tk.after(lr_vars.MainThreadUpdateTime.get(), self._queue_listener)  # перезапуск
+        lr_vars.Tk.after(lr_vars.MainThreadUpdateTime.get(), self._queue_listener)  # перезапуск
         return
 
 

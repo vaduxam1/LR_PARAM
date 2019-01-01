@@ -36,7 +36,8 @@ class ActWin(lr_lib.gui.action.act_any.ActAny):
 
         self.re_auto_param_creator_button = tk.Button(
             self.toolbar, text='Найти param RegExp', font=lr_vars.DefaultFont + ' bold',
-            command=lambda: lr_lib.gui.etc.group_param.group_param_re.re_auto_param_creator(self))
+            command=lambda: lr_vars.T_POOL_decorator(
+                lr_lib.gui.etc.group_param.group_param_re.re_auto_param_creator)(self))
 
         self.final_wnd_cbx = tk.Checkbutton(
             self.toolbar, text='final', font=lr_vars.DefaultFont, variable=self.final_wnd_var)
@@ -129,8 +130,13 @@ class ActWin(lr_lib.gui.action.act_any.ActAny):
                 if self.force_yes_inf.get():
                     lr_vars.Logger.warning('{q}\n\n{e}{wrsp}'.format(e=ex, q=qb, wrsp=wrsp))
                 else:
-                    y = lr_lib.gui.widj.dialog.YesNoCancel(buttons=['Создать', 'Пропустить'], text_after=qb, text_before=str(ex),
-                                                           title='создать web_reg_save_param ?', parent=self).ask()
+                    y = lr_lib.gui.widj.dialog.YesNoCancel(
+                        buttons=['Создать', 'Пропустить'],
+                        text_after=qb,
+                        text_before=str(ex),
+                        title='создать web_reg_save_param ?',
+                        parent=self,
+                    ).ask()
                     if y == 'Пропустить':
                         raise
                     else:

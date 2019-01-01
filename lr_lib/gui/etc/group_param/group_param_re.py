@@ -9,7 +9,7 @@ from lr_lib.gui.etc.group_param.group_param import group_param
 from lr_lib.gui.etc.group_param.group_param_filter import param_sort, param_filter
 
 K_FIND = 'Найти'
-K_CREATE = 'Создать'
+K_CREATE = 'Найти/Создать'
 K_CANCEL = 'Отменить'
 
 
@@ -48,10 +48,10 @@ def re_auto_param_creator(action: 'lr_lib.gui.action.main_action.ActionWindow', 
     """
     y = lr_lib.gui.widj.dialog.YesNoCancel(
         [K_FIND, K_CANCEL],
-        title='regexp {} шт.'.format(len(lr_vars.REGEXP_PARAMS)),
+        title='action.c regexp',
         is_text='\n'.join(lr_vars.REGEXP_PARAMS),
-        text_before='Будет произведен поиск param: re.findall(regexp, action_text)',
-        text_after='При необходимости - добавить/удалить',
+        text_before='Будет произведен поиск param, в action.c тексте: re.findall(regexp, action_text)',
+        text_after='добавить/удалить',
         parent=action,
     )
     ans = y.ask()
@@ -75,9 +75,10 @@ def re_auto_param_creator(action: 'lr_lib.gui.action.main_action.ActionWindow', 
             [K_CREATE, K_CANCEL],
             title='param {} шт.'.format(len(params)),
             is_text='\n'.join(params),
-            text_before='Будет произведено создание param',
-            text_after='При необходимости - добавить/удалить',
+            text_before='найдено {} шт'.format(len(params)),
+            text_after='добавить/удалить',
             parent=action,
+            default_key=(K_CANCEL if wrsp_create else K_FIND),
         )
         ans = y.ask()
         if ans == K_CREATE:

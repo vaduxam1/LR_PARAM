@@ -47,4 +47,23 @@ def session_params(action: 'lr_lib.gui.action.main_action.ActionWindow', lb_list
         continue
 
     params = param_sort(params)
+
+    y = lr_lib.gui.widj.dialog.YesNoCancel(
+        [K_FIND, K_SKIP],
+        default_key=K_FIND,
+        title='Имена param',
+        is_text='\n'.join(params),
+        text_before='найдено {} шт'.format(len(params)),
+        text_after='добавить/удалить',
+        parent=action,
+    )
+    ans = y.ask()
+
+    # создание param
+    if ans == K_FIND:
+        params = y.text.split('\n')
+    else:
+        return []
+
+    params = param_sort(params)
     return params

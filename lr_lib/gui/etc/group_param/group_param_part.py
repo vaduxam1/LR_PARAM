@@ -10,6 +10,7 @@ from lr_lib.core.var import vars as lr_vars
 
 K_FIND = 'Найти'
 K_CANCEL = 'Отменить'
+K_SKIP = 'Пропустить'
 
 
 def group_param_search(action: 'lr_lib.gui.action.main_action.ActionWindow') -> ["zkau_5650", "zkau_5680", ]:
@@ -34,6 +35,29 @@ def group_param_search(action: 'lr_lib.gui.action.main_action.ActionWindow') -> 
             ps = param_sort(ps)
             params.update(ps)
             continue
+    else:
+        return params
+
+    params = param_sort(params)
+
+    y = lr_lib.gui.widj.dialog.YesNoCancel(
+        [K_FIND, K_SKIP],
+        default_key=K_FIND,
+        title='Имена param',
+        is_text='\n'.join(params),
+        text_before='найдено {} шт'.format(len(params)),
+        text_after='добавить/удалить',
+        parent=action,
+    )
+    ans = y.ask()
+
+    # создание param
+    if ans == K_FIND:
+        params = y.text.split('\n')
+    else:
+        return []
+
+    params = param_sort(params)
     return params
 
 
@@ -79,16 +103,38 @@ def _group_param_search(action: 'lr_lib.gui.action.main_action.ActionWindow',
     return
 
 
-def run_in_end_param_from_param(action: 'lr_lib.gui.action.main_action.ActionWindow', params: [str, ]) -> None:
+def run_in_end_param_from_param(action: 'lr_lib.gui.action.main_action.ActionWindow', exist_params: [str, ]) -> [str, ]:
     """поиск по началу имени - взять n первых символов для повторного поиска param по началу имени"""
     param_spin = lr_vars.SecondaryParamLen.get()
     if not param_spin:
         return
 
-    for p in params.copy():  # params.update
+    params = set()
+    for p in exist_params:  # params.update
         part = p[:param_spin]
         ap = _group_param_search(action, part)
         params.update(ap)
         continue
 
-    return
+    params.update(exist_params)
+
+    y = lr_lib.gui.widj.dialog.YesNoCancel(
+        [K_FIND, K_SKIP],
+        default_key=K_FIND,
+        title='Имена param, поиск в action.c',
+        is_text='\n'.join(params),
+        text_before='поиск в action.c, по началу имени - взять n первых символов '
+                    'для повторного поиска param по началу имени\nнайдено {} шт'.format(len(params)),
+        text_after='добавить/удалить',
+        parent=action,
+    )
+    ans = y.ask()
+
+    # создание param
+    if ans == K_FIND:
+        params = y.text.split('\n')
+    else:
+        return []
+
+    params = param_sort(params)
+    return params

@@ -37,9 +37,9 @@ def auto_param_creator(action: 'lr_lib.gui.action.main_action.ActionWindow') -> 
     psr = re_r_auto_param_creator(action)
     params.update(psr)
 
-    params = set(param_sort(params))
     # поиск(в action.c) по началу имени - взять n первых символов
-    run_in_end_param_from_param(action, params)
+    pre = run_in_end_param_from_param(action, params)
+    params.update(pre)
 
     params = param_sort(params)
     lp = len(params)
@@ -50,7 +50,7 @@ def auto_param_creator(action: 'lr_lib.gui.action.main_action.ActionWindow') -> 
         title='Имена param',
         is_text='\n'.join(params),
         text_before='создание + автозамена. {} шт'.format(lp),
-        text_after='При необходимости - добавить/удалить',
+        text_after='добавить/удалить',
         parent=action,
     )
     ans = y.ask()

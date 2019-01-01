@@ -57,7 +57,9 @@ class ActionWindow(lr_lib.gui.action.act_win.ActWin):
     def set_menu(self) -> None:
         """menubar"""
         filemenu = tk.Menu(self.menubar, tearoff=0)
-        filemenu.add_command(label="WRSP Setting", command=lambda: lr_lib.gui.widj.wrsp_setting.WrspSettingWindow(parent=self))
+        filemenu.add_command(
+            label="WRSP Setting",
+            command=lambda: lr_lib.gui.widj.wrsp_setting.WrspSettingWindow(parent=self))
         filemenu.add_command(label="Web Legend Window", command=self.legend)
         filemenu.add_command(label="show/hide main bar", command=self.show_hide_bar_1)
         filemenu.add_command(label="show/hide navigation bar", command=self.show_hide_bar_2)
@@ -68,10 +70,14 @@ class ActionWindow(lr_lib.gui.action.act_win.ActWin):
         self.menubar.add_cascade(label="Show/Hide", menu=filemenu)
 
         filemenu2 = tk.Menu(self.menubar, tearoff=0)
-        filemenu2.add_command(label="Open", command=lambda: self.open_action_dialog(title=True, folder=lr_vars.BackupFolder))
+        filemenu2.add_command(
+            label="Open",
+            command=lambda: self.open_action_dialog(title=True, folder=lr_vars.BackupFolder))
         filemenu2.add_command(label="Save", command=self.save_action_file)
-        filemenu2.add_command(label="Перенести текст_на_экране, во внутр_предсталение", command=self.tk_text_to_web_action)
-        filemenu2.add_command(label="Перенести внутр_предсталение, в текст_на_экране", command=self.web_action_to_tk_text)
+        filemenu2.add_command(
+            label="Перенести текст_на_экране, во внутр_предсталение", command=self.tk_text_to_web_action)
+        filemenu2.add_command(
+            label="Перенести внутр_предсталение, в текст_на_экране", command=self.web_action_to_tk_text)
         self.menubar.add_cascade(label="Open/Save", menu=filemenu2)
 
         filemenu3 = tk.Menu(self.menubar, tearoff=0)
@@ -82,12 +88,19 @@ class ActionWindow(lr_lib.gui.action.act_win.ActWin):
         self.menubar.add_cascade(label="Remove/Rename", menu=filemenu3)
 
         filemenu4 = tk.Menu(self.menubar, tearoff=0)
-        filemenu4.add_command(label="Найти и Создать WRSP", command=lambda: lr_lib.gui.etc.group_param.group_param_main.auto_param_creator(self))
-        filemenu4.add_command(label="regexp: найти и создать WRSP", command=lambda: lr_lib.gui.etc.group_param.group_param_re.re_auto_param_creator(self))
+        filemenu4.add_command(
+            label="Найти и Создать WRSP",
+            command=lambda: lr_lib.gui.etc.group_param.group_param_main.auto_param_creator(self))
+        filemenu4.add_command(
+            label="regexp: найти и создать WRSP",
+            command=lambda: lr_vars.T_POOL_decorator(
+                lr_lib.gui.etc.group_param.group_param_re.re_auto_param_creator)(self))
         self.menubar.add_cascade(label="Запуск", menu=filemenu4)
 
         filemenu5 = tk.Menu(self.menubar, tearoff=0)
-        filemenu5.add_command(label="по Snapshot inf номерам", command=lambda: lr_lib.gui.etc.action_lib.snapshot_files(self.tk_text, i_num=1))
+        filemenu5.add_command(
+            label="по Snapshot inf номерам",
+            command=lambda: lr_lib.gui.etc.action_lib.snapshot_files(self.tk_text, i_num=1))
         filemenu5.add_command(label="подряд", command=lambda: lr_lib.gui.wrsp.top.top_allfiles.TopFolder(self))
         self.menubar.add_cascade(label="Файлы ответов", menu=filemenu5)
         return

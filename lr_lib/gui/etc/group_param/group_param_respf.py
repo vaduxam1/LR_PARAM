@@ -86,10 +86,10 @@ def re_r_auto_param_creator(action: 'lr_lib.gui.action.main_action.ActionWindow'
     text = '\n'.join(in_action_param_only)
     y = lr_lib.gui.widj.dialog.YesNoCancel(
         buttons=[K_FIND, K_SKIP],
-        default_key=K_SKIP,
+        default_key=K_FIND,
         title='поиск param, в файлах ответов, на основе регулярных выражений, по LB/RB',
         is_text=text,
-        text_before='поиск param, в файлах ответов',
+        text_before='поиск param, в файлах ответов: найдено {} шт'.format(len(params)),
         text_after='добавить/удалить',
         parent=action,
     )
