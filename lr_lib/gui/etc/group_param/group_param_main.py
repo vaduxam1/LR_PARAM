@@ -3,8 +3,12 @@
 
 import lr_lib
 from lr_lib.core.var import vars as lr_vars
-from lr_lib.gui.etc.group_param.group_param import group_param, group_param_search, session_params
-from lr_lib.gui.etc.group_param.group_param_filter import param_sort, param_filter
+from lr_lib.gui.etc.group_param.group_param import group_param
+from lr_lib.gui.etc.group_param.group_param_act_lb import session_params
+from lr_lib.gui.etc.group_param.group_param_filter import param_sort
+from lr_lib.gui.etc.group_param.group_param_part import group_param_search, run_in_end_param_from_param
+from lr_lib.gui.etc.group_param.group_param_respf import re_r_auto_param_creator
+from lr_lib.gui.etc.group_param.group_param_re import re_auto_param_creator
 
 K_FIND = 'Найти'
 K_CREATE = 'Создать'
@@ -16,56 +20,45 @@ def auto_param_creator(action: 'lr_lib.gui.action.main_action.ActionWindow') -> 
     """
     group params по кнопке PARAM - по LB + по началу имени
     """
+    params = set()
+    # поиск по началу имени, в action.c
+    ps = group_param_search(action)
+    params.update(ps)
+
+    # поиск по LB=, в action.c
+    prs = session_params(action)
+    params.update(prs)
+
+    # поиск по LB, в action.c, на основе регулярных выражений
+    prr = re_auto_param_creator(action, wrsp_create=False)
+    params.update(prr)
+
+    # поиск param, в файлах ответов
+    psr = re_r_auto_param_creator(action)
+    params.update(psr)
+
+    params = set(param_sort(params))
+    # поиск(в action.c) по началу имени - взять n первых символов
+    run_in_end_param_from_param(action, params)
+
+    params = param_sort(params)
+    lp = len(params)
+
     y = lr_lib.gui.widj.dialog.YesNoCancel(
-        [K_FIND, K_CANCEL],
+        [K_CREATE, K_CANCEL],
         default_key=K_CANCEL,
-        title='начало param-имен',
-        is_text='\n'.join(lr_vars.Params_names),
-        text_before='Будет произведен поиск param, имя которых начинается на указанные имена.',
+        title='Имена param',
+        is_text='\n'.join(params),
+        text_before='создание + автозамена. {} шт'.format(lp),
         text_after='При необходимости - добавить/удалить',
         parent=action,
     )
     ans = y.ask()
-    if ans == K_FIND:
-        # поиск по LB=
-        params = set(session_params(action))
 
-        # поиск по началу имени
-        param_parts = set(filter(str.strip, y.text.split('\n')))
-        for part in param_parts:
-            ps = group_param_search(action, part)
-            params.update(ps)
-            continue
-
-        params = set(param_filter(params))
-
-        # поиск по началу имени - взять n первых символов для повторного поиска param по началу имени
-        param_spin = lr_vars.SecondaryParamLen.get()
-        if param_spin:
-            for p in params.copy():  # params.update
-                part = p[:param_spin]
-                ap = group_param_search(action, part)
-                params.update(ap)
-                continue
-
-        params = param_sort(params)
-        lp = len(params)
-
-        y = lr_lib.gui.widj.dialog.YesNoCancel(
-            [K_CREATE, K_CANCEL],
-            default_key=K_CANCEL,
-            title='Имена param',
-            is_text='\n'.join(params),
-            text_before='создание + автозамена. {} шт'.format(lp),
-            text_after='При необходимости - добавить/удалить',
-            parent=action,
-        )
-        ans = y.ask()
-
-        # создание переданных param
-        if ans == K_CREATE:
-            params = y.text.split('\n')
-            params = param_sort(params, deny_param_filter=False)
-            # создание
-            group_param(None, widget=action.tk_text, params=params, ask=False)
+    # создание переданных param
+    if ans == K_CREATE:
+        params = y.text.split('\n')
+        params = param_sort(params, deny_param_filter=False)
+        # создание
+        group_param(None, widget=action.tk_text, params=params, ask=False)
     return

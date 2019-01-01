@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# нахождение и замена group_param, на основе регулярных выражений
+# нахождение param, в action.c файле, на основе регулярных выражений
 
 import re
 
@@ -42,8 +42,7 @@ def _param_filter(params: [str, ], min_param_len=lr_vars.MinParamLen,
     return
 
 
-@lr_vars.T_POOL_decorator
-def re_auto_param_creator(action: 'lr_lib.gui.action.main_action.ActionWindow', ) -> None:
+def re_auto_param_creator(action: 'lr_lib.gui.action.main_action.ActionWindow', wrsp_create=True) -> [str, ]:
     """
     group params поиск, на основе регулярных выражений
     """
@@ -60,7 +59,7 @@ def re_auto_param_creator(action: 'lr_lib.gui.action.main_action.ActionWindow', 
         yt = y.text.split('\n')
         regexps = param_filter(map(str.strip, yt))
     else:
-        return
+        return []
 
     params = []
     for rx in regexps:
@@ -70,6 +69,7 @@ def re_auto_param_creator(action: 'lr_lib.gui.action.main_action.ActionWindow', 
         continue
 
     params = param_sort(params)
+
     if params:
         y = lr_lib.gui.widj.dialog.YesNoCancel(
             [K_CREATE, K_CANCEL],
@@ -83,8 +83,12 @@ def re_auto_param_creator(action: 'lr_lib.gui.action.main_action.ActionWindow', 
         if ans == K_CREATE:
             params = y.text.split('\n')
             params = param_sort(params, deny_param_filter=False)
-            group_param(None, widget=action.tk_text, params=params, ask=False)
-    return
+
+            if wrsp_create:  # создать wrsp
+                group_param(None, widget=action.tk_text, params=params, ask=False)
+
+            return params
+    return []
 
 
 Filter = lr_lib.core.wrsp.param.wrsp_allow_symb.__contains__  # фильтр поиск param

@@ -1,14 +1,14 @@
 # -*- coding: UTF-8 -*-
 # нахождение и замена group_param
-import re
 import sys
 import queue
-import tkinter as tk
 
 import lr_lib
 from lr_lib.core.etc.lbrb_checker import check_bound_lb
 from lr_lib.core.var import vars as lr_vars
+from lr_lib.gui.etc.group_param.group_param_act_lb import session_params
 from lr_lib.gui.etc.group_param.group_param_filter import param_sort
+from lr_lib.gui.etc.group_param.group_param_part import _group_param_search
 from lr_lib.gui.etc.group_param.group_progress import ProgressBar
 
 
@@ -24,6 +24,7 @@ def group_param(event, widget=None, params=None, ask=True) -> None:
         widget = event.widget
     if not params:
         params = _find_params(widget, params=params)
+        params = param_sort(params)
         if not params:
             lr_vars.Logger.warning('param не найдены! {}'.format(params), parent=widget.action)
             return
@@ -50,7 +51,7 @@ def _find_params(widget, params: '([str, ] or False or None)') -> [str, ]:
     """при params == False or None - найти params в widget"""
     if params is None:  # поиск только по началу имени
         selection = widget.selection_get()
-        params = group_param_search(widget.action, selection)
+        params = list(_group_param_search(widget.action, selection))
     elif params is False:  # поиск только по LB=
         selection = widget.selection_get()
         params = session_params(widget.action, lb_list=[selection], ask=False)
@@ -146,90 +147,3 @@ def _thread_wrsp_dict_creator(wrsp_dicts: queue.Queue, params: [str, ], unsucces
 
     wrsp_dicts.put_nowait(None)  # exit
     return
-
-
-def group_param_search(action: 'lr_lib.gui.action.main_action.ActionWindow',
-                       param_part: "zkau_") -> ["zkau_5650", "zkau_5680", ]:
-    """поиск в action.c, всех уникальных param, в имени которых есть param_part"""
-    params = _group_param_search(action, param_part)
-    params = param_sort(params)
-    return params
-
-
-def _group_param_search(action: 'lr_lib.gui.action.main_action.ActionWindow', param_part: "zkau_",
-                        part_mode=True, allow=lr_lib.core.wrsp.param.wrsp_allow_symb,
-                        ) -> iter(("zkau_5650", "zkau_5680",)):
-    """поиск в action.c, всех param, в имени которых есть param_part / или по LB"""
-    for web_ in action.web_action.get_web_snapshot_all():
-        split_text = web_.get_body().split(param_part)
-
-        for index in range(len(split_text) - 1):
-            left = split_text[index]
-            left = left.rsplit('\n', 1)
-            left = left[-1].lstrip()
-            right = split_text[index + 1]
-            right = right.split('\n', 1)
-            right = right[0].rstrip()
-
-            if part_mode:
-                st = check_bound_lb(left)
-            else:
-                st = (right[0] in allow)
-
-            if st:
-                param = []  # "5680"
-
-                for s in right:
-                    if s in allow:
-                        param.append(s)
-                    else:
-                        break
-                    continue
-
-                if param:
-                    param = ''.join(param)
-                    if part_mode:  # param_part или по LB
-                        param = (param_part + param)
-
-                    yield param  # "zkau_5680"
-            continue
-        continue
-    return
-
-
-def session_params(action: 'lr_lib.gui.action.main_action.ActionWindow', lb_list=None, ask=True, ) -> list:
-    """поиск param в action, по LB="""
-    if lb_list is None:
-        lb_list = lr_vars.LB_PARAM_FIND_LIST
-
-    if ask:
-        text = action.tk_text.get(1.0, tk.END)
-
-        # что за param?
-        lb_uuid = re.findall(r'uuid_\d=', text)
-        lb_col_count = re.findall(r'p_p_col_count=\d&', text)
-
-        ts = set(lb_list + lb_uuid + lb_col_count)
-        text = '\n'.join(ts)
-        y = lr_lib.gui.widj.dialog.YesNoCancel(
-            buttons=[K_FIND, K_SKIP],
-            default_key=K_FIND,
-            title='автозамена по LB=',
-            is_text=text,
-            text_before='найти param по LB=',
-            text_after='указать LB, с новой строки',
-            parent=action,
-        )
-        if y.ask() == K_FIND:
-            lb_list = y.text.split('\n')
-        else:
-            return []
-
-    params = []
-    for lb_in_action in filter(str.strip, lb_list):
-        ps = _group_param_search(action, lb_in_action, part_mode=False)
-        params.extend(ps)
-        continue
-
-    params = param_sort(params)
-    return params
