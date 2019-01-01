@@ -56,6 +56,7 @@ def session_params(action: 'lr_lib.gui.action.main_action.ActionWindow', lb_list
         text_before='найдено {} шт'.format(len(params)),
         text_after='добавить/удалить',
         parent=action,
+        color=lr_vars.PopUpWindColor1,
     )
     ans = y.ask()
 

@@ -79,6 +79,7 @@ def re_auto_param_creator(action: 'lr_lib.gui.action.main_action.ActionWindow', 
             text_after='добавить/удалить',
             parent=action,
             default_key=(K_CANCEL if wrsp_create else K_FIND),
+            color=lr_vars.PopUpWindColor1,
         )
         ans = y.ask()
         if ans == K_CREATE:

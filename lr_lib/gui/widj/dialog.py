@@ -11,7 +11,7 @@ import tkinter.ttk as ttk
 class YesNoCancel(tk.Toplevel):
     """диалог окно, тк велосипед, работает только в потоке"""
     def __init__(self, buttons: [str, ], text_before: str, text_after: str, title: str, parent=None, default_key='',
-                 is_text=None, focus=None, combo_dict=None, t_enc=False):
+                 is_text=None, focus=None, combo_dict=None, t_enc=False, color=None,):
         super().__init__(master=parent, padx=0, pady=0)
 
         self._wind_attributes()
@@ -38,7 +38,7 @@ class YesNoCancel(tk.Toplevel):
 
             self.combo.bind("<<ComboboxSelected>>", enc)
 
-        self.label1 = tk.Label(self, text=str(text_before), font='Arial 11', padx=0, pady=0)
+        self.label1 = tk.Label(self, text=str(text_before), font='Arial 11', padx=0, pady=0, bg=color)
         self.label1.grid(row=3, column=0, sticky=tk.NSEW, columnspan=2, padx=0, pady=0)
         self.label2 = tk.Label(self, text=str(text_after), font='Arial 10', padx=0, pady=0)
         self.label2.grid(row=100, column=0, sticky=tk.NSEW, columnspan=2, padx=0, pady=0)

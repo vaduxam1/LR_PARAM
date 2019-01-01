@@ -48,6 +48,7 @@ def group_param_search(action: 'lr_lib.gui.action.main_action.ActionWindow') -> 
         text_before='найдено {} шт'.format(len(params)),
         text_after='добавить/удалить',
         parent=action,
+        color=lr_vars.PopUpWindColor1,
     )
     ans = y.ask()
 
@@ -107,16 +108,14 @@ def run_in_end_param_from_param(action: 'lr_lib.gui.action.main_action.ActionWin
     """поиск по началу имени - взять n первых символов для повторного поиска param по началу имени"""
     param_spin = lr_vars.SecondaryParamLen.get()
     if not param_spin:
-        return
+        return []
 
     params = set()
-    for p in exist_params:  # params.update
-        part = p[:param_spin]
+    for param in exist_params:  # params.update
+        part = param[:param_spin]
         ap = _group_param_search(action, part)
         params.update(ap)
         continue
-
-    params.update(exist_params)
 
     y = lr_lib.gui.widj.dialog.YesNoCancel(
         [K_FIND, K_SKIP],
@@ -127,6 +126,7 @@ def run_in_end_param_from_param(action: 'lr_lib.gui.action.main_action.ActionWin
                     'для повторного поиска param по началу имени\nнайдено {} шт'.format(len(params)),
         text_after='добавить/удалить',
         parent=action,
+        color=lr_vars.PopUpWindColor1,
     )
     ans = y.ask()
 

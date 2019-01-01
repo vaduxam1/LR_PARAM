@@ -92,6 +92,7 @@ def re_r_auto_param_creator(action: 'lr_lib.gui.action.main_action.ActionWindow'
         text_before='поиск param, в файлах ответов: найдено {} шт'.format(len(params)),
         text_after='добавить/удалить',
         parent=action,
+        color=lr_vars.PopUpWindColor1,
     )
 
     if y.ask() != K_FIND:

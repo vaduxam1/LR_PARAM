@@ -21,6 +21,7 @@ def auto_param_creator(action: 'lr_lib.gui.action.main_action.ActionWindow') -> 
     group params по кнопке PARAM - по LB + по началу имени
     """
     params = set()
+
     # поиск по началу имени, в action.c
     ps = group_param_search(action)
     params.update(ps)
