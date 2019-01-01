@@ -229,7 +229,7 @@ allow_symbols = set(allow_symbols)
 #####################################
 # gui
 
-_Tk_WIND_SIZE = [420, 600]  # размер главного окна
+_Tk_WIND_SIZE = [600, 700]  # размер главного окна
 _Tk_ActionWIND_SIZE = [1100, 600]  # размер action окна
 
 _Tk_LegendWIND_SIZE = [600, 325]  # размер legend окна
