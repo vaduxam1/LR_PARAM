@@ -7,7 +7,6 @@ import urllib.request
 
 import lr_lib.core.var.vars as lr_vars
 import lr_lib.gui.wrsp.main_window
-from lr_lib.core.var.vars import GitHub, Logger, github, VERSION
 
 
 def init(c_args=None) -> None:
@@ -36,7 +35,7 @@ def start(action=True, lock=True) -> None:
 
 def find_git_ver():
     """версия утилиты на github.com"""
-    with urllib.request.urlopen(GitHub) as f:
+    with urllib.request.urlopen(lr_vars.GitHub) as f:
         html = f.read().decode('utf-8')
 
     v = html.split('>VERSION</span>', 1)
@@ -50,11 +49,11 @@ def find_git_ver():
 def check_git_ver():
     """проверить обновление версии утилиты на github.com"""
     GVER = find_git_ver()
-    Logger.info([github, GVER])
-    if VERSION != GVER:
+    lr_vars.Logger.info([lr_vars.github, GVER])
+    if lr_vars.VERSION != GVER:
         tkinter.messagebox.showwarning(
-            "Для версии {v} доступно обновление".format(v=VERSION),
+            "Для версии {v} доступно обновление".format(v=lr_vars.VERSION),
             "По адресу {a} доступно последнее [{v}] обновление утилиты.".format(
-                v=GVER,a=github,
+                v=GVER,a=lr_vars.github,
             ))
     return
