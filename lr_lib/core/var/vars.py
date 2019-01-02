@@ -1,19 +1,12 @@
 ﻿# -*- coding: UTF-8 -*-
 # общие переменные, настройки
 
-import encodings.aliases
-import functools
-import itertools
 import multiprocessing
 import os
-import string
 import time
 import tkinter as tk
-import tkinter.messagebox
-import urllib.request
 
 from lr_lib.core.var.var import (Var, )
-from lr_lib.etc.help import (COLORS, HEX, )
 
 #####################################
 # главные переменные
@@ -46,73 +39,8 @@ VarWRSPStatsTransac = tk.BooleanVar(value=False)  # для wrsp, статист�
 VarWRSPStatsTransacNames = tk.BooleanVar(value=False)  # для wrsp, имена транзакций в которых используется param
 VarWRSPStats = tk.BooleanVar(value=False)  # для wrsp, создавать подробные/короткие коментарии
 
-DENY_WEB_ = {
-    'google.com', 'yandex.ru', 'mail.ru',
-}  # web_ запросы, содержащие эти слова, помечять WARNING
-
 #####################################
 # поиск web_reg_save_param
-
-Params_names = {
-    'zkau_', 'Desktop_', 'index_', 'editWindow_', 'zul_', 'z_', 'nV0', 'iEK', 'aFF', 'adv_upload_',
-}  # "начало" имен для поиска param(1)
-
-LB_PARAM_FIND_LIST = [
-    'sessionid=',
-    'docSessionId=',
-    'Value=', 'UID=',
-    'row.id=',
-    'row.id="',
-    'value="',
-    ':[\\"',
-    'appid=\\"',
-    'contentId\\":\\"',
-    'reference\\":\\"',
-    'items%22%3A%5B%22',
-    'reference%22%3A%22',
-    'dtid=',
-    'items\\":[\\"',
-    'ViewState" value="',
-    'navigator.id="',
-    '_sn=',
-    'jdemafjascacheUID=',
-    'jdemafjasUID=',
-    '_adf.ctrl-state=',
-    '_adf.winId=',
-    '_adf.winId=',
-    '_afrLoop=',
-    '_adf.ctrlstate=',
-    '_adfp_rendition_cahce_key=',
-    '_adfp_request_hash=',
-    '_adfp_full_page_mode_request=',
-    '_afrLoop=',
-    '_afrWindowMode=',
-    '_afrWindowId=',
-    '_afPfm=',
-    '_rtrnId=',
-    'dfp_request_id=',
-    'ViewState=',
-    '/consumer/',
-    'PSI=',
-]  # использовать для поиска param(1) по LB=
-
-DENY_Startswitch_PARAMS = [
-    'opt_', 'cmd_', 'data_', 'uuid_',
-    ]  # не использовать в качестве параметров, если начинаются так
-
-DENY_PARAMS = [
-    'UTF-8', 'boot', 'true', 'false', 'i', 'xonLoadUseIndustrialCalendar', 'dummy', 'CPAGE', 'null', 'pt1', 'cb1', 'f1',
-    'POST', 'HTML', 'Yes', 'dtid', 'compId',
-]  # не использовать в качестве параметров
-
-REGEXP_PARAMS = [
-    '\"(.+?)\"',
-    '\"(.+?)\\\\"',
-    # '\\\\"(.+?)\\\\"',
-    '\'(.+?)\'',
-    '=(.+?)\"',
-    '=(.+?)\'',
-]  # поиск param, на основе регулярных выражений re.findall(regexp, text)
 
 SecondaryParamLen = tk.IntVar(value=3)  # число первых символов, взятых из param, для использования их при поиске одноименных param
 MinParamLen = 3  # минимальная длина param
@@ -147,11 +75,6 @@ SnapshotInName = tk.BooleanVar(value=True)  # в wrsp имени param, отоб
 TransactionInNameMax = tk.IntVar(value=50)  # в wrsp имени param, отображать максимум символов transaction, в которой создан wrsp
 WrspNameFirst = tk.StringVar(value='P')  # начало(P) wrsp имени param: {P_11_zkau_22}
 wrsp_name_splitter = tk.StringVar(value='')  # символ разделения имени wrsp(для '_'): Win__aFFX9__id -> Win__a_FFX_9__id
-
-LRB_rep_list = [
-    'zul', 'path', 'Set', 'wnd', 'sel', 'inp', 'dt', 'wgt', 'imp', 'false', 'true', 'visible', 'cmd', 'label', 'zclass',
-    'btn', 'menu', 'tab', 'cmb', 'amp', 'id',
-]  # не использовать эти слова в LB/RB, для wrsp имени param
 
 #####################################
 # формирование LB RB
@@ -192,39 +115,10 @@ VarRbB2 = tk.BooleanVar(value=True)  # по RB определить, если pa
 VarRbRstrip = tk.BooleanVar(value=True)  # обрезать RB
 VarREnd = tk.BooleanVar(value=True)  # обрезать RB
 
-# LB/RB обрежутся до этих строк
-_SplitList0 = list('{},=$')
-_SplitList1 = list('{}=$;,')
-_SplitList2 = ['\\n', '\\', '"']
-_SplitList_3 = _SplitList1 + _SplitList2
-SplitList = tuple(_SplitList0 + _SplitList2 + list(string.digits))
-
-StripLBEnd1 = ['{', '}', '[', ']', ]
-StripLBEnd2 = ['},', ]
-StripLBEnd3 = ['{', ',', ]
-
-StripRBEnd1 = ['{', '}', '[', ']', ]
-StripRBEnd2 = [',{', ]
-StripRBEnd3 = ['{', ',']
-
-# символы для экранирования слешем
-Screening = ['\\', '"', ]
-
 VarSplitListLB = tk.BooleanVar(value=True)  # обрезать LB до SplitList строк
 VarSplitListRB = tk.BooleanVar(value=True)  # обрезать RB до SplitList строк
 VarSplitListNumLB = tk.IntVar(value=3)  # Не учитывать n символов LB(последние), при SplitList обрезке
 VarSplitListNumRB = tk.IntVar(value=2)  # Не учитывать n символов RB(первые), при SplitList обрезке
-
-
-# символы, которые могут входить в имя param, кроме букв и цифр
-AddAllowParamSymb = '_!-'
-
-# символы обрезки автозамены
-allow_symbols = string.punctuation + string.whitespace
-for s in AddAllowParamSymb:
-    allow_symbols = allow_symbols.replace(s, '')
-    continue
-allow_symbols = set(allow_symbols)
 
 #####################################
 # gui
@@ -244,7 +138,7 @@ VarToolTipTimeout = tk.StringVar(value=9000)  # время жизни всплы
 ToolTipFont = ('Arial', '7', 'bold italic')  # всплывающие подсказки
 DefaultFont = 'Arial 7'  # шрифт кнопок и тд
 DefaultLBRBFont = 'Arial 8 bold'  # шрифт LB/RB(5)
-InfoLabelUpdateTime = tk.IntVar(value=1500)  # (мс) обновление action.label с процентами и пулом
+InfoLabelUpdateTime = tk.IntVar(value=1500)  # (мс) обновление linenumbers + action.label с процентами и пулом
 
 DefaultActionHighlightFont = 'Eras Medium ITC'  # шрифт подсвеченного текста action
 DefaultActionHighlightFontSize = 9  # размер подсвеченного шрифта текста action
@@ -265,101 +159,6 @@ var_bar_2 = False  # show/hide navigation bar
 var_bar_3 = False  # show/hide info bar
 
 #####################################
-# подсветка
-
-PopUpWindColor1 = 'Grey'  # просто какойто общий цвет для выделения PopUpWindow
-
-HighlightOn = True  # включить подсветку
-HighlightAfter0 = 1500  # задержка(мс), перед перезапуском проверки необходимости подсветки
-HighlightAfter1 = 250  # задержка(мс), перед стартом подсветки всех линий, отображенных на экране
-HighlightAfter2 = 250  # задержка(мс), перед подсветкой одной линии
-Background = 'khaki'
-
-highlight_words_folder = os.path.join(lib_folder, 'etc')
-highlight_words_main_file = os.path.join(highlight_words_folder, 'highlight_words.txt')
-highlight_words_files_startswith = 'highlight_words'
-
-ColorIterator = itertools.cycle(COLORS.keys() - {'black'})
-VarColorTeg = Var(value=set(COLORS.keys()))
-
-
-def _unpunct(st: str) -> str:
-    """без пунктуации в конце строки"""
-    if st:
-        if st[-1] in string.punctuation:
-            return _unpunct(st[:-1])
-        else:
-            return st
-    return ''
-
-_LB_LIST_highlight = set(_unpunct(s) for s in LB_PARAM_FIND_LIST)
-_LB_LIST_highlight.update({
-    'uuid_', 'dtid', 'sessionid', 'Snapshot', 'Snapshot=t', 'EXTRARES', '.inf',
-})
-
-# слова для подсветки
-highlight_words = set()
-for file in next(os.walk(highlight_words_folder))[2]:
-    if file.startswith(highlight_words_files_startswith):
-        with open(os.path.join(highlight_words_folder, file)) as hws:
-            for line in hws:
-                lr = line.rstrip('\n')
-                ls = lr.strip()
-                if ls and (not ls.startswith('#')):
-                    highlight_words.add(lr)
-                continue
-    continue
-
-highlight_words.update(COLORS.keys())
-highlight_words.update(HEX)
-for s in string.digits:
-    highlight_words.add('Value={\\"\\":%s' % s)
-    continue
-
-tnrvf = set('\\{}'.format(s) for s in 'tnrvf')
-highlight_words.update(tnrvf)
-
-rd = {
-    '/*', '*/', 'WARNING',
-}
-rd.update(DENY_WEB_)
-
-VarDefaultColorTeg = {
-    'background': {
-        'orange': rd,
-        'springgreen': {'lr_end_transaction', },
-        'yellowgreen': {'lr_think_time',},
-        'mediumspringgreen': {'lr_start_transaction', },
-    },
-    'foreground': {
-        'olive': highlight_words,
-        'purple': _LB_LIST_highlight,
-    },
-}
-
-DefaultColor = 'olive'  # цвет для "фонового" текста
-hex_unicode_words = '\\\\x\w\w'  # re.compile(hex_unicode_words).findall('start\\xCE\\xE1end')
-hex_unicode_ground = 'foreground'  # \\xCE\\xE1
-hex_unicode_color = 'olive'  # \\xCE\\xE1
-PunctDigitTag = 'foregroundblack'
-RusTag = 'backgroundorange'
-wrsp_color1 = 'chartreuse'
-wrsp_color2 = 'darkblue'
-color_transactions_names = 'darkslategrey'
-color_warn_wrsp = 'red'
-
-ForceOlive = (
-    'value=xon', 'value=on', 'value={\\"left\\', 'value=i"', 'value={}', 'value={\\"', 'value=dummy',
-    'value={\\"command',
-)  # всегда подсвечивать olive цветом
-
-ColorMainTegStartswith = 'background'  # не подсветит другим тегом, если подсвечено этим
-OliveChildTeg = 'foregroundolive'  # не подсветит этим тегом, если подсвечено любым другим
-minus_teg = {OliveChildTeg}  # other_tegs = (tegs_indxs.keys() - minus_teg)
-
-web_reg_highlight_len = 6  # выделить начало имени web_reg_save_param
-
-#####################################
 # Backup
 
 BackupActionFile = 100  # макс(по кругу) кол-во backup файлов
@@ -368,33 +167,18 @@ BackupName = '{i}_backup_{ind}_action.c'
 
 #####################################
 # область выделения двойным кликом мыши
-
-# this first statement triggers tcl to autoload the library # that defines the variables we want to override.
-Tk.tk.call('tcl_wordBreakAfter', '', 0)
-# this defines what tcl considers to be a "word". For more # information see http://www.tcl.tk/man/tcl8.5/TclCmd/library.htm#M19
-Tk.tk.call('set', 'tcl_wordchars', '[a-zA-Z0-9_.!-]')
-Tk.tk.call('set', 'tcl_nonwordchars', '[^a-zA-Z0-9_.!-]')
+tcl_wordchars = '[a-zA-Z0-9_.!-]'
+tcl_nonwordchars = '[^a-zA-Z0-9_.!-]'
 
 # #####################################
 # логирование
 
 Logger = None  # lr_lib.etc.logger.Logger # вывод сообщений во все Handler: Logger.info('m', notepad=True, parent=act)
-
 log_overdrive = 'a'
 logFolder = 'lr_logs'
 logName = 'server_%s.log' % time.strftime('%d.%m')
 logPath = os.path.join(os.getcwd(), logFolder)
 logFullName = os.path.join(logPath, logName)
-
-loggingLevels = {
-    'TRACE': 1,
-    'DEBUG': 10,
-    'INFO': 20,
-    'WARNING': 30,
-    'ERROR': 40,
-    'CRITICAL': 50,
-    }
-
 logger_level = 1  # loggingLevels
 
 VarWindowLogger = tk.StringVar(value='INFO')  # минимальный уровень вывода сообщений в gui
@@ -406,41 +190,12 @@ EHE = (EHOME, EEND) = [3, 1]  # при ошибке, показать строк
 DEFAULT_FILES_FOLDER = 'data'  # каталог поиска
 DEFAULT_FILES_FOLDER = os.path.realpath(DEFAULT_FILES_FOLDER) if os.path.isdir(DEFAULT_FILES_FOLDER) else os.getcwd()
 
-_FileOptions = (
-    'FileName',
-    'ResponseHeaderFile',
-    'SnapshotXmlFile',
-)
-FileOptionsStartswith = set(map(str.lower, _FileOptions))  # секции в inf-файле, c файлами-ответов
-
-# файлы, исключенные из поиска param
-DENY_FILES = {
-    'CodeGenerationLog.txt', 'CorrelationLog.txt',
-}
-DENY_PART_NAME = {
-    '_RequestHeader', '_RequestBody',
-}
-DENY_EXT = {
-    '.inf', '.ico', '.gif', '.jpg', '.jpeg', '.bmp', '.tif', '.png', '.zip', '.rar', '.7z', '.gz', '.tar', '.c', '.css',
-}
-
 VarFilesFolder = tk.StringVar(value=DEFAULT_FILES_FOLDER)  # каталог с файлами
 VarIsSnapshotFiles = tk.BooleanVar(value=True)  # брать файлы, проаписанные в inf файлах каталога / или все файлы
 VarAllowDenyFiles = tk.BooleanVar(value=False)  # разрешить поиск, в DENY_ исключенных из поиска файлах
 VarAllFilesStatistic = tk.IntVar(value=False)  # при старте, создавать подробную статистику файлов(размер, символы и тд), сильно замедляет старт утилиты
 SetFilesPOOLEnable = True  # использовать M_POOL, для создания файлов, при старте программы
 FilesCreatePortionSize = 15  # порция, число обрабатываемых файлов, для создания из них файлой ответов, за один вызов/в одном потоке
-
-#####################################
-# все кодировки
-
-VarEncode = tk.StringVar(value='cp1251')  # используемая кодировка файлов
-ENCODE_LIST = {
-    'base64_codec', 'bz2_codec', 'cp1006', 'cp65001', 'cp720', 'cp737', 'cp856', 'cp874', 'cp875', 'hex_codec',
-    'hp_roman8', 'koi8_u', 'mbcs', 'quopri_codec', 'rot_13', 'tactis', 'tis_620', 'utf_8_sig', 'uu_codec', 'zlib_codec',
-}
-ENCODE_LIST.update(set(encodings.aliases.aliases.values()))
-ENCODE_LIST = list(sorted(ENCODE_LIST))
 
 #####################################
 # пулы
@@ -452,7 +207,7 @@ MainThreadUpdateTime = tk.IntVar(value=(_MTUT * 1000))  # интервал(мс)
 M_POOL = None  # пул процессов  # lr_lib.etc.pool.main_pool.POOL
 M_POOL_NAME = 'multiprocessing.Pool'  # тип основной пул
 cpu_count = multiprocessing.cpu_count()
-M_POOL_Size = cpu_count if (cpu_count < 5) else 4  # основной MP пул(int/None)
+M_POOL_Size = (cpu_count if (cpu_count < 5) else 4)  # основной MP пул(int/None)
 
 T_POOL = None  # пул потоков # lr_lib.etc.pool.main_pool.POOL
 T_POOL_NAME = 'SThreadPool(threading.Thread)'  # тип фоновый пул
@@ -469,69 +224,12 @@ _SThreadMonitorUpdate = tk.IntVar(value=1000)  # мс, время обновле
 
 #####################################
 # etc
-
 EDITOR = dict(exe='notepad.exe')  # программа для открытия "в Editor"
-
 FIND_PARAM_HOTKEY = 'ctrl+shift+c'  # хоткей "найти(2) param"
-
-#####################################
-# чтото чтобы не импортировать лишнего
-
-
-def T_POOL_decorator(func: callable):
-    """декоратор, выполнения func в T_POOL потоке"""
-    @functools.wraps(func)
-    def wrap(*args, **kwargs):
-        if hasattr(T_POOL, 'submit'):
-            return T_POOL.submit(func, *args, **kwargs)
-        elif hasattr(T_POOL, 'apply_async'):
-            return T_POOL.apply_async(func, args, kwargs)
-        else:
-            raise AttributeError('у пула({p}) нет атрибута submit или apply_async\n{f}\n{a}\n{k}'.format(
-                f=func, a=args, k=kwargs, p=T_POOL.pool))
-    return wrap
-
-
-def clearVars() -> None:
-    """очистка Var's"""
-    v = (
-        VarParam, VarFileName, VarFile, VarPartNum, VarLB, VarRB, VarFileText, VarWrspDict,
-        VarFileSortKey1, VarFileSortKey2,
-    )
-    for var in v:
-        var.set(var.default_value, callback=False)
-        continue
-    FilesWithParam.clear()
-    return
-
 
 #####################################
 # проверка наличия обновленной версии
 github = 'https://github.com/vaduxam1/LR_PARAM'
 github_vars = '/blob/master/lr_lib/core/var/vars.py'
 GitHub = (github + github_vars)
-
-
-def find_git_ver():
-    """версия утилиты на github.com"""
-    with urllib.request.urlopen(GitHub) as f:
-        html = f.read().decode('utf-8')
-
-    v = html.split('>VERSION</span>', 1)
-    v = v[1].split('\n', 1)
-    v = v[0].split('</span>v', 1)
-    v = v[1].split('<', 1)
-    GVER = 'v{0}'.format(v[0])
-    return GVER
-
-
-def check_git_ver():
-    GVER = find_git_ver()
-    Logger.info([github, GVER])
-    if VERSION != GVER:
-        tkinter.messagebox.showwarning(
-            "Для версии {v} доступно обновление".format(v=VERSION),
-            "По адресу {a} доступно последнее [{v}] обновление утилиты.".format(
-                v=GVER,a=github,
-            ))
-    return
+GitUpdPeriod = (60 * 60 * 4)  # сек, период проверки

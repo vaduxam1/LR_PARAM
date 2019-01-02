@@ -6,6 +6,7 @@ import os
 import tkinter as tk
 
 import lr_lib
+import lr_lib.core.var.vars_f
 import lr_lib.gui.action.act_win
 import lr_lib.core_gui.group_param.main_gp
 import lr_lib.core_gui.group_param.gp_act_re
@@ -93,7 +94,7 @@ class ActionWindow(lr_lib.gui.action.act_win.ActWin):
             command=lambda: lr_lib.core_gui.group_param.main_gp.auto_param_creator(self))
         filemenu4.add_command(
             label="regexp: найти и создать WRSP",
-            command=lambda: lr_vars.T_POOL_decorator(
+            command=lambda: lr_lib.core.var.vars_f.T_POOL_decorator(
                 lr_lib.core_gui.group_param.gp_act_re.re_auto_param_creator)(self))
         self.menubar.add_cascade(label="Запуск", menu=filemenu4)
 
@@ -416,7 +417,7 @@ class ActionWindow(lr_lib.gui.action.act_win.ActWin):
             'On - inf, где первый раз встречается pram, в action.c\n\t'
             'что неправильно но необходимо, тк LoadRunner так записывает\n'
             'Off - inf, предшествующий, номеру inf, где первый раз встречается pram, в action.c\n\t'
-            'используется, совместно с чекбоксом last, для поиска inf-ответа,\n\t'
+            'используется, совместно с чекбоксом "reverse", для поиска inf-ответа,\n\t'
             'максимально близкого, к param-inf, те поиску с конца\n\t'
             '# add_inf_cbx'
         )

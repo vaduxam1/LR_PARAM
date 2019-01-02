@@ -5,6 +5,7 @@ import tkinter as tk
 
 import lr_lib
 import lr_lib.core.var.vars as lr_vars
+import lr_lib.core.var.vars_f
 import lr_lib.core_gui.rename
 
 
@@ -185,7 +186,7 @@ class WrspSettingWindow(tk.Toplevel):
         lr_lib.gui.etc.gui_other.center_widget(self)
         return
 
-    @lr_vars.T_POOL_decorator
+    @lr_lib.core.var.vars_f.T_POOL_decorator
     def all_wrsp_rename(self, *args) -> None:
         """переименавать все wrsp, вручную"""
         _wrsps = tuple(self.parent.web_action.get_web_reg_save_param_all())

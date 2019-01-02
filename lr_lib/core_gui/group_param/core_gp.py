@@ -5,6 +5,7 @@ import sys
 import queue
 
 import lr_lib
+import lr_lib.core.var.vars_f
 from lr_lib.core.etc.lbrb_checker import check_bound_lb
 from lr_lib.core.var import vars as lr_vars
 from lr_lib.core_gui.group_param.gp_act_lb import session_params
@@ -14,7 +15,7 @@ from lr_lib.core_gui.group_param.gp_progress import ProgressBar
 from lr_lib.core_gui.group_param.gp_var import K_FIND, K_SKIP, K_CANCEL
 
 
-@lr_vars.T_POOL_decorator
+@lr_lib.core.var.vars_f.T_POOL_decorator
 def group_param(event, widget=None, params=None, ask=True) -> None:
     """gui - нахождение и замена для группы web_reg_save_param's"""
     if widget is None:
@@ -128,7 +129,7 @@ def _group_param_iter(params: [str, ],
     return
 
 
-@lr_vars.T_POOL_decorator
+@lr_lib.core.var.vars_f.T_POOL_decorator
 def _thread_wrsp_dict_creator(wrsp_dicts: queue.Queue, params: [str, ], unsuccess: [],
                               action: 'lr_lib.gui.action.main_action.ActionWindow') -> None:
     """ядро - создать wrsp_dicts в фоне, чтобы не терять время, при показе popup окон"""

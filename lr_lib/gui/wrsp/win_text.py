@@ -4,6 +4,8 @@
 import tkinter as tk
 import tkinter.ttk as ttk
 
+import lr_lib.core.var.vars_f
+import lr_lib.core.var.vars_h
 import lr_lib.gui.wrsp.win_block
 import lr_lib.core.var.vars as lr_vars
 
@@ -14,7 +16,7 @@ class WinText(lr_lib.gui.wrsp.win_block.WinBlock):
         lr_lib.gui.wrsp.win_block.WinBlock.__init__(self)
 
         self.tk_text = tk.Text(
-            self, foreground='grey', background=lr_vars.Background, wrap=tk.NONE, height=10, padx=0, pady=0, undo=True,
+            self, foreground='grey', background=lr_lib.core.var.vars_h.Background, wrap=tk.NONE, height=10, padx=0, pady=0, undo=True,
         )
 
         self.text_scrolly = ttk.Scrollbar(self, orient=tk.VERTICAL, command=self.tk_text.yview)
@@ -25,7 +27,7 @@ class WinText(lr_lib.gui.wrsp.win_block.WinBlock):
 
     def add_message(self, levelname: str, text: str) -> None:
         """сообщения в конец текста gui"""
-        if lr_vars.loggingLevels[lr_vars.VarWindowLogger.get()] <= lr_vars.loggingLevels[levelname]:
+        if lr_lib.core.var.vars_f.loggingLevels[lr_vars.VarWindowLogger.get()] <= lr_lib.core.var.vars_f.loggingLevels[levelname]:
             self.tk_text.insert(tk.END, '{}\n'.format(text))
             self.tk_text.see(tk.END)
         return

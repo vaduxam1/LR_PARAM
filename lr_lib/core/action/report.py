@@ -8,7 +8,7 @@ import collections
 import lr_lib
 import lr_lib.core.action.web_
 import lr_lib.core.var.vars as lr_vars
-
+import lr_lib.core.var.vars_p
 
 is_ascii = set(string.printable)
 
@@ -84,7 +84,7 @@ class WebReport:
                 if no_ascii:
                     self.rus_webs[snapshot] = no_ascii
 
-                for k in lr_vars.DENY_WEB_:
+                for k in lr_lib.core.var.vars_p.DENY_WEB_:
                     count = line.count(k)
                     if count:
                         self.google_webs.setdefault(snapshot, {})[k] = count

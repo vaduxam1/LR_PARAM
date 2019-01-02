@@ -12,12 +12,14 @@ import tkinter as tk
 import lr_lib
 import lr_lib.core.var.vars_func
 import lr_lib.core.action.web_
+import lr_lib.core.var.vars_h
+import lr_lib.core.var.vars_f
 import lr_lib.gui.widj.responce_files
 import lr_lib.core.var.vars as lr_vars
 from lr_lib.core.var import vars as lr_vars
 
 
-@lr_vars.T_POOL_decorator
+@lr_lib.core.var.vars_f.T_POOL_decorator
 def mouse_web_reg_save_param(widget: lr_lib.gui.widj.highlight_text.HighlightText, param: str,
                              mode=('SearchAndReplace', 'highlight', ), wrsp=None, wrsp_dict=None, set_param=True) -> None:
     """в окне action.c, для param, автозамена, залить цветом, установить виджеты"""
@@ -58,7 +60,7 @@ def mouse_web_reg_save_param(widget: lr_lib.gui.widj.highlight_text.HighlightTex
     return
 
 
-@lr_vars.T_POOL_decorator
+@lr_lib.core.var.vars_f.T_POOL_decorator
 def rClick_Param(event, *args, **kwargs) -> None:
     """web_reg_save_param из выделения, меню правой кнопки мыши, с отображением в виджетах lr_vars.Window окна"""
     widget = event.widget
@@ -130,7 +132,7 @@ def rClick_Search(event) -> None:
     return
 
 
-@lr_vars.T_POOL_decorator
+@lr_lib.core.var.vars_f.T_POOL_decorator
 def encoder(event, action=None) -> None:
     """декодирование выделения"""
     try:
@@ -179,10 +181,10 @@ def add_highlight_words_to_file(event) -> None:
     """сохранить слово для подсветки в файл - "навсегда" """
     selection = event.widget.selection_get()
 
-    with open(lr_vars.highlight_words_main_file, 'a') as f:
+    with open(lr_lib.core.var.vars_h.highlight_words_main_file, 'a') as f:
         f.write(selection + '\n')
 
-    rClick_add_highlight(event, 'foreground', lr_vars.DefaultColor, 'добавить', find=True)
+    rClick_add_highlight(event, 'foreground', lr_lib.core.var.vars_h.DefaultColor, 'добавить', find=True)
     return
 
 
@@ -280,7 +282,7 @@ def wrsp_text_from_selection(event) -> object:
     return wrsp
 
 
-@lr_vars.T_POOL_decorator
+@lr_lib.core.var.vars_f.T_POOL_decorator
 def rClick_web_reg_save_param_regenerate(event, new_lb_rb=True, selection=None, replace=True) -> (dict, str):
     """из выделения, переформатировать LB/RB в уже созданном web_reg_save_param, меню правой кнопки мыши"""
     if selection is None:

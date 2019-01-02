@@ -5,6 +5,7 @@ import tkinter as tk
 
 import lr_lib
 import lr_lib.core.var.vars as lr_vars
+import lr_lib.core.var.vars_h
 import lr_lib.core_gui.action_lib
 import lr_lib.core_gui.all_wrsp
 import lr_lib.core_gui.rename
@@ -151,7 +152,7 @@ def rClicker(event) -> str:
             )
 
             submenu = tk.Menu(submenu_other, tearoff=False)
-            colors = lr_vars.VarColorTeg.get()
+            colors = lr_lib.core.var.vars_h.VarColorTeg.get()
             submenu.add_cascade(
                 label='сорх в файл', underline=0,
                 command=lambda e=event: lr_lib.core_gui.action_lib.add_highlight_words_to_file(e),
@@ -161,7 +162,7 @@ def rClicker(event) -> str:
             for val in vl:
                 vSub = tk.Menu(submenu, tearoff=False)
                 submenu.add_cascade(label=val, menu=vSub, underline=0)
-                for option in lr_vars.VarDefaultColorTeg:
+                for option in lr_lib.core.var.vars_h.VarDefaultColorTeg:
                     sub = tk.Menu(vSub, tearoff=False)
                     vSub.add_cascade(label=option, menu=sub, underline=0)
                     for color in colors:

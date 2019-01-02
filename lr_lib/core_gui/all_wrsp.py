@@ -6,12 +6,13 @@ import time
 
 import lr_lib
 import lr_lib.core
+import lr_lib.core.var.vars_f
 import lr_lib.etc.excepthook
 from lr_lib.core.var import vars as lr_vars
 from lr_lib.core_gui.action_lib import event_action_getter
 
 
-@lr_vars.T_POOL_decorator
+@lr_lib.core.var.vars_f.T_POOL_decorator
 def all_wrsp_dict_web_reg_save_param(event, wrsp_web_=None) -> None:
     """
     все варианты создания web_reg_save_param, искать не ограничивая верхний номер Snapshot

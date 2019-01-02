@@ -6,6 +6,8 @@ import tkinter.ttk as ttk
 
 import lr_lib
 import lr_lib.core.var.vars as lr_vars
+import lr_lib.core.var.vars_h
+import lr_lib.core.var.vars_f
 
 
 class TopPoolSetting(tk.Toplevel):
@@ -24,7 +26,7 @@ class TopPoolSetting(tk.Toplevel):
         lr_lib.gui.widj.tooltip.createToolTip(labMP, 'основной пул(process), поиск в файлах и тд')
 
         entryMPName = ttk.Combobox(self, justify='center', textvariable=lr_vars.M_POOL.name, width=65, foreground='grey',
-                                   background=lr_vars.Background, font=lr_vars.DefaultFont + ' italic')
+                                   background=lr_lib.core.var.vars_h.Background, font=lr_vars.DefaultFont + ' italic')
         entryMPName['values'] = list(lr_vars.T_POOL.pools.keys())
         entryMPName.bind("<<ComboboxSelected>>", lambda *a: self.set_pool(lr_vars.M_POOL))
         lr_lib.gui.widj.tooltip.createToolTip(entryMPName, 'тип MP пула(любые стандартные(process))')
@@ -40,7 +42,7 @@ class TopPoolSetting(tk.Toplevel):
         lr_lib.gui.widj.tooltip.createToolTip(labT, 'доп пул(thread only), выполнение в фоне, подсветка и тд')
 
         entryTName = ttk.Combobox(self, justify='center', textvariable=lr_vars.T_POOL.name, width=65, foreground='grey',
-                                  background=lr_vars.Background, font=lr_vars.DefaultFont + ' italic')
+                                  background=lr_lib.core.var.vars_h.Background, font=lr_vars.DefaultFont + ' italic')
         entryTName['values'] = list(lr_vars.T_POOL.pools.keys())
         entryTName.bind("<<ComboboxSelected>>", lambda *a: self.set_pool(lr_vars.T_POOL))
         lr_lib.gui.widj.tooltip.createToolTip(entryTName, 'тип T пула(чтото из thread)')
@@ -96,7 +98,7 @@ class TopPoolSetting(tk.Toplevel):
         self.action.last_frame_text_set()
         return
 
-    @lr_vars.T_POOL_decorator
+    @lr_lib.core.var.vars_f.T_POOL_decorator
     def pool_state_updater(self) -> None:
         """SThreadPool(threading.Thread) текст состояния пула"""
         def pool_state_string(st=lambda i: '{0:<6} : {1}'.format(*i)) -> str:

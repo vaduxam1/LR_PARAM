@@ -5,6 +5,7 @@ import argparse
 
 import lr_lib
 import lr_lib.core.var.vars as lr_vars
+import lr_lib.core.var.vars_f
 
 
 def init(as_console: bool) -> dict:
@@ -41,7 +42,7 @@ def _console_vars_setter(c_args: dict) -> None:
     if 'max_inf' in c_args:
         lr_vars.VarSearchMaxSnapshot.set(c_args['max_inf'])
     if 'encoding' in c_args:
-        lr_vars.VarEncode.set(c_args['encoding'])
+        lr_lib.core.var.vars_f.VarEncode.set(c_args['encoding'])
     lr_vars.VarFileNamesNumsShow.set(c_args['file_names'])
     lr_vars.VarAllFilesStatistic.set(c_args['statistic'])
     return

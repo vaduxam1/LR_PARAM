@@ -4,15 +4,27 @@
 import threading
 
 import lr_lib.core.var.vars as lr_vars
+import lr_lib.core.var.vars_h
+import lr_lib.gui.etc.git_update
 import lr_lib.gui.wrsp.main_window
+import lr_lib.gui.etc.gui_other
 
 
 def init(c_args=None) -> None:
     """создать gui"""
-    print(c_args)
     lr_vars.Window = lr_lib.gui.wrsp.main_window.Window()  # main Gui
 
-    t = threading.Thread(target=lr_vars.check_git_ver)
+    lr_lib.gui.etc.gui_other.wordBreakAfter()  # область выделения двойным кликом мыши
+    lr_lib.core.var.vars_h.init_highlight_words()  # слова для подсветки
+
+    threading.Thread(target=_git_update_check).start()  # проверить обновление
+    return
+
+
+def _git_update_check():
+    """проверить обновление утилиты на github.com"""
+    lr_lib.gui.etc.git_update.check_git_ver()
+    t = threading.Timer(lr_vars.GitUpdPeriod, _git_update_check)
     t.start()
     return
 

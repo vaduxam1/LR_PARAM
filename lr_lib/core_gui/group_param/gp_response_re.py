@@ -6,6 +6,8 @@ import os
 import itertools
 
 import lr_lib
+import lr_lib.core.var.vars_h
+import lr_lib.core.var.vars_p
 import lr_lib.etc.excepthook
 import lr_lib.gui.action._other
 import lr_lib.core.etc.lbrb_checker
@@ -33,7 +35,7 @@ Regxp = [
     ("dtid=\w+&", param_from_str_2),
     ('jsessionid=\w+"', param_from_str_2),
 ]
-Regxp.extend(('{0}\w+"'.format(r), param_from_str_2) for r in lr_vars.LB_PARAM_FIND_LIST if ('\\' not in r))
+Regxp.extend(('{0}\w+"'.format(r), param_from_str_2) for r in lr_lib.core.var.vars_p.LB_PARAM_FIND_LIST if ('\\' not in r))
 
 
 def re_r_auto_param_creator(action: 'lr_lib.gui.action.main_action.ActionWindow', encoding='utf-8', errors='replace'):
@@ -92,7 +94,7 @@ def re_r_auto_param_creator(action: 'lr_lib.gui.action.main_action.ActionWindow'
         text_before='4) поиск param, в файлах ответов: найдено {} шт'.format(len(params)),
         text_after='добавить/удалить',
         parent=action,
-        color=lr_vars.PopUpWindColor1,
+        color=lr_lib.core.var.vars_h.PopUpWindColor1,
     )
 
     if y.ask() != K_FIND:

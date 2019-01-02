@@ -6,6 +6,8 @@ import tkinter.ttk as ttk
 
 import lr_lib
 import lr_lib.core.var.vars as lr_vars
+import lr_lib.core.var.vars_f
+import lr_lib.core.var.vars_h
 
 
 class TopEncoding(tk.Toplevel):
@@ -20,10 +22,10 @@ class TopEncoding(tk.Toplevel):
         self.title(tt)
 
         encodeEntry = ttk.Combobox(
-            self, justify='center', textvariable=lr_vars.VarEncode, width=65, foreground='grey',
-            background=lr_vars.Background, font=lr_vars.DefaultFont + ' italic')
+            self, justify='center', textvariable=lr_lib.core.var.vars_f.VarEncode, width=65, foreground='grey',
+            background=lr_lib.core.var.vars_h.Background, font=lr_vars.DefaultFont + ' italic')
 
-        encodeEntry['values'] = lr_vars.ENCODE_LIST
+        encodeEntry['values'] = lr_lib.core.var.vars_f.ENCODE_LIST
         encodeEntry.bind("<<ComboboxSelected>>", lambda *a: self.action.comboFiles_change())
 
         lr_lib.gui.widj.tooltip.createToolTip(encodeEntry, tt)

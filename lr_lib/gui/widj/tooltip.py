@@ -6,6 +6,7 @@ import threading
 import tkinter as tk
 
 import lr_lib.core.var.vars as lr_vars
+import lr_lib.core.var.vars_h
 
 
 class ToolTip(object):
@@ -46,7 +47,7 @@ class ToolTip(object):
             self.tip.wm_overrideredirect(1)
             self.tip.wm_geometry("+%d+%d" % (x, y))
             self.tip.attributes('-topmost', True)
-            tk.Label(self.tip, text=text, justify=tk.LEFT, background=lr_vars.Background, relief=tk.SOLID, borderwidth=1,
+            tk.Label(self.tip, text=text, justify=tk.LEFT, background=lr_lib.core.var.vars_h.Background, relief=tk.SOLID, borderwidth=1,
                      font=lr_vars.ToolTipFont).pack(ipadx=0, ipady=0)
         except Exception as ex:
             pass

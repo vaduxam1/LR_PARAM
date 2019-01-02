@@ -7,6 +7,7 @@ import tkinter as tk
 import tkinter.ttk as ttk
 
 import lr_lib
+import lr_lib.core.var.vars_f
 import lr_lib.gui.widj.lbrb5
 import lr_lib.gui.wrsp.win_part_lbrb
 import lr_lib.core.wrsp.files
@@ -168,6 +169,6 @@ class WinWidj(lr_lib.gui.wrsp.win_part_lbrb.WinPartsLbRb):
     def show_frame_info_working(self) -> None:
         """отображение всякой информации"""
         self.main_frame['text'] = '{} | {} | ParamClipBoardSearchHotKey[{}]'.format(
-            lr_vars.VarEncode.get(), time.strftime('%H:%M:%S'), lr_vars.FIND_PARAM_HOTKEY)
+            lr_lib.core.var.vars_f.VarEncode.get(), time.strftime('%H:%M:%S'), lr_vars.FIND_PARAM_HOTKEY)
         self.last_frame['text'] = 'working ... {}'.format(lr_vars.VarFilesFolder.get())
         return

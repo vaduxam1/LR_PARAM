@@ -7,6 +7,7 @@ import tkinter as tk
 
 import lr_lib
 import lr_lib.core.var.vars as lr_vars
+import lr_lib.core.var.vars_h
 
 
 class HighlightLines:
@@ -28,9 +29,9 @@ class HighlightLines:
         self.highlight_enable = self.tk_text.highlight_var.get()
         self.set_thread_attrs()
 
-        self.HighlightAfter0 = lr_vars.HighlightAfter0
-        self.HighlightAfter1 = lr_vars.HighlightAfter1
-        self.HighlightAfter2 = lr_vars.HighlightAfter2
+        self.HighlightAfter0 = lr_lib.core.var.vars_h.HighlightAfter0
+        self.HighlightAfter1 = lr_lib.core.var.vars_h.HighlightAfter1
+        self.HighlightAfter2 = lr_lib.core.var.vars_h.HighlightAfter2
 
         # признак необходимости подсветить линии на экране
         self.highlight_need = True
@@ -100,18 +101,18 @@ class HighlightLines:
             indxs = set(line_indxs[teg])
             line_indxs[teg] = indxs  # удалить индексы-дубли
 
-            if teg.startswith(lr_vars.ColorMainTegStartswith):
+            if teg.startswith(lr_lib.core.var.vars_h.ColorMainTegStartswith):
                 bg_indxs.update(indxs)
             continue
 
         for teg in line_indxs:  # удалить все background индексы, из не-background тегов
-            if not teg.startswith(lr_vars.ColorMainTegStartswith):
+            if not teg.startswith(lr_lib.core.var.vars_h.ColorMainTegStartswith):
                 line_indxs[teg] -= bg_indxs
             continue
 
-        if lr_vars.OliveChildTeg in line_indxs:  # удалить из Olive тега все индексы, принадлежищие любому другому тегу
-            other_tegs = (line_indxs.keys() - lr_vars.minus_teg)
-            line_indxs[lr_vars.OliveChildTeg] -= set(i for t in other_tegs for i in line_indxs[t])
+        if lr_lib.core.var.vars_h.OliveChildTeg in line_indxs:  # удалить из Olive тега все индексы, принадлежищие любому другому тегу
+            other_tegs = (line_indxs.keys() - lr_lib.core.var.vars_h.minus_teg)
+            line_indxs[lr_lib.core.var.vars_h.OliveChildTeg] -= set(i for t in other_tegs for i in line_indxs[t])
 
         # подсветить
         tag_add = self.tk_text.tag_add
@@ -148,7 +149,7 @@ def join_indxs(index: int, *indxs: sorted) -> iter((int, int),):
 def generate_line_tags_names_indxs(line: str, setdefault: callable, teg_names: {str: {(str, int)}}) -> None:
     """индексы tags для подсветки, для линии - слова из словаря
     teg_names={'backgroundorange': {('warning', 7),..."""
-    olive_callback = setdefault(lr_vars.OliveChildTeg, []).extend
+    olive_callback = setdefault(lr_lib.core.var.vars_h.OliveChildTeg, []).extend
 
     for tag in teg_names:
         teg_callback = setdefault(tag, []).extend
@@ -161,7 +162,7 @@ def generate_line_tags_names_indxs(line: str, setdefault: callable, teg_names: {
                     break
 
                 i = range(index, (index + len_name))
-                if any(map(line[index:].startswith, lr_vars.ForceOlive)):
+                if any(map(line[index:].startswith, lr_lib.core.var.vars_h.ForceOlive)):
                     olive_callback(i)
                 else:
                     teg_callback(i)
@@ -177,8 +178,8 @@ whitespace_letters = set(string.whitespace + string.ascii_letters)
 
 def genetate_line_tags_purct_etc_indxs(line: str, setdefault: callable) -> None:
     """индексы подсветки для линии - пунктуация, цифры и не ASCII"""
-    punct_digit_callback = setdefault(lr_vars.PunctDigitTag, []).append
-    rus_callback = setdefault(lr_vars.RusTag, []).append
+    punct_digit_callback = setdefault(lr_lib.core.var.vars_h.PunctDigitTag, []).append
+    rus_callback = setdefault(lr_lib.core.var.vars_h.RusTag, []).append
 
     for (index, symbol) in enumerate(line):
         if symbol in whitespace_letters:

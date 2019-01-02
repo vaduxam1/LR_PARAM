@@ -6,6 +6,7 @@ import tkinter.ttk as ttk
 
 from tkinter import messagebox
 
+import lr_lib.core.var.vars_h
 import lr_lib.gui.widj.highlight_text
 import lr_lib.gui.action.act_widj
 import lr_lib.core.var.vars as lr_vars
@@ -17,14 +18,14 @@ class ActScrollText(lr_lib.gui.action.act_widj.ActWidj):
     def __init__(self):
         lr_lib.gui.action.act_widj.ActWidj.__init__(self)
 
-        self.tk_text = lr_lib.gui.widj.highlight_text.HighlightText(self, background=lr_vars.Background, wrap=tk.NONE, bd=0)
+        self.tk_text = lr_lib.gui.widj.highlight_text.HighlightText(self, background=lr_lib.core.var.vars_h.Background, wrap=tk.NONE, bd=0)
 
         self.text_scrolly = ttk.Scrollbar(self, orient=tk.VERTICAL, command=self.tk_text.yview)
         self.text_scrollx = ttk.Scrollbar(self, orient=tk.HORIZONTAL, command=self.tk_text.xview)
         self.tk_text.configure(yscrollcommand=self.report_position_Y, xscrollcommand=self.report_position_X, bd=0)
 
         self.highlight_cbx = tk.Checkbutton(
-            self.cbx_bar, text='highlight', font=lr_vars.DefaultFont, background=lr_vars.Background,
+            self.cbx_bar, text='highlight', font=lr_vars.DefaultFont, background=lr_lib.core.var.vars_h.Background,
             variable=self.tk_text.highlight_var, command=self.tk_text.highlight_apply)
 
         self.buttonColorReset = tk.Button(self.cbx_bar, text='reset', font=lr_vars.DefaultFont, command=self.resColor)
@@ -32,9 +33,9 @@ class ActScrollText(lr_lib.gui.action.act_widj.ActWidj):
         self.highlight_After0 = tk.Entry(self.cbx_bar, font=lr_vars.DefaultFont, width=4)
         self.highlight_After1 = tk.Entry(self.cbx_bar, font=lr_vars.DefaultFont, width=4)
         self.highlight_After2 = tk.Entry(self.cbx_bar, font=lr_vars.DefaultFont, width=4)
-        self.highlight_After0.insert(0, lr_vars.HighlightAfter0)
-        self.highlight_After1.insert(0, lr_vars.HighlightAfter1)
-        self.highlight_After2.insert(0, lr_vars.HighlightAfter2)
+        self.highlight_After0.insert(0, lr_lib.core.var.vars_h.HighlightAfter0)
+        self.highlight_After1.insert(0, lr_lib.core.var.vars_h.HighlightAfter1)
+        self.highlight_After2.insert(0, lr_lib.core.var.vars_h.HighlightAfter2)
         return
 
     def report_position_X(self, *argv) -> None:

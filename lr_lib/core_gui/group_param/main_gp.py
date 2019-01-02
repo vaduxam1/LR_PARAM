@@ -2,6 +2,7 @@
 # запуск нахождения и замены group_param
 
 import lr_lib
+import lr_lib.core.var.vars_f
 from lr_lib.core.var import vars as lr_vars
 from lr_lib.core_gui.group_param.core_gp import group_param
 from lr_lib.core_gui.group_param.gp_act_lb import session_params
@@ -12,7 +13,7 @@ from lr_lib.core_gui.group_param.gp_act_re import re_auto_param_creator
 from lr_lib.core_gui.group_param.gp_var import K_CREATE, K_CANCEL
 
 
-@lr_vars.T_POOL_decorator
+@lr_lib.core.var.vars_f.T_POOL_decorator
 def auto_param_creator(action: 'lr_lib.gui.action.main_action.ActionWindow') -> None:
     """
     group params по кнопке PARAM - по LB + по началу имени
@@ -22,6 +23,9 @@ def auto_param_creator(action: 'lr_lib.gui.action.main_action.ActionWindow') -> 
     # поиск по началу имени, в action.c
     ps = group_param_search(action)
     params.update(ps)
+
+    if (not ps) and isinstance(ps, set):
+        return
 
     # поиск по LB=, в action.c
     prs = session_params(action)
@@ -47,7 +51,7 @@ def auto_param_creator(action: 'lr_lib.gui.action.main_action.ActionWindow') -> 
         default_key=K_CANCEL,
         title='Финальное окно',
         is_text='\n'.join(params),
-        text_before='создание + автозамена. {} шт'.format(lp),
+        text_before='создание WRSP и автозамена в action.c : WRSP = {} шт'.format(lp),
         text_after='добавить/удалить',
         parent=action,
         color='Orange'

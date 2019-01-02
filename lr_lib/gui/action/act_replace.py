@@ -6,6 +6,8 @@ import tkinter as tk
 from tkinter import messagebox
 
 import lr_lib
+import lr_lib.core.var.vars_f
+import lr_lib.core.var.vars_p
 import lr_lib.etc.template
 import lr_lib.gui.widj.dialog
 import lr_lib.gui.action.act_search
@@ -30,7 +32,7 @@ class ActReplaceRemove(lr_lib.gui.action.act_search.ActSearch):
             command=self.remove_web_dummy_template)
         return
 
-    @lr_vars.T_POOL_decorator
+    @lr_lib.core.var.vars_f.T_POOL_decorator
     def remove_web_dummy_template(self, *args, force=True) -> None:
         """для WebDummyTemplate_List - удалить все dummy web_"""
         lr_lib.etc.template.Dummy.setattrs(lr_lib.etc.template.WebDummyTemplate_Part_Endswith)
@@ -51,7 +53,8 @@ class ActReplaceRemove(lr_lib.gui.action.act_search.ActSearch):
                     sn = '"Snapshot=t{}.inf"'.format(web.snapshot.inf)
                     yask = lr_lib.gui.widj.dialog.YesNoCancel(
                         ['Удалить текущий', "Удалить все Snapshot's {}".format(gws), 'Пропустить', 'Выход'],
-                        "удалить {sn} содержащий {d}".format(d={k: wt.count(k) for k in lr_vars.DENY_WEB_}, sn=sn),
+                        "удалить {sn} содержащий {d}".format(d={k: wt.count(k) for k in
+                                                                lr_lib.core.var.vars_p.DENY_WEB_}, sn=sn),
                         'всего можно удалить {} шт'.format(len(self.web_action.websReport.google_webs)),
                         parent=self, is_text=wt, title=sn).ask()
                     del_all = yask.startswith('Удалить все')
@@ -171,7 +174,7 @@ class ActReplaceRemove(lr_lib.gui.action.act_search.ActSearch):
                 self.tk_text_to_web_action('\n'.join(lines), websReport=True)
         return
 
-    @lr_vars.T_POOL_decorator
+    @lr_lib.core.var.vars_f.T_POOL_decorator
     def all_transaction_rename(self, *args) -> None:
         """переименавать все транзакции"""
         _transactions = [t.split('"', 1)[1] for t in self.transaction]

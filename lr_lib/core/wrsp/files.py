@@ -9,6 +9,8 @@ import collections
 
 import lr_lib
 import lr_lib.core.etc.other
+import lr_lib.core.var.vars_f
+import lr_lib.core.var.vars_p
 import lr_lib.etc.excepthook
 import lr_lib.core.var.vars as lr_vars
 
@@ -16,7 +18,8 @@ import lr_lib.core.var.vars as lr_vars
 def is_responce_file(name: str) -> (str, str):
     """вернуть файлы ответов, отбраковать "вероятно ненужные" файлы"""
     (n, ext) = os.path.splitext(name)
-    if (name in lr_vars.DENY_FILES) or (ext in lr_vars.DENY_EXT) or any((p in n) for p in lr_vars.DENY_PART_NAME):
+    if (name in lr_lib.core.var.vars_p.DENY_FILES) or (ext in lr_lib.core.var.vars_p.DENY_EXT) or any((p in n) for p in
+                                                                                                      lr_lib.core.var.vars_p.DENY_PART_NAME):
         return
     else:
         return n, ext
@@ -133,7 +136,7 @@ def _create_files_from_inf(args: [(str, str, bool, bool), (str, int)]) -> iter((
 
         for sect in config.sections():
             for opt in config.options(sect):
-                if any(map(opt.startswith, lr_vars.FileOptionsStartswith)):
+                if any(map(opt.startswith, lr_lib.core.var.vars_p.FileOptionsStartswith)):
                     file_name = config[sect]
 
                     try:
@@ -163,7 +166,7 @@ def _create_files_from_inf(args: [(str, str, bool, bool), (str, int)]) -> iter((
                 num = -1
 
             for line in lines:  # создать файлы из ключей файла t75.inf
-                if any(map(line.startswith, lr_vars.FileOptionsStartswith)):
+                if any(map(line.startswith, lr_lib.core.var.vars_p.FileOptionsStartswith)):
                     (key_from_inf, file_name) = line.split('=', 1)
                     full_name = os.path.join(folder, file_name)
                     if os.path.isfile(full_name):
@@ -180,7 +183,7 @@ def init() -> None:
     folder = lr_vars.VarFilesFolder.get()
     lr_vars.Logger.info('Поиск файлов ответов в "{d}" ...'.format(d=folder))
 
-    enc = lr_vars.VarEncode.get()
+    enc = lr_lib.core.var.vars_f.VarEncode.get()
     allow_deny = lr_vars.VarAllowDenyFiles.get()
     statistic = lr_vars.VarAllFilesStatistic.get()
 
@@ -289,7 +292,7 @@ def _set_fileFile_stats(fileFile: dict, text: str, let=0, wts=0, ptn=0, dts=0, n
     return
 
 
-@lr_vars.T_POOL_decorator
+@lr_lib.core.var.vars_f.T_POOL_decorator
 def thread_set_stat(files: [dict, ]) -> None:
     """создавать статистику в фоне, для всех файлов"""
     for file in files:

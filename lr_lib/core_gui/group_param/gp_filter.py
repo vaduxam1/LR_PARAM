@@ -1,6 +1,6 @@
 # -*- coding: UTF-8 -*-
 # фильтрация и сортировка param
-
+import lr_lib.core.var.vars_p
 from lr_lib.core.var import vars as lr_vars
 
 
@@ -15,7 +15,7 @@ def param_sort(params: [str, ], reverse=True, _filter=True, deny_param_filter=Tr
     return params
 
 
-def param_filter(params: [str, ], len_p_min=lr_vars.MinParamLen, deny=lr_vars.DENY_PARAMS,
+def param_filter(params: [str, ], len_p_min=lr_vars.MinParamLen, deny=lr_lib.core.var.vars_p.DENY_PARAMS,
                  deny_param_filter=True, ) -> iter((str,)):
     """отфильтровать лишние param"""
     params = set(filter(str.strip, params))  # отфильтровать bool и только whitespace str
