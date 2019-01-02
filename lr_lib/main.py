@@ -9,7 +9,7 @@ import sys
 import contextlib
 
 import lr_lib.core.var.vars as lr_vars
-import lr_lib.core.var.vars_f
+import lr_lib.core.var.vars_other
 
 import lr_lib.gui.main_gui
 import lr_lib.core.main_core
@@ -24,9 +24,9 @@ import lr_lib.etc.pool.other
 def init(excepthook=True):
     """инит дополнительных классов, сохр. их в lr_vars, запуск core/gui"""
     # lr_vars.Logger
-    with lr_lib.etc.logger.init(name='__main__', encoding='cp1251', levels=lr_lib.core.var.vars_f.loggingLevels) as lr_vars.Logger:
+    with lr_lib.etc.logger.init(name='__main__', encoding='cp1251', levels=lr_lib.core.var.vars_other.loggingLevels) as lr_vars.Logger:
         lr_vars.Logger.info('version={v}, defaults.VarEncode={ce}\n{si}'.format(
-            v=lr_vars.VERSION, ce=lr_lib.core.var.vars_f.VarEncode.get(), si=lr_lib.etc.sysinfo.system_info()))
+            v=lr_vars.VERSION, ce=lr_lib.core.var.vars_other.VarEncode.get(), si=lr_lib.etc.sysinfo.system_info()))
 
         # lr_vars.MainThreadUpdater
         with lr_lib.etc.pool.other.MainThreadUpdater().init() as lr_vars.MainThreadUpdater:

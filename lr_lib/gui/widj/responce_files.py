@@ -10,8 +10,8 @@ from tkinter import filedialog
 
 import lr_lib
 import lr_lib.core.var.vars as lr_vars
-import lr_lib.core.var.vars_f
-import lr_lib.core.var.vars_h
+import lr_lib.core.var.vars_other
+import lr_lib.core.var.vars_highlight
 
 
 class RespFiles(tk.Toplevel):
@@ -39,7 +39,7 @@ class RespFiles(tk.Toplevel):
             lr_lib.core.etc.other._openTextInEditor(full_name)
 
         file_dt = lr_lib.core.wrsp.files.file_dict_creator(
-            ent.get(), full_name, inf_num=0, enc=lr_lib.core.var.vars_f.VarEncode.get(), inf_key='', deny=True, stats=True)
+            ent.get(), full_name, inf_num=0, enc=lr_lib.core.var.vars_other.VarEncode.get(), inf_key='', deny=True, stats=True)
         del file_dt['Param']
         del file_dt['Snapshot']
 
@@ -70,7 +70,7 @@ class RespFiles(tk.Toplevel):
         deny_cbx = tk.Checkbutton(lab, text='', variable=deny_cbx_var, command=files_cmb_set, font='Arial 7')
         lr_lib.gui.widj.tooltip.createToolTip(deny_cbx, 'отбраковать "вероятно ненужные" файлы')
 
-        files_cmb = ttk.Combobox(lab, background=lr_lib.core.var.vars_h.Background, font='Arial 7')
+        files_cmb = ttk.Combobox(lab, background=lr_lib.core.var.vars_highlight.Background, font='Arial 7')
         files_cmb_set()
         files_cmb.bind("<<ComboboxSelected>>", lambda *a: self.combo_select(files_cmb, folder, cbx_var))
         lr_lib.gui.widj.tooltip.createToolTip(files_cmb, text)
@@ -93,7 +93,7 @@ class RespFiles(tk.Toplevel):
             return
 
         inf_var = tk.StringVar(value=self.inf_file)
-        inf_cmb = ttk.Combobox(lab, background=lr_lib.core.var.vars_h.Background, font='Arial 7', textvariable=inf_var)
+        inf_cmb = ttk.Combobox(lab, background=lr_lib.core.var.vars_highlight.Background, font='Arial 7', textvariable=inf_var)
         inf_cmb['values'] = list(sorted(get_inf_files(), key=lr_lib.core.etc.other.numericalSort))
         inf_cmb.bind("<<ComboboxSelected>>", set_inf)
         inf_cmb.config(width=max(len(i) for i in (inf_cmb['values'] or [''])))

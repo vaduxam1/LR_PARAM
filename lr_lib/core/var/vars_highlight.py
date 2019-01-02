@@ -5,10 +5,10 @@ import itertools
 import os
 import string
 
-from lr_lib.core.var.var import Var
+from lr_lib.core.var._var import Var
 from lr_lib.core.var.vars import lib_folder
-from lr_lib.core.var.vars_f import _unpunct
-from lr_lib.core.var.vars_p import LB_PARAM_FIND_LIST, DENY_WEB_
+from lr_lib.core.var.vars_other import _unpunct
+from lr_lib.core.var.vars_param import LB_PARAM_FIND_LIST, DENY_WEB_
 from lr_lib.etc.help import COLORS, HEX
 
 HighlightOn = True  # включить подсветку

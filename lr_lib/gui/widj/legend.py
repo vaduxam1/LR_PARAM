@@ -8,14 +8,14 @@ import tkinter as tk
 import tkinter.ttk as ttk
 
 import lr_lib
-import lr_lib.core.var.vars_h
+import lr_lib.core.var.vars_highlight
 import lr_lib.gui.widj.tooltip_canvas
 import lr_lib.core.var.vars as lr_vars
 
 
 def clrs() -> [str, ]:
     """цвет"""
-    cs = sorted(c for c in lr_lib.core.var.vars_h.VarColorTeg.get() if not any((r >= 0) for r in map(
+    cs = sorted(c for c in lr_lib.core.var.vars_highlight.VarColorTeg.get() if not any((r >= 0) for r in map(
          c.find, {'white', 'black', 'navy', 'grey', 'alice'})))
     return cs
 
@@ -259,7 +259,7 @@ class WebLegend(tk.Toplevel):
             tw.grid_rowconfigure(0, weight=1)
 
             tk_text = tk.Text(
-                tw, foreground='grey', background=lr_lib.core.var.vars_h.Background, wrap=tk.NONE, padx=0, pady=0, undo=True,)
+                tw, foreground='grey', background=lr_lib.core.var.vars_highlight.Background, wrap=tk.NONE, padx=0, pady=0, undo=True,)
 
             text_scrolly = ttk.Scrollbar(tw, orient=tk.VERTICAL, command=tk_text.yview)
             text_scrollx = ttk.Scrollbar(tw, orient=tk.HORIZONTAL, command=tk_text.xview)

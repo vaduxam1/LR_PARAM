@@ -8,8 +8,8 @@ import string  # через gui, используется в eval splitters_comb
 
 import lr_lib
 import lr_lib.core.var.vars as lr_vars
-import lr_lib.core.var.vars_f
-import lr_lib.core.var.vars_p
+import lr_lib.core.var.vars_other
+import lr_lib.core.var.vars_param
 
 
 def init() -> None:
@@ -36,7 +36,7 @@ def _set_file(file: dict, errors='replace') -> None:
     """чение файла в lr_vars.VarFileText"""
     ff = file['File']
 
-    with open(ff['FullName'], encoding=lr_lib.core.var.vars_f.VarEncode.get(), errors=errors) as f:
+    with open(ff['FullName'], encoding=lr_lib.core.var.vars_other.VarEncode.get(), errors=errors) as f:
         lr_vars.VarFileText.set(f.read())
 
     lr_vars.VarPartNum.set(0)
@@ -145,24 +145,24 @@ def lb_rb_split_end(lb: str, rb: str) -> (str, str):
     if lr_vars.VarLEnd.get():
         llb = len(lb)
         if llb < 5:
-            for s in lr_lib.core.var.vars_p.StripLBEnd1:
+            for s in lr_lib.core.var.vars_param.StripLBEnd1:
                 lb = lb.rsplit(s, 1)
                 lb = lb[1 if (len(lb) == 2) else 0]
                 continue
-        if (llb > 2) and any(map(lb.startswith, lr_lib.core.var.vars_p.StripLBEnd2)):
+        if (llb > 2) and any(map(lb.startswith, lr_lib.core.var.vars_param.StripLBEnd2)):
             lb = lb[2:].lstrip()
-        elif (llb > 1) and any(map(lb.startswith, lr_lib.core.var.vars_p.StripLBEnd3)):
+        elif (llb > 1) and any(map(lb.startswith, lr_lib.core.var.vars_param.StripLBEnd3)):
             lb = lb[1:].lstrip()
 
     if lr_vars.VarREnd.get():
         lrb = len(rb)
         if lrb < 5:
-            for s in lr_lib.core.var.vars_p.StripRBEnd1:
+            for s in lr_lib.core.var.vars_param.StripRBEnd1:
                 rb = rb.split(s, 1)[0]
                 continue
-        if (lrb > 2) and any(map(rb.endswith, lr_lib.core.var.vars_p.StripRBEnd2)):
+        if (lrb > 2) and any(map(rb.endswith, lr_lib.core.var.vars_param.StripRBEnd2)):
             rb = rb[:-2].rstrip()
-        elif (lrb > 1) and any(map(rb.endswith, lr_lib.core.var.vars_p.StripRBEnd3)):
+        elif (lrb > 1) and any(map(rb.endswith, lr_lib.core.var.vars_param.StripRBEnd3)):
             rb = rb[:-1].rstrip()
 
     return lb, rb
@@ -201,11 +201,11 @@ def lb_rb_split_list_set(__lb: str, __rb: str, lb: str, rb: str) -> (str, str):
     try:
         lb_combo = splitters_combo(lr_vars.Window.LBent_SplitList)
     except AttributeError:
-        lb_combo = lr_lib.core.var.vars_p.SplitList
+        lb_combo = lr_lib.core.var.vars_param.SplitList
     try:
         rb_combo = splitters_combo(lr_vars.Window.RBent_SplitList)
     except AttributeError:
-        rb_combo = lr_lib.core.var.vars_p.SplitList
+        rb_combo = lr_lib.core.var.vars_param.SplitList
 
     # обрезать из SplitList
     if lr_vars.VarSplitListLB.get():

@@ -7,7 +7,7 @@ import time
 import tkinter as tk
 import tkinter.ttk as ttk
 
-import lr_lib.core.var.vars_p
+import lr_lib.core.var.vars_param
 import lr_lib.gui.action.act_goto
 import lr_lib.core.var.vars as lr_vars
 
@@ -91,7 +91,7 @@ class ActAny(lr_lib.gui.action.act_goto.ActGoto):
         if self.web_action.websReport.google_webs:
             info.append('Возможно следующие номера inf лишние, тк содержат слова {s}\nих можно удалить('
                         '+"сохр пользоват. измения в тексте" из меню мыши)\n{w}'.format(
-                w=self.web_action.websReport.google_webs, s=lr_lib.core.var.vars_p.DENY_WEB_))
+                w=self.web_action.websReport.google_webs, s=lr_lib.core.var.vars_param.DENY_WEB_))
 
         if info:
             lr_vars.Logger.info('\n\n'.join(info), parent=self)

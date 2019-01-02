@@ -2,8 +2,8 @@
 # нахождение param, в action.c файле, по началу имени param
 
 import lr_lib
-import lr_lib.core.var.vars_h
-import lr_lib.core.var.vars_p
+import lr_lib.core.var.vars_highlight
+import lr_lib.core.var.vars_param
 import lr_lib.gui.widj.dialog
 from lr_lib.core.etc.lbrb_checker import check_bound_lb
 from lr_lib.core_gui.group_param.gp_filter import param_sort
@@ -17,7 +17,7 @@ def group_param_search(action: 'lr_lib.gui.action.main_action.ActionWindow') -> 
         [K_FIND, K_CANCEL],
         default_key=K_CANCEL,
         title='1.1) запрос: поиск param в action, используя начало param имен',
-        is_text='\n'.join(lr_lib.core.var.vars_p.Params_names),
+        is_text='\n'.join(lr_lib.core.var.vars_param.Params_names),
         text_before='1) В action.c тексте, будет произведен поиск param, имя которых начинается на указанные имена.',
         text_after='добавить/удалить',
         parent=action,
@@ -46,7 +46,7 @@ def group_param_search(action: 'lr_lib.gui.action.main_action.ActionWindow') -> 
         text_before='1) найдено {} шт'.format(len(params)),
         text_after='добавить/удалить',
         parent=action,
-        color=lr_lib.core.var.vars_h.PopUpWindColor1,
+        color=lr_lib.core.var.vars_highlight.PopUpWindColor1,
     )
     ans = y.ask()
 
@@ -124,7 +124,7 @@ def run_in_end_param_from_param(action: 'lr_lib.gui.action.main_action.ActionWin
                     'для повторного поиска param по началу имени\nнайдено {} шт'.format(len(params)),
         text_after='добавить/удалить',
         parent=action,
-        color=lr_lib.core.var.vars_h.PopUpWindColor1,
+        color=lr_lib.core.var.vars_highlight.PopUpWindColor1,
     )
     ans = y.ask()
 

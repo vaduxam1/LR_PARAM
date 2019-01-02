@@ -1,4 +1,5 @@
 ﻿# -*- coding: UTF-8 -*-
+# не используется, приведен как пример
 # все варианты смены VarPartNum и VarFile
 
 import lr_lib

@@ -6,7 +6,7 @@ import os
 import time
 import tkinter as tk
 
-from lr_lib.core.var.var import (Var, )
+from lr_lib.core.var._var import Var
 
 #####################################
 # главные переменные

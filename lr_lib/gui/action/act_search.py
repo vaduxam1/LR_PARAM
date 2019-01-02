@@ -6,7 +6,7 @@ import tkinter.ttk as ttk
 
 from tkinter import messagebox
 
-import lr_lib.core.var.vars_h
+import lr_lib.core.var.vars_highlight
 import lr_lib.gui.widj.tooltip
 import lr_lib.gui.action.act_serializ
 import lr_lib.core.var.vars as lr_vars
@@ -34,7 +34,7 @@ class ActSearch(lr_lib.gui.action.act_serializ.TkTextWebSerialization):
 
         self.search_res_combo = ttk.Combobox(
             self.toolbar, textvariable=self.searchPosVar, justify='center', font=lr_vars.DefaultFont,
-            background=lr_lib.core.var.vars_h.Background)
+            background=lr_lib.core.var.vars_highlight.Background)
 
         self.search_res_combo.bind("<<ComboboxSelected>>", self.tk_text_see)
         self.search_res_combo.bind("<KeyRelease-Return>", self.tk_text_see)

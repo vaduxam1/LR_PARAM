@@ -5,7 +5,7 @@ import tkinter as tk
 import tkinter.ttk as ttk
 
 import lr_lib
-import lr_lib.core.var.vars_h
+import lr_lib.core.var.vars_highlight
 import lr_lib.gui.action.act_replace
 import lr_lib.core.var.vars as lr_vars
 
@@ -88,7 +88,7 @@ class ActFont(lr_lib.gui.action.act_replace.ActReplaceRemove):
             "red" - имя цвета
         """
         if color is None:  # смена по кругу
-            color = next(lr_lib.core.var.vars_h.ColorIterator)
+            color = next(lr_lib.core.var.vars_highlight.ColorIterator)
         if not color:  # выбранный
             color = self.background_color_combo.get()
 

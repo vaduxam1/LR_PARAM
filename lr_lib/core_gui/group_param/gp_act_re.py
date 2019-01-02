@@ -4,8 +4,8 @@
 import re
 
 import lr_lib
-import lr_lib.core.var.vars_h
-import lr_lib.core.var.vars_p
+import lr_lib.core.var.vars_highlight
+import lr_lib.core.var.vars_param
 from lr_lib.core.var import vars as lr_vars
 from lr_lib.core_gui.group_param.core_gp import group_param
 from lr_lib.core_gui.group_param.gp_filter import param_sort, param_filter
@@ -13,7 +13,7 @@ from lr_lib.core_gui.group_param.gp_var import K_FIND, K_CREATE, K_SKIP
 
 
 def _param_filter(params: [str, ], min_param_len=lr_vars.MinParamLen,
-                  deny=lr_lib.core.var.vars_p.DENY_Startswitch_PARAMS, ) -> [str, ]:
+                  deny=lr_lib.core.var.vars_param.DENY_Startswitch_PARAMS, ) -> [str, ]:
     """удалить не param-слова"""
     params = param_filter(params)
     for param in params:
@@ -48,7 +48,7 @@ def re_auto_param_creator(action: 'lr_lib.gui.action.main_action.ActionWindow', 
     y = lr_lib.gui.widj.dialog.YesNoCancel(
         [K_FIND, K_SKIP],
         title='3.1) запрос: action.c regexp',
-        is_text='\n'.join(lr_lib.core.var.vars_p.REGEXP_PARAMS),
+        is_text='\n'.join(lr_lib.core.var.vars_param.REGEXP_PARAMS),
         text_before='3) Будет произведен поиск param, в action.c тексте: re.findall(regexp, action_text)',
         text_after='добавить/удалить',
         parent=action,
@@ -78,7 +78,7 @@ def re_auto_param_creator(action: 'lr_lib.gui.action.main_action.ActionWindow', 
             text_after='добавить/удалить',
             parent=action,
             default_key=(K_SKIP if wrsp_create else K_FIND),
-            color=lr_lib.core.var.vars_h.PopUpWindColor1,
+            color=lr_lib.core.var.vars_highlight.PopUpWindColor1,
         )
         ans = y.ask()
         if ans == K_CREATE:

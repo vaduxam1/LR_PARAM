@@ -9,7 +9,7 @@ import tkinter as tk
 from tkinter.font import Font
 
 import lr_lib
-import lr_lib.core.var.vars_h
+import lr_lib.core.var.vars_highlight
 import lr_lib.gui.widj.highlight
 import lr_lib.core.var.vars as lr_vars
 
@@ -25,7 +25,7 @@ class HighlightText(tk.Text):
         self.bind_all("<Control-z>", self.undo)
         self.bind_all("<Control-y>", self.redo)
 
-        self.highlight_dict = copy.deepcopy(lr_lib.core.var.vars_h.VarDefaultColorTeg)
+        self.highlight_dict = copy.deepcopy(lr_lib.core.var.vars_highlight.VarDefaultColorTeg)
 
         self.font_var = tk.StringVar(value=kwargs.get('font_var', lr_vars.DefaultActionNoHighlightFont))
         self.size_var = tk.IntVar(value=kwargs.get('size_var', lr_vars.DefaultActionNoHighlightFontSize))
@@ -34,7 +34,7 @@ class HighlightText(tk.Text):
         self.slant_var = tk.BooleanVar(value=lr_vars.DefaultActionNoHighlightFontSlant)
         self.overstrike_var = tk.BooleanVar(value=lr_vars.DefaultActionNoHighlightFontOverstrike)
 
-        self.highlight_var = tk.BooleanVar(value=lr_lib.core.var.vars_h.HighlightOn)
+        self.highlight_var = tk.BooleanVar(value=lr_lib.core.var.vars_highlight.HighlightOn)
 
         self.tk.eval("""
                             proc widget_proxy {widget widget_command args} {
@@ -123,7 +123,7 @@ class HighlightText(tk.Text):
         if parent is None:
             parent = self
 
-        tegs = lr_lib.core.var.vars_h.VarColorTeg.get()
+        tegs = lr_lib.core.var.vars_highlight.VarColorTeg.get()
         (w, s, u, o) = self.__class__._text_checkbox(parent)
 
         size = parent.size_var.get()
@@ -139,7 +139,7 @@ class HighlightText(tk.Text):
     def reset_highlight(self, highlight=True) -> None:
         """сбросить текст настройки цветов"""
         self.highlight_dict.clear()
-        self.highlight_dict.update(copy.deepcopy(lr_lib.core.var.vars_h.VarDefaultColorTeg))
+        self.highlight_dict.update(copy.deepcopy(lr_lib.core.var.vars_highlight.VarDefaultColorTeg))
         if highlight:
             self.highlight_apply()
         return
@@ -167,9 +167,9 @@ class HighlightText(tk.Text):
     def get_tegs_names(self) -> {str: {str,}}:
         """_tegs_names + \\xCE\\xE1"""
         tegs_names = {}
-        hex_unicode_words = re.compile(lr_lib.core.var.vars_h.hex_unicode_words).findall(self.get(1.0, tk.END))  # \\xCE\\xE1
+        hex_unicode_words = re.compile(lr_lib.core.var.vars_highlight.hex_unicode_words).findall(self.get(1.0, tk.END))  # \\xCE\\xE1
         self.highlight_dict.setdefault(
-            lr_lib.core.var.vars_h.hex_unicode_ground, dict()).setdefault(lr_lib.core.var.vars_h.hex_unicode_color, set()).update(hex_unicode_words)
+            lr_lib.core.var.vars_highlight.hex_unicode_ground, dict()).setdefault(lr_lib.core.var.vars_highlight.hex_unicode_color, set()).update(hex_unicode_words)
 
         for ground in self.highlight_dict:
             colors = self.highlight_dict[ground]
@@ -191,11 +191,11 @@ class HighlightText(tk.Text):
         for wr in wrsp_all:  # warn_wrsp highlight
             n = wr.name
             if (n in ps) and (not all(ps[n].values())):
-                self.highlight_mode(wr.name, option='background', color=lr_lib.core.var.vars_h.color_warn_wrsp)
+                self.highlight_mode(wr.name, option='background', color=lr_lib.core.var.vars_highlight.color_warn_wrsp)
             continue
 
         for n in self.action.web_action.transactions.names:
-            self.highlight_mode(n, option='foreground', color=lr_lib.core.var.vars_h.color_transactions_names)
+            self.highlight_mode(n, option='foreground', color=lr_lib.core.var.vars_highlight.color_transactions_names)
             continue
 
         return tegs_names
@@ -209,10 +209,10 @@ class HighlightText(tk.Text):
             continue
 
         if isinstance(web_, lr_lib.core.action.web_.WebRegSaveParam):
-            m = lr_lib.core.var.vars_h.web_reg_highlight_len
-            self.highlight_mode('{}'.format(web_.name[:m]), option='background', color=lr_lib.core.var.vars_h.wrsp_color1)
-            self.highlight_mode(web_.name[m:], option='foreground', color=lr_lib.core.var.vars_h.wrsp_color2)
-            self.highlight_mode(web_.param, option='foreground', color=lr_lib.core.var.vars_h.wrsp_color2)
+            m = lr_lib.core.var.vars_highlight.web_reg_highlight_len
+            self.highlight_mode('{}'.format(web_.name[:m]), option='background', color=lr_lib.core.var.vars_highlight.wrsp_color1)
+            self.highlight_mode(web_.name[m:], option='foreground', color=lr_lib.core.var.vars_highlight.wrsp_color2)
+            self.highlight_mode(web_.param, option='foreground', color=lr_lib.core.var.vars_highlight.wrsp_color2)
             for line in web_.lines_list[1:]:
                 self.highlight_mode(line.strip())
                 continue
@@ -220,7 +220,7 @@ class HighlightText(tk.Text):
             self.highlight_mode(web_.name)
         return
 
-    def highlight_mode(self, word: str, option='foreground', color=lr_lib.core.var.vars_h.DefaultColor) -> None:
+    def highlight_mode(self, word: str, option='foreground', color=lr_lib.core.var.vars_highlight.DefaultColor) -> None:
         """залить цветом все word в tk.Text widget"""
         colors = self.highlight_dict.setdefault(option, {})
         try:
@@ -233,7 +233,7 @@ class HighlightText(tk.Text):
 class TextLineNumbers(tk.Canvas):
     """номера линий tk.Text"""
     def __init__(self, tk_text: HighlightText):
-        super().__init__(tk_text.action, background=lr_lib.core.var.vars_h.Background)
+        super().__init__(tk_text.action, background=lr_lib.core.var.vars_highlight.Background)
         self.linenum = -1
 
         self.tk_text = tk_text

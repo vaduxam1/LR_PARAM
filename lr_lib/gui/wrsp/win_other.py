@@ -7,7 +7,7 @@ import tkinter as tk
 import tkinter.ttk as ttk
 
 import lr_lib
-import lr_lib.core.var.vars_f
+import lr_lib.core.var.vars_other
 import lr_lib.gui.wrsp.win_filesort
 import lr_lib.core.var.vars as lr_vars
 
@@ -54,7 +54,7 @@ class WinOther(lr_lib.gui.wrsp.win_filesort.WinFileSort):
         self.cbxOrdVersion = tk.Checkbutton(
             self.mid_frame, variable=lr_vars.VarOrdVersion, padx=0, pady=0, font=lr_vars.DefaultFont, text='ord')
 
-        log_vals = list(lr_lib.core.var.vars_f.loggingLevels.keys())
+        log_vals = list(lr_lib.core.var.vars_other.loggingLevels.keys())
         self.comboLogger = ttk.Combobox(
             self.last_frame, textvariable=lr_vars.VarWindowLogger, justify='center', font=lr_vars.DefaultFont,
             width=5, style="BW.TButton")
@@ -95,7 +95,7 @@ class WinOther(lr_lib.gui.wrsp.win_filesort.WinFileSort):
         self._block(False)
         return
 
-    @lr_lib.core.var.vars_f.T_POOL_decorator
+    @lr_lib.core.var.vars_other.T_POOL_decorator
     def param_file_editor(self, *args):
         """открыть param файл в editor"""
         f = lr_lib.core.wrsp.files.get_file_with_kwargs(lr_vars.FilesWithParam)['File']['FullName']
@@ -105,7 +105,7 @@ class WinOther(lr_lib.gui.wrsp.win_filesort.WinFileSort):
     def clear(self) -> None:
         """очистить поля ввода"""
         self.show_frame_info_working()
-        lr_lib.core.var.vars_f.clearVars()
+        lr_lib.core.var.vars_other.clearVars()
         self.LB.set('')
         self.RB.set('')
 

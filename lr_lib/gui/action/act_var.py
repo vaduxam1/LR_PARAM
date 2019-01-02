@@ -8,7 +8,7 @@ import tkinter as tk
 
 import lr_lib
 import lr_lib.core.action.main_awal
-import lr_lib.core.var.vars_h
+import lr_lib.core.var.vars_highlight
 import lr_lib.gui.action.act_toplevel
 import lr_lib.core.var.vars as lr_vars
 
@@ -38,7 +38,7 @@ class ActVar(lr_lib.gui.action.act_toplevel.ActToplevel):
         self.force_yes_inf = tk.BooleanVar(value=lr_vars.DefaultActionForceYes)
 
         self.font_var = tk.StringVar(value=lr_vars.DefaultActionHighlightFont)
-        self.background_var = tk.StringVar(value=lr_lib.core.var.vars_h.Background)
+        self.background_var = tk.StringVar(value=lr_lib.core.var.vars_highlight.Background)
         self.size_var = tk.IntVar(value=lr_vars.DefaultActionHighlightFontSize)
 
         self.weight_var = tk.BooleanVar(value=lr_vars.DefaultActionHighlightFontBold)

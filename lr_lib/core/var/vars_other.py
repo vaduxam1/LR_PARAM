@@ -50,23 +50,33 @@ def T_POOL_decorator(func: callable):
     @functools.wraps(func)
     def wrap(*args, **kwargs):
         if hasattr(lr_lib.core.var.vars.T_POOL, 'submit'):
-            return lr_lib.core.var.vars.T_POOL.submit(func, *args, **kwargs)
+            out = lr_lib.core.var.vars.T_POOL.submit(func, *args, **kwargs)
         elif hasattr(lr_lib.core.var.vars.T_POOL, 'apply_async'):
-            return lr_lib.core.var.vars.T_POOL.apply_async(func, args, kwargs)
+            out = lr_lib.core.var.vars.T_POOL.apply_async(func, args, kwargs)
         else:
             raise AttributeError('у пула({p}) нет атрибута submit или apply_async\n{f}\n{a}\n{k}'.format(
                 f=func, a=args, k=kwargs, p=lr_lib.core.var.vars.T_POOL.pool))
-
+        return out
     return wrap
+
+
+VRS = (
+    lr_lib.core.var.vars.VarParam,
+    lr_lib.core.var.vars.VarFileName,
+    lr_lib.core.var.vars.VarFile,
+    lr_lib.core.var.vars.VarPartNum,
+    lr_lib.core.var.vars.VarLB,
+    lr_lib.core.var.vars.VarRB,
+    lr_lib.core.var.vars.VarFileText,
+    lr_lib.core.var.vars.VarWrspDict,
+    lr_lib.core.var.vars.VarFileSortKey1,
+    lr_lib.core.var.vars.VarFileSortKey2,
+)  # переменные для default_value очистки
 
 
 def clearVars() -> None:
     """очистка Var's"""
-    v = (
-        lr_lib.core.var.vars.VarParam, lr_lib.core.var.vars.VarFileName, lr_lib.core.var.vars.VarFile, lr_lib.core.var.vars.VarPartNum, lr_lib.core.var.vars.VarLB, lr_lib.core.var.vars.VarRB, lr_lib.core.var.vars.VarFileText, lr_lib.core.var.vars.VarWrspDict,
-        lr_lib.core.var.vars.VarFileSortKey1, lr_lib.core.var.vars.VarFileSortKey2,
-    )
-    for var in v:
+    for var in VRS:
         var.set(var.default_value, callback=False)
         continue
     lr_lib.core.var.vars.FilesWithParam.clear()

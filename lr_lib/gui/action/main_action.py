@@ -6,7 +6,7 @@ import os
 import tkinter as tk
 
 import lr_lib
-import lr_lib.core.var.vars_f
+import lr_lib.core.var.vars_other
 import lr_lib.gui.action.act_win
 import lr_lib.core_gui.group_param.main_gp
 import lr_lib.core_gui.group_param.gp_act_re
@@ -94,7 +94,7 @@ class ActionWindow(lr_lib.gui.action.act_win.ActWin):
             command=lambda: lr_lib.core_gui.group_param.main_gp.auto_param_creator(self))
         filemenu4.add_command(
             label="regexp: найти и создать WRSP",
-            command=lambda: lr_lib.core.var.vars_f.T_POOL_decorator(
+            command=lambda: lr_lib.core.var.vars_other.T_POOL_decorator(
                 lr_lib.core_gui.group_param.gp_act_re.re_auto_param_creator)(self))
         self.menubar.add_cascade(label="Запуск", menu=filemenu4)
 

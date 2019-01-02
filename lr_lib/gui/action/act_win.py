@@ -6,7 +6,7 @@ import os
 import tkinter as tk
 
 import lr_lib
-import lr_lib.core.var.vars_f
+import lr_lib.core.var.vars_other
 import lr_lib.gui.action.act_any
 import lr_lib.core_gui.group_param.main_gp
 import lr_lib.core_gui.group_param.gp_act_re
@@ -37,7 +37,7 @@ class ActWin(lr_lib.gui.action.act_any.ActAny):
 
         self.re_auto_param_creator_button = tk.Button(
             self.toolbar, text='Найти param RegExp', font=lr_vars.DefaultFont + ' bold',
-            command=lambda: lr_lib.core.var.vars_f.T_POOL_decorator(
+            command=lambda: lr_lib.core.var.vars_other.T_POOL_decorator(
                 lr_lib.core_gui.group_param.gp_act_re.re_auto_param_creator)(self))
 
         self.final_wnd_cbx = tk.Checkbutton(

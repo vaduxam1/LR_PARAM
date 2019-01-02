@@ -4,7 +4,7 @@
 import tkinter as tk
 
 import lr_lib
-import lr_lib.core.var.vars_f
+import lr_lib.core.var.vars_other
 from lr_lib.core.var import vars as lr_vars
 
 ABounds = [
@@ -17,7 +17,7 @@ _M1 = (' -> ' + _M0)
 M = (_M0 + '{:<%s}' + _M0 + _M1 + '{}' + _M0)  # "старое имя" -> "новое имя"
 
 
-@lr_lib.core.var.vars_f.T_POOL_decorator
+@lr_lib.core.var.vars_other.T_POOL_decorator
 def all_wrsp_auto_rename(gui: 'lr_lib.gui.action.main_action.ActionWindow', *args, ) -> None:
     """
     переименовать все wrsp, автоматически, с учетом всех настроек, для wrsp, содержащих LB/RB вида:
@@ -118,7 +118,7 @@ def _rename_wrsp(wrsps_text: str,
     return
 
 
-@lr_lib.core.var.vars_f.T_POOL_decorator
+@lr_lib.core.var.vars_other.T_POOL_decorator
 def rename_transaction(event, parent=None, s='lr_start_transaction("', e='lr_end_transaction("') -> None:
     """
     переименование транзакции - необходимо выделять всю линию с транзакцией

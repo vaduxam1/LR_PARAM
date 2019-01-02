@@ -3,7 +3,7 @@
 
 import lr_lib
 import lr_lib.core.var.vars as lr_vars
-import lr_lib.core.var.vars_f
+import lr_lib.core.var.vars_other
 from lr_lib.core.var.vars import Tk
 
 
@@ -24,7 +24,7 @@ def repA(widget) -> None:
     t = 'transac_len={}, param_len={}'.format(len(rep), len(widget.action.web_action.websReport.wrsp_and_param_names))
     y = lr_lib.gui.widj.dialog.YesNoCancel(buttons=['OK'], text_before='repA', text_after='websReport.all_in_one',
                                            is_text=lr_lib.core.etc.other.get_json(rep), title=t, parent=widget.action, t_enc=True, )
-    lr_lib.core.var.vars_f.T_POOL_decorator(y.ask)()
+    lr_lib.core.var.vars_other.T_POOL_decorator(y.ask)()
     return
 
 
@@ -50,7 +50,7 @@ def repB(widget, counter=None, st='\n----\n') -> None:
         buttons=['OK'], text_before=tb, text_after='{} шт'.format(counter), is_text='\n\n{}'.format(ta),
         title='создано: {} шт.'.format(counter), parent=widget.action, t_enc=True,
     )
-    lr_lib.core.var.vars_f.T_POOL_decorator(y.ask)()
+    lr_lib.core.var.vars_other.T_POOL_decorator(y.ask)()
     # lr_vars.Logger.trace('{}\n\n{}'.format(tb, ta))
     return
 

@@ -8,8 +8,8 @@ import string
 
 import lr_lib
 import lr_lib.core.var.vars as lr_vars
-import lr_lib.core.var.vars_f
-import lr_lib.core.var.vars_p
+import lr_lib.core.var.vars_other
+import lr_lib.core.var.vars_param
 
 LR_COMENT = '//lr:'
 
@@ -99,7 +99,7 @@ def create_web_reg_save_param_and_dict(wrsp_dict=None) -> (str, dict):
     return s, wrsp_dict
 
 
-wrsp_allow_symb = (string.ascii_letters + string.digits + lr_lib.core.var.vars_p.AddAllowParamSymb)  # из каких символов, может состоять param
+wrsp_allow_symb = (string.ascii_letters + string.digits + lr_lib.core.var.vars_param.AddAllowParamSymb)  # из каких символов, может состоять param
 allow_lrb = set(string.ascii_letters + string.digits)  # из каких символов, может состоять lb rb части имени web_reg_save_param
 wrsp_deny_punctuation = {ord(c): '' for c in string.punctuation.replace('_', '')}  # из каких символов, не может состоять имя web_reg_save_param
 wrsp_deny_punctuation.update({ord(c): '' for c in string.whitespace})  # из каких символов, не может состоять имя web_reg_save_param
@@ -188,7 +188,7 @@ def wrsp_name_creator(param: str, Lb: str, Rb: str, snapshot: int) -> str:
             elif lbn[-1]:
                 lbn.append('')
             continue
-        lbn = [b for b in filter(bool, lbn) if (b not in lr_lib.core.var.vars_p.LRB_rep_list)]
+        lbn = [b for b in filter(bool, lbn) if (b not in lr_lib.core.var.vars_param.LRB_rep_list)]
         lb_name = '_'.join(sorted(set(lbn), key=lbn.index))[-MaxLbWrspName:]
     else:
         lb_name = ''
@@ -201,7 +201,7 @@ def wrsp_name_creator(param: str, Lb: str, Rb: str, snapshot: int) -> str:
             elif rbn[-1]:
                 rbn.append('')
             continue
-        rbn = [b for b in filter(bool, rbn) if (b not in lr_lib.core.var.vars_p.LRB_rep_list)]
+        rbn = [b for b in filter(bool, rbn) if (b not in lr_lib.core.var.vars_param.LRB_rep_list)]
         rb_name = '_'.join(sorted(set(rbn), key=rbn.index))[:MaxRbWrspName]
     else:
         rb_name = ''
@@ -244,7 +244,7 @@ def wrsp_name_creator(param: str, Lb: str, Rb: str, snapshot: int) -> str:
     return wrsp_name
 
 
-def screening_wrsp(s: str, t={ord(c): '\\{}'.format(c) for c in lr_lib.core.var.vars_p.Screening}) -> str:
+def screening_wrsp(s: str, t={ord(c): '\\{}'.format(c) for c in lr_lib.core.var.vars_param.Screening}) -> str:
     """экранирование для web_reg_save_param"""
     return str.translate(s, t)
 
@@ -356,7 +356,7 @@ def get_search_data(param: str) -> dict:
             NotPrintable=lr_lib.core.etc.other.not_printable(param),
         ),
         File=dict(
-            encoding=lr_lib.core.var.vars_f.VarEncode.get(),
+            encoding=lr_lib.core.var.vars_other.VarEncode.get(),
         ),
     )
     return search_data

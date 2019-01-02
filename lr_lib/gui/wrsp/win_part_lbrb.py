@@ -7,9 +7,9 @@ import tkinter as tk
 import tkinter.ttk as ttk
 
 import lr_lib
-import lr_lib.core.var.vars_h
-import lr_lib.core.var.vars_f
-import lr_lib.core.var.vars_p
+import lr_lib.core.var.vars_highlight
+import lr_lib.core.var.vars_other
+import lr_lib.core.var.vars_param
 import lr_lib.gui.wrsp.win_text
 import lr_lib.core.var.vars as lr_vars
 
@@ -42,8 +42,8 @@ class WinPartsLbRb(lr_lib.gui.wrsp.win_text.WinText):
         )
 
         spl = [
-            lr_lib.core.var.vars_p.SplitList, lr_lib.core.var.vars_p._SplitList0, lr_lib.core.var.vars_p._SplitList1,
-            lr_lib.core.var.vars_p._SplitList2, lr_lib.core.var.vars_p._SplitList_3,
+            lr_lib.core.var.vars_param.SplitList, lr_lib.core.var.vars_param._SplitList0, lr_lib.core.var.vars_param._SplitList1,
+            lr_lib.core.var.vars_param._SplitList2, lr_lib.core.var.vars_param._SplitList_3,
             list(string.whitespace), 'list(string.ascii_letters)', 'list(string.digits)', 'list(string.punctuation)',
         ]
         split_list = tuple(map(str, spl))
@@ -77,11 +77,11 @@ class WinPartsLbRb(lr_lib.gui.wrsp.win_text.WinText):
         )
         self.max_lb = tk.Entry(
             self.last_frameCbx1, width=4, textvariable=lr_vars.VarMaxLenLB, justify='center', foreground='grey',
-            background=lr_lib.core.var.vars_h.Background, font=lr_vars.DefaultFont + ' italic',
+            background=lr_lib.core.var.vars_highlight.Background, font=lr_vars.DefaultFont + ' italic',
         )
         self.spin_LB_height = tk.Spinbox(
             self.last_frameCbx1, from_=1, to=99, textvariable=self.LB.heightVar, width=2, command=self.LB.set_height,
-            font=lr_vars.DefaultFont + ' italic', background=lr_lib.core.var.vars_h.Background,
+            font=lr_vars.DefaultFont + ' italic', background=lr_lib.core.var.vars_highlight.Background,
         )
         self.ButtonLB_note = tk.Button(
             self.last_frameCbx1, text='note', command=lambda: self.lr_note(self.LB), width=3,
@@ -140,7 +140,7 @@ class WinPartsLbRb(lr_lib.gui.wrsp.win_text.WinText):
 
         self.max_rb = tk.Entry(
             self.last_frameCbx2, width=4, textvariable=lr_vars.VarMaxLenRB, justify='center', foreground='grey',
-            background=lr_lib.core.var.vars_h.Background, font=lr_vars.DefaultFont + ' italic',
+            background=lr_lib.core.var.vars_highlight.Background, font=lr_vars.DefaultFont + ' italic',
         )
         self.partNumEmptyRbNext = tk.Checkbutton(
             self.last_frameCbx2, variable=lr_vars.VarPartNumEmptyRbNext, text='empty',
@@ -152,7 +152,7 @@ class WinPartsLbRb(lr_lib.gui.wrsp.win_text.WinText):
         )
         self.spin_RB_height = tk.Spinbox(
             self.last_frameCbx2, from_=1, to=99, textvariable=self.RB.heightVar, width=2, command=self.RB.set_height,
-            font=lr_vars.DefaultFont + ' italic', background=lr_lib.core.var.vars_h.Background,
+            font=lr_vars.DefaultFont + ' italic', background=lr_lib.core.var.vars_highlight.Background,
         )
         self.ButtonRB_note = tk.Button(
             self.last_frameCbx2, text='note', command=lambda: self.lr_note(self.RB), width=3,
@@ -239,7 +239,7 @@ class WinPartsLbRb(lr_lib.gui.wrsp.win_text.WinText):
         self.comboParts_change()
         return
 
-    @lr_lib.core.var.vars_f.T_POOL_decorator
+    @lr_lib.core.var.vars_other.T_POOL_decorator
     def lr_note(self, ob) -> None:
         """открыть в блокноте"""
         lr_lib.core.etc.other.openTextInEditor(ob.get())

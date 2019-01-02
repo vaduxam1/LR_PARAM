@@ -4,8 +4,8 @@ import re
 import tkinter as tk
 
 import lr_lib
-import lr_lib.core.var.vars_h
-import lr_lib.core.var.vars_p
+import lr_lib.core.var.vars_highlight
+import lr_lib.core.var.vars_param
 from lr_lib.core.var import vars as lr_vars
 from lr_lib.core_gui.group_param.gp_filter import param_sort
 from lr_lib.core_gui.group_param.gp_act_startswith import _group_param_search
@@ -18,7 +18,7 @@ F2 = r'p_p_col_count=\d&'
 def session_params(action: 'lr_lib.gui.action.main_action.ActionWindow', lb_list=None, ask=True, ) -> list:
     """поиск param в action, по LB="""
     if lb_list is None:
-        lb_list = lr_lib.core.var.vars_p.LB_PARAM_FIND_LIST
+        lb_list = lr_lib.core.var.vars_param.LB_PARAM_FIND_LIST
 
     if ask:
         text = action.tk_text.get(1.0, tk.END)
@@ -59,7 +59,7 @@ def session_params(action: 'lr_lib.gui.action.main_action.ActionWindow', lb_list
         text_before='2) найдено {} шт'.format(len(params)),
         text_after='добавить/удалить',
         parent=action,
-        color=lr_lib.core.var.vars_h.PopUpWindColor1,
+        color=lr_lib.core.var.vars_highlight.PopUpWindColor1,
     )
     ans = y.ask()
 

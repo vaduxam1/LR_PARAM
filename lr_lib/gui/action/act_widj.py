@@ -4,7 +4,7 @@
 import tkinter as tk
 import tkinter.ttk as ttk
 
-import lr_lib.core.var.vars_h
+import lr_lib.core.var.vars_highlight
 import lr_lib.gui.action.act_var
 import lr_lib.core.var.vars as lr_vars
 
@@ -40,7 +40,7 @@ class ActWidj(lr_lib.gui.action.act_var.ActVar):
 
         #
         # self.scroll_lab = tk.Label(self, text='0')
-        self.scroll_lab2 = ttk.Label(self, text='0 %', background=lr_lib.core.var.vars_h.Background)
+        self.scroll_lab2 = ttk.Label(self, text='0 %', background=lr_lib.core.var.vars_highlight.Background)
 
         self.help1 = tk.Label(self, text='?', foreground='grey')
         self.help2 = tk.Label(self, text='?', foreground='grey')

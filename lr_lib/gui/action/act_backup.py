@@ -5,7 +5,7 @@ import os
 
 import tkinter as tk
 
-import lr_lib.core.var.vars_f
+import lr_lib.core.var.vars_other
 import lr_lib.gui.action.act_block
 import lr_lib.core.var.vars as lr_vars
 
@@ -33,7 +33,7 @@ class ActBackup(lr_lib.gui.action.act_block.ActBlock):
             os.makedirs(d)
         b_name = self.backup_name()
 
-        with open(b_name, 'w', errors=errors, encoding=lr_lib.core.var.vars_f.VarEncode.get()) as f:
+        with open(b_name, 'w', errors=errors, encoding=lr_lib.core.var.vars_other.VarEncode.get()) as f:
             f.write(self.tk_text.get(1.0, tk.END))
 
         lr_vars.Logger.debug('{} = {} byte'.format(b_name, os.path.getsize(b_name)))
