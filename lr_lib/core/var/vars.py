@@ -11,7 +11,7 @@ from lr_lib.core.var._var import Var
 #####################################
 # главные переменные
 
-VERSION = 'v11.2.1'
+VERSION = 'v11.2'
 lib_folder = 'lr_lib'
 Tk = tk.Tk()  # tkinter
 original_callback_exception = Tk.report_callback_exception
