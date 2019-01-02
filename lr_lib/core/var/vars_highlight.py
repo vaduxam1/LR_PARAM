@@ -3,6 +3,7 @@
 
 import itertools
 import os
+import random
 import string
 
 from lr_lib.core.var._var import Var
@@ -19,7 +20,18 @@ Background = 'khaki'
 highlight_words_folder = os.path.join(lib_folder, 'etc')
 highlight_words_main_file = os.path.join(highlight_words_folder, 'highlight_words.txt')
 highlight_words_files_startswith = 'highlight_words'
-ColorIterator = itertools.cycle(COLORS.keys() - {'black'})
+
+
+def random_color(ckeck=True, all_color=tuple(COLORS.keys())) -> str:
+    """итератор - случайный цвет"""
+    while ckeck:
+        color = random.choice(all_color)
+        yield color
+        continue
+    return
+
+
+ColorIterator = random_color()
 VarColorTeg = Var(value=set(COLORS.keys()))
 _LB_LIST_highlight = {'uuid_', 'dtid', 'sessionid', 'Snapshot', 'Snapshot=t', 'EXTRARES', '.inf', }
 _LB_LIST_highlight.update(_unpunct(s) for s in LB_PARAM_FIND_LIST)
