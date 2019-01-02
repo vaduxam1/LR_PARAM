@@ -35,7 +35,9 @@ Regxp = [
     ("dtid=\w+&", param_from_str_2),
     ('jsessionid=\w+"', param_from_str_2),
 ]
-Regxp.extend(('{0}\w+"'.format(r), param_from_str_2) for r in lr_lib.core.var.vars_param.LB_PARAM_FIND_LIST if ('\\' not in r))
+Regxp.extend(
+    ('{0}\w+"'.format(r), param_from_str_2) for r in lr_lib.core.var.vars_param.LB_PARAM_FIND_LIST if ('\\' not in r)
+)
 
 
 def re_r_auto_param_creator(action: 'lr_lib.gui.action.main_action.ActionWindow', encoding='utf-8', errors='replace'):
@@ -89,9 +91,10 @@ def re_r_auto_param_creator(action: 'lr_lib.gui.action.main_action.ActionWindow'
     y = lr_lib.gui.widj.dialog.YesNoCancel(
         buttons=[K_FIND, K_SKIP],
         default_key=K_FIND,
-        title='4) запрос/ответ: поиск param, в файлах ответов, на основе регулярных выражений, по LB/RB',
+        title='4) Поиск param в тексте [ Файлов Ответов ] по param-LB/RB',
         is_text=text,
-        text_before='4) поиск param, в файлах ответов: найдено {} шт'.format(len(in_action_param_only)),
+        text_before='4) Поиск param в тексте [ Файлов Ответов ]:\n\nна основе регулярных выражений, по param-LB/RB:\n\n'
+                    'найдено {} шт'.format(len(in_action_param_only)),
         text_after='добавить/удалить',
         parent=action,
         color=lr_lib.core.var.vars_highlight.PopUpWindColor1,

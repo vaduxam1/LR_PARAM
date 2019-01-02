@@ -18,7 +18,11 @@ def group_param_search(action: 'lr_lib.gui.action.main_action.ActionWindow') -> 
         default_key=K_CANCEL,
         title='1.1) запрос: поиск param в action, используя начало param имен',
         is_text='\n'.join(lr_lib.core.var.vars_param.Params_names),
-        text_before='1) В action.c тексте, будет произведен поиск param, имя которых начинается на указанные имена.',
+        text_before='1) Поиск param в [ ACTION.C ] тексте: '
+                    'Поиск param, имя которых начинается на указанные имена.\n'
+                    'Например используя ( "zkau_" ), для action.c файла подобного содержания:\n\n'
+                    'web_url("index.zul",\n...value=zkau_1;...\n...value=zkau_12}...\nLAST;"\n\n'
+                    'можно найти такие param: "zkau_1", "zkau_12" и тд.',
         text_after='добавить/удалить',
         parent=action,
     )
@@ -120,8 +124,10 @@ def run_in_end_param_from_param(action: 'lr_lib.gui.action.main_action.ActionWin
         default_key=K_FIND,
         title='5) запрос/ответ: Имена param, поиск в action.c',
         is_text='\n'.join(params),
-        text_before='5) поиск в action.c, по началу имени - взять n первых символов '
-                    'для повторного поиска param по началу имени\nнайдено {} шт'.format(len(params)),
+        text_before='5) Поиск param в [ ACTION.C ] тексте:\n\n'
+                    'Для всех param, найденных предыдущими способами - взять {n} первых символов имени,\n'
+                    'и использовать для повторного поиска param по началу имени\n\n'
+                    'найдено {ln} шт'.format(ln=len(params), n=param_spin, ),
         text_after='добавить/удалить',
         parent=action,
         color=lr_lib.core.var.vars_highlight.PopUpWindColor1,

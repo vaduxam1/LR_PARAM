@@ -34,7 +34,10 @@ def session_params(action: 'lr_lib.gui.action.main_action.ActionWindow', lb_list
             default_key=K_FIND,
             title='2.1) запрос: поиск param в action, используя action-LB',
             is_text=text,
-            text_before='2) Найти param в action.c, используя LB символы, именно action.c тексте, а не файлах ответов',
+            text_before='2) Поиск param в [ ACTION.C ] тексте: используя action-LB символы.\n'
+                        'Например используя action-LB: ( "value=" ), для action.c файла подобного содержания:\n\n'
+                        'web_url("index.zul",\n...value=editZul_3;...\n...value=zkau_1}...\nLAST;"\n\n'
+                        'можно найти такие param: "editZul_3", "zkau_1" и тд.',
             text_after='добавить/удалить',
             parent=action,
         )

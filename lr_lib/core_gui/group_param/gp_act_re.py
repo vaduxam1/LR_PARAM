@@ -49,7 +49,8 @@ def re_auto_param_creator(action: 'lr_lib.gui.action.main_action.ActionWindow', 
         [K_FIND, K_SKIP],
         title='3.1) запрос: action.c regexp',
         is_text='\n'.join(lr_lib.core.var.vars_param.REGEXP_PARAMS),
-        text_before='3) Будет произведен поиск param, в action.c тексте: re.findall(regexp, action_text)',
+        text_before='3) Поиск param в [ ACTION.C ] тексте:\n\n'
+                    'Поиск re.findall(regexp, action_text) слов в action-тексте, например zkau_12 для "value=zkau_12".',
         text_after='добавить/удалить',
         parent=action,
     )
