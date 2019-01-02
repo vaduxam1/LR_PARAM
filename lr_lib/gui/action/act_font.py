@@ -80,7 +80,7 @@ class ActFont(lr_lib.gui.action.act_replace.ActReplaceRemove):
         self.tk_text.set_tegs(parent=self)
         return
 
-    def background_color_set(self, *args, color='') -> None:
+    def background_color_set(self, *args, color='', rr=4) -> None:
         """
         установить цвет фона:
             None - следующий цвет
@@ -88,12 +88,15 @@ class ActFont(lr_lib.gui.action.act_replace.ActReplaceRemove):
             "red" - имя цвета
         """
         if color is None:  # смена по кругу
-            color = next(lr_lib.core.var.vars_highlight.ColorIterator)
-        if not color:  # выбранный
-            color = self.background_color_combo.get()
+            colors = [next(lr_lib.core.var.vars_highlight.ColorIterator) for _ in range(rr)]
+        elif color:  # выбранный
+            colors = [color for _ in range(rr)]
+        else:
+            cc = self.background_color_combo.get()
+            colors = [cc for _ in range(rr)]
 
-        self.config(background=color)
-        self.scroll_lab2.config(background=color)
-        self.tk_text.config(background=color)
-        self.tk_text.linenumbers.config(background=color)
+        self.config(background=colors[0])
+        self.auto_param_creator_button.config(background=colors[1])
+        self.tk_text.config(background=colors[2])
+        self.tk_text.linenumbers.config(background=colors[3])
         return
