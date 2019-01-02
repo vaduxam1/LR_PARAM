@@ -10,32 +10,44 @@ from lr_lib.core.var import vars as lr_vars
 from lr_lib.core_gui.group_param.gp_filter import param_sort
 from lr_lib.core_gui.group_param.gp_act_startswith import _group_param_search
 from lr_lib.core_gui.group_param.core_gp import group_param
-from lr_lib.core_gui.group_param.gp_var import K_FIND, K_SKIP
-
-F1 = r'uuid_\d='
-F2 = r'p_p_col_count=\d&'
+from lr_lib.core_gui.group_param.gp_var import K_FIND, K_SKIP, responce_files_texts
 
 
-def session_params(action: 'lr_lib.gui.action.main_action.ActionWindow',
-                   lb_list=None, ask=True, wrsp_create=False, ) -> list:
+Regs = [
+    r'uuid_\d=',
+    r'p_p_col_count=\d&',
+]  # дополнитеные LB
+
+
+def group_param_search_by_lb(action: 'lr_lib.gui.action.main_action.ActionWindow',
+                             lb_items=None, ask=True, wrsp_create=False, texts_for_lb=None) -> list:
     """поиск param в action, по LB="""
-    if lb_list is None:
-        lb_list = lr_lib.core.var.vars_param.LB_PARAM_FIND_LIST
+    is_action_text = (texts_for_lb is None)
+
+    if lb_items is None:
+        lb_items = lr_lib.core.var.vars_param.LB_PARAM_FIND_LIST
+    if is_action_text:
+        texts_for_lb = [action.tk_text.get(1.0, tk.END), ]
+    elif isinstance(texts_for_lb, str):
+        texts_for_lb = [texts_for_lb, ]
+    else:
+        texts_for_lb = (t[1] for t in responce_files_texts())
+
+    lb_items = set(lb_items)
+    for text in texts_for_lb:
+        for r in Regs:
+            lb = re.findall(r, text)
+            lb_items.update(lb)
+            continue
+        continue
 
     if ask:
-        text = action.tk_text.get(1.0, tk.END)
-
-        # что за param?
-        lb_uuid = re.findall(F1, text)
-        lb_col_count = re.findall(F2, text)
-
-        ts = set(lb_list + lb_uuid + lb_col_count)
-        text = '\n'.join(ts)
+        tt = '\n'.join(lb_items)
         y = lr_lib.gui.widj.dialog.YesNoCancel(
             buttons=[K_FIND, K_SKIP],
             default_key=K_FIND,
             title='2.1) запрос: поиск param в action, используя action-LB',
-            is_text=text,
+            is_text=tt,
             text_before='2) Поиск param в [ ACTION.C ] тексте: используя action-LB символы.\n'
                         'Например используя action-LB: ( "value=" ), для action.c файла подобного содержания:\n\n'
                         'web_url("index.zul",\n'
@@ -46,13 +58,16 @@ def session_params(action: 'lr_lib.gui.action.main_action.ActionWindow',
             parent=action,
         )
         if y.ask() == K_FIND:
-            lb_list = y.text.split('\n')
+            lb_items = y.text.split('\n')
         else:
             return []
 
     params = []
-    for lb_in_action in filter(str.strip, lb_list):
-        ps = _group_param_search(action, lb_in_action, part_mode=False)
+    for lb_in_action in filter(str.strip, lb_items):
+        if is_action_text:
+            ps = _group_param_search(action, lb_in_action, part_mode=False, texts_for_search=None)
+        else:  # responce_files_texts() каждый раз вычитывает файлы - для экономии памяти
+            ps = _group_param_search(action, lb_in_action, part_mode=False, texts_for_search=responce_files_texts())
         params.extend(ps)
         continue
 

@@ -11,7 +11,7 @@ from lr_lib.core_gui.group_param.gp_filter import param_sort, param_filter, _par
 from lr_lib.core_gui.group_param.gp_var import K_FIND, K_CREATE, K_SKIP
 
 
-def re_auto_param_creator(action: 'lr_lib.gui.action.main_action.ActionWindow', wrsp_create=False) -> [str, ]:
+def group_param_search_by_act_re(action: 'lr_lib.gui.action.main_action.ActionWindow', wrsp_create=False) -> [str, ]:
     """
     group params поиск, на основе регулярных выражений
     """

@@ -5,11 +5,11 @@ import lr_lib
 import lr_lib.core.var.vars_other
 from lr_lib.core.var import vars as lr_vars
 from lr_lib.core_gui.group_param.core_gp import group_param
-from lr_lib.core_gui.group_param.gp_act_lb import session_params
+from lr_lib.core_gui.group_param.gp_act_lb import group_param_search_by_lb
 from lr_lib.core_gui.group_param.gp_filter import param_sort
-from lr_lib.core_gui.group_param.gp_act_startswith import group_param_search, run_in_end_param_from_param
-from lr_lib.core_gui.group_param.gp_response_re import re_r_auto_param_creator
-from lr_lib.core_gui.group_param.gp_act_re import re_auto_param_creator
+from lr_lib.core_gui.group_param.gp_act_startswith import group_param_search_by_name, group_param_search_by_exist_param
+from lr_lib.core_gui.group_param.gp_response_re import group_param_search_by_resp_re
+from lr_lib.core_gui.group_param.gp_act_re import group_param_search_by_act_re
 from lr_lib.core_gui.group_param.gp_var import K_CREATE, K_CANCEL
 
 
@@ -21,26 +21,26 @@ def auto_param_creator(action: 'lr_lib.gui.action.main_action.ActionWindow') -> 
     params = set()
 
     # поиск по началу имени, в action.c
-    ps = group_param_search(action)
+    ps = group_param_search_by_name(action)
     params.update(ps)
 
     if (not ps) and isinstance(ps, set):
         return
 
     # поиск по LB=, в action.c
-    prs = session_params(action)
+    prs = group_param_search_by_lb(action)
     params.update(prs)
 
     # поиск по LB, в action.c, на основе регулярных выражений
-    prr = re_auto_param_creator(action)
+    prr = group_param_search_by_act_re(action)
     params.update(prr)
 
     # поиск param, в файлах ответов
-    psr = re_r_auto_param_creator(action)
+    psr = group_param_search_by_resp_re(action)
     params.update(psr)
 
-    # поиск(в action.c) по началу имени - взять n первых символов
-    pre = run_in_end_param_from_param(action, params)
+    # поиск(в action.c) по началу имени - взять n первых символов - запускать последним!
+    pre = group_param_search_by_exist_param(action, params)
     params.update(pre)
 
     params = param_sort(params)

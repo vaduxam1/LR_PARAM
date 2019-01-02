@@ -1,6 +1,10 @@
 # -*- coding: UTF-8 -*-
 # разное
+
+import os
+
 import lr_lib
+import lr_lib.etc.excepthook
 from lr_lib.core.var import vars as lr_vars
 from lr_lib.core_gui.group_param.gp_filter import param_sort
 
@@ -41,3 +45,20 @@ def _ask_params(params: [str, ], action: 'lr_lib.gui.action.main_action.ActionWi
 
     item = (new_len_params, params)
     return item
+
+
+def responce_files_texts(encoding='utf-8', errors='replace', ) -> iter([(str, str), ]):
+    fgen = os.walk(lr_vars.DEFAULT_FILES_FOLDER)
+    (dirpath, dirnames, filenames) = next(fgen)
+    for file in filenames:
+        path = os.path.join(dirpath, file)
+        try:
+            with open(path, encoding=encoding, errors=errors) as f:
+                txt = f.read()
+
+            item = (file, txt)
+            yield item
+        except Exception as ex:
+            lr_lib.etc.excepthook.excepthook(ex)
+            continue
+    return

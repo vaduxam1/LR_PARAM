@@ -14,7 +14,6 @@ LB_PARAM_FIND_LIST = [
     'docSessionId=',
     'Value=', 'UID=',
     'row.id=',
-    'row.id="',
     'value="',
     ':[\\"',
     'appid=\\"',

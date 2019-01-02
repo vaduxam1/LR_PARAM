@@ -12,8 +12,8 @@ from lr_lib.core_gui.group_param.core_gp import group_param
 from lr_lib.core_gui.group_param.gp_var import K_FIND, K_SKIP, K_CANCEL
 
 
-def group_param_search(action: 'lr_lib.gui.action.main_action.ActionWindow',
-                       wrsp_create=False,) -> ["zkau_5650", "zkau_5680", ]:
+def group_param_search_by_name(action: 'lr_lib.gui.action.main_action.ActionWindow',
+                               wrsp_create=False, ) -> ["zkau_5650", "zkau_5680", ]:
     """поиск в action.c, всех уникальных param, в имени которых есть param_part"""
     y = lr_lib.gui.widj.dialog.YesNoCancel(
         [K_FIND, K_CANCEL],
@@ -73,10 +73,17 @@ def group_param_search(action: 'lr_lib.gui.action.main_action.ActionWindow',
 def _group_param_search(action: 'lr_lib.gui.action.main_action.ActionWindow',
                         param_part: "zkau_",
                         part_mode=True, allow=lr_lib.core.wrsp.param.wrsp_allow_symb,
+                        texts_for_search=None,
                         ) -> iter(("zkau_5650", "zkau_5680",)):
-    """поиск в action.c, всех param, в имени которых есть param_part / или по LB"""
-    for web_ in action.web_action.get_web_snapshot_all():
-        split_text = web_.get_body().split(param_part)
+    """
+    поиск в action.c, всех param, в имени которых есть param_part / или по LB
+    part_mode=False - поиск param в action, по LB=
+    """
+    if texts_for_search is None:
+        texts_for_search = ((web_.snapshot, web_.get_body()) for web_ in action.web_action.get_web_snapshot_all())
+
+    for (_file, text) in texts_for_search:
+        split_text = text.split(param_part)
 
         for index in range(len(split_text) - 1):
             left = split_text[index]
@@ -112,8 +119,8 @@ def _group_param_search(action: 'lr_lib.gui.action.main_action.ActionWindow',
     return
 
 
-def run_in_end_param_from_param(action: 'lr_lib.gui.action.main_action.ActionWindow', exist_params: [str, ],
-                                wrsp_create=False) -> [str, ]:
+def group_param_search_by_exist_param(action: 'lr_lib.gui.action.main_action.ActionWindow', exist_params: [str, ],
+                                      wrsp_create=False) -> [str, ]:
     """поиск по началу имени - взять n первых символов для повторного поиска param по началу имени"""
     param_spin = lr_vars.SecondaryParamLen.get()
     if not param_spin:

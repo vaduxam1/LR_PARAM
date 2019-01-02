@@ -14,7 +14,7 @@ import lr_lib.core.etc.lbrb_checker
 from lr_lib.core_gui.group_param.gp_filter import param_sort
 from lr_lib.core.var import vars as lr_vars
 from lr_lib.core_gui.group_param.core_gp import group_param
-from lr_lib.core_gui.group_param.gp_var import K_FIND, K_SKIP
+from lr_lib.core_gui.group_param.gp_var import K_FIND, K_SKIP, responce_files_texts
 
 
 def param_from_str_1(stri: str) -> (str, str):
@@ -41,24 +41,13 @@ Regxp.extend(
 )
 
 
-def re_r_auto_param_creator(action: 'lr_lib.gui.action.main_action.ActionWindow',
-                            encoding='utf-8', errors='replace', wrsp_create=False):
+def group_param_search_by_resp_re(action: 'lr_lib.gui.action.main_action.ActionWindow', wrsp_create=False):
     """поиск param, для action.c, но в файлах ответов, на основе регулярных выражений"""
     params = {}
     wa = action.web_action.get_web_all()
     action_text = '\n'.join(w.get_body() for w in wa)
 
-    fgen = os.walk(lr_vars.DEFAULT_FILES_FOLDER)
-    (dirpath, dirnames, filenames) = next(fgen)
-    for file in filenames:
-        path = os.path.join(dirpath, file)
-        try:
-            with open(path, encoding=encoding, errors=errors) as f:
-                txt = f.read()
-        except Exception as ex:
-            lr_lib.etc.excepthook.excepthook(ex)
-            continue
-
+    for (file, txt) in responce_files_texts():
         for (rx, cb) in Regxp:
             st = re.findall(rx, txt)
             for stri in st:
