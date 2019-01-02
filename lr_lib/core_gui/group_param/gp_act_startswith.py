@@ -21,7 +21,7 @@ def group_param_search(action: 'lr_lib.gui.action.main_action.ActionWindow') -> 
         text_before='1) Поиск param в [ ACTION.C ] тексте: '
                     'Поиск param, имя которых начинается на указанные имена.\n'
                     'Например используя ( "zkau_" ), для action.c файла подобного содержания:\n\n'
-                    'web_url("index.zul",\n...value=zkau_1;...\n...value=zkau_12}...\nLAST;"\n\n'
+                    'web_url("index.zul",\n...value=zkau_1;...\n...items={zkau_12, }...\nLAST;"\n\n'
                     'можно найти такие param: "zkau_1", "zkau_12" и тд.',
         text_after='добавить/удалить',
         parent=action,
