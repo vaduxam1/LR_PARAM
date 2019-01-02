@@ -9,7 +9,6 @@ import lr_lib
 import lr_lib.core.var.vars_other
 import lr_lib.gui.action.act_win
 import lr_lib.core_gui.group_param.main_gp
-import lr_lib.core_gui.group_param.gp_act_re
 import lr_lib.core_gui.rename
 import lr_lib.gui.widj.tooltip
 import lr_lib.gui.wrsp.top.top_allfiles
@@ -18,6 +17,10 @@ import lr_lib.core_gui.group_param.core_gp
 import lr_lib.gui.widj.wrsp_setting
 import lr_lib.core_gui.action_lib
 import lr_lib.core.var.vars as lr_vars
+from lr_lib.core_gui.group_param.gp_act_lb import session_params
+from lr_lib.core_gui.group_param.gp_act_startswith import group_param_search, run_in_end_param_from_param
+from lr_lib.core_gui.group_param.gp_response_re import re_r_auto_param_creator
+from lr_lib.core_gui.group_param.gp_act_re import re_auto_param_creator
 
 
 class ActionWindow(lr_lib.gui.action.act_win.ActWin):
@@ -90,13 +93,32 @@ class ActionWindow(lr_lib.gui.action.act_win.ActWin):
         self.menubar.add_cascade(label="Remove/Rename", menu=filemenu3)
 
         filemenu4 = tk.Menu(self.menubar, tearoff=0)
+
         filemenu4.add_command(
-            label="Найти и Создать WRSP",
-            command=lambda: lr_lib.core_gui.group_param.main_gp.auto_param_creator(self))
+            label="* Найти и Создать WRSP: всеми вариантами",
+            command=lambda: lr_lib.core_gui.group_param.main_gp.auto_param_creator(self)
+        )
         filemenu4.add_command(
-            label="regexp: найти и создать WRSP",
-            command=lambda: lr_lib.core.var.vars_other.T_POOL_decorator(
-                lr_lib.core_gui.group_param.gp_act_re.re_auto_param_creator)(self))
+            label="1) Найти и Создать WRSP: в action.c, по началу имени",
+            command=lambda: lr_lib.core.var.vars_other.T_POOL_decorator(group_param_search)(self, wrsp_create=True)
+        )
+        filemenu4.add_command(
+            label="2) Найти и Создать WRSP: в action.c, по action-LB",
+            command=lambda: lr_lib.core.var.vars_other.T_POOL_decorator(session_params)(self, wrsp_create=True)
+        )
+        filemenu4.add_command(
+            label="3) Найти и Создать WRSP: в action.c, по regexp",
+            command=lambda: lr_lib.core.var.vars_other.T_POOL_decorator(re_auto_param_creator)(self, wrsp_create=True)
+        )
+        filemenu4.add_command(
+            label="4) Найти и Создать WRSP: в Файлах Ответов, по regexp",
+            command=lambda: lr_lib.core.var.vars_other.T_POOL_decorator(re_r_auto_param_creator)(self, wrsp_create=True)
+        )
+        filemenu4.add_command(
+            label="5) Найти и Создать WRSP: в action.c, поиск по началу имен уже созданных",
+            command=lambda: lr_lib.core.var.vars_other.T_POOL_decorator(run_in_end_param_from_param)(
+                self, list(self.web_action.websReport.wrsp_and_param_names.values()), wrsp_create=True)
+        )
         self.menubar.add_cascade(label="Запуск", menu=filemenu4)
 
         filemenu5 = tk.Menu(self.menubar, tearoff=0)

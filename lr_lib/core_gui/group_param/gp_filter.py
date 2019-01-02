@@ -1,5 +1,6 @@
 # -*- coding: UTF-8 -*-
 # фильтрация и сортировка param
+import lr_lib.core
 import lr_lib.core.var.vars_param
 from lr_lib.core.var import vars as lr_vars
 
@@ -52,3 +53,32 @@ def filter_deny_onUpper(param: str, n=2, s='on', ) -> bool:
     if state:
         state = param.startswith(s)
     return state
+
+
+def _param_filter(params: [str, ], min_param_len=lr_vars.MinParamLen,
+                  deny=lr_lib.core.var.vars_param.DENY_Startswitch_PARAMS, ) -> [str, ]:
+    """удалить не param-слова"""
+    params = param_filter(params)
+    for param in params:
+        if len(param) < min_param_len:
+            continue
+
+        check = True
+        for dp in deny:
+            if param.startswith(dp):  # "uuid_1" - "статичный" параметр, не требующий парамертизации
+                ps = param.split(dp, 2)
+                lps = len(ps)
+                if lps == 2:
+                    p1 = ps[1]
+                    numeric = map(str.isnumeric, p1)
+                    check = (not all(numeric))
+                elif lps < 2:
+                    check = False
+                break
+            continue
+
+        if check:
+            yield param
+
+        continue
+    return

@@ -27,6 +27,7 @@ class WrspSettingWindow(tk.Toplevel):
             "P:5/84" - кол-во использований aFFX9 : "в текущем Snapshot"(необязат) / "во всх Snapshot's"
             "S:72=[1:875]" - кол-во Snapshot's, использующих aFFX9 : кол-во=[мин_номер : макс_номер(необязат)]
             "T:41" - кол-во транзакций, использующих aFFX9'''
+
         laf = tk.LabelFrame(self, text='{t1}\n{t2}\n'.format(t1=t1, t2=t2), font='Arial 7', labelanchor=tk.NW, bd=3)
         t3 = '{p}\n{w}\n'.format(p='{P_6637_2__login__Button__a_FFX_9__auth}', w=lr_lib.core.wrsp.param.WEB_REG_NUM)
         _lab = tk.LabelFrame(self, text=t3, bd=3)
@@ -116,43 +117,74 @@ class WrspSettingWindow(tk.Toplevel):
         lr_lib.gui.widj.tooltip.createToolTip(VarWRSPStatsTransacNames, tt_wrsp_trn)
         lr_lib.gui.widj.tooltip.createToolTip(VarWRSPStats, tt_wrsp_st)
         lr_lib.gui.widj.tooltip.createToolTip(SnapshotInName, tt_SnapshotInName)
-        lr_lib.gui.widj.tooltip.createToolTip(TransactionInNameMax, '{transaction}\nв WRSP имени, использовать символы(максимум) имени транзакции\n'
-                                                       'Изменится при пересоздании param\n'
-                                                       '0 - все\n'
-                                                       '-1 - откл')
-        lr_lib.gui.widj.tooltip.createToolTip(MaxLbWrspName, '{lb_name}\nмакс число символов, взятых из LB, для WRSP имени\n'
-                                                'Изменится при пересоздании param\n'
-                                                '0 - все\n'
-                                                '-1 - откл')
-        lr_lib.gui.widj.tooltip.createToolTip(MaxRbWrspName, '{rb_name}\nмакс число символов, взятых из RB, для WRSP имени\n'
-                                                'Изменится при пересоздании param\n'
-                                                '0 - все\n'
-                                                '-1 - откл')
-        lr_lib.gui.widj.tooltip.createToolTip(MaxParamWrspName, '{wrsp_name}\nмакс число символов, взятых из param, для WRSP имени\n'
-                                                   'Изменится при пересоздании param\n'
-                                                   '0 - все\n'
-                                                   '-1 - откл')
-        lr_lib.gui.widj.tooltip.createToolTip(MinWrspRnum, '{wrsp_rnd_num}\nмин число, для случайного номера, в WRSP имени\n'
-                                              'Изменится при пересоздании param\n'
-                                              '0 - все\n'
-                                              '-1 - откл')
-        lr_lib.gui.widj.tooltip.createToolTip(MaxWrspRnum, '{wrsp_rnd_num}\nмакс число, для случайного номера, в WRSP имени\n'
-                                              'Изменится при пересоздании param\n'
-                                              '0 - все\n'
-                                              '-1 - откл')
-        lr_lib.gui.widj.tooltip.createToolTip(wrsp_name_splitter, 'символ разделения в имени WRSP\nдля "_" : "aFFX9" -> "a_FFX_9"\n'
-                                                     'Изменится при пересоздании param\nничего - откл')
-        lr_lib.gui.widj.tooltip.createToolTip(WrspNameFirst, '{letter}\nначало(P) WRSP имени: {P_6637_2_aFFX9}\n'
-                                                'Изменится при пересоздании param\n'
-                                                'ничего - откл')
 
-        lr_lib.gui.widj.tooltip.createToolTip(wrsp_rename_btn, 'скопом переименовать, все уже созданные web_reg_save_param\n'
-                                                  'имена слева, не трогать\nимена справа, переименовать, либо не трогать')
-        lr_lib.gui.widj.tooltip.createToolTip(wrsp_auto_rename_btn, 'автоматически переименовать(пересоздание имени), '
-                                                       'все уже созданные web_reg_save_param\n'
-                                                       'с учетом всех настроек имени,\n'
-                                                       'и изменения имен транзакций, после его создания\n\n'
-                                                       'имена слева, не трогать\nимена справа, переименовать, либо не трогать')
+        lr_lib.gui.widj.tooltip.createToolTip(
+            TransactionInNameMax,
+            '{transaction}\nв WRSP имени, использовать символы(максимум) имени транзакции\n'
+            'Изменится при пересоздании param\n'
+            '0 - все\n'
+            '-1 - откл'
+        )
+        lr_lib.gui.widj.tooltip.createToolTip(
+            MaxLbWrspName,
+            '{lb_name}\nмакс число символов, взятых из LB, для WRSP имени\n'
+            'Изменится при пересоздании param\n'
+            '0 - все\n'
+            '-1 - откл'
+        )
+        lr_lib.gui.widj.tooltip.createToolTip(
+            MaxRbWrspName,
+            '{rb_name}\nмакс число символов, взятых из RB, для WRSP имени\n'
+            'Изменится при пересоздании param\n'
+            '0 - все\n'
+            '-1 - откл'
+        )
+        lr_lib.gui.widj.tooltip.createToolTip(
+            MaxParamWrspName,
+            '{wrsp_name}\nмакс число символов, взятых из param, для WRSP имени\n'
+            'Изменится при пересоздании param\n'
+            '0 - все\n'
+            '-1 - откл'
+        )
+        lr_lib.gui.widj.tooltip.createToolTip(
+            MinWrspRnum,
+            '{wrsp_rnd_num}\nмин число, для случайного номера, в WRSP имени\n'
+            'Изменится при пересоздании param\n'
+            '0 - все\n'
+            '-1 - откл'
+        )
+        lr_lib.gui.widj.tooltip.createToolTip(
+            MaxWrspRnum,
+            '{wrsp_rnd_num}\nмакс число, для случайного номера, в WRSP имени\n'
+            'Изменится при пересоздании param\n'
+            '0 - все\n'
+            '-1 - откл'
+        )
+        lr_lib.gui.widj.tooltip.createToolTip(
+            wrsp_name_splitter,
+            'символ разделения в имени WRSP\nдля "_" : "aFFX9" -> "a_FFX_9"\n'
+            'Изменится при пересоздании param\nничего - откл'
+        )
+        lr_lib.gui.widj.tooltip.createToolTip(
+            WrspNameFirst,
+            '{letter}\nначало(P) WRSP имени: {P_6637_2_aFFX9}\n'
+            'Изменится при пересоздании param\n'
+            'ничего - откл'
+        )
+
+        lr_lib.gui.widj.tooltip.createToolTip(
+            wrsp_rename_btn,
+            'скопом переименовать, все уже созданные web_reg_save_param\n'
+            'имена слева, не трогать\nимена справа, переименовать, либо не трогать'
+                                              )
+        lr_lib.gui.widj.tooltip.createToolTip(
+            wrsp_auto_rename_btn,
+            'автоматически переименовать(пересоздание имени), '
+            'все уже созданные web_reg_save_param\n'
+            'с учетом всех настроек имени,\n'
+            'и изменения имен транзакций, после его создания\n\n'
+            'имена слева, не трогать\nимена справа, переименовать, либо не трогать'
+        )
 
         laf.grid(row=1, column=1, sticky=tk.W, columnspan=3)
 
@@ -189,33 +221,4 @@ class WrspSettingWindow(tk.Toplevel):
         _lab7.grid(row=7, column=3)
 
         lr_lib.gui.etc.gui_other.center_widget(self)
-        return
-
-    @lr_lib.core.var.vars_other.T_POOL_decorator
-    def all_wrsp_rename(self, *args) -> None:
-        """переименавать все wrsp, вручную"""
-        _wrsps = tuple(self.parent.web_action.get_web_reg_save_param_all())
-        wrsps = tuple(w.name for w in _wrsps)
-        mx = max(map(len, wrsps or ['']))
-        m = ('"{:<%s}" -> "{}"' % mx)
-        all_wrsps = '\n'.join(m.format(old, new) for (old, new) in zip(wrsps, wrsps))
-        y = lr_lib.gui.widj.dialog.YesNoCancel(['Переименовать', 'Отмена'], 'Переименовать wrsp слева',
-                                  'в wrsp справа', 'wrsp', parent=self, is_text=all_wrsps)
-
-        if y.ask() == 'Переименовать':
-            new_wrsps = [t.split('-> "', 1)[1].split('"', 1)[0].strip() for t in y.text.strip().split('\n')]
-            assert (len(wrsps) == len(new_wrsps))
-            with self.parent.block():
-                self.parent.backup()
-                text = self.parent.tk_text.get('1.0', tk.END)
-
-                for (old, new) in zip(wrsps, new_wrsps):
-                    text = text.replace(lr_lib.core.wrsp.param.param_bounds_setter(old),
-                                        lr_lib.core.wrsp.param.param_bounds_setter(new))
-                    text = text.replace(lr_lib.core.wrsp.param.param_bounds_setter(old, start='"', end='"'),
-                                        lr_lib.core.wrsp.param.param_bounds_setter(new, start='"', end='"'))
-                    continue
-
-                self.parent.web_action.set_text_list(text, websReport=True)
-                self.parent.web_action_to_tk_text(websReport=False)
         return

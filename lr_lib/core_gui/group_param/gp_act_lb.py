@@ -9,13 +9,15 @@ import lr_lib.core.var.vars_param
 from lr_lib.core.var import vars as lr_vars
 from lr_lib.core_gui.group_param.gp_filter import param_sort
 from lr_lib.core_gui.group_param.gp_act_startswith import _group_param_search
+from lr_lib.core_gui.group_param.core_gp import group_param
 from lr_lib.core_gui.group_param.gp_var import K_FIND, K_SKIP
 
 F1 = r'uuid_\d='
 F2 = r'p_p_col_count=\d&'
 
 
-def session_params(action: 'lr_lib.gui.action.main_action.ActionWindow', lb_list=None, ask=True, ) -> list:
+def session_params(action: 'lr_lib.gui.action.main_action.ActionWindow',
+                   lb_list=None, ask=True, wrsp_create=False, ) -> list:
     """поиск param в action, по LB="""
     if lb_list is None:
         lb_list = lr_lib.core.var.vars_param.LB_PARAM_FIND_LIST
@@ -74,5 +76,7 @@ def session_params(action: 'lr_lib.gui.action.main_action.ActionWindow', lb_list
     else:
         return []
 
-    params = param_sort(params)
+    params = param_sort(params, deny_param_filter=False)
+    if wrsp_create:  # создать wrsp
+        group_param(None, params, widget=action.tk_text, ask=False)
     return params

@@ -6,42 +6,12 @@ import re
 import lr_lib
 import lr_lib.core.var.vars_highlight
 import lr_lib.core.var.vars_param
-from lr_lib.core.var import vars as lr_vars
 from lr_lib.core_gui.group_param.core_gp import group_param
-from lr_lib.core_gui.group_param.gp_filter import param_sort, param_filter
+from lr_lib.core_gui.group_param.gp_filter import param_sort, param_filter, _param_filter
 from lr_lib.core_gui.group_param.gp_var import K_FIND, K_CREATE, K_SKIP
 
 
-def _param_filter(params: [str, ], min_param_len=lr_vars.MinParamLen,
-                  deny=lr_lib.core.var.vars_param.DENY_Startswitch_PARAMS, ) -> [str, ]:
-    """удалить не param-слова"""
-    params = param_filter(params)
-    for param in params:
-        if len(param) < min_param_len:
-            continue
-
-        check = True
-        for dp in deny:
-            if param.startswith(dp):  # "uuid_1" - "статичный" параметр, не требующий парамертизации
-                ps = param.split(dp, 2)
-                lps = len(ps)
-                if lps == 2:
-                    p1 = ps[1]
-                    numeric = map(str.isnumeric, p1)
-                    check = (not all(numeric))
-                elif lps < 2:
-                    check = False
-                break
-            continue
-
-        if check:
-            yield param
-
-        continue
-    return
-
-
-def re_auto_param_creator(action: 'lr_lib.gui.action.main_action.ActionWindow', wrsp_create=True) -> [str, ]:
+def re_auto_param_creator(action: 'lr_lib.gui.action.main_action.ActionWindow', wrsp_create=False) -> [str, ]:
     """
     group params поиск, на основе регулярных выражений
     """
@@ -82,12 +52,12 @@ def re_auto_param_creator(action: 'lr_lib.gui.action.main_action.ActionWindow', 
             color=lr_lib.core.var.vars_highlight.PopUpWindColor1,
         )
         ans = y.ask()
-        if ans == K_CREATE:
+        if ans == K_FIND:
             params = y.text.split('\n')
             params = param_sort(params, deny_param_filter=False)
 
             if wrsp_create:  # создать wrsp
-                group_param(None, widget=action.tk_text, params=params, ask=False)
+                group_param(None, params, widget=action.tk_text, ask=False)
 
             return params
     return []

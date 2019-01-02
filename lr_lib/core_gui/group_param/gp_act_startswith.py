@@ -8,10 +8,12 @@ import lr_lib.gui.widj.dialog
 from lr_lib.core.etc.lbrb_checker import check_bound_lb
 from lr_lib.core_gui.group_param.gp_filter import param_sort
 from lr_lib.core.var import vars as lr_vars
+from lr_lib.core_gui.group_param.core_gp import group_param
 from lr_lib.core_gui.group_param.gp_var import K_FIND, K_SKIP, K_CANCEL
 
 
-def group_param_search(action: 'lr_lib.gui.action.main_action.ActionWindow') -> ["zkau_5650", "zkau_5680", ]:
+def group_param_search(action: 'lr_lib.gui.action.main_action.ActionWindow',
+                       wrsp_create=False,) -> ["zkau_5650", "zkau_5680", ]:
     """поиск в action.c, всех уникальных param, в имени которых есть param_part"""
     y = lr_lib.gui.widj.dialog.YesNoCancel(
         [K_FIND, K_CANCEL],
@@ -63,6 +65,8 @@ def group_param_search(action: 'lr_lib.gui.action.main_action.ActionWindow') -> 
         return []
 
     params = param_sort(params)
+    if wrsp_create:  # создать wrsp
+        group_param(None, params, widget=action.tk_text, ask=False)
     return params
 
 
@@ -108,7 +112,8 @@ def _group_param_search(action: 'lr_lib.gui.action.main_action.ActionWindow',
     return
 
 
-def run_in_end_param_from_param(action: 'lr_lib.gui.action.main_action.ActionWindow', exist_params: [str, ]) -> [str, ]:
+def run_in_end_param_from_param(action: 'lr_lib.gui.action.main_action.ActionWindow', exist_params: [str, ],
+                                wrsp_create=False) -> [str, ]:
     """поиск по началу имени - взять n первых символов для повторного поиска param по началу имени"""
     param_spin = lr_vars.SecondaryParamLen.get()
     if not param_spin:
@@ -142,5 +147,7 @@ def run_in_end_param_from_param(action: 'lr_lib.gui.action.main_action.ActionWin
     else:
         return []
 
-    params = param_sort(params)
+    params = param_sort(params, deny_param_filter=False)
+    if wrsp_create:  # создать wrsp
+        group_param(None, params, widget=action.tk_text, ask=False)
     return params

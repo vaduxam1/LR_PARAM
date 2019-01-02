@@ -13,6 +13,7 @@ import lr_lib.gui.action._other
 import lr_lib.core.etc.lbrb_checker
 from lr_lib.core_gui.group_param.gp_filter import param_sort
 from lr_lib.core.var import vars as lr_vars
+from lr_lib.core_gui.group_param.core_gp import group_param
 from lr_lib.core_gui.group_param.gp_var import K_FIND, K_SKIP
 
 
@@ -40,7 +41,8 @@ Regxp.extend(
 )
 
 
-def re_r_auto_param_creator(action: 'lr_lib.gui.action.main_action.ActionWindow', encoding='utf-8', errors='replace'):
+def re_r_auto_param_creator(action: 'lr_lib.gui.action.main_action.ActionWindow',
+                            encoding='utf-8', errors='replace', wrsp_create=False):
     """поиск param, для action.c, но в файлах ответов, на основе регулярных выражений"""
     params = {}
     wa = action.web_action.get_web_all()
@@ -105,4 +107,6 @@ def re_r_auto_param_creator(action: 'lr_lib.gui.action.main_action.ActionWindow'
 
     yt = y.text.split('\n')
     in_action_param_only = param_sort(yt, deny_param_filter=False)
+    if wrsp_create:  # создать wrsp
+        group_param(None, in_action_param_only, widget=action.tk_text, ask=False)
     return in_action_param_only

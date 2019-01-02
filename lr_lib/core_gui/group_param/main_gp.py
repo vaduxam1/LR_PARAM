@@ -32,7 +32,7 @@ def auto_param_creator(action: 'lr_lib.gui.action.main_action.ActionWindow') -> 
     params.update(prs)
 
     # поиск по LB, в action.c, на основе регулярных выражений
-    prr = re_auto_param_creator(action, wrsp_create=False)
+    prr = re_auto_param_creator(action)
     params.update(prr)
 
     # поиск param, в файлах ответов
@@ -63,5 +63,5 @@ def auto_param_creator(action: 'lr_lib.gui.action.main_action.ActionWindow') -> 
         params = y.text.split('\n')
         params = param_sort(params, deny_param_filter=False)
         # создание
-        group_param(None, widget=action.tk_text, params=params, ask=False)
+        group_param(None, params, widget=action.tk_text, ask=False)
     return

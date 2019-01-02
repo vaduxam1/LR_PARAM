@@ -21,14 +21,14 @@ class WinFolder(lr_lib.gui.wrsp.win_other.WinOther):
 
         self.change_folder_cbx = tk.Checkbutton(
             self.last_frame, variable=lr_vars.VarIsSnapshotFiles, padx=0, pady=0, font=lr_vars.DefaultFont + ' italic',
-            command=self.set_folder, text='')
+            command=self.set_folder, text='lr')
 
         self.deny_file_cbx = tk.Checkbutton(
             self.last_frame, variable=lr_vars.VarAllowDenyFiles, padx=0, pady=0, font=lr_vars.DefaultFont + ' italic',
-            command=self.set_folder, text='')
+            command=self.set_folder, text='deny')
 
         self.filesStats_cbx = tk.Checkbutton(
-            self.last_frame, variable=lr_vars.VarAllFilesStatistic, padx=0, pady=0, text='',
+            self.last_frame, variable=lr_vars.VarAllFilesStatistic, padx=0, pady=0, text='stat',
             font=lr_vars.DefaultFont + ' italic', command=self.set_folder)
         return
 
