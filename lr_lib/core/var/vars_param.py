@@ -70,6 +70,11 @@ LRB_rep_list = [
     'btn', 'menu', 'tab', 'cmb', 'amp', 'id',
 ]  # не использовать эти слова в LB/RB, для wrsp имени param
 
+MutableLBRegs = [
+    r'uuid_\d=',
+    r'p_p_col_count=\d&',
+]  # дополнитеные "вариативные" LB для поиска param
+
 # LB/RB обрежутся до этих строк
 _SplitList0 = list('{},=$')
 _SplitList1 = list('{}=$;,')

@@ -6,9 +6,9 @@ import re
 import lr_lib
 import lr_lib.core.var.vars_highlight
 import lr_lib.core.var.vars_param
-from lr_lib.core_gui.group_param.core_gp import group_param
-from lr_lib.core_gui.group_param.gp_filter import param_sort, param_filter, _param_filter
-from lr_lib.core_gui.group_param.gp_var import K_FIND, K_CREATE, K_SKIP
+import lr_lib.core_gui.group_param.core_gp
+import lr_lib.core_gui.group_param.gp_filter
+from lr_lib.core_gui.group_param.gp_var import K_FIND, K_SKIP
 
 
 def group_param_search_by_act_re(action: 'lr_lib.gui.action.main_action.ActionWindow', wrsp_create=False) -> [str, ]:
@@ -27,18 +27,18 @@ def group_param_search_by_act_re(action: 'lr_lib.gui.action.main_action.ActionWi
     ans = y.ask()
     if ans == K_FIND:
         yt = y.text.split('\n')
-        regexps = param_filter(map(str.strip, yt))
+        regexps = lr_lib.core_gui.group_param.gp_filter.param_filter(map(str.strip, yt))
     else:
         return []
 
     params = []
     for rx in regexps:
         prs = group_param_search_quotes(action, regexp=rx)
-        prs = _param_filter(prs)
+        prs = lr_lib.core_gui.group_param.gp_filter._param_filter(prs)
         params.extend(prs)
         continue
 
-    params = param_sort(params)
+    params = lr_lib.core_gui.group_param.gp_filter.param_sort(params)
 
     if params:
         y = lr_lib.gui.widj.dialog.YesNoCancel(
@@ -54,10 +54,10 @@ def group_param_search_by_act_re(action: 'lr_lib.gui.action.main_action.ActionWi
         ans = y.ask()
         if ans == K_FIND:
             params = y.text.split('\n')
-            params = param_sort(params, deny_param_filter=False)
+            params = lr_lib.core_gui.group_param.gp_filter.param_sort(params, deny_param_filter=False)
 
             if wrsp_create:  # создать wrsp
-                group_param(None, params, widget=action.tk_text, ask=False)
+                lr_lib.core_gui.group_param.core_gp.group_param(None, params, widget=action.tk_text, ask=False)
 
             return params
     return []

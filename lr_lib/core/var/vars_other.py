@@ -60,6 +60,8 @@ def T_POOL_decorator(func: callable):
     return wrap
 
 
+#####################################
+# очистка Var's
 VRS = (
     lr_lib.core.var.vars.VarParam,
     lr_lib.core.var.vars.VarFileName,

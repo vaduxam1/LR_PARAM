@@ -6,9 +6,12 @@ import tkinter as tk
 import lr_lib
 import lr_lib.core.var.vars as lr_vars
 import lr_lib.core.var.vars_highlight
+import lr_lib.core.var.vars_other
 import lr_lib.core_gui.action_lib
 import lr_lib.core_gui.all_wrsp
 import lr_lib.core_gui.rename
+from lr_lib.core_gui.group_param.gp_act_lb import group_param_search_by_lb
+from lr_lib.core_gui.group_param.gp_act_startswith import group_param_search_by_name
 
 
 def rClicker(event) -> str:
@@ -66,20 +69,28 @@ def rClicker(event) -> str:
 
             submenu_param.add_cascade(
                 label='группа(найти по налалу имени) -> найти и заменить', underline=0,
-                command=lambda e=event: lr_lib.core_gui.group_param.core_gp.group_param(e, params=None))
+                command=lambda e=event: lr_lib.core.var.vars_other.T_POOL_decorator(
+                    group_param_search_by_name)(
+                    e.widget.action, wrsp_create=True, text=e.widget.selection_get(),
+                ))
 
             submenu_param.add_cascade(
                 label='* группа(найти по LB=") -> найти и заменить', underline=0,
-                command=lambda e=event: lr_lib.core_gui.group_param.core_gp.group_param(e, params=False))
+                command=lambda e=event: lr_lib.core.var.vars_other.T_POOL_decorator(
+                    group_param_search_by_lb)(
+                    e.widget.action, wrsp_create=True, lb_items=[e.widget.selection_get(), ], ask=False,
+                ))
 
             submenu_param.add_cascade(
                 label='* готовый -> пересоздать, с измененными LB/RB', underline=0,
-                command=lambda e=event: lr_lib.core_gui.action_lib.rClick_web_reg_save_param_regenerate(e, new_lb_rb=True),
+                command=lambda e=event: lr_lib.core_gui.action_lib.rClick_web_reg_save_param_regenerate(
+                    e, new_lb_rb=True),
             )
 
             submenu_param.add_cascade(
                 label='готовый -> пересоздать, с оригинальными LB/RB', underline=0,
-                command=lambda e=event: lr_lib.core_gui.action_lib.rClick_web_reg_save_param_regenerate(e, new_lb_rb=False),
+                command=lambda e=event: lr_lib.core_gui.action_lib.rClick_web_reg_save_param_regenerate(
+                    e, new_lb_rb=False),
             )
 
             submenu_param.add_cascade(
@@ -126,7 +137,8 @@ def rClicker(event) -> str:
 
             if param:
                 p_wrsp = lr_lib.core.wrsp.param.wrsp_start_end.format(param=param)
-                submenu_goto.add_cascade(label=p_wrsp, underline=0, command=lambda e=event, n=p_wrsp: action_goto(e, n))
+                submenu_goto.add_cascade(label=p_wrsp, underline=0,
+                                         command=lambda e=event, n=p_wrsp: action_goto(e, n))
 
         if selection:
             # other
@@ -169,6 +181,7 @@ def rClicker(event) -> str:
                         def cmd(e=event, o=option, c=color, v=val, f=True) -> None:
                             lr_lib.core_gui.action_lib.rClick_add_highlight(e, o, c, v, find=f)
                             return
+
                         sub.add_command(label=color, command=cmd)
                         continue
                     continue
@@ -183,7 +196,7 @@ def rClicker(event) -> str:
 
 
 def rClickbinder(widget, wdg=('Text', 'Entry', 'Listbox', 'Label')) -> None:
-    for b in wdg: #
+    for b in wdg:  #
         try:
             widget.bind_class(b, sequence='<Button-3>', func=rClicker, add='')
         except tk.TclError as ex:

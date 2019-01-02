@@ -1,5 +1,5 @@
 ﻿# -*- coding: UTF-8 -*-
-# Var
+# Var - вероятно хотел сделать потокобезопасную tkiner.Var(value=any_type) переменную
 
 
 def default_callback(value, *args, **kwargs) -> None:

@@ -4,9 +4,9 @@
 import os
 
 import lr_lib
+import lr_lib.core_gui.group_param.gp_filter
 import lr_lib.etc.excepthook
 from lr_lib.core.var import vars as lr_vars
-from lr_lib.core_gui.group_param.gp_filter import param_sort
 
 K_FIND = 'Найти'
 K_SKIP = 'Пропуск'
@@ -32,7 +32,7 @@ def _ask_params(params: [str, ], action: 'lr_lib.gui.action.main_action.ActionWi
 
         if ask == K_FIND:
             yt = y.text.split('\n')
-            params = param_sort(yt, deny_param_filter=False)
+            params = lr_lib.core_gui.group_param.gp_filter.param_sort(yt, deny_param_filter=False)
         elif ask == K_SKIP:
             params = []
         else:

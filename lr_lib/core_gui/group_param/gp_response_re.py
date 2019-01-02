@@ -1,19 +1,16 @@
 # -*- coding: UTF-8 -*-
 # поиск param, для action.c, но в файлах ответов, на основе регулярных выражений
 
-import re
-import os
 import itertools
+import re
 
 import lr_lib
+import lr_lib.core.etc.lbrb_checker
 import lr_lib.core.var.vars_highlight
 import lr_lib.core.var.vars_param
-import lr_lib.etc.excepthook
-import lr_lib.gui.action._other
-import lr_lib.core.etc.lbrb_checker
-from lr_lib.core_gui.group_param.gp_filter import param_sort
+import lr_lib.core_gui.group_param.core_gp
+import lr_lib.core_gui.group_param.gp_filter
 from lr_lib.core.var import vars as lr_vars
-from lr_lib.core_gui.group_param.core_gp import group_param
 from lr_lib.core_gui.group_param.gp_var import K_FIND, K_SKIP, responce_files_texts
 
 
@@ -72,7 +69,7 @@ def group_param_search_by_resp_re(action: 'lr_lib.gui.action.main_action.ActionW
             continue
         continue
 
-    in_action_param_only = param_sort(in_action_param_only)
+    in_action_param_only = lr_lib.core_gui.group_param.gp_filter.param_sort(in_action_param_only)
 
     inf = '\n'.join(str([stri, len(params[stri]), params[stri]]) for stri in sorted(params))
     inf = 'in_action_param_only/all: {}/{}\n{}'.format(len(in_action_param_only), len(all_p), inf)
@@ -95,7 +92,7 @@ def group_param_search_by_resp_re(action: 'lr_lib.gui.action.main_action.ActionW
         return []
 
     yt = y.text.split('\n')
-    in_action_param_only = param_sort(yt, deny_param_filter=False)
+    in_action_param_only = lr_lib.core_gui.group_param.gp_filter.param_sort(yt, deny_param_filter=False)
     if wrsp_create:  # создать wrsp
-        group_param(None, in_action_param_only, widget=action.tk_text, ask=False)
+        lr_lib.core_gui.group_param.core_gp.group_param(None, in_action_param_only, widget=action.tk_text, ask=False)
     return in_action_param_only
