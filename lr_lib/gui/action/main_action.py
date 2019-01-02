@@ -287,13 +287,6 @@ class ActionWindow(lr_lib.gui.action.act_win.ActWin):
             '# auto_param_creator_button'
         )
         lr_lib.gui.widj.tooltip.createToolTip(
-            self.re_auto_param_creator_button,
-            'автоматичейский поиск и создание web_reg_save_param\n '
-            'поиск param, на основе регулярных выражений.\n'
-            'аналог нескольких меню_мыши/web_reg_save_param/группа\n\t'
-            '# re_auto_param_creator_button'
-        )
-        lr_lib.gui.widj.tooltip.createToolTip(
             self.save_action_button,
             'сохранить текст action окна\n'
             '+ обновить "служебную" инфу об удаленных "inf-блоках", если чтото удаляли вручную\n\t'
@@ -476,8 +469,7 @@ class ActionWindow(lr_lib.gui.action.act_win.ActWin):
         self.open_button.grid(row=6, column=16, sticky=tk.NSEW)
         self.editor_button.grid(row=7, column=16, sticky=tk.NSEW, columnspan=2)
         self.no_cbx.grid(row=7, column=10, sticky=tk.W)
-        self.auto_param_creator_button.grid(row=7, column=8, sticky=tk.NSEW)
-        self.re_auto_param_creator_button.grid(row=8, column=8, sticky=tk.NSEW)
+        self.auto_param_creator_button.grid(row=7, column=8, sticky=tk.NSEW, rowspan=2)
         self.force_ask_cbx.grid(row=8, column=10, sticky=tk.W)
         self.unblock.grid(row=9, column=17, sticky=tk.NSEW)
         self.final_wnd_cbx.grid(row=8, column=12, sticky=tk.W)

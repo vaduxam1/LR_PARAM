@@ -32,13 +32,8 @@ class ActWin(lr_lib.gui.action.act_any.ActAny):
             command=lambda: lr_lib.core.etc.other.openTextInEditor(self.tk_text.get(1.0, tk.END)))
 
         self.auto_param_creator_button = tk.Button(
-            self.toolbar, text='Найти param LB=', background='orange', font=lr_vars.DefaultFont + ' bold',
+            self.toolbar, text='Найти и Создать\nparam WRSP', background='orange', font=lr_vars.DefaultFont + ' bold',
             command=lambda: lr_lib.core_gui.group_param.main_gp.auto_param_creator(self))
-
-        self.re_auto_param_creator_button = tk.Button(
-            self.toolbar, text='Найти param RegExp', font=lr_vars.DefaultFont + ' bold',
-            command=lambda: lr_lib.core.var.vars_other.T_POOL_decorator(
-                lr_lib.core_gui.group_param.gp_act_re.re_auto_param_creator)(self))
 
         self.final_wnd_cbx = tk.Checkbutton(
             self.toolbar, text='final', font=lr_vars.DefaultFont, variable=self.final_wnd_var)
