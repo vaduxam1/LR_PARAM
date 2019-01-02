@@ -133,7 +133,7 @@ def _all_wrsp(action: 'lr_lib.gui.action.main_action.ActionWindow') -> None:
 def _next_wrsp() -> 'iter([dict, str]) or None':
     """поиск следующего возможного wrsp"""
     try:
-        lr_lib.core.var.vars_core.next_3_or_4_if_bad_or_enmpy_lb_rb('поиск всех возможных wrsp_dict')
+        lr_lib.core.var.vars_core.next_3_or_4_if_bad_or_enmpy_lb_rb('поиск всех корректных wrsp_dict')
     except UserWarning as ex:
         return  # конец поиска
     else:
