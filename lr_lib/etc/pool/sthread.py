@@ -14,6 +14,16 @@ DLOCK = threading.Lock()
 QLOCK = threading.Lock()
 
 
+Text = '''
+target = {target}
+   type_target = {lt} : {t_target}
+args = {args}
+  type_args = {la} : {t_args}
+kwargs = {kwargs}
+  type_kwargs = {lk} : {t_kwargs}
+'''
+
+
 class Task:
     """задача для пула"""
     __slots__ = ('target', 'args', 'kwargs', )
@@ -35,16 +45,11 @@ class Task:
         except TypeError:
             lk = None
 
-        task_text = '''
-    target = {target}
-       type_target = {lt} : {t_target}
-    args = {args}
-      type_args = {la} : {t_args}
-    kwargs = {kwargs}
-      type_kwargs = {lk} : {t_kwargs}
-        '''.format(target=self.target, args=self.args, kwargs=self.kwargs, t_args=str(list(map(type, self.args))),
-                   t_kwargs=str(list(map(type, self.kwargs.values()))), la=la, lk=lk,
-                   t_target=type(self.target), lt=(len(self.target) if hasattr(self.target, '__len__') else None))
+        task_text = Text.format(
+            target=self.target, args=self.args, kwargs=self.kwargs, t_args=str(list(map(type, self.args))),
+            t_kwargs=str(list(map(type, self.kwargs.values()))), la=la, lk=lk,
+            t_target=type(self.target), lt=(len(self.target) if hasattr(self.target, '__len__') else None),
+        )
 
         return task_text
 
@@ -103,7 +108,8 @@ class SThread(threading.Thread, SThreadIOQueue):
                     if self.pool.size > self.size_min:
                         return
                 except Exception:
-                    return lr_lib.etc.excepthook.excepthook(*sys.exc_info())
+                    lr_lib.etc.excepthook.excepthook(*sys.exc_info())
+                    return
 
                 else:
                     try:  # выполнить задачу
@@ -113,7 +119,8 @@ class SThread(threading.Thread, SThreadIOQueue):
                     except Exception:  # выход/ошибка
                         if task is None:
                             return
-                        return lr_lib.etc.excepthook.excepthook(*sys.exc_info())
+                        lr_lib.etc.excepthook.excepthook(*sys.exc_info())
+                        return
 
                     finally:  # поток свободен
                         self.task = self.queue_in.task_done()

@@ -156,3 +156,36 @@ def rename_transaction(event, parent=None, s='lr_start_transaction("', e='lr_end
         event.widget.insert(1.0, '\n'.join(lit))  # вставить
         event.widget.action.save_action_file(file_name=False)
     return
+
+
+@lr_lib.core.var.vars_other.T_POOL_decorator
+def all_wrsp_rename(gui: 'lr_lib.gui.action.main_action.ActionWindow', parent=None, ) -> None:
+    """переименавать все wrsp, вручную"""
+    if parent is None:
+        parent = gui
+
+    _wrsps = tuple(gui.web_action.get_web_reg_save_param_all())
+    wrsps = tuple(w.name for w in _wrsps)
+    mx = max(map(len, wrsps or ['']))
+    m = ('"{:<%s}" -> "{}"' % mx)
+    all_wrsps = '\n'.join(m.format(old, new) for (old, new) in zip(wrsps, wrsps))
+    y = lr_lib.gui.widj.dialog.YesNoCancel(['Переименовать', 'Отмена'], 'Переименовать wrsp слева',
+                              'в wrsp справа', 'wrsp', parent=parent, is_text=all_wrsps)
+
+    if y.ask() == 'Переименовать':
+        new_wrsps = [t.split('-> "', 1)[1].split('"', 1)[0].strip() for t in y.text.strip().split('\n')]
+        assert (len(wrsps) == len(new_wrsps))
+        with gui.block():
+            gui.backup()
+            text = gui.tk_text.get('1.0', tk.END)
+
+            for (old, new) in zip(wrsps, new_wrsps):
+                text = text.replace(lr_lib.core.wrsp.param.param_bounds_setter(old),
+                                    lr_lib.core.wrsp.param.param_bounds_setter(new))
+                text = text.replace(lr_lib.core.wrsp.param.param_bounds_setter(old, start='"', end='"'),
+                                    lr_lib.core.wrsp.param.param_bounds_setter(new, start='"', end='"'))
+                continue
+
+            gui.web_action.set_text_list(text, websReport=True)
+            gui.web_action_to_tk_text(websReport=False)
+    return

@@ -98,9 +98,14 @@ class WrspSettingWindow(tk.Toplevel):
 
         apply_btn = tk.Button(self, font='Arial 8 bold', text='Применить',
                               command=lambda: self.parent.save_action_file(file_name=False))
-        wrsp_rename_btn = tk.Button(self, font='Arial 7', text='wrsp_rename', command=self.all_wrsp_rename)
-        wrsp_auto_rename_btn = tk.Button(_lab, font='Arial 8 bold italic', text='wrsp_auto_rename',
-                                         command=lambda *_: lr_lib.core_gui.rename.all_wrsp_auto_rename(self.parent))
+        wrsp_rename_btn = tk.Button(
+            self, font='Arial 7', text='wrsp_rename',
+            command=lambda *_: lr_lib.core_gui.rename.all_wrsp_auto_rename(parent=self),
+        )
+        wrsp_auto_rename_btn = tk.Button(
+            _lab, font='Arial 8 bold italic', text='wrsp_auto_rename',
+            command=lambda *_: lr_lib.core_gui.rename.all_wrsp_auto_rename(self.parent),
+        )
 
         lr_lib.gui.widj.tooltip.createToolTip(apply_btn, 'применить изменения')
         lr_lib.gui.widj.tooltip.createToolTip(VarWebStatsTransac, tt_stat)

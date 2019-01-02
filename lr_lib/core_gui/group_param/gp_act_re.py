@@ -72,7 +72,7 @@ def re_auto_param_creator(action: 'lr_lib.gui.action.main_action.ActionWindow', 
 
     if params:
         y = lr_lib.gui.widj.dialog.YesNoCancel(
-            [K_CREATE, K_SKIP],
+            [K_FIND, K_SKIP],
             title='3.2) ответ',
             is_text='\n'.join(params),
             text_before='3) найдено {} шт'.format(len(params)),

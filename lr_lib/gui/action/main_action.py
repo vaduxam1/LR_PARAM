@@ -85,7 +85,8 @@ class ActionWindow(lr_lib.gui.action.act_win.ActWin):
         filemenu3.add_command(label="Remove dummy", command=self.remove_web_dummy_template)
         filemenu3.add_command(label="Remove thinktime", command=self.thinktime_remove)
         filemenu3.add_command(label="Rename transaction", command=self.all_transaction_rename)
-        filemenu3.add_command(label="Rename WRSP", command=lambda: lr_lib.core_gui.rename.all_wrsp_auto_rename(self))
+        filemenu3.add_command(label="Rename WRSP+", command=lambda: lr_lib.core_gui.rename.all_wrsp_auto_rename(self))
+        filemenu3.add_command(label="Rename WRSP-", command=lambda: lr_lib.core_gui.rename.all_wrsp_rename(self))
         self.menubar.add_cascade(label="Remove/Rename", menu=filemenu3)
 
         filemenu4 = tk.Menu(self.menubar, tearoff=0)
