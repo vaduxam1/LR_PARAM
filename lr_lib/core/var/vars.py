@@ -1,19 +1,19 @@
 ﻿# -*- coding: UTF-8 -*-
 # общие переменные, настройки
 
-import os
-import time
-import string
-import itertools
-import functools
-import multiprocessing
 import encodings.aliases
-
+import functools
+import itertools
+import multiprocessing
+import os
+import string
+import time
 import tkinter as tk
+import tkinter.messagebox
+import urllib.request
 
 from lr_lib.core.var.var import (Var, )
 from lr_lib.etc.help import (COLORS, HEX, )
-
 
 #####################################
 # главные переменные
@@ -502,4 +502,36 @@ def clearVars() -> None:
         var.set(var.default_value, callback=False)
         continue
     FilesWithParam.clear()
+    return
+
+
+#####################################
+# проверка наличия обновленной версии
+github = 'https://github.com/vaduxam1/LR_PARAM'
+github_vars = '/blob/master/lr_lib/core/var/vars.py'
+GitHub = (github + github_vars)
+
+
+def find_git_ver():
+    """версия утилиты на github.com"""
+    with urllib.request.urlopen(GitHub) as f:
+        html = f.read().decode('utf-8')
+
+    v = html.split('>VERSION</span>', 1)
+    v = v[1].split('\n', 1)
+    v = v[0].split('</span>v', 1)
+    v = v[1].split('<', 1)
+    GVER = 'v{0}'.format(v[0])
+    return GVER
+
+
+def check_git_ver():
+    GVER = find_git_ver()
+    Logger.info([github, GVER])
+    if VERSION != GVER:
+        tkinter.messagebox.showwarning(
+            "Для версии {v} доступно обновление".format(v=VERSION),
+            "По адресу {a} доступно последнее [{v}] обновление утилиты.".format(
+                v=GVER,a=github,
+            ))
     return

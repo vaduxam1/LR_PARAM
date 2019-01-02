@@ -1,6 +1,8 @@
 ﻿# -*- coding: UTF-8 -*-
 # создание главного окна + заблокировать
 
+import threading
+
 import lr_lib.core.var.vars as lr_vars
 import lr_lib.gui.wrsp.main_window
 
@@ -9,6 +11,9 @@ def init(c_args=None) -> None:
     """создать gui"""
     print(c_args)
     lr_vars.Window = lr_lib.gui.wrsp.main_window.Window()  # main Gui
+
+    t = threading.Thread(target=lr_vars.check_git_ver)
+    t.start()
     return
 
 
