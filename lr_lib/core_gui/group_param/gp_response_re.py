@@ -91,7 +91,7 @@ def re_r_auto_param_creator(action: 'lr_lib.gui.action.main_action.ActionWindow'
         default_key=K_FIND,
         title='4) запрос/ответ: поиск param, в файлах ответов, на основе регулярных выражений, по LB/RB',
         is_text=text,
-        text_before='4) поиск param, в файлах ответов: найдено {} шт'.format(len(params)),
+        text_before='4) поиск param, в файлах ответов: найдено {} шт'.format(len(in_action_param_only)),
         text_after='добавить/удалить',
         parent=action,
         color=lr_lib.core.var.vars_highlight.PopUpWindColor1,
