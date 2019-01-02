@@ -44,7 +44,7 @@ def next_part_or_file(_work=True) -> iter((bool, )):
 def _next_part() -> bool:
     """следующее param-вхождение"""
     file = lr_vars.VarFile.get()
-    count = file['Param']['Count']  # число возможных вхождений(4) param в файл
+    count = file['Param']['Count']  # число возможных вхождений(4) param в файл(3)
     num = (lr_vars.VarPartNum.get() + 1)  # индекс следующего вхождения(4)
     if num < count:
         # установить вхождение(4)
@@ -56,9 +56,9 @@ def _next_part() -> bool:
 def _next_file() -> bool:
     """следующей файл"""
     f = lr_vars.VarFile.get()  # текущий файл
-    index = lr_vars.FilesWithParam.index(f)  # индекс следующего файла(3)
+    index = lr_vars.FilesWithParam.index(f)  # индекс текушего файла(3)
     try:
-        file = lr_vars.FilesWithParam[index + 1]
+        file = lr_vars.FilesWithParam[index + 1]  # следующий файл
     except IndexError:
         return False  # все файлы перебраны
     else:
