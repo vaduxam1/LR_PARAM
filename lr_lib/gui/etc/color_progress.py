@@ -4,6 +4,7 @@ import threading
 import time
 
 import lr_lib
+import lr_lib.gui.etc.color_change
 from lr_lib.core.var import vars as lr_vars
 
 
@@ -51,7 +52,8 @@ class ColorProgress:
 
     def color_change(self, color: 'None or ""') -> None:
         """смена цвета"""
-        callback = lambda: self.action.background_color_set(color=color, **self.color_set_kwargs)
+        callback = lambda: lr_lib.gui.etc.color_change.background_color_set(
+            self.action, color=color, **self.color_set_kwargs)
         lr_vars.MainThreadUpdater.submit(callback)  # action цвет
         return
 

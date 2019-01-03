@@ -1,6 +1,7 @@
 # -*- coding: UTF-8 -*-
 # progressbar нахождения и замены group_param
 
+import lr_lib.gui.etc.color_change
 from lr_lib.core.var import vars as lr_vars
 
 progress_str = '{proc}% : {counter}/{len_params} | fail={fail}\n{wrsp}'
@@ -52,7 +53,7 @@ class ProgressBar:
                 wrsp=wrsp,
             )
             # action цвет по кругу
-            self.widget.action.background_color_set(color=None)
+            lr_lib.gui.etc.color_change.background_color_set(self.widget.action, color=None)
             # перезапуск с задержкой
             lr_vars.T_POOL.submit(self.start)
             return
@@ -70,7 +71,7 @@ class ProgressBar:
                 lr_vars.Logger.error('{} param не были обработаны:\n\t{}'.format(
                     fail, '\n\t'.join(unsuccess)), parent=self.widget.action)
 
-            self.widget.action.background_color_set(color='')  # action оригинальный цвет
+            lr_lib.gui.etc.color_change.background_color_set(self.widget.action, color='')  # action оригинальный цвет
             self.widget.action.set_combo_len()
             lr_vars.Logger.debug(param_counter)
 
