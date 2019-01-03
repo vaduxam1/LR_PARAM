@@ -11,7 +11,7 @@ from lr_lib.core.var._var import Var
 #####################################
 # главные переменные
 
-VERSION = 'v11.3.2'
+VERSION = 'v11.4'
 lib_folder = 'lr_lib'
 Tk = tk.Tk()  # tkinter
 original_callback_exception = Tk.report_callback_exception
@@ -201,7 +201,7 @@ FilesCreatePortionSize = 15  # порция, число обрабатываем
 # пулы
 
 MainThreadUpdater = None  # выполнять callback из main потока # lr_lib.etc.pool.other.MainThreadUpdater
-_MTUT = 0.1  # сек - влияет на общую отзывчивость интерфейса
+_MTUT = 0.5  # сек - влияет на общую отзывчивость интерфейса
 MainThreadUpdateTime = tk.IntVar(value=(_MTUT * 1000))  # интервал(мс) проверки очереди, callback(из потоков) + скорость обновления подсветки
 
 M_POOL = None  # пул процессов  # lr_lib.etc.pool.main_pool.POOL

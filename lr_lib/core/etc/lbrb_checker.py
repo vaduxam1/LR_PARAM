@@ -14,13 +14,13 @@ def check_bound_lb_rb(left: 'id="', right: '",') -> bool:
     return i
 
 
-def check_bound_rb(right: '",', rb_allow=lr_lib.core.var.vars_param.allow_symbols.__contains__) -> bool:
+def check_bound_rb(right: '",', rb_allow=lr_lib.core.var.vars_param.param_splitters.__contains__) -> bool:
     """id="zkau_11","""
     i = (right and rb_allow(right[0]))
     return i
 
 
-def check_bound_lb(left: 'id="', lb_allow=lr_lib.core.var.vars_param.allow_symbols.__contains__) -> bool:
+def check_bound_lb(left: 'id="', lb_allow=lr_lib.core.var.vars_param.param_splitters.__contains__) -> bool:
     """id="zkau_11","""
     i = (left and lb_allow(left[-1]) or check_lb_percent(left) or check_lb_tnrvf(left))
     return i

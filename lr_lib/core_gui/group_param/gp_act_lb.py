@@ -12,6 +12,17 @@ import lr_lib.core_gui.group_param.gp_filter
 from lr_lib.core_gui.group_param.gp_var import K_FIND, K_SKIP, responce_files_texts
 
 
+T1 = '2.1) запрос: поиск param в action, используя action-LB'
+T2 = '2) Поиск param в [ ACTION.C ] тексте: используя action-LB символы.\n' \
+     'Например используя action-LB: ( value= ), для action.c файла подобного содержания:\n\n' \
+     'web_url("index.zul",\n' \
+     '... "value=zkau_1"; ... value=editZul_1;...\n... value={editZul_2, "zkau_2"} ...\n' \
+     '... "item=zkau_3"; ... item=editZul_3; ...\n... item={editZul_4, "zkau_4"} ...\nLAST);\n\n' \
+     'можно найти такие param: zkau_1, editZul_1.'
+T3 = '2.2) ответ'
+T4 = '2) найдено {} шт'
+
+
 def group_param_search_by_lb(
         action: 'lr_lib.gui.action.main_action.ActionWindow',
         lb_items=None,
@@ -19,6 +30,7 @@ def group_param_search_by_lb(
         wrsp_create=False,
         texts_for_lb=None,
         MutableLBRegs=lr_lib.core.var.vars_param.MutableLBRegs,
+        t1=T1, t2=T2, t3=T3, t4=T4,
 ) -> list:
     """
     поиск param в action, по LB=
@@ -44,7 +56,7 @@ def group_param_search_by_lb(
             continue
 
     if ask:  # диалог окно поиск param
-        lb_items = _ask_lb_items(action, lb_items)
+        lb_items = _ask_lb_items(action, lb_items, t1, t2)
         if not lb_items:
             return lb_items
 
@@ -68,9 +80,9 @@ def group_param_search_by_lb(
     y = lr_lib.gui.widj.dialog.YesNoCancel(
         [K_FIND, K_SKIP],
         default_key=K_FIND,
-        title='2.2) ответ',
+        title=t3,
         is_text='\n'.join(params),
-        text_before='2) найдено {} шт'.format(len(params)),
+        text_before=t4.format(len(params)),
         text_after='добавить/удалить',
         parent=action,
         color=lr_lib.core.var.vars_highlight.PopUpWindColor1,
@@ -89,21 +101,16 @@ def group_param_search_by_lb(
     return params
 
 
-def _ask_lb_items(action: 'lr_lib.gui.action.main_action.ActionWindow', lb_items: [str, ]) -> [str, ]:
+def _ask_lb_items(action: 'lr_lib.gui.action.main_action.ActionWindow', lb_items: [str, ], t1: str, t2: str) -> [str, ]:
     """диалог окно поиск param"""
     tt = '\n'.join(lb_items)
 
     y = lr_lib.gui.widj.dialog.YesNoCancel(
         buttons=[K_FIND, K_SKIP],
         default_key=K_FIND,
-        title='2.1) запрос: поиск param в action, используя action-LB',
+        title=t1,
         is_text=tt,
-        text_before='2) Поиск param в [ ACTION.C ] тексте: используя action-LB символы.\n'
-                    'Например используя action-LB: ( value= ), для action.c файла подобного содержания:\n\n'
-                    'web_url("index.zul",\n'
-                    '... "value=zkau_1"; ... value=editZul_1;...\n... value={editZul_2, "zkau_2"} ...\n'
-                    '... "item=zkau_3"; ... item=editZul_3; ...\n... item={editZul_4, "zkau_4"} ...\nLAST);\n\n'
-                    'можно найти такие param: zkau_1, editZul_1.',
+        text_before=t2,
         text_after='добавить/удалить',
         parent=action,
     )

@@ -54,7 +54,8 @@ DENY_Startswitch_PARAMS = [
 
 DENY_PARAMS = [
     'UTF-8', 'boot', 'true', 'false', 'i', 'xonLoadUseIndustrialCalendar', 'dummy', 'CPAGE', 'null', 'pt1', 'cb1', 'f1',
-    'POST', 'HTML', 'Yes', 'dtid', 'compId', 'this',
+    'POST', 'HTML', 'Yes', 'dtid', 'compId', 'this', 'left', 'right', 'top', 'bottom', 'open', 'pageY', 'pageX',
+    'value', 'which', 'items', 'reference', 'selectAll', 'clearFirst',
 ]  # не использовать в качестве параметров
 
 REGEXP_PARAMS = [
@@ -97,11 +98,11 @@ Screening = ['\\', '"', ]  # символы для экранирования с
 AddAllowParamSymb = '_!-'  # символы, которые могут входить в имя param, кроме букв и цифр
 
 # символы обрезки автозамены
-allow_symbols = (string.punctuation + string.whitespace)
+param_splitters = (string.punctuation + string.whitespace)
 for s in AddAllowParamSymb:
-    allow_symbols = allow_symbols.replace(s, '')
+    param_splitters = param_splitters.replace(s, '')
     continue
-allow_symbols = set(allow_symbols)
+param_splitters = set(param_splitters)
 
 ########
 # web

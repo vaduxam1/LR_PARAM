@@ -1,7 +1,7 @@
 # -*- coding: UTF-8 -*-
 # фильтрация и сортировка param
 import lr_lib.core
-import lr_lib.core.var.vars_param
+from lr_lib.core.var.vars_param import DENY_Startswitch_PARAMS, DENY_PARAMS, param_splitters
 from lr_lib.core.var import vars as lr_vars
 
 
@@ -12,14 +12,17 @@ def param_sort(params: [str, ], reverse=True, _filter=True, deny_param_filter=Tr
     """
     if _filter:
         params = param_filter(params, deny_param_filter=deny_param_filter, )
+        if deny_param_filter:
+            params = _param_filter(params)
     params = sorted(params, key=len, reverse=reverse)
     return params
 
 
-def param_filter(params: [str, ], len_p_min=lr_vars.MinParamLen, deny=lr_lib.core.var.vars_param.DENY_PARAMS,
+def param_filter(params: [str, ], len_p_min=lr_vars.MinParamLen, deny=DENY_PARAMS,
                  deny_param_filter=True, ) -> iter((str,)):
     """отфильтровать лишние param"""
-    params = set(filter(str.strip, params))  # отфильтровать bool и только whitespace str
+    params = filter(str.strip, params)
+    params = set(params)
 
     if deny_param_filter:
         for param in params:
@@ -30,10 +33,11 @@ def param_filter(params: [str, ], len_p_min=lr_vars.MinParamLen, deny=lr_lib.cor
                 if len_p > len_p_min:  # иногда находит чтото 1-2 символьное, но явно param должен быть min=3 символа
                     if filter_deny_onUpper(param):
                         continue  # "onScreen"
+
                     # иначе это param - вернуть
                     yield param
             continue
-    else:  # иначе это param? - "onScreen_123-onScreen_asd" - вернуть?
+    else:  # иначе вернуть
         yield from params
     return
 
@@ -56,11 +60,12 @@ def filter_deny_onUpper(param: str, n=2, s='on', ) -> bool:
 
 
 def _param_filter(params: [str, ], min_param_len=lr_vars.MinParamLen,
-                  deny=lr_lib.core.var.vars_param.DENY_Startswitch_PARAMS, ) -> [str, ]:
+                  deny=DENY_Startswitch_PARAMS, ) -> [str, ]:
     """удалить не param-слова"""
     params = param_filter(params)
     for param in params:
-        if len(param) < min_param_len:
+        lp = len(param)
+        if (lp < min_param_len) or any(map(param_splitters.__contains__, param)):
             continue
 
         check = True
