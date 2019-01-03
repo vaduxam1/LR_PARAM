@@ -174,8 +174,8 @@ class WebLegend(tk.Toplevel):
                 if c:
                     c -= 1
                 cl = (colrs[c:] + colrs[:c])
-                onObjectClick1 = lambda event, i=i, cl=cl: onObjectClick1(event, i=i, colors=iter(itertools.cycle(cl)))
-                onObjectClick2 = lambda event, i=i, cl=cl: onObjectClick2(event, i=i, colors=iter(itertools.cycle(cl)))
+                onObjectClick1 = lambda event, i=i, cl=cl, *k: onObjectClick1(event, i=i, colors=iter(itertools.cycle(cl)))
+                onObjectClick2 = lambda event, i=i, cl=cl, *k: onObjectClick2(event, i=i, colors=iter(itertools.cycle(cl)))
             else:
                 cmd = self.canvas.create_rectangle
             xy1 = (lcolor, sep, 20, (width + sep + w_), (20 + height), )
