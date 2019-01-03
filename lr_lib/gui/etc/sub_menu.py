@@ -16,6 +16,7 @@ import lr_lib.core_gui.group_param.gp_act_startswith
 
 
 def progress_decor(func, action):
+    """декоратор - навесить цветной прогрессбар на команды меню мыши"""
     def wrap(*args, **kwargs):
         with lr_lib.gui.etc.color_progress.ColorProgress(action):
             _ = func(*args, **kwargs)
