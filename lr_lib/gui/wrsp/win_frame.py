@@ -11,11 +11,14 @@ import lr_lib.core.var.vars_highlight
 class WinFrame(tk.Frame):
     """ttk.Frame"""
     def __init__(self):
-        tk.Frame.__init__(self, lr_vars.Tk)
-
         lr_vars.Tk.protocol("WM_DELETE_WINDOW", self.on_closing)
         lr_vars.Tk.geometry('{}x{}'.format(*lr_vars._Tk_WIND_SIZE))
         lr_vars.Tk.option_add("*Listbox*Background", lr_lib.core.var.vars_highlight.Background)
+        lr_vars.Tk.option_add("*Frame*Background", lr_lib.core.var.vars_highlight.Background)
+        lr_vars.Tk.option_add("*Toplevel*Background", lr_lib.core.var.vars_highlight.Background)
+
+        tk.Frame.__init__(self, lr_vars.Tk)
+        self.config(background=lr_lib.core.var.vars_highlight.Background)
 
         # "масштабирование" виджетов окна
         lr_vars.Tk.grid_rowconfigure(0, weight=1)

@@ -81,10 +81,11 @@ class ActFont(lr_lib.gui.action.act_replace.ActReplaceRemove):
         self.tk_text.set_tegs(parent=self)
         return
 
-    def background_color_set(self, color='') -> None:
+    def background_color_set(self, color='', _types=('utton', ), obs=None) -> None:
         """поменять цвет всех виджетов"""
-        obs = [self, lr_vars.Window, ]
-        obs = itertools.chain(*map(DiR, obs))
+        if obs is None:
+            wid = [self, lr_vars.Window, ]
+            obs = [ob for w in wid for ob in DiR(w, _types=_types)]
 
         for ob in obs:
             if color is None:
@@ -123,15 +124,14 @@ class ActFont(lr_lib.gui.action.act_replace.ActReplaceRemove):
 
 
 ColorCash = {}
-_Typ = ['utton', ]
 
 
-def DiR(ob):
+def DiR(ob, _types=('utton', )):
     """объекты для смены цвета"""
     for attr in dir(ob):
         ga = getattr(ob, attr)
         ta = type(ga)
-        if not any(map(str(ta).__contains__, _Typ)):
+        if not any(map(str(ta).__contains__, _types)):
             continue
 
         try:

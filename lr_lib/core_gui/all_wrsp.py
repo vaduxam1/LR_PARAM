@@ -1,15 +1,13 @@
 # -*- coding: UTF-8 -*-
 # все варианты создания web_reg_save_param
 
-import threading
-import time
-
 import lr_lib
 import lr_lib.core
 import lr_lib.core.var.vars_other
+import lr_lib.core_gui.action_lib
 import lr_lib.etc.excepthook
+import lr_lib.gui.etc.color_progress
 from lr_lib.core.var import vars as lr_vars
-from lr_lib.core_gui.action_lib import event_action_getter
 
 
 @lr_lib.core.var.vars_other.T_POOL_decorator
@@ -17,7 +15,7 @@ def all_wrsp_dict_web_reg_save_param(event, wrsp_web_=None) -> None:
     """
     все варианты создания web_reg_save_param, искать не ограничивая верхний номер Snapshot
     """
-    action = event_action_getter(event)
+    action = lr_lib.core_gui.action_lib.event_action_getter(event)
     m = action.max_inf_cbx_var.get()
     action.max_inf_cbx_var.set(0)
     selection = event.widget.selection_get()
@@ -76,57 +74,14 @@ def _wrsp_text_delta_remove(wr: (dict, str), ) -> str:
     return without_delta
 
 
-class ColorProgress:
-    """
-    менять цвет action.c окна при "работе" поиска всех вариантов создания web_reg_save_param
-    """
-    def __init__(self, action: 'lr_lib.gui.action.main_action.ActionWindow', start=False):
-        self.is_work = [True]
-        self.action = action
-
-        if start:
-            self.start()
-        return
-
-    def stop(self) -> None:
-        """остановка"""
-        self.is_work.clear()
-        return
-
-    def start(self) -> None:
-        """циклическая смена цвета"""
-        t = threading.Thread(target=self._start)
-        t.start()
-        return
-
-    def _start(self) -> None:
-        """циклическая смена цвета"""
-        while self.is_work:
-            self.color_change(None)  # смена цвета
-            time.sleep(lr_vars._MTUT)
-            continue
-
-        self.color_change('')  # оригинальный цвет
-        return
-
-    def color_change(self, color: 'None or ""') -> None:
-        """смена цвета"""
-        callback = lambda: self.action.background_color_set(color=color)
-        lr_vars.MainThreadUpdater.submit(callback)  # action цвет
-        return
-
-
 def _all_wrsp(action: 'lr_lib.gui.action.main_action.ActionWindow') -> None:
     """поиск всех возможных wrsp"""
-    colors = ColorProgress(action, start=True)
-    try:
+    with lr_lib.gui.etc.color_progress.ColorProgress(action, obs=[action.tk_text.linenumbers, ]):
         wr = _wr_create()  # первый/текущий wrsp
         while wr:
             yield wr
             wr = _next_wrsp()  # остальные wrsp
             continue
-    finally:
-        colors.stop()
     return
 
 
