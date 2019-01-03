@@ -98,7 +98,7 @@ def _ask_lb_items(action: 'lr_lib.gui.action.main_action.ActionWindow', lb_items
         title='2.1) запрос: поиск param в action, используя action-LB',
         is_text=tt,
         text_before='2) Поиск param в [ ACTION.C ] тексте: используя action-LB символы.\n'
-                    'Например используя action-LB: ( "value=" ), для action.c файла подобного содержания:\n\n'
+                    'Например используя action-LB: ( value= ), для action.c файла подобного содержания:\n\n'
                     'web_url("index.zul",\n'
                     '... "value=zkau_1"; ... value=editZul_1;...\n... value={editZul_2, "zkau_2"} ...\n'
                     '... "item=zkau_3"; ... item=editZul_3; ...\n... item={editZul_4, "zkau_4"} ...\nLAST);\n\n'

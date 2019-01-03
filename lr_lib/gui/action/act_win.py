@@ -188,9 +188,17 @@ class ActWin(lr_lib.gui.action.act_any.ActAny):
         """директория файлов ответов"""
         result_folder = self.usr_config['General']['LastResultDir']
         folder = os.path.join(os.getcwd(), result_folder)
-        file = os.path.join(folder, file)
+        file = os.path.join(folder, file)  # 'C:\\SCR\\LR_10\\LR_PARAM\\result1\\Results.xml'
+
+        if not os.path.isfile(file):
+            lr_vars.Logger.error(
+                'Не найдены LoadRunner файлы, ответов при воспроизведении, например "..\\result1\\Results.xml".\n'
+                'Для появления файлов ответов, необходимо хотябы один раз, запустить action.c скрипт в LoadRunner.\n'
+                'Путь для директории последнего воспроизведения, берется из "имя_скрипта.usr" LoadRunner файла.'
+            )
         with open(file) as f:
             text = f.read()
+
         text = text.rsplit('.inf]]></Path>', 1)
         text = text[0]
         text = text.rsplit('t', 1)
