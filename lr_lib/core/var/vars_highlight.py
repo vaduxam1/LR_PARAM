@@ -36,7 +36,7 @@ VarColorTeg = Var(value=set(COLORS.keys()))
 _LB_LIST_highlight = {'uuid_', 'dtid', 'sessionid', 'Snapshot', 'Snapshot=t', 'EXTRARES', '.inf', }
 _LB_LIST_highlight.update(_unpunct(s) for s in LB_PARAM_FIND_LIST)
 tnrvf = set('\\{}'.format(s) for s in 'tnrvf')
-PopUpWindColor1 = 'Grey'  # просто какойто общий цвет для выделения PopUpWindow
+PopUpWindColor1 = 'LightGrey'  # просто какойто общий цвет для выделения PopUpWindow
 highlight_words = set()  # слова для подсветки
 
 

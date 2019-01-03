@@ -79,7 +79,7 @@ def group_param_search_by_resp_re(action: 'lr_lib.gui.action.main_action.ActionW
     y = lr_lib.gui.widj.dialog.YesNoCancel(
         buttons=[K_FIND, K_SKIP],
         default_key=K_FIND,
-        title='4) Поиск param в тексте [ Файлов Ответов ] по param-LB/RB',
+        title='4) запрос/ответ: Поиск param в тексте [ Файлов Ответов ] по param-LB/RB',
         is_text=text,
         text_before='4) Поиск param в тексте [ Файлов Ответов ]:\n\nна основе регулярных выражений, по param-LB/RB:\n\n'
                     'найдено {} шт'.format(len(in_action_param_only)),

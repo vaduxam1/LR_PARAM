@@ -51,7 +51,7 @@ class WinPartsLbRb(lr_lib.gui.wrsp.win_text.WinText):
         # --- LB ---
         self.ButtonNewLB = tk.Button(
             self.last_frameCbx1, text='reset', command=self.comboParts_change, font=lr_vars.DefaultFont + ' italic',
-            width=4, padx=0, pady=0,
+            width=4, padx=0, pady=0, relief='groove',
         )
         self.LBcbx_return = tk.Checkbutton(
             self.last_frameCbx1, variable=lr_vars.VarReturnLB, text='\\n', font=lr_vars.DefaultFont + ' italic',
@@ -61,7 +61,7 @@ class WinPartsLbRb(lr_lib.gui.wrsp.win_text.WinText):
             self.last_frameCbx1, variable=lr_vars.VarRusLB, text='ascii', font=lr_vars.DefaultFont + ' italic',
             command=self.comboParts_change, padx=0, pady=0,
         )
-        self.lb_split_label = tk.LabelFrame(self.last_frameCbx1, bd=1, padx=0, pady=0, relief='ridge',)
+        self.lb_split_label = tk.LabelFrame(self.last_frameCbx1, bd=1, padx=0, pady=0,)
 
         self.LBcbx_SplitList = tk.Checkbutton(
             self.lb_split_label, variable=lr_vars.VarSplitListLB, text='split', font=lr_vars.DefaultFont + ' bold',
@@ -85,7 +85,7 @@ class WinPartsLbRb(lr_lib.gui.wrsp.win_text.WinText):
         )
         self.ButtonLB_note = tk.Button(
             self.last_frameCbx1, text='note', command=lambda: self.lr_note(self.LB), width=3,
-            font=lr_vars.DefaultFont + ' italic', padx=0, pady=0,
+            font=lr_vars.DefaultFont + ' italic', padx=0, pady=0, relief='groove',
         )
         self.partNumEmptyLbNext = tk.Checkbutton(
             self.last_frameCbx1, variable=lr_vars.VarPartNumEmptyLbNext, text='empty',
@@ -111,7 +111,7 @@ class WinPartsLbRb(lr_lib.gui.wrsp.win_text.WinText):
         # --- RB ---
         self.ButtonNewRB = tk.Button(
             self.last_frameCbx2, text='reset', command=self.comboParts_change, font=lr_vars.DefaultFont + ' italic',
-            width=4, padx=0, pady=0,
+            width=4, padx=0, pady=0, relief='groove',
         )
         self.RBcbx_return = tk.Checkbutton(
             self.last_frameCbx2, variable=lr_vars.VarReturnRB, text='\\n', font=lr_vars.DefaultFont + ' italic',
@@ -156,7 +156,7 @@ class WinPartsLbRb(lr_lib.gui.wrsp.win_text.WinText):
         )
         self.ButtonRB_note = tk.Button(
             self.last_frameCbx2, text='note', command=lambda: self.lr_note(self.RB), width=3,
-            font=lr_vars.DefaultFont + ' italic', padx=0, pady=0,
+            font=lr_vars.DefaultFont + ' italic', padx=0, pady=0, relief='groove',
         )
         self.RbB1Cbx = tk.Checkbutton(
             self.rb_split_label, variable=lr_vars.VarRbB1, text='{}', font=lr_vars.DefaultFont, padx=0, pady=0,

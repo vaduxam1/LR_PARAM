@@ -72,8 +72,10 @@ class ActFont(lr_lib.gui.action.act_replace.ActReplaceRemove):
                                                    font=lr_vars.DefaultFont)
         self.background_color_combo['values'] = list(sorted(lr_lib.etc.help.COLORS.keys()))
 
-        self.background_color_combo.bind("<KeyRelease-Return>", self.background_color_set)
-        self.background_color_combo.bind("<<ComboboxSelected>>", self.background_color_set)
+        self.background_color_combo.bind("<KeyRelease-Return>", lambda *a: self.background_color_set(
+            color=self.background_color_combo.get(), obs=[self.tk_text, ], ))
+        self.background_color_combo.bind("<<ComboboxSelected>>", lambda *a: self.background_color_set(
+            color=self.background_color_combo.get(), _types=('Text', 'rame', 'bel', ), ))
         self.config(background=self.background_color_combo.get())
         return
 
@@ -84,7 +86,7 @@ class ActFont(lr_lib.gui.action.act_replace.ActReplaceRemove):
     def background_color_set(self, color='', _types=('utton', ), obs=None) -> None:
         """поменять цвет всех виджетов"""
         if obs is None:
-            wid = [self, lr_vars.Window, ]
+            wid = [self, self.tk_text, lr_vars.Window, ]
             obs = [ob for w in wid for ob in DiR(w, _types=_types)]
 
         for ob in obs:

@@ -17,7 +17,7 @@ class WinFolder(lr_lib.gui.wrsp.win_other.WinOther):
 
         self.Button_change_folder = tk.Button(
             self.last_frame, text='folder', padx=0, pady=0, command=self.change_folder_ask,
-            font=lr_vars.DefaultFont + ' italic bold')
+            font=lr_vars.DefaultFont + ' italic bold', relief='groove')
 
         self.change_folder_cbx = tk.Checkbutton(
             self.last_frame, variable=lr_vars.VarIsSnapshotFiles, padx=0, pady=0, font=lr_vars.DefaultFont + ' italic',

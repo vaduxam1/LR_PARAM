@@ -27,26 +27,27 @@ class WinOther(lr_lib.gui.wrsp.win_filesort.WinFileSort):
 
         self.unblock = tk.Button(
             self.last_frame, text='unblock', font=lr_vars.DefaultFont + ' bold', padx=0, pady=0,
-            command=self.force_unblock)
+            command=self.force_unblock, relief='groove')
 
         self.ButtonClearDown = tk.Button(
-            self.last_frame, text='clearW', command=self.clear, font=lr_vars.DefaultFont + ' italic', padx=0, pady=0)
+            self.last_frame, text='clearW', command=self.clear, font=lr_vars.DefaultFont + ' italic', padx=0, pady=0,
+            relief='groove')
 
         self.ButtonClearUp = tk.Button(
             self.last_frame, text='clearT', command=lambda: self.tk_text.delete(0.0, 'end'),
-            font=lr_vars.DefaultFont + ' italic', padx=0, pady=0)
+            font=lr_vars.DefaultFont + ' italic', padx=0, pady=0, relief='groove')
 
         self.ButtonNote = tk.Button(
             self.last_frame, text='text', command=lambda: lr_lib.core.etc.other.openTextInEditor(self.tk_text.get('1.0', tk.END)),
-            font=lr_vars.DefaultFont + ' italic', padx=0, pady=0)
+            font=lr_vars.DefaultFont + ' italic', padx=0, pady=0, relief='groove')
 
         self.ButtonLog = tk.Button(
             self.last_frame, text='log', font=lr_vars.DefaultFont + ' italic', padx=0, pady=0,
-            command=lambda: subprocess.Popen([lr_vars.EDITOR['exe'], lr_vars.logFullName]))
+            command=lambda: subprocess.Popen([lr_vars.EDITOR['exe'], lr_vars.logFullName]), relief='groove')
 
         self.ButtonParamFileOpen = tk.Button(
             self.last_frame, text='file(3)', font=lr_vars.DefaultFont + ' bold', padx=0, pady=0,
-            command=self.param_file_editor)
+            command=self.param_file_editor, relief='groove')
 
         self.spin_toolTipTimeout = tk.Entry(
             self.last_frame, textvariable=lr_vars.VarToolTipTimeout, width=4, font=lr_vars.DefaultFont + ' italic')
