@@ -122,7 +122,7 @@ class WinPartsLbRb(lr_lib.gui.wrsp.win_text.WinText):
             command=self.comboParts_change, padx=0, pady=0,
         )
         self.rb_split_label = tk.LabelFrame(
-            self.last_frameCbx2, bd=1, padx=0, pady=0, relief='ridge',
+            self.last_frameCbx2, bd=1, padx=0, pady=0,
         )
 
         self.RBcbx_SplitList = tk.Checkbutton(

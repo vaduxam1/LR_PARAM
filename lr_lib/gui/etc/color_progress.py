@@ -11,7 +11,8 @@ class ColorProgress:
     """
     менять цвет action.c окна при "работе" поиска всех вариантов создания web_reg_save_param
     """
-    def __init__(self, action: 'lr_lib.gui.action.main_action.ActionWindow', **color_set_kwargs):
+    def __init__(self, action: 'lr_lib.gui.action.main_action.ActionWindow', min_sleep=0.5,
+                 **color_set_kwargs):
         self.is_work = [True]
         self.action = action
         self.color_set_kwargs = color_set_kwargs

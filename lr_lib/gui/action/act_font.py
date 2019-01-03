@@ -86,7 +86,7 @@ class ActFont(lr_lib.gui.action.act_replace.ActReplaceRemove):
     def background_color_set(self, color='', _types=('utton', ), obs=None) -> None:
         """поменять цвет всех виджетов"""
         if obs is None:
-            wid = [self, self.tk_text, lr_vars.Window, ]
+            wid = [self, lr_vars.Window, ]
             obs = [ob for w in wid for ob in DiR(w, _types=_types)]
 
         for ob in obs:
