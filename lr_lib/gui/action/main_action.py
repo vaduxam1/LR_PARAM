@@ -21,6 +21,7 @@ from lr_lib.core_gui.group_param.gp_act_lb import group_param_search_by_lb
 from lr_lib.core_gui.group_param.gp_act_startswith import group_param_search_by_name, group_param_search_by_exist_param
 from lr_lib.core_gui.group_param.gp_response_re import group_param_search_by_resp_re
 from lr_lib.core_gui.group_param.gp_act_re import group_param_search_by_act_re
+from lr_lib.gui.etc.color_progress import progress_decor
 
 
 class ActionWindow(lr_lib.gui.action.act_win.ActWin):
@@ -96,38 +97,37 @@ class ActionWindow(lr_lib.gui.action.act_win.ActWin):
 
         filemenu4.add_command(
             label="* Найти и Создать WRSP: всеми вариантами",
-            command=lambda: lr_lib.core_gui.group_param.main_gp.auto_param_creator(self)
+            command=lambda: progress_decor(lr_lib.core_gui.group_param.main_gp.auto_param_creator, self)(self)
         )
         filemenu4.add_command(
             label="1) Найти и Создать WRSP: в action.c, по началу имени",
-            command=lambda: lr_lib.core.var.vars_other.T_POOL_decorator(
-                group_param_search_by_name)(self, wrsp_create=True)
+            command=lambda: lr_lib.core.var.vars_other.T_POOL_decorator(progress_decor(
+                group_param_search_by_name, self))(self, wrsp_create=True)
         )
         filemenu4.add_command(
             label="2) Найти и Создать WRSP: в action.c, по action-LB",
-            command=lambda: lr_lib.core.var.vars_other.T_POOL_decorator(
-                group_param_search_by_lb)(self, wrsp_create=True, texts_for_lb=None)
+            command=lambda: lr_lib.core.var.vars_other.T_POOL_decorator(progress_decor(
+                group_param_search_by_lb, self))(self, wrsp_create=True, texts_for_lb=None)
         )
         filemenu4.add_command(
             label="3) Найти и Создать WRSP: в action.c, по regexp",
-            command=lambda: lr_lib.core.var.vars_other.T_POOL_decorator(
-                group_param_search_by_act_re)(self, wrsp_create=True)
+            command=lambda: lr_lib.core.var.vars_other.T_POOL_decorator(progress_decor(
+                group_param_search_by_act_re, self))(self, wrsp_create=True)
         )
         filemenu4.add_command(
             label="4) Найти и Создать WRSP: в Файлах Ответов, по regexp",
-            command=lambda: lr_lib.core.var.vars_other.T_POOL_decorator(
-                group_param_search_by_resp_re)(self, wrsp_create=True)
-        )
+            command=lambda: lr_lib.core.var.vars_other.T_POOL_decorator(progress_decor(
+                group_param_search_by_resp_re, self))(self, wrsp_create=True))
         filemenu4.add_command(
             label="5) Найти и Создать WRSP: в action.c, поиск по началу имен уже созданных",
-            command=lambda: lr_lib.core.var.vars_other.T_POOL_decorator(group_param_search_by_exist_param)(
-                self, list(self.web_action.websReport.wrsp_and_param_names.values()), wrsp_create=True)
-        )
+            command=lambda: lr_lib.core.var.vars_other.T_POOL_decorator(progress_decor(
+                group_param_search_by_exist_param, self))(
+                self, list(self.web_action.websReport.wrsp_and_param_names.values()), wrsp_create=True))
         filemenu4.add_command(
             label="WRSP в Файлах Ответов, по param-LB / окно от 2), долго ждать, плохой результат",
-            command=lambda: lr_lib.core.var.vars_other.T_POOL_decorator(
-                group_param_search_by_lb)(self, wrsp_create=True, texts_for_lb=True)
-        )
+            command=lambda: lr_lib.core.var.vars_other.T_POOL_decorator(progress_decor(
+                group_param_search_by_lb, self))(self, wrsp_create=True, texts_for_lb=True))
+
         self.menubar.add_cascade(label="Запуск", menu=filemenu4)
 
         filemenu5 = tk.Menu(self.menubar, tearoff=0)

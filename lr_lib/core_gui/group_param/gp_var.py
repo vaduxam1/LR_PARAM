@@ -48,6 +48,7 @@ def _ask_params(params: [str, ], action: 'lr_lib.gui.action.main_action.ActionWi
 
 
 def responce_files_texts(encoding='utf-8', errors='replace', ) -> iter([(str, str), ]):
+    """файлы ответов и запросов и все остальные"""
     fgen = os.walk(lr_vars.DEFAULT_FILES_FOLDER)
     (dirpath, dirnames, filenames) = next(fgen)
     for file in filenames:

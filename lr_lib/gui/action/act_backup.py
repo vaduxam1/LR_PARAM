@@ -8,6 +8,7 @@ import tkinter as tk
 import lr_lib.core.var.vars_other
 import lr_lib.gui.action.act_block
 import lr_lib.core.var.vars as lr_vars
+from lr_lib.gui.etc.color_progress import progress_decor
 
 
 class ActBackup(lr_lib.gui.action.act_block.ActBlock):
@@ -21,6 +22,7 @@ class ActBackup(lr_lib.gui.action.act_block.ActBlock):
         self.backup_entry.insert('1', lr_vars.BackupActionFile)
         return
 
+    @progress_decor
     def backup(self, errors='replace') -> None:
         """сделать action.c бэкап"""
         self._backup_index += 1

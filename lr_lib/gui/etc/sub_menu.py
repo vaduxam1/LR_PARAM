@@ -13,15 +13,7 @@ import lr_lib.core_gui.rename
 import lr_lib.gui.etc.color_progress
 import lr_lib.core_gui.group_param.gp_act_lb
 import lr_lib.core_gui.group_param.gp_act_startswith
-
-
-def progress_decor(func, action):
-    """декоратор - навесить цветной прогрессбар на команды меню мыши"""
-    def wrap(*args, **kwargs):
-        with lr_lib.gui.etc.color_progress.ColorProgress(action):
-            _ = func(*args, **kwargs)
-        return
-    return wrap
+from lr_lib.gui.etc.color_progress import progress_decor
 
 
 def rClicker(event) -> str:
@@ -34,7 +26,6 @@ def rClicker(event) -> str:
         except:
             selection = None
         rmenu = tk.Menu(None, tearoff=False)
-        action = event.widget.action
 
         if selection:
             rmenu.add_cascade(
@@ -91,6 +82,7 @@ def rClicker(event) -> str:
                 command=lambda e=event: lr_lib.core.var.vars_other.T_POOL_decorator(
                     progress_decor(lr_lib.core_gui.group_param.gp_act_lb.group_param_search_by_lb, e.widget.action))(
                     e.widget.action, wrsp_create=True, lb_items=[e.widget.selection_get(), ], ask=False,
+                    MutableLBRegs=(),
                 ))
 
             submenu_param.add_cascade(

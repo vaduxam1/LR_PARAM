@@ -26,7 +26,7 @@ def group_param_search_by_lb(
     is_action_text = (texts_for_lb is None)
 
     if is_action_text:
-        texts_for_lb = [action.tk_text.get(1.0, tk.END), ]
+        texts_for_lb = [action.tk_text.get(1.0, tk.END), ]  # action.c
     elif isinstance(texts_for_lb, str):
         texts_for_lb = [texts_for_lb, ]
     else:
@@ -35,6 +35,7 @@ def group_param_search_by_lb(
     if lb_items is None:
         lb_items = set(lr_lib.core.var.vars_param.LB_PARAM_FIND_LIST)
 
+    if MutableLBRegs:
         for text in texts_for_lb:
             for r in MutableLBRegs:
                 lb = re.findall(r, text)

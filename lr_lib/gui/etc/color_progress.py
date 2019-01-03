@@ -54,3 +54,13 @@ class ColorProgress:
         callback = lambda: self.action.background_color_set(color=color, **self.color_set_kwargs)
         lr_vars.MainThreadUpdater.submit(callback)  # action цвет
         return
+
+
+def progress_decor(func, action=None):
+    """декоратор - навесить цветной прогрессбар на команды меню мыши"""
+    def wrap(*args, **kwargs):
+        act = (args[0] if (action is None) else action)
+        with lr_lib.gui.etc.color_progress.ColorProgress(act):
+            _ = func(*args, **kwargs)
+        return
+    return wrap

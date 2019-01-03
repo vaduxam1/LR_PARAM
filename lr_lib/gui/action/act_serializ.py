@@ -11,6 +11,7 @@ import lr_lib.gui.etc.gui_other
 import lr_lib.gui.action._other
 import lr_lib.gui.action.act_backup
 import lr_lib.core.var.vars as lr_vars
+from lr_lib.gui.etc.color_progress import progress_decor
 
 
 class TkTextWebSerialization(lr_lib.gui.action.act_backup.ActBackup):
@@ -30,6 +31,7 @@ class TkTextWebSerialization(lr_lib.gui.action.act_backup.ActBackup):
             self.file_bar, text='open', font=lr_vars.DefaultFont, command=self.open_action_dialog)
         return
 
+    @progress_decor
     def web_action_to_tk_text(self, websReport=False, highlight_apply=True, gui_reset=True) -> None:
         """from self.web_action to self.tk_text"""
         text = self.web_action.to_str(websReport=websReport)
@@ -45,6 +47,7 @@ class TkTextWebSerialization(lr_lib.gui.action.act_backup.ActBackup):
             self.tk_text.highlight_apply()
         return
 
+    @progress_decor
     def tk_text_to_web_action(self, text=None, websReport=True, highlight_apply=True, gui_reset=True) -> None:
         """from self.web_action to self.tk_text"""
         if text is None:
@@ -62,6 +65,7 @@ class TkTextWebSerialization(lr_lib.gui.action.act_backup.ActBackup):
         self.tk_text.see("insert")
         return
 
+    @progress_decor
     def open_action(self, file=None, errors='replace', callback=None) -> None:
         """сформировать action.c"""
         self.action_file = file or lr_lib.gui.action._other.get_action_file(lr_vars.VarFilesFolder.get())
@@ -73,6 +77,7 @@ class TkTextWebSerialization(lr_lib.gui.action.act_backup.ActBackup):
                 callback()
         return
 
+    @progress_decor
     def save_action_file(self, file_name=None, errors='replace', websReport=True) -> None:
         """текст to WEB_ACTION - сохранить текст action.c окна"""
         self.tk_text_to_web_action(websReport=websReport)

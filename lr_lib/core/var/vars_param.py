@@ -12,7 +12,8 @@ Params_names = {
 LB_PARAM_FIND_LIST = [
     'sessionid=',
     'docSessionId=',
-    'Value=', 'UID=',
+    'Value=',
+    'UID=',
     'row.id=',
     'value="',
     ':[\\"',
@@ -53,7 +54,7 @@ DENY_Startswitch_PARAMS = [
 
 DENY_PARAMS = [
     'UTF-8', 'boot', 'true', 'false', 'i', 'xonLoadUseIndustrialCalendar', 'dummy', 'CPAGE', 'null', 'pt1', 'cb1', 'f1',
-    'POST', 'HTML', 'Yes', 'dtid', 'compId',
+    'POST', 'HTML', 'Yes', 'dtid', 'compId', 'this',
 ]  # не использовать в качестве параметров
 
 REGEXP_PARAMS = [
@@ -63,6 +64,9 @@ REGEXP_PARAMS = [
     '\'(.+?)\'',
     '=(.+?)\"',
     '=(.+?)\'',
+
+    '"(.+?)"',
+    '=(.+?)&',
 ]  # поиск param, на основе регулярных выражений re.findall(regexp, text)
 
 LRB_rep_list = [
