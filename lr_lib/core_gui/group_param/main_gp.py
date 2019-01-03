@@ -23,7 +23,7 @@ def auto_param_creator(action: 'lr_lib.gui.action.main_action.ActionWindow') -> 
     ps = lr_lib.core_gui.group_param.gp_act_startswith.group_param_search_by_name(action)
     params.update(ps)
 
-    if (not ps) and isinstance(ps, set):
+    if (not ps) and isinstance(ps, tuple):
         return
 
     # поиск по LB=, в action.c

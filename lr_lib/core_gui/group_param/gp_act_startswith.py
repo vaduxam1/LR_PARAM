@@ -37,7 +37,7 @@ def group_param_search_by_name(
 
         ans = y.ask()
         if ans != K_FIND:
-            return []
+            return ()
         text = y.text
 
     params = set()

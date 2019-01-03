@@ -1,6 +1,7 @@
 # -*- coding: UTF-8 -*-
 # action.с окно - шрифты и цвет
 
+import itertools
 import tkinter as tk
 import tkinter.ttk as ttk
 
@@ -80,23 +81,67 @@ class ActFont(lr_lib.gui.action.act_replace.ActReplaceRemove):
         self.tk_text.set_tegs(parent=self)
         return
 
-    def background_color_set(self, *args, color='', rr=4) -> None:
-        """
-        установить цвет фона:
-            None - следующий цвет
-            "" - изначальный цвет
-            "red" - имя цвета
-        """
-        if color is None:  # смена по кругу
-            colors = [next(lr_lib.core.var.vars_highlight.ColorIterator) for _ in range(rr)]
-        elif color:  # выбранный
-            colors = [color for _ in range(rr)]
-        else:
-            cc = self.background_color_combo.get()
-            colors = [cc for _ in range(rr)]
+    def background_color_set(self, color='') -> None:
+        """поменять цвет всех виджетов"""
+        obs = [self, lr_vars.Window, ]
+        obs = itertools.chain(*map(DiR, obs))
 
-        self.config(background=colors[0])
-        self.auto_param_creator_button.config(background=colors[1])
-        self.tk_text.config(background=colors[2])
-        self.tk_text.linenumbers.config(background=colors[3])
+        for ob in obs:
+            if color is None:
+                if ob not in ColorCash:
+                    try:
+                        ColorCash[ob] = ob['background']
+                    except Exception as ex:
+                        continue
+                background = self._rnd_color(color)
+            elif not color:
+                if ob in ColorCash:
+                    background = ColorCash[ob]
+                else:
+                    background = self._rnd_color(color)
+            else:
+                background = self._rnd_color(color)
+
+            try:
+                ob.config(background=background)
+            except Exception as ex:
+                pass
+            continue
         return
+
+    def _rnd_color(self, color) -> str:
+        """
+        вернуть имя цвета
+        :param color: None-случайный/False-оригинальный/str-"Red"
+        :return: "Red"
+        """
+        if color is None:
+            color = next(lr_lib.core.var.vars_highlight.ColorIterator)
+        elif not color:
+            color = self.background_color_combo.get()
+        return color
+
+
+ColorCash = {}
+_Typ = ['utton', ]
+
+
+def DiR(ob):
+    """объекты для смены цвета"""
+    for attr in dir(ob):
+        ga = getattr(ob, attr)
+        ta = type(ga)
+        if not any(map(str(ta).__contains__, _Typ)):
+            continue
+
+        try:
+            ga['background']
+            assert hasattr(ga, 'config')
+        except:
+            continue
+
+        yield ga
+        if hasattr(ga, 'winfo_children') and (not callable(ga)):
+            yield from DiR(ga.winfo_children())
+        continue
+    return

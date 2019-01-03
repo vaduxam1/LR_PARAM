@@ -8,10 +8,10 @@ import lr_lib.core.var.vars as lr_vars
 import lr_lib.core.var.vars_highlight
 
 
-class WinFrame(ttk.Frame):
+class WinFrame(tk.Frame):
     """ttk.Frame"""
     def __init__(self):
-        ttk.Frame.__init__(self, lr_vars.Tk, padding="0 0 0 0")
+        tk.Frame.__init__(self, lr_vars.Tk)
 
         lr_vars.Tk.protocol("WM_DELETE_WINDOW", self.on_closing)
         lr_vars.Tk.geometry('{}x{}'.format(*lr_vars._Tk_WIND_SIZE))
@@ -34,9 +34,9 @@ class WinFrame(ttk.Frame):
         # frame
         self.main_frame = tk.LabelFrame(
             self, bd=2, labelanchor=tk.N, relief='groove', padx=0, pady=0, font=lr_vars.DefaultFont)
-        self.mid_frame = ttk.Frame(self.main_frame, padding="0 0 0 0")
-        self.find_frame = ttk.Frame(self.main_frame, padding="0 0 0 0")
-        self.show_param_frame = ttk.Frame(self.main_frame, padding="0 0 0 0")
+        self.mid_frame = tk.Frame(self.main_frame, )
+        self.find_frame = tk.Frame(self.main_frame, )
+        self.show_param_frame = tk.Frame(self.main_frame, )
         self.last_frame = tk.LabelFrame(
             self, labelanchor=tk.S, bd=1, relief='groove', padx=0, pady=0, font=lr_vars.DefaultFont)
         return

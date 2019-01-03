@@ -15,7 +15,6 @@ class WinAct(lr_lib.gui.wrsp.win_frame.WinFrame):
     """связь с lr_lib.gui.action.main_action.ActionWindow"""
     def __init__(self):
         lr_lib.gui.wrsp.win_frame.WinFrame.__init__(self)
-
         self.action_windows = collections.OrderedDict()  # {id: lr_lib.gui.action.main_action.ActionWindow, }
 
         self.actionButton = tk.Button(
