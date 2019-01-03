@@ -22,10 +22,10 @@ highlight_words_main_file = os.path.join(highlight_words_folder, 'highlight_word
 highlight_words_files_startswith = 'highlight_words'
 
 
-def random_color(ckeck=True, all_color=tuple(COLORS.keys())) -> str:
+def random_color(ckeck=True, all_color='ABCDEF1234567890') -> str:
     """итератор - случайный цвет"""
     while ckeck:
-        color = random.choice(all_color)
+        color = '#{}'.format(''.join(random.choice(all_color) for _ in range(6)))
         yield color
         continue
     return
