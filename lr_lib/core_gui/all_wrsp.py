@@ -76,7 +76,7 @@ def _wrsp_text_delta_remove(wr: (dict, str), ) -> str:
 
 def _all_wrsp(action: 'lr_lib.gui.action.main_action.ActionWindow') -> None:
     """поиск всех возможных wrsp"""
-    with lr_lib.gui.etc.color_progress.ColorProgress(action, obs=[action.tk_text.linenumbers, ]):
+    with lr_lib.gui.etc.color_progress.ColorProgress(action):
         wr = _wr_create()  # первый/текущий wrsp
         while wr:
             yield wr
