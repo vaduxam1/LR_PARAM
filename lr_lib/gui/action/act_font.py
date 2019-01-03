@@ -88,6 +88,7 @@ class ActFont(lr_lib.gui.action.act_replace.ActReplaceRemove):
         if obs is None:
             wid = [self, lr_vars.Window, ]
             obs = [ob for w in wid for ob in DiR(w, _types=_types)]
+            obs.append(self.tk_text.linenumbers)
 
         for ob in obs:
             if color is None:

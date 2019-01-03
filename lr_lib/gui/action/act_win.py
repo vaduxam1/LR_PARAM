@@ -184,18 +184,18 @@ class ActWin(lr_lib.gui.action.act_any.ActAny):
             self.web_action_to_tk_text(websReport=True)
         return
 
-    def get_result_folder(self, resilts_xml='Results.xml') -> str:
+    def get_result_folder(self, results_xml='Results.xml') -> str:
         """директория файлов ответов"""
         result_folder = self.usr_config['General']['LastResultDir']
         folder = os.path.join(os.getcwd(), result_folder)
-        resilts_xml = os.path.join(folder, resilts_xml)  # 'C:\\SCR\\LR_10\\LR_PARAM\\result1\\Results.xml'
+        results_xml = os.path.join(folder, results_xml)  # 'C:\\SCR\\LR_10\\LR_PARAM\\result1\\Results.xml'
 
-        if not os.path.isfile(resilts_xml):
+        if not os.path.isfile(results_xml):
             lr_vars.Logger.error(
                 'Не найдены LoadRunner файлы, ответов при воспроизведении, например "LR_scr\\result1\\Results.xml".\n'
                 'Для появления файлов ответов, необходимо хотябы один раз, запустить action.c скрипт в LoadRunner.\n'
                 'Путь директории последнего воспроизведения, берется из "LR_scr\\имя_скрипта.usr" LoadRunner файла.')
-        with open(resilts_xml) as f:
+        with open(results_xml) as f:
             text = f.read()
 
         text = text.rsplit('.inf]]></Path>', 1)
