@@ -51,31 +51,61 @@ class RunSettingWindow(tk.Toplevel):
             self, lr_lib.core_gui.group_param.gp_act_lb.group_param_search_by_lb,
             '1) по LB',
             label_title=TT_LB,
+            _act_num=0,
+            files_req=True,
+            files_resp=True,
+            files_other=True,
+            only_in_act_param=True,
         )
         self.item2 = RItem(
             self, lr_lib.core_gui.group_param.gp_act_re.group_param_search_by_act_re,
             '2) по regexp',
             label_title=TT_RE,
+            _act_num=0,
+            files_req=True,
+            files_resp=True,
+            files_other=False,
+            only_in_act_param=True,
         )
         self.item3 = RItem(
             self, lr_lib.core_gui.group_param.gp_response_re.group_param_search_by_resp_re,
             '3) по regexp c постобработкой результата',
             label_title=TT_REP,
+            _act_num=0,
+            files_req=False,
+            files_resp=True,
+            files_other=True,
+            only_in_act_param=True,
         )
         self.item4 = RItem(
             self, lr_lib.core_gui.group_param.gp_act_resp_split.group_param_search_by_split,
             '4) split способ',
             label_title=TT_SPL,
+            _act_num=0,
+            files_req=True,
+            files_resp=True,
+            files_other=True,
+            only_in_act_param=True,
         )
         self.item_last_startsw = RItem(
             self, lr_lib.core_gui.group_param.gp_act_start.group_param_search_by_exist_param,
             '5) LAST: по начальным символам известных',
             label_title=TT_N,
+            _act_num=0,
+            files_req=True,
+            files_resp=True,
+            files_other=True,
+            only_in_act_param=True,
         )
         self.item_last_lb = RItem(
             self, lr_lib.core_gui.group_param.gp_lb_post.group_param_search_by_lb_post,
             '6) LAST: по LB известных',
             label_title=TT_LBP,
+            _act_num=0,
+            files_req=True,
+            files_resp=True,
+            files_other=True,
+            only_in_act_param=True,
         )
 
         # Button

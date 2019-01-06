@@ -1,7 +1,8 @@
 # -*- coding: UTF-8 -*-
 # фильтрация и сортировка param
 import lr_lib.core
-from lr_lib.core.var.vars_param import DENY_Startswitch_PARAMS, DENY_PARAMS_LOWER, param_splitters, param_valid_letters
+from lr_lib.core.var.vars_param import DENY_Startswitch_PARAMS, DENY_PARAMS_LOWER, param_splitters, \
+    param_valid_letters, DENY_Force_Startswitch_PARAMS
 from lr_lib.core.var import vars as lr_vars
 
 
@@ -34,9 +35,11 @@ def param_filter(params: [str, ], deny_param_filter=True, ) -> iter((str,)):
     for param in params:
         len_p = len(param)
 
-        if param.lower() in DENY_PARAMS_LOWER:
+        if len_p < lr_vars.MinParamLen:
+            continue  # чтото 1-2 символьное
+        elif any(map(param.startswith, DENY_Force_Startswitch_PARAMS)):
             continue
-        elif len_p < lr_vars.MinParamLen:  # иногда находит чтото 1-2 символьное
+        elif param.lower() in DENY_PARAMS_LOWER:
             continue
         elif filter_deny_onUpper(param):
             continue  # "onScreen"
@@ -46,6 +49,8 @@ def param_filter(params: [str, ], deny_param_filter=True, ) -> iter((str,)):
             continue  # "224px"
         elif param.startswith('JSESSIONID') and (len_p > 10) and all(map(str.isnumeric, param[10:])):
             continue  # "JSESSIONID2" - уже найденный LoadRunner-ом параметр
+        elif param.startswith('-') and (len_p > 2) and all(map(str.isnumeric, param[1:])):
+            continue  # "-310"
 
         # иначе это param - вернуть
         yield param

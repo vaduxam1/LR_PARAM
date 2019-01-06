@@ -137,6 +137,8 @@ def _params_by_part(
         right = split_text[index + 1]
         right = right.split('\n', 1)
         right = right[0].rstrip()
+        if not right:
+            continue
 
         if part_mode:
             state = lr_lib.core.etc.lbrb_checker.check_bound_lb(left)

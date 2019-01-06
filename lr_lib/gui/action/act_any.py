@@ -6,6 +6,7 @@ import time
 
 import tkinter as tk
 import tkinter.ttk as ttk
+import tkinter.messagebox
 
 import lr_lib.core.var.vars_param
 import lr_lib.gui.action.act_goto
@@ -42,7 +43,7 @@ class ActAny(lr_lib.gui.action.act_goto.ActGoto):
 
     def clear_text(self) -> None:
         """очистить tk_text"""
-        if messagebox.askquestion('очистить', 'очистить окно?', parent=self) == 'yes':
+        if tkinter.messagebox.askquestion('очистить', 'очистить окно?', parent=self) == 'yes':
             self.backup()
             self.tk_text.delete(1.0, tk.END)
 
@@ -66,11 +67,20 @@ class ActAny(lr_lib.gui.action.act_goto.ActGoto):
         return
 
     def set_title(self) -> None:
-        self.title('{} {} undo: ctrl-z / redo: ctrl-y)'.format(self._set_title(), lr_vars.VERSION))
+        self.title('{} {} undo: ctrl-z / redo: ctrl-y)'.format(
+            self._set_title(), lr_vars.VERSION,
+        ))
         return
 
     def _set_title(self) -> str:
-        i = '{a} | {i} | backup={b} |'.format(a=self.action_file, b=self._backup_index, i=self.id_)
+        i = '{a} | {i} | backup={b} | Всего( WRSP/WebSnapshot/WebAny ) : ( {ww}/{ws}/{wa} ) |'.format(
+            a=self.action_file,
+            b=self._backup_index,
+            i=self.id_,
+            ww=len(self.web_action.websReport.wrsp_and_param_names),
+            wa=len(list(self.web_action.get_web_all())),
+            ws=len(list(self.web_action.get_web_snapshot_all())),
+        )
         return i
 
     def _open_action_final(self, *args) -> None:

@@ -54,16 +54,21 @@ LB_PARAM_FIND_LIST = [
 
 DENY_Startswitch_PARAMS = (
     'opt_', 'cmd_', 'data_', 'uuid_',
+)  # не использовать в качестве параметров, если начинаются так + цифры
+
+DENY_Force_Startswitch_PARAMS = (
+    'X-Atmosphere', 'Accept-', 'Adf-', 'X-Cache', 'click', 'selected', 'content-', 'doc-content', 'suppress',
+    'disclosed', '_adfp_', '_afrLocal', 'viewport', 'adfport', 'User-', 'Transfer-',
 )  # не использовать в качестве параметров, если начинаются так
 
 DENY_PARAMS_LOWER = {
-    'UTF-8', 'boot', 'true', 'false', 'i', 'xonLoadUseIndustrialCalendar', 'dummy', 'CPAGE', 'null', 'pt1',
-    'cb1', 'f1', 'POST', 'HTML', 'Yes', 'dtid', 'compId', 'this', 'left', 'right', 'top', 'bottom', 'open',
-    'pageY', 'pageX', 'value', 'which', 'items', 'reference', 'selectAll', 'clearFirst', 'Referer', 'text',
+    'UTF-8', 'boot', 'true', 'false', 'i', 'xonLoadUseIndustrialCalendar', 'dummy', 'CPAGE', 'null', 'pt1', 'itSearch',
+    'cb1', 'f1', 'POST', 'HTML', 'Yes', 'dtid', 'compId', 'this', 'left', 'right', 'top', 'bottom', 'open', 'unique',
+    'pageY', 'pageX', 'value', 'which', 'items', 'reference', 'selectAll', 'clearFirst', 'Referer', 'text', 'advradio',
     'otr', 'zul', 'user_name', 'user', 'name', 'password', 'jsessionid', 'sessionid', 'horizontal', 'inprogress',
     'fromServer', 'undefined', 'fixedSize', 'maximized', 'isLoaded', 'keypress', 'function', 'complete', 'textarea',
     'checkbox', 'tabpanel', 'embedded', 'dblclick', 'padding', 'boolean', 'checked', 'option', 'hidden', 'string',
-    'normal', 'script', 'newPos', 'inline', 'number', 'before', 'radio', 'input', 'popup', 'self', 'cmd',
+    'normal', 'script', 'newPos', 'inline', 'number', 'before', 'radio', 'input', 'popup', 'self', 'cmd', 'advcheckbox',
     'margin', 'windowY', 'windowX', 'formatBlock', 'propertychange', 'plugin_resolved', 'uploadInfo', 'granted',
     'tmpobj', 'QTWeb', 'nodom', 'day', 'toolbar',  'Accept-Language',  'print_scroller',  'installCheckResult',
     'timeZoneOffset', 'mouseleave', 'cls', 'setConstraint', 'dialog-edit', 'exitFullscreen', 'scrollable', 'between',
@@ -71,12 +76,14 @@ DENY_PARAMS_LOWER = {
     'webkitRequestFullscreen', '_columns', 'loadCertificateContent', 'doFocus_',  'ZK-SID',  'before_center',  'Trim',
     'table-wrapper',  '_closable',  'PATCH',  '_posInfo',  '_resizable',  'padding-',  'dialog',  'z-paging-next',
     '_columnsgroup',  'beforeSize',  'common-scroller', 'item-content',  '_running',  'z-paging-first',  'expand',
-    'timezone',  'Transfer-Encoding',  'DOMContentLoaded',  'mouseover',  'overrideTooltip',  'z-renderdefer',
-    'zIndex', '_rows',  'head',  'Italic',  'getValue',  'selectedScroller',  'content-body',  'zk_download',
-    'visibility', 'rowspan',  '_doClick',  'ZK-Error',  '_visible',  'doc-content-view',  'onload',  'ru_RU', 'unlink',
+    'timezone',  'DOMContentLoaded',  'mouseover',  'overrideTooltip',  'z-renderdefer', 'mailCount',
+    'zIndex', '_rows',  'head',  'Italic',  'getValue',  'zk_download', 'udu-webcenter', 'natural', 'checkJinn',
+    'visibility', 'rowspan',  '_doClick',  'ZK-Error',  '_visible',  'onload',  'ru_RU', 'unlink', 'cryptoProPlugin',
     'Bold', '_src', 'icon', 'year', 'west', 'Blob', 'rows', 'Busy', 'Host', 'color', 'panel', 'outer', 'fixed',
-    'unload', 'content-language', 'content_script', 'woff', 'ARP', 'signAttributes', 'MODApplet',
-    'getValueFromArrayById', 'zkau',
+    'unload', 'content_script', 'woff', 'ARP', 'signAttributes', 'MODApplet', 'selectedRowKeys', '_afrVblRws',
+    'getValueFromArrayById', 'zkau', 'username',  'styleClass',  'desktop',  'Content-Type',  'Resource',  'zk',
+    'json',  'styles',  'sortDirection', 'charCode', 'autoSubmit', 'polling', 'xonLoadCal', 'valueChange',
+    'combobox', 'blank', 'outcome', 'renderOnly', 'clientKey', 'clientId',
 }  # не использовать в качестве параметров
 
 

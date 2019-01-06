@@ -44,8 +44,8 @@ def group_param_search_by_lb_post(
     if ask:
         y = lr_lib.gui.widj.dialog.YesNoCancel(
             [K_FIND, K_SKIP],
-            title='пост LB',
-            is_text='\n'.join(lb_items),
+            title='6.1) пост LB запрос',
+            is_text='6.1) {}'.format('\n'.join(lb_items)),
             text_before=lr_lib.core_gui.run.r_texts.TT_LBP,
             text_after='добавить/удалить',
             parent=action,
@@ -71,9 +71,9 @@ def group_param_search_by_lb_post(
         cf = CREATE_or_FIND(wrsp_create)
         y = lr_lib.gui.widj.dialog.YesNoCancel(
             [cf, K_SKIP],
-            title='123',
+            title='6.2) пост LB ответ',
             is_text='\n'.join(params),
-            text_before='3) найдено {} шт'.format(len(params)),
+            text_before='6.2) найдено {} шт'.format(len(params)),
             text_after='добавить/удалить',
             parent=action,
             default_key=cf,

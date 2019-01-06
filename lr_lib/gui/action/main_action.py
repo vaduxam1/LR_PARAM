@@ -4,6 +4,7 @@
 import os
 
 import tkinter as tk
+import tkinter.messagebox
 
 import lr_lib
 import lr_lib.core.var.vars_other
@@ -45,6 +46,20 @@ class ActionWindow(lr_lib.gui.action.act_win.ActWin):
     lr_act_toplevel.ActToplevel
     tk.Toplevel
     """
+
+    def _all_wrsp_remove(self) -> None:
+        """удалить все созданные WRSP"""
+        if not tkinter.messagebox.askokcancel('Удаление WRSP', 'Удалить все web_reg_save_param из action.c?'):
+            return
+
+        w_list = list(self.web_action.get_web_reg_save_param_all())
+
+        for wrsp in w_list:
+            self.web_action.web_reg_save_param_remove(wrsp.name)
+            continue
+
+        self.web_action_to_tk_text(websReport=True)  # вставить в action.c
+        return
 
     def __repr__(self) -> str:
         """переопределить строковое представление объекта класса, все равно ткинер сует чтото неинформативное"""
@@ -96,6 +111,7 @@ class ActionWindow(lr_lib.gui.action.act_win.ActWin):
         filemenu3 = tk.Menu(self.menubar, tearoff=0)
         filemenu3.add_command(label="Remove dummy", command=self.remove_web_dummy_template)
         filemenu3.add_command(label="Remove thinktime", command=self.thinktime_remove)
+        filemenu3.add_command(label="Remove ALL web_reg_save_param", command=self._all_wrsp_remove)
         filemenu3.add_command(label="Rename transaction", command=self.all_transaction_rename)
         filemenu3.add_command(label="Rename WRSP+", command=lambda: lr_lib.core_gui.rename.all_wrsp_auto_rename(self))
         filemenu3.add_command(label="Rename WRSP-", command=lambda: lr_lib.core_gui.rename.all_wrsp_rename(self))
