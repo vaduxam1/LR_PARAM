@@ -133,6 +133,8 @@ def _params_by_part(
         left = split_text[index]
         left = left.rsplit('\n', 1)
         left = left[-1].lstrip()
+        if not left:
+            continue
 
         right = split_text[index + 1]
         right = right.split('\n', 1)

@@ -2,58 +2,68 @@
 # всплывающие подсказки
 
 import threading
+import collections
 
 import tkinter as tk
 
 import lr_lib.core.var.vars as lr_vars
 import lr_lib.core.var.vars_highlight
 
+Lock = threading.Lock()
+ActiveTips = collections.OrderedDict()
+
+
+def tt_clear() -> None:
+    """удалить все ToolTip"""
+    tips = list(ActiveTips.keys())
+    for tip in tips:
+        try:
+            tip.hidetip()
+        except Exception as ex:
+            pass
+        try:
+            del ActiveTips[tip]
+        except Exception as ex:
+            pass
+        continue
+    return
+
 
 class ToolTip(object):
     """всплывающие подсказки"""
-    toolTips = []
-    lock = threading.Lock()
-
     def __init__(self, widget):
         self.widget = widget
         self.tip = None
+
         self.x = 0
         self.y = 0
         return
 
     def showtip(self, text: str) -> None:
         """Display text in tooltip"""
-        if self.toolTips:
-            with self.lock:
-                for tip in self.toolTips:
-                    try:
-                        tip.hidetip()
-                    except Exception as ex:
-                        pass
-                    try:
-                        self.toolTips.remove(tip)
-                    except Exception as ex:
-                        pass
-                    continue
-
-        with self.lock:
-            self.toolTips.append(self)
-
         try:
             (x, y, cx, cy) = self.widget.bbox("insert")
             x += (self.widget.winfo_rootx() + 25)
             y += (self.widget.winfo_rooty() + 20)
+
             self.tip = tk.Toplevel(self.widget)
+            ActiveTips[self] = None
+
             self.tip.wm_overrideredirect(1)
             self.tip.wm_geometry("+%d+%d" % (x, y))
             self.tip.attributes('-topmost', True)
-            tk.Label(self.tip, text=text, justify=tk.LEFT, background=lr_lib.core.var.vars_highlight.Background, relief=tk.SOLID, borderwidth=1,
-                     font=lr_vars.ToolTipFont).pack(ipadx=0, ipady=0)
+
+            lbl = tk.Label(
+                self.tip, text=text, justify=tk.LEFT, background=lr_lib.core.var.vars_highlight.Background,
+                relief=tk.SOLID, borderwidth=1, font=lr_vars.ToolTipFont,
+            )
+            lbl.pack(ipadx=0, ipady=0)
         except Exception as ex:
             pass
         return
 
     def hidetip(self) -> None:
+        """destroy подсказки"""
         try:
             self.tip.destroy()
         except Exception as ex:
@@ -74,24 +84,51 @@ def widget_values_counter(widget) -> (int, int):
     except Exception as ex:
         pass
 
-    return widget.widgetName, i, li
+    item = (widget.widgetName, i, li)
+    return item
 
 
 def createToolTip(widget, text: str) -> None:
     """всплывающая подсказка для widget"""
     toolTip = ToolTip(widget)
 
-    def enter(event, toolTip=toolTip, text=text, wlines='') -> None:
+    def _enter(event, toolTip=toolTip, text=text, wlines='') -> None:
+        """событие входа мыши на виджет"""
+        Lock.acquire()
+        try:
+            tt_clear()
+        finally:
+            Lock.release()
+
         wvc = widget_values_counter(widget)
         if any(wvc[1:]):
             wlines = ' * {0} выбрана строка {1} из {2}\n'.format(*wvc)
 
-        toolTip.showtip('{t}{text}'.format(t=wlines, text=text.rstrip()))
-        widget.after(int(lr_vars.VarToolTipTimeout.get()), toolTip.hidetip)  # тк иногда подсказки "зависают"
+        t = '{t}{text}'.format(t=wlines, text=text.rstrip(), )
+        toolTip.showtip(t)
+
+        t = lr_vars.VarToolTipTimeout.get()
+        t = int(t)
+        widget.after(t, toolTip.hidetip)
         return
 
     def leave(event, toolTip=toolTip) -> None:
-        toolTip.hidetip()
+        """событие выхода мыши из виджета"""
+        Lock.acquire()
+        try:
+            lr_vars.Tk.after_cancel(ActiveTips[toolTip])
+        except (KeyError, ValueError):
+            return
+        finally:
+            toolTip.hidetip()
+            Lock.release()
+        return
+
+    def enter(event, wait=750, ) -> None:
+        """событие входа мыши на виджет"""
+        Lock.acquire()
+        ActiveTips[toolTip] = lr_vars.Tk.after(wait, _enter, event)
+        Lock.release()
         return
 
     widget.bind('<Enter>', enter)
