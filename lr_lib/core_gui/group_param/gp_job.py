@@ -80,7 +80,7 @@ def _text_from_params_source(
 def _group_param_search_by_exist_param(
         exist_params: [str, ],
         params_source,
-        **kwargs,
+        **kwargs
 ) -> iter((str,)):
     """поиск по началу имени - взять n первых символов для повторного поиска param по началу имени"""
     param_spin = lr_vars.SecondaryParamLen.get()
@@ -102,7 +102,7 @@ def _group_param_search_by_lb(lb_items: [str, ], params_source) -> iter((str, ))
 def _group_param_search_by_param_part(
         param_parts: ["zkau_", ],
         params_source,
-        **kwargs,
+        **kwargs
 ) -> iter(("zkau_5650", "zkau_5680",)):
     """
     для группы parts

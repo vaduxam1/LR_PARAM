@@ -18,7 +18,7 @@ M = (_M0 + '{:<%s}' + _M0 + _M1 + '{}' + _M0)  # "старое имя" -> "но�
 
 
 @lr_lib.core.var.vars_other.T_POOL_decorator
-def all_wrsp_auto_rename(gui: 'lr_lib.gui.action.main_action.ActionWindow', *args, ) -> None:
+def all_wrsp_auto_rename(gui: 'lr_lib.gui.action.main_action.ActionWindow', *args) -> None:
     """
     переименовать все wrsp, автоматически, с учетом всех настроек, для wrsp, содержащих LB/RB вида:
         ('"LB=', '"RB='), ('"LB/IC=', '"RB/IC=')

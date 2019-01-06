@@ -219,7 +219,7 @@ class RItem:
                 ask2=ask2,
                 wrsp_create=wrsp_create,
                 action_text=at,
-                **self.kwargs,
+                **self.kwargs
             )
         return params
 
