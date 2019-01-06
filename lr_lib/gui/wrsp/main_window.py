@@ -394,13 +394,13 @@ class Window(lr_lib.gui.wrsp.win_menu.WinMenu):
             '# Window.filesStats_cbx\n\t'
             '# lr_vars.VarAllFilesStatistic -> lr_vars.AllFiles'
         )
-        lr_lib.gui.widj.tooltip.createToolTip(
-            self.cbxFirstLastFile,
-            'автоматически выбирается первый файл из (3)\n'
-            ' on - reverse список файлов\n'
-            '# Window.cbxFirstLastFile\n\t'
-            '# lr_vars.VarFirstLastFile -> lr_vars.VarFileName'
-        )
+
+        self._T2 = 'автоматически выбирается первый файл из (3)\n' \
+                   ' on - reverse список файлов\n' \
+                   '# Window.cbxFirstLastFile\n\t' \
+                   '# lr_vars.VarFirstLastFile -> lr_vars.VarFileName'
+        lr_lib.gui.widj.tooltip.createToolTip(self.cbxFirstLastFile, self._T2)
+
         lr_lib.gui.widj.tooltip.createToolTip(
             self.cbxFileNamesNumsShow,
             'показывать имена найденых файлов и inf номера, после поиска(2)\n\t'

@@ -1,7 +1,11 @@
 ﻿# -*- coding: UTF-8 -*-
 # общие переменные, настройки - param, web и файлы
 
+import itertools
 import string
+
+import lr_lib.core
+import lr_lib.core.var.vars_highlight
 
 ########
 # param
@@ -48,15 +52,44 @@ LB_PARAM_FIND_LIST = [
     'PSI=',
 ]  # использовать для поиска param(1) по LB=
 
-DENY_Startswitch_PARAMS = [
+DENY_Startswitch_PARAMS = (
     'opt_', 'cmd_', 'data_', 'uuid_',
-    ]  # не использовать в качестве параметров, если начинаются так
+)  # не использовать в качестве параметров, если начинаются так
 
-DENY_PARAMS = [
-    'UTF-8', 'boot', 'true', 'false', 'i', 'xonLoadUseIndustrialCalendar', 'dummy', 'CPAGE', 'null', 'pt1', 'cb1', 'f1',
-    'POST', 'HTML', 'Yes', 'dtid', 'compId', 'this', 'left', 'right', 'top', 'bottom', 'open', 'pageY', 'pageX',
-    'value', 'which', 'items', 'reference', 'selectAll', 'clearFirst',
-]  # не использовать в качестве параметров
+DENY_PARAMS_LOWER = {
+    'UTF-8', 'boot', 'true', 'false', 'i', 'xonLoadUseIndustrialCalendar', 'dummy', 'CPAGE', 'null', 'pt1',
+    'cb1', 'f1', 'POST', 'HTML', 'Yes', 'dtid', 'compId', 'this', 'left', 'right', 'top', 'bottom', 'open',
+    'pageY', 'pageX', 'value', 'which', 'items', 'reference', 'selectAll', 'clearFirst', 'Referer', 'text',
+    'otr', 'zul', 'user_name', 'user', 'name', 'password', 'jsessionid', 'sessionid', 'horizontal', 'inprogress',
+    'fromServer', 'undefined', 'fixedSize', 'maximized', 'isLoaded', 'keypress', 'function', 'complete', 'textarea',
+    'checkbox', 'tabpanel', 'embedded', 'dblclick', 'padding', 'boolean', 'checked', 'option', 'hidden', 'string',
+    'normal', 'script', 'newPos', 'inline', 'number', 'before', 'radio', 'input', 'popup', 'self', 'cmd',
+    'margin', 'windowY', 'windowX', 'formatBlock', 'propertychange', 'plugin_resolved', 'uploadInfo', 'granted',
+    'tmpobj', 'QTWeb', 'nodom', 'day', 'toolbar',  'Accept-Language',  'print_scroller',  'installCheckResult',
+    'timeZoneOffset', 'mouseleave', 'cls', 'setConstraint', 'dialog-edit', 'exitFullscreen', 'scrollable', 'between',
+    'insertChildHTML_', 'zmousedown', '_target', '_minsize', 'DOMMouseScroll', 'resetSize_', 'z-paging', 'shortName',
+    'webkitRequestFullscreen', '_columns', 'loadCertificateContent', 'doFocus_',  'ZK-SID',  'before_center',  'Trim',
+    'table-wrapper',  '_closable',  'PATCH',  '_posInfo',  '_resizable',  'padding-',  'dialog',  'z-paging-next',
+    '_columnsgroup',  'beforeSize',  'common-scroller', 'item-content',  '_running',  'z-paging-first',  'expand',
+    'timezone',  'Transfer-Encoding',  'DOMContentLoaded',  'mouseover',  'overrideTooltip',  'z-renderdefer',
+    'zIndex', '_rows',  'head',  'Italic',  'getValue',  'selectedScroller',  'content-body',  'zk_download',
+    'visibility', 'rowspan',  '_doClick',  'ZK-Error',  '_visible',  'doc-content-view',  'onload',  'ru_RU', 'unlink',
+    'Bold', '_src', 'icon', 'year', 'west', 'Blob', 'rows', 'Busy', 'Host', 'color', 'panel', 'outer', 'fixed',
+    'unload', 'content-language', 'content_script', 'woff', 'ARP', 'signAttributes', 'MODApplet',
+    'getValueFromArrayById', 'zkau',
+}  # не использовать в качестве параметров
+
+
+def DENY_PARAMS_update_and_lower() -> None:
+    """
+    обновить DENY_PARAMS из highlight_words, после инита highlight_words
+    """
+    DENY_PARAMS_LOWER.update(lr_lib.core.var.vars_highlight.highlight_words)
+    ldp = list(map(str.lower, map(str.strip, itertools.chain(DENY_PARAMS_LOWER, LRB_rep_list, LB_PARAM_FIND_LIST, ))))
+    DENY_PARAMS_LOWER.clear()
+    DENY_PARAMS_LOWER.update(ldp)
+    return
+
 
 REGEXP_PARAMS = [
     '\"(.+?)\"',
@@ -96,6 +129,9 @@ StripRBEnd3 = ['{', ',']
 
 Screening = ['\\', '"', ]  # символы для экранирования слешем
 AddAllowParamSymb = '_!-'  # символы, которые могут входить в имя param, кроме букв и цифр
+
+param_valid_letters = (string.ascii_letters + string.digits + AddAllowParamSymb)  # символы из которых, может состоять param
+
 
 # символы обрезки автозамены
 param_splitters = (string.punctuation + string.whitespace)

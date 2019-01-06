@@ -12,7 +12,7 @@ import lr_lib.core_gui.all_wrsp
 import lr_lib.core_gui.rename
 import lr_lib.gui.etc.color_progress
 import lr_lib.core_gui.group_param.gp_act_lb
-import lr_lib.core_gui.group_param.gp_act_startswith
+import lr_lib.core_gui.group_param.gp_act_start
 from lr_lib.gui.etc.color_progress import progress_decor
 
 
@@ -73,15 +73,17 @@ def rClicker(event) -> str:
             submenu_param.add_cascade(
                 label='группа(найти по налалу имени) -> найти и заменить', underline=0,
                 command=lambda e=event: lr_lib.core.var.vars_other.T_POOL_decorator(
-                    progress_decor(lr_lib.core_gui.group_param.gp_act_startswith.group_param_search_by_name, e.widget.action))(
-                    e.widget.action, wrsp_create=True, text=e.widget.selection_get(),
+                    progress_decor(
+                        lr_lib.core_gui.group_param.gp_act_start.group_param_search_by_name, e.widget.action))(
+                    e.widget.action, [['web', e.widget.action], 'all'], wrsp_create=True, text=e.widget.selection_get(),
                 ))
 
             submenu_param.add_cascade(
                 label='* группа(найти по LB=") -> найти и заменить', underline=0,
                 command=lambda e=event: lr_lib.core.var.vars_other.T_POOL_decorator(
                     progress_decor(lr_lib.core_gui.group_param.gp_act_lb.group_param_search_by_lb, e.widget.action))(
-                    e.widget.action, wrsp_create=True, lb_items=[e.widget.selection_get(), ], ask=False,
+                    e.widget.action, [['web', e.widget.action], 'all'], wrsp_create=True,
+                    lb_items=[e.widget.selection_get(),], ask=False,
                     MutableLBRegs=(),
                 ))
 

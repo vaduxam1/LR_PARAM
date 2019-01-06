@@ -338,3 +338,8 @@ class ActionWebsAndLines:
             sep = is_str
             continue
         return
+
+    def _all_web_body_text(self) -> str:
+        """текст body всех web"""
+        text = '\n'.join(w.get_body() for w in self.get_web_all())
+        return text

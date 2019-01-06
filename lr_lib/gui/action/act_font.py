@@ -8,6 +8,7 @@ import tkinter.ttk as ttk
 import lr_lib
 import lr_lib.core.var.vars_highlight
 import lr_lib.gui.action.act_replace
+import lr_lib.gui.etc.color_change
 import lr_lib.core.var.vars as lr_vars
 
 
@@ -72,10 +73,14 @@ class ActFont(lr_lib.gui.action.act_replace.ActReplaceRemove):
                                                    font=lr_vars.DefaultFont)
         self.background_color_combo['values'] = list(sorted(lr_lib.etc.help.COLORS.keys()))
 
-        self.background_color_combo.bind("<KeyRelease-Return>", lambda *a: self.background_color_set(
-            color=self.background_color_combo.get(), obs=[self.tk_text, ], ))
-        self.background_color_combo.bind("<<ComboboxSelected>>", lambda *a: self.background_color_set(
-            color=self.background_color_combo.get(), _types=('Text', 'rame', 'bel', ), ))
+        self.background_color_combo.bind(
+            "<KeyRelease-Return>", lambda *a: lr_lib.gui.etc.color_change.background_color_set(
+                self, color=self.background_color_combo.get(), obs=[self.tk_text, ],
+            ))
+        self.background_color_combo.bind(
+            "<<ComboboxSelected>>", lambda *a: lr_lib.gui.etc.color_change.background_color_set(
+            self, color=self.background_color_combo.get(), _types=('Text', 'rame', 'bel', ),
+            ))
         self.config(background=self.background_color_combo.get())
         return
 

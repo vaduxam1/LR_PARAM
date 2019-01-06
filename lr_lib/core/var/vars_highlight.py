@@ -1,8 +1,8 @@
 ﻿# -*- coding: UTF-8 -*-
 # Highlight переменные, настройки
 
-import itertools
 import os
+import itertools
 import random
 import string
 
@@ -17,16 +17,26 @@ HighlightAfter0 = 1500  # задержка(мс), перед перезапус�
 HighlightAfter1 = 250  # задержка(мс), перед стартом подсветки всех линий, отображенных на экране
 HighlightAfter2 = 250  # задержка(мс), перед подсветкой одной линии
 Background = 'khaki'
+ColorProgressDelay = 0.5  # мс - чем меньше тем быстрее смена цветов "гирлянды"
+
 highlight_words_folder = os.path.join(lib_folder, 'etc')
 highlight_words_main_file = os.path.join(highlight_words_folder, 'highlight_words.txt')
 highlight_words_files_startswith = 'highlight_words'
 
+_COLORS = itertools.cycle(COLORS.keys())
 
-def random_color(ckeck=True, all_color='ABCDEF1234567890') -> str:
+
+def random_color(ckeck=True, all_color='ABCDEF1234567890', r=6, ) -> str:
     """итератор - случайный цвет"""
+    # ch = True
     while ckeck:
-        color = '#{}'.format(''.join(random.choice(all_color) for _ in range(6)))
+        # if ch:
+        #     color = '#{}'.format(''.join(random.choice(all_color) for _ in range(r)))
+        # else:
+        color = next(_COLORS)
+
         yield color
+        # ch = (not ch)
         continue
     return
 

@@ -16,9 +16,11 @@ import lr_lib.gui.etc.gui_other
 import lr_lib.core_gui.group_param.core_gp
 import lr_lib.gui.widj.wrsp_setting
 import lr_lib.core_gui.action_lib
+import lr_lib.core_gui.run.run_setting
 import lr_lib.core.var.vars as lr_vars
+from lr_lib.core_gui.group_param.gp_lb_post import group_param_search_by_lb_post
 from lr_lib.core_gui.group_param.gp_act_lb import group_param_search_by_lb
-from lr_lib.core_gui.group_param.gp_act_startswith import group_param_search_by_name, group_param_search_by_exist_param
+from lr_lib.core_gui.group_param.gp_act_start import group_param_search_by_name, group_param_search_by_exist_param
 from lr_lib.core_gui.group_param.gp_response_re import group_param_search_by_resp_re
 from lr_lib.core_gui.group_param.gp_act_re import group_param_search_by_act_re
 from lr_lib.core_gui.group_param.gp_act_resp_split import group_param_search_by_split
@@ -43,6 +45,11 @@ class ActionWindow(lr_lib.gui.action.act_win.ActWin):
     lr_act_toplevel.ActToplevel
     tk.Toplevel
     """
+
+    def __repr__(self) -> str:
+        """переопределить строковое представление объекта класса, все равно ткинер сует чтото неинформативное"""
+        r = '{}:action.c'.format(self.__class__.__name__)
+        return r
 
     def __init__(self):
         lr_lib.gui.action.act_win.ActWin.__init__(self)
@@ -96,55 +103,60 @@ class ActionWindow(lr_lib.gui.action.act_win.ActWin):
 
         filemenu4 = tk.Menu(self.menubar, tearoff=0)
 
-
         filemenu4.add_command(
-            label="* Найти и Создать WRSP: вариантами 1)-5)",
-            command=lambda: progress_decor(lr_lib.core_gui.group_param.main_gp.auto_param_creator, self)(self)
-        )
-        filemenu4.add_command(
-            label="1) Найти и Создать WRSP: в action.c, по началу имени",
-            command=lambda: lr_lib.core.var.vars_other.T_POOL_decorator(progress_decor(
-                group_param_search_by_name, self))(self, wrsp_create=True)
+            label="* Найти и Создать WRSP: расширенный вариант",
+            command=lambda: lr_lib.core_gui.run.run_setting.RunSettingWindow(self)
         )
 
+        # filemenu4.add_command(
+        #     label="* Найти и Создать WRSP: вариантами 1)-5)",
+        #     command=lambda: progress_decor(lr_lib.core_gui.group_param.main_gp.auto_param_creator, self)(self)
+        # )
         filemenu4.add_command(
-            label="2) Найти и Создать WRSP: в action.c, по action-LB",
-            command=lambda: lr_lib.core.var.vars_other.T_POOL_decorator(progress_decor(
-                group_param_search_by_lb, self))(self, wrsp_create=True, texts_for_lb=None)
-        )
-
-        filemenu4.add_command(
-            label="3) Найти и Создать WRSP: в action.c, по regexp",
-            command=lambda: lr_lib.core.var.vars_other.T_POOL_decorator(progress_decor(
-                group_param_search_by_act_re, self))(self, wrsp_create=True)
-        )
-
-        filemenu4.add_command(
-            label="4) Найти и Создать WRSP: в Файлах Ответов, по regexp",
-            command=lambda: lr_lib.core.var.vars_other.T_POOL_decorator(progress_decor(
-                group_param_search_by_resp_re, self))(self, wrsp_create=True))
-
-        filemenu4.add_command(
-            label="5) Найти и Создать WRSP: в action.c, поиск по началу имен уже созданных",
-            command=lambda: lr_lib.core.var.vars_other.T_POOL_decorator(progress_decor(
-                group_param_search_by_exist_param, self))(
-                self, list(self.web_action.websReport.wrsp_and_param_names.values()), wrsp_create=True))
-
-        filemenu4.add_command(
-            label="6) Найти и Создать WRSP в RequestBody/RequestHeader файлах",
-            command=lambda: lr_lib.core.var.vars_other.T_POOL_decorator(progress_decor(
-                group_param_search_by_split, self))(self, wrsp_create=True))
-
-        filemenu4.add_command(
-            label="7) Найти и Создать WRSP во всех файлах, по param-LB",
+            label="1) по LB",
             command=lambda: lr_lib.core.var.vars_other.T_POOL_decorator(progress_decor(
                 group_param_search_by_lb, self))(
-                self, wrsp_create=True, texts_for_lb=True,
-                t1='запрос: поиск param во всех файлах, используя param-LB',
-                t2='Поиск param во всех файлах запросов/ответов и любых других, каталога "data"',
-                t3='ответ',
-                t4='найдено {} шт',
-            ))
+                self, [['web', self], 'all'], wrsp_create=True,
+            )
+        )
+
+        filemenu4.add_command(
+            label="2) по regexp",
+            command=lambda: lr_lib.core.var.vars_other.T_POOL_decorator(progress_decor(
+                group_param_search_by_act_re, self))(
+                self, [['web', self], 'all'], wrsp_create=True, texts_for_lb=None,
+            )
+        )
+
+        filemenu4.add_command(
+            label="3) по regexp c постобработкой результата",
+            command=lambda: lr_lib.core.var.vars_other.T_POOL_decorator(progress_decor(
+                group_param_search_by_resp_re, self))(
+                self, [['web', self], 'all'], wrsp_create=True,
+            )
+        )
+
+        filemenu4.add_command(
+            label="4) split способ",
+            command=lambda: lr_lib.core.var.vars_other.T_POOL_decorator(progress_decor(
+                group_param_search_by_split, self))(
+                self, [['web', self], 'all'], wrsp_create=True,
+            )
+        )
+
+        filemenu4.add_command(
+            label="5) LAST: по начальным символам известных",
+            command=lambda: lr_lib.core.var.vars_other.T_POOL_decorator(progress_decor(
+                group_param_search_by_exist_param, self))(
+                self, [['web', self], 'all'],
+                list(self.web_action.websReport.wrsp_and_param_names.values()), wrsp_create=True,
+            )
+        )
+
+        filemenu4.add_command(
+            label="6) LAST: по LB известных",
+            command=lambda: lr_lib.core.var.vars_other.T_POOL_decorator(progress_decor(
+                group_param_search_by_lb_post, self))(self, [['web', self], 'all'], wrsp_create=True))
 
         self.menubar.add_cascade(label="Запуск", menu=filemenu4)
 
@@ -435,35 +447,20 @@ class ActionWindow(lr_lib.gui.action.act_win.ActWin):
             '# transaction_rename'
         )
         lr_lib.gui.widj.tooltip.createToolTip(
-            self.secondary_param_spin,
-            'Для всех найденных param, диалог окна поиска и создания WRSP,'
-            'дополнительно попытытся найти param, предполагая, что есть param,\n'
-            'имя которых начинается на теже n-символов, что и у param найденых до этого по другим правилам.\n\n'
-            '0 - отключить повторный поиск.\n'
-            'слишком маленькое значение даст "излишние"-неправильные param\n'
-            'слишком большое значение не даст никакого эфекта\n\n'
-            'В идеале использовать следует так:\n'
-            'Например для param "zkau_171", "zkau_172" и т.д. следует выбрать "zkau_",\n'
-            'а точнее длину len("zkau_") == 5, те установить spinbox в 5.\n'
-            'В большинстве случаев можно постоянно использовать значение 3-4. Если попадает много лишнего - отключить.'
-            '\n\t# secondary_param_spin'
-        )
-        lr_lib.gui.widj.tooltip.createToolTip(
             self.max_inf_cbx,
             'ограничить диапазон поиска param - максимальный номер inf\n'
             'Это номер inf, в action.c, где первый раз встречается pram\n\t'
             '# max_inf_cbx'
         )
-        lr_lib.gui.widj.tooltip.createToolTip(
-            self.add_inf_cbx,
-            'макс номер inf, для поиска param, в LoadRunner файлах ответов\n '
-            'On - inf, где первый раз встречается pram, в action.c\n\t'
-            'что неправильно но необходимо, тк LoadRunner так записывает\n'
-            'Off - inf, предшествующий, номеру inf, где первый раз встречается pram, в action.c\n\t'
-            'используется, совместно с чекбоксом "reverse", для поиска inf-ответа,\n\t'
-            'максимально близкого, к param-inf, те поиску с конца\n\t'
-            '# add_inf_cbx'
-        )
+
+        self._T1 = 'макс номер inf, для поиска param, в LoadRunner файлах ответов\n ' \
+                   'On - inf, где первый раз встречается pram, в action.c\n\t' \
+                   'что неправильно но необходимо, тк LoadRunner так записывает\n' \
+                   'Off - inf, предшествующий, номеру inf, где первый раз встречается pram, в action.c\n\t' \
+                   'используется, совместно с чекбоксом "reverse", для поиска inf-ответа,\n\t' \
+                   'максимально близкого, к param-inf, те поиску с конца\n\t' \
+                   '# add_inf_cbx'
+        lr_lib.gui.widj.tooltip.createToolTip(self.add_inf_cbx, self._T1)
         return
 
     def set_grid(self):
@@ -552,5 +549,4 @@ class ActionWindow(lr_lib.gui.action.act_win.ActWin):
         self.lr_report_B.grid(row=8, column=4, sticky=tk.NSEW)
         self.lr_report_A.grid(row=7, column=4, sticky=tk.NSEW)
         self.transaction_rename.grid(row=7, column=5, sticky=tk.NSEW, rowspan=1)
-        self.secondary_param_spin.grid(row=8, column=5, sticky=tk.NSEW, rowspan=1)
         return

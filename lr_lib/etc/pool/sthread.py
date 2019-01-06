@@ -116,10 +116,10 @@ class SThread(threading.Thread, SThreadIOQueue):
                         task.target(*task.args, **task.kwargs)
                         continue
 
-                    except Exception:  # выход/ошибка
+                    except Exception as ex :  # выход/ошибка
                         if task is None:
                             return
-                        lr_lib.etc.excepthook.excepthook(*sys.exc_info())
+                        lr_lib.etc.excepthook.excepthook(ex)
                         return
 
                     finally:  # поток свободен

@@ -7,11 +7,7 @@ import lr_lib
 import lr_lib.core_gui.group_param.gp_filter
 import lr_lib.etc.excepthook
 from lr_lib.core.var import vars as lr_vars
-
-K_FIND = 'Найти'
-K_SKIP = 'Пропуск'
-K_CANCEL = 'Отменить'
-K_CREATE = 'Создать'
+from lr_lib.gui.widj.dialog import K_FIND, K_SKIP, K_CANCEL
 
 
 def _ask_params(params: [str, ], action: 'lr_lib.gui.action.main_action.ActionWindow', ask=True) -> (int, [str, ]):
@@ -47,18 +43,24 @@ def _ask_params(params: [str, ], action: 'lr_lib.gui.action.main_action.ActionWi
     return item
 
 
-def responce_files_texts(encoding='utf-8', errors='replace', ) -> iter([(str, str), ]):
+def responce_files_texts(folder=lr_vars.DEFAULT_FILES_FOLDER, name_check=bool,
+                         encoding='utf-8', errors='replace', ) -> iter([(str, str), ]):
     """файлы ответов и запросов и все остальные"""
-    fgen = os.walk(lr_vars.DEFAULT_FILES_FOLDER)
+    fgen = os.walk(folder)
     (dirpath, dirnames, filenames) = next(fgen)
+
     for file in filenames:
-        path = os.path.join(dirpath, file)
+        if name_check(file):
+            path = os.path.join(dirpath, file)
+        else:
+            continue
         try:
             with open(path, encoding=encoding, errors=errors) as f:
-                txt = f.read()
+                for txt in f:
+                    item = (file, txt)
+                    yield item
+                    continue
 
-            item = (file, txt)
-            yield item
         except Exception as ex:
             lr_lib.etc.excepthook.excepthook(ex)
             continue

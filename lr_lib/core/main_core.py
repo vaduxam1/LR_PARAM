@@ -5,13 +5,17 @@ import argparse
 
 import lr_lib
 import lr_lib.core.var.vars as lr_vars
+import lr_lib.core.var.vars_highlight
+import lr_lib.core.var.vars_param
 import lr_lib.core.var.vars_other
 
 
 def init(as_console: bool) -> dict:
     """стартовать core"""
     lr_lib.core.var.vars_core.init()  # связь основных Var
-    
+    lr_lib.core.var.vars_highlight.init_highlight_words()  # слова для подсветки
+    lr_lib.core.var.vars_param.DENY_PARAMS_update_and_lower()  # слова для подсветки
+
     if as_console:  # поиск param из консоли
         c_args = _console_argument_parser()
         _console_vars_setter(c_args)

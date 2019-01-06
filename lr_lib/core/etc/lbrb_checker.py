@@ -8,6 +8,30 @@ import lr_lib.core.var.vars_highlight
 import lr_lib.core.var.vars_param
 
 
+def check_in_text_param_all_bound_lb_rb(text=None, param=None) -> iter((bool, )):
+    """проверить корректность всех вхождений param в text"""
+    if text is None:
+        action = lr_vars.Window.get_main_action()
+        text = [w.get_body() for w in action.web_action.get_web_all()]
+        text = '.\n.'.join(text)
+    if param is None:
+        param = lr_vars.VarParam.get()
+
+    split = text.split(param)
+    len_split = len(split)
+    if len_split < 2:
+        return ()
+
+    for i in range(1, len_split):
+        left = split[i - 1]
+        right = split[i]
+        check = check_bound_lb_rb(left, right)
+
+        yield check
+        continue
+    return
+
+
 def check_bound_lb_rb(left: 'id="', right: '",') -> bool:
     """id="zkau_11","""
     i = (check_bound_rb(right) and check_bound_lb(left))

@@ -7,10 +7,11 @@ import lr_lib
 import lr_lib.core.var.vars_highlight
 import lr_lib.core.var.vars_param
 import lr_lib.core_gui.group_param.core_gp
-import lr_lib.core_gui.group_param.gp_act_startswith
+import lr_lib.core_gui.group_param.gp_act_start
 import lr_lib.core_gui.group_param.gp_filter
-from lr_lib.core_gui.group_param.gp_var import K_FIND, K_SKIP, responce_files_texts
-
+import lr_lib.core_gui.group_param.gp_job
+from lr_lib.core_gui.group_param.gp_var import responce_files_texts
+from lr_lib.gui.widj.dialog import K_FIND, K_SKIP, CREATE_or_FIND
 
 T1 = '2.1) запрос: поиск param в action, используя action-LB'
 T2 = '2) Поиск param в [ ACTION.C ] тексте: используя action-LB символы.\n' \
@@ -25,11 +26,14 @@ T4 = '2) найдено {} шт'
 
 def group_param_search_by_lb(
         action: 'lr_lib.gui.action.main_action.ActionWindow',
+        params_source,
         lb_items=None,
         ask=True,
+        ask2=True,
         wrsp_create=False,
         texts_for_lb=None,
         MutableLBRegs=lr_lib.core.var.vars_param.MutableLBRegs,
+        action_text=True,
         t1=T1, t2=T2, t3=T3, t4=T4,
 ) -> list:
     """
@@ -57,45 +61,37 @@ def group_param_search_by_lb(
 
     if ask:  # диалог окно поиск param
         lb_items = _ask_lb_items(action, lb_items, t1, t2)
-        if not lb_items:
-            return lb_items
 
-    params = []
-    for lb_in_action in filter(str.strip, lb_items):
-
-        if is_action_text:
-            ps = lr_lib.core_gui.group_param.gp_act_startswith._group_param_search(
-                action, lb_in_action, part_mode=False, texts_for_search=None,
-            )  # в action.c
-        else:
-            ps = lr_lib.core_gui.group_param.gp_act_startswith._group_param_search(
-                action, lb_in_action, part_mode=False, texts_for_search=responce_files_texts(),
-            )  # test - responce_files_texts() каждый раз вычитывает файлы - для экономии памяти
-
-        params.extend(ps)
-        continue
-
-    params = lr_lib.core_gui.group_param.gp_filter.param_sort(params)
-
-    y = lr_lib.gui.widj.dialog.YesNoCancel(
-        [K_FIND, K_SKIP],
-        default_key=K_FIND,
-        title=t3,
-        is_text='\n'.join(params),
-        text_before=t4.format(len(params)),
-        text_after='добавить/удалить',
-        parent=action,
-        color=lr_lib.core.var.vars_highlight.PopUpWindColor1,
-    )
-    ans = y.ask()
-
-    # создание param
-    if ans == K_FIND:
-        params = y.text.split('\n')
-    else:
+    lb_items = list(filter(str.strip, lb_items))
+    if not lb_items:
         return []
 
-    params = lr_lib.core_gui.group_param.gp_filter.param_sort(params, deny_param_filter=False)
+    params = lr_lib.core_gui.group_param.gp_job._group_param_search_by_lb(lb_items, params_source)
+    if action_text and (not isinstance(action_text, str)):
+        action_text = action.web_action._all_web_body_text()
+    params = lr_lib.core_gui.group_param.gp_filter.param_sort(params, action_text=action_text)
+
+    if ask2:
+        cf = CREATE_or_FIND(wrsp_create)
+        y = lr_lib.gui.widj.dialog.YesNoCancel(
+            [cf, K_SKIP],
+            default_key=cf,
+            title=t3,
+            is_text='\n'.join(params),
+            text_before=t4.format(len(params)),
+            text_after='добавить/удалить',
+            parent=action,
+            color=lr_lib.core.var.vars_highlight.PopUpWindColor1,
+        )
+        ans = y.ask()
+
+        # создание param
+        if ans == cf:
+            params = y.text.split('\n')
+        else:
+            return []
+
+        params = lr_lib.core_gui.group_param.gp_filter.param_sort(params, deny_param_filter=False)
     if wrsp_create:  # создать wrsp
         lr_lib.core_gui.group_param.core_gp.group_param(None, params, widget=action.tk_text, ask=False)
     return params

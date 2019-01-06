@@ -19,76 +19,94 @@ class WinOther(lr_lib.gui.wrsp.win_filesort.WinFileSort):
 
         self.cbxFirstLastFile = tk.Checkbutton(
             self.mid_frame, variable=lr_vars.VarFirstLastFile, text='reverse', font=lr_vars.DefaultFont + ' italic',
-            padx=0, pady=0, command=self.firstOrLastFile)
+            padx=0, pady=0, command=self.firstOrLastFile,
+        )
 
         self.StrongSearchInFile_cbx = tk.Checkbutton(
             self.mid_frame, variable=lr_vars.VarStrongSearchInFile, padx=0, pady=0, text='strong',
-            font=lr_vars.DefaultFont + ' italic')
+            font=lr_vars.DefaultFont + ' italic',
+        )
 
         self.unblock = tk.Button(
             self.last_frame, text='unblock', font=lr_vars.DefaultFont + ' bold', padx=0, pady=0,
-            command=self.force_unblock, relief='groove')
+            command=self.force_unblock, relief='groove',
+        )
 
         self.ButtonClearDown = tk.Button(
             self.last_frame, text='clearW', command=self.clear, font=lr_vars.DefaultFont + ' italic', padx=0, pady=0,
-            relief='groove')
+            relief='groove',
+        )
 
         self.ButtonClearUp = tk.Button(
             self.last_frame, text='clearT', command=lambda: self.tk_text.delete(0.0, 'end'),
-            font=lr_vars.DefaultFont + ' italic', padx=0, pady=0, relief='groove')
+            font=lr_vars.DefaultFont + ' italic', padx=0, pady=0, relief='groove',
+        )
 
         self.ButtonNote = tk.Button(
-            self.last_frame, text='text', command=lambda: lr_lib.core.etc.other.openTextInEditor(self.tk_text.get('1.0', tk.END)),
-            font=lr_vars.DefaultFont + ' italic', padx=0, pady=0, relief='groove')
+            self.last_frame, text='text',
+            command=lambda: lr_lib.core.etc.other.openTextInEditor(self.tk_text.get('1.0', tk.END)),
+            font=lr_vars.DefaultFont + ' italic', padx=0, pady=0, relief='groove',
+        )
 
         self.ButtonLog = tk.Button(
             self.last_frame, text='log', font=lr_vars.DefaultFont + ' italic', padx=0, pady=0,
-            command=lambda: subprocess.Popen([lr_vars.EDITOR['exe'], lr_vars.logFullName]), relief='groove')
+            command=lambda: subprocess.Popen([lr_vars.EDITOR['exe'], lr_vars.logFullName]), relief='groove',
+        )
 
         self.ButtonParamFileOpen = tk.Button(
             self.last_frame, text='file(3)', font=lr_vars.DefaultFont + ' bold', padx=0, pady=0,
-            command=self.param_file_editor, relief='groove')
+            command=self.param_file_editor, relief='groove',
+        )
 
         self.spin_toolTipTimeout = tk.Entry(
             self.last_frame, textvariable=lr_vars.VarToolTipTimeout, width=4, font=lr_vars.DefaultFont + ' italic')
 
         self.cbxOrdVersion = tk.Checkbutton(
-            self.mid_frame, variable=lr_vars.VarOrdVersion, padx=0, pady=0, font=lr_vars.DefaultFont, text='ord')
+            self.mid_frame, variable=lr_vars.VarOrdVersion, padx=0, pady=0, font=lr_vars.DefaultFont, text='ord',
+        )
 
         log_vals = list(lr_lib.core.var.vars_other.loggingLevels.keys())
         self.comboLogger = ttk.Combobox(
             self.last_frame, textvariable=lr_vars.VarWindowLogger, justify='center', font=lr_vars.DefaultFont,
-            width=5, style="BW.TButton")
+            width=5, style="BW.TButton",
+        )
         self.comboLogger['values'] = log_vals
         self.comboLogger.bind("<<ComboboxSelected>>", lambda *a: lr_vars.VarWindowLogger.set(self.comboLogger.get()))
 
         self.ButtonShowParam = tk.Button(
             self.mid_frame, text='сформировать web_reg_save_param ', command=self.show_LR_Param, padx=0, pady=0,
-            font=lr_vars.DefaultFont + ' bold', background='orange')
+            font=lr_vars.DefaultFont + ' bold', background='orange',
+        )
 
         self.cbxClipboard = tk.Checkbutton(
             self.mid_frame, variable=self.cbxWrspClipboard, text='clipb', font=lr_vars.DefaultFont + ' italic',
-            padx=0, pady=0)
+            padx=0, pady=0,
+        )
 
         self.cbxClearShow = tk.Checkbutton(
             self.mid_frame, variable=self.cbxClearShowVar, text='clear', font=lr_vars.DefaultFont + ' italic',
-            padx=0, pady=0)
+            padx=0, pady=0,
+        )
 
         self.cbxAutoShowParam = tk.Checkbutton(
             self.show_param_frame, variable=self.cbxWrspAutoCreate, text='auto', font=lr_vars.DefaultFont + ' italic',
-            padx=0, pady=0)
+            padx=0, pady=0,
+        )
 
         self.cbxAutoNoteParam = tk.Checkbutton(
             self.mid_frame, variable=self.cbxNotepadWrsp, text='note', font=lr_vars.DefaultFont + ' italic',
-            padx=0, pady=0)
+            padx=0, pady=0,
+        )
 
         self.cbxFileNamesNumsShow = tk.Checkbutton(
             self.show_param_frame, variable=lr_vars.VarFileNamesNumsShow, text='name',
-            font=lr_vars.DefaultFont + ' italic', padx=0, pady=0)
+            font=lr_vars.DefaultFont + ' italic', padx=0, pady=0,
+        )
 
         self.cbxPopupWindow = tk.Checkbutton(
             self.last_frame, variable=lr_vars.VarShowPopupWindow, text='Win', padx=0, pady=0, background='orange',
-            font=lr_vars.DefaultFont + ' italic bold')
+            font=lr_vars.DefaultFont + ' italic bold',
+        )
         return
 
     def force_unblock(self, *args) -> None:

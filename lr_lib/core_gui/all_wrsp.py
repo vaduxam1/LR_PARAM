@@ -183,6 +183,10 @@ def _create_wrsp_web_(text: str, param: str, action: 'lr_lib.gui.action.main_act
 
     # вставить в action.c
     action.web_action_to_tk_text(websReport=True)
+    try:
+        action.search_in_action(word=wrsp_web_.name)
+    except:
+        pass
     return
 
 

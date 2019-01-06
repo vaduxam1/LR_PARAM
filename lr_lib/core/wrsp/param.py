@@ -99,7 +99,6 @@ def create_web_reg_save_param_and_dict(wrsp_dict=None) -> (str, dict):
     return s, wrsp_dict
 
 
-wrsp_allow_symb = (string.ascii_letters + string.digits + lr_lib.core.var.vars_param.AddAllowParamSymb)  # из каких символов, может состоять param
 allow_lrb = set(string.ascii_letters + string.digits)  # из каких символов, может состоять lb rb части имени web_reg_save_param
 wrsp_deny_punctuation = {ord(c): '' for c in string.punctuation.replace('_', '')}  # из каких символов, не может состоять имя web_reg_save_param
 wrsp_deny_punctuation.update({ord(c): '' for c in string.whitespace})  # из каких символов, не может состоять имя web_reg_save_param

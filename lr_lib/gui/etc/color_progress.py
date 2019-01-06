@@ -6,6 +6,7 @@ import time
 import lr_lib
 import lr_lib.gui.etc.color_change
 from lr_lib.core.var import vars as lr_vars
+import lr_lib.core.var.vars_highlight
 
 
 class ColorProgress:
@@ -44,7 +45,8 @@ class ColorProgress:
         """циклическая смена цвета"""
         while self.is_work:
             self.color_change(None)  # смена цвета
-            time.sleep(lr_vars._MTUT)
+            # ждать
+            time.sleep(lr_lib.core.var.vars_highlight.ColorProgressDelay)
             continue
 
         self.color_change('')  # оригинальный цвет
@@ -59,10 +61,12 @@ class ColorProgress:
 
 
 def progress_decor(func, action=None):
-    """декоратор - навесить цветной прогрессбар на команды меню мыши"""
+    """декоратор - навесить цветной прогрессбар"""
     def wrap(*args, **kwargs):
-        act = (args[0] if (action is None) else action)
-        with lr_lib.gui.etc.color_progress.ColorProgress(act):
-            _ = func(*args, **kwargs)
-        return
+        p = ColorProgress(args[0] if (action is None) else action)
+        p.__enter__()
+        try:
+            return func(*args, **kwargs)
+        finally:
+            p.__exit__(None, None, None, )
     return wrap

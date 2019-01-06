@@ -5,7 +5,14 @@ import codecs
 import queue
 
 import tkinter as tk
+import tkinter.messagebox
 import tkinter.ttk as ttk
+
+K_FIND = 'Найти'
+K_SKIP = 'Пропуск'
+K_CANCEL = 'Отменить'
+K_CREATE = 'Создать'
+CREATE_or_FIND = lambda x: (K_CREATE if x else '')
 
 
 class YesNoCancel(tk.Toplevel):
@@ -13,6 +20,7 @@ class YesNoCancel(tk.Toplevel):
     def __init__(self, buttons: [str, ], text_before: str, text_after: str, title: str, parent=None, default_key='',
                  is_text=None, focus=None, combo_dict=None, t_enc=False, color=None,):
         super().__init__(master=parent, padx=0, pady=0)
+        buttons = list(filter(bool, buttons))
 
         self._wind_attributes()
         self.alive_ = True
@@ -49,9 +57,18 @@ class YesNoCancel(tk.Toplevel):
         i = 10
 
         for name in buttons:
+
             def cmd(*a, n=name) -> None:
-                self.queue.put(n)
+                """button callback"""
+                if n == K_CREATE:
+                    if tkinter.messagebox.askokcancel('Продолжить?', K_CREATE, parent=self):
+                        self.queue.put(n)
+                    else:
+                        self.queue.put(K_CANCEL)
+                else:
+                    self.queue.put(n)
                 return
+
             self.buttons[name] = tk.Button(
                 self, text=name, command=cmd, width=width, font='Arial 9 bold', padx=0, pady=0)
             self.buttons[name].bind("<KeyRelease-Return>", cmd)
@@ -108,7 +125,7 @@ class YesNoCancel(tk.Toplevel):
     def _wind_attributes(self) -> None:
         """сделать окно похожим на dialog"""
         # self.resizable(width=False, height=False)
-        self.attributes('-topmost', True)  # свсегда сверху
+        # self.attributes('-topmost', True)  # свсегда сверху
         # self.attributes("-toolwindow", 1)  # remove maximize/minimize
         self.protocol('WM_DELETE_WINDOW', self.close)  # remove close_threads
         self.grid_rowconfigure(0, weight=1)

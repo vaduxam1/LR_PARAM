@@ -13,9 +13,7 @@ import lr_lib.gui.etc.gui_other
 def init(c_args=None) -> None:
     """создать gui"""
     lr_vars.Window = lr_lib.gui.wrsp.main_window.Window()  # main Gui
-
     lr_lib.gui.etc.gui_other.wordBreakAfter()  # область выделения двойным кликом мыши
-    lr_lib.core.var.vars_highlight.init_highlight_words()  # слова для подсветки
 
     threading.Thread(target=lr_lib.gui.etc.git_update._git_update_check).start()  # проверить обновление
     return

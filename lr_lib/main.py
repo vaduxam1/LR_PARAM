@@ -32,11 +32,8 @@ def init(excepthook=True):
         with lr_lib.etc.pool.other.MainThreadUpdater().init() as lr_vars.MainThreadUpdater:
             # lr_vars.M_POOL, lr_vars.T_POOL
             with lr_lib.etc.pool.main_pool.init() as (lr_vars.M_POOL, lr_vars.T_POOL):
-
                 # core/gui
-                with _start(excepthook=excepthook) as ex:
-                    if any(ex):  # выход - в теле with работа уже окончена
-                        lr_lib.etc.excepthook.full_tb_write(*ex)
+                _start(excepthook=excepthook)
     return
 
 
@@ -58,9 +55,9 @@ def _start(excepthook=True, console_args=sys.argv) -> iter(((None, None, None), 
                 lr_lib.gui.main_gui.init(c_args)
                 lr_lib.gui.main_gui.start(action=True, lock=True)
 
-        yield sys.exc_info()
     except Exception as ex:
         lr_lib.etc.excepthook.excepthook(ex)
+        raise
     else:
         lr_vars.Logger.trace('Exit\nas_console={c}\nconsole_args={cas}\nc_args={ca}'.format(
             c=as_console, cas=console_args, ca=c_args))

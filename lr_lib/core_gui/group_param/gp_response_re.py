@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# поиск param, для action.c, но в файлах ответов, на основе регулярных выражений
+# поиск param, по regexp и дальнейшей обработке результата
 
 import itertools
 import re
@@ -11,7 +11,8 @@ import lr_lib.core.var.vars_param
 import lr_lib.core_gui.group_param.core_gp
 import lr_lib.core_gui.group_param.gp_filter
 from lr_lib.core.var import vars as lr_vars
-from lr_lib.core_gui.group_param.gp_var import K_FIND, K_SKIP, responce_files_texts
+import lr_lib.core_gui.group_param.gp_job
+from lr_lib.gui.widj.dialog import K_FIND, K_SKIP, CREATE_or_FIND
 
 
 def param_from_str_1(stri: str) -> (str, str):
@@ -29,23 +30,48 @@ def param_from_str_2(stri: str) -> (str, str):
 
 
 Regxp = [
-    ("'\w+.\w+.\w+','\w+',{", param_from_str_1),
-    ("dtid=\w+&", param_from_str_2),
-    ('jsessionid=\w+"', param_from_str_2),
+    ["'\w+.\w+.\w+','\w+',{", param_from_str_1],
+    ["dtid=\w+&", param_from_str_2],
+    ['jsessionid=\w+"', param_from_str_2],
 ]
 Regxp.extend(
-    ('{0}\w+"'.format(r), param_from_str_2) for r in lr_lib.core.var.vars_param.LB_PARAM_FIND_LIST if ('\\' not in r)
+    ['{0}\w+"'.format(r), param_from_str_2] for r in lr_lib.core.var.vars_param.LB_PARAM_FIND_LIST if ('\\' not in r)
 )
 
 
-def group_param_search_by_resp_re(action: 'lr_lib.gui.action.main_action.ActionWindow', wrsp_create=False):
-    """поиск param, для action.c, но в файлах ответов, на основе регулярных выражений"""
+def group_param_search_by_resp_re(action: 'lr_lib.gui.action.main_action.ActionWindow',
+                                  params_source,
+                                  wrsp_create=False,
+                                  action_text=True,
+                                  ask=True,
+                                  ask2=True,
+                                  ):
+    """поиск param, для action.c, по regexp и дальнейшей обработке результата"""
     params = {}
-    wa = action.web_action.get_web_all()
-    action_text = '\n'.join(w.get_body() for w in wa)
+    regexp = list(Regxp)
 
-    for (file, txt) in responce_files_texts():
-        for (rx, cb) in Regxp:
+    if ask:
+        text = '\n'.join(r[0] for r in regexp)
+        y = lr_lib.gui.widj.dialog.YesNoCancel(
+            buttons=[K_FIND, K_SKIP],
+            default_key=K_FIND,
+            title='4) запрос: Поиск param по regexp с постобработкой',
+            is_text=text,
+            text_before='4) Поиск param в тексте {ps}:\n\nпо regexp и дальнейшей обработке результата.\n'
+                        'Например в "zul.sel.Treecell" конструкциях.'.format(ps=params_source,),
+            text_after='Можно попытатся поменять regexp, но добавлять/удалять нельзя.',
+            parent=action,
+            color=lr_lib.core.var.vars_highlight.PopUpWindColor1,
+        )
+
+        if y.ask() == K_FIND:
+            r = list(filter(bool, map(str.strip, y.text.split('\n'))))
+            regexp = [[r[n], regexp[n][1]] for n in range(len(r))]
+        else:
+            return []
+
+    for (file, txt) in lr_lib.core_gui.group_param.gp_job._text_from_params_source(params_source):
+        for (rx, cb) in regexp:
             st = re.findall(rx, txt)
             for stri in st:
                 try:  # "'zul.sel.Treecell','bJsPt4',"
@@ -59,40 +85,35 @@ def group_param_search_by_resp_re(action: 'lr_lib.gui.action.main_action.ActionW
 
     all_p = sorted(set(itertools.chain(*params.values())))
 
-    in_action_param_only = []
-    for param in all_p:
-        at = action_text.split(param)
-        for n in range(1, len(at)):
-            if lr_lib.core.etc.lbrb_checker.check_bound_lb_rb(at[n - 1], at[n]):
-                in_action_param_only.append(param)
-                break
-            continue
-        continue
+    if action_text and (not isinstance(action_text, str)):
+        action_text = action.web_action._all_web_body_text()
+    in_action_param_only = lr_lib.core_gui.group_param.gp_filter.param_sort(all_p, action_text=action_text)
 
-    in_action_param_only = lr_lib.core_gui.group_param.gp_filter.param_sort(in_action_param_only)
+    lr_vars.Logger.info('in_action_param_only/all: {}/{}\n{}'.format(
+        len(in_action_param_only), len(all_p), '\n'.join(
+            str([stri, len(params[stri]), params[stri]]) for stri in sorted(params))))
 
-    inf = '\n'.join(str([stri, len(params[stri]), params[stri]]) for stri in sorted(params))
-    inf = 'in_action_param_only/all: {}/{}\n{}'.format(len(in_action_param_only), len(all_p), inf)
-    lr_vars.Logger.info(inf)
+    if ask2:
+        text = '\n'.join(in_action_param_only)
+        cf = CREATE_or_FIND(wrsp_create)
+        y = lr_lib.gui.widj.dialog.YesNoCancel(
+            buttons=[cf, K_SKIP],
+            default_key=cf,
+            title='4) ответ: Поиск param по regexp с постобработкой',
+            is_text=text,
+            text_before='4) Поиск param в тексте {ps}:\n\nпо regexp и дальнейшей обработке результата.\n'
+                        'найдено {ln} шт'.format(ps=params_source, ln=len(in_action_param_only), ),
+            text_after='добавить/удалить',
+            parent=action,
+            color=lr_lib.core.var.vars_highlight.PopUpWindColor1,
+        )
 
-    text = '\n'.join(in_action_param_only)
-    y = lr_lib.gui.widj.dialog.YesNoCancel(
-        buttons=[K_FIND, K_SKIP],
-        default_key=K_FIND,
-        title='4) запрос/ответ: Поиск param в тексте [ Файлов Ответов ] по param-LB/RB',
-        is_text=text,
-        text_before='4) Поиск param в тексте [ Файлов Ответов ]:\n\nна основе регулярных выражений, по param-LB/RB:\n\n'
-                    'найдено {} шт'.format(len(in_action_param_only)),
-        text_after='добавить/удалить',
-        parent=action,
-        color=lr_lib.core.var.vars_highlight.PopUpWindColor1,
-    )
+        if y.ask() == cf:
+            yt = y.text.split('\n')
+            in_action_param_only = lr_lib.core_gui.group_param.gp_filter.param_sort(yt, deny_param_filter=False)
+        else:
+            return []
 
-    if y.ask() != K_FIND:
-        return []
-
-    yt = y.text.split('\n')
-    in_action_param_only = lr_lib.core_gui.group_param.gp_filter.param_sort(yt, deny_param_filter=False)
     if wrsp_create:  # создать wrsp
         lr_lib.core_gui.group_param.core_gp.group_param(None, in_action_param_only, widget=action.tk_text, ask=False)
     return in_action_param_only

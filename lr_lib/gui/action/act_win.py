@@ -29,22 +29,27 @@ class ActWin(lr_lib.gui.action.act_any.ActAny):
 
         self.editor_button = tk.Button(
             self.file_bar, text='editor', font=lr_vars.DefaultFont + ' bold',
-            command=lambda: lr_lib.core.etc.other.openTextInEditor(self.tk_text.get(1.0, tk.END)))
+            command=lambda: lr_lib.core.etc.other.openTextInEditor(self.tk_text.get(1.0, tk.END)),
+        )
 
         self.auto_param_creator_button = tk.Button(
             self.toolbar, text='Найти и Создать\nparam WRSP', background='orange', font=lr_vars.DefaultFont + ' bold',
-            command=lambda: lr_lib.core_gui.group_param.main_gp.auto_param_creator(self))
+            command=lambda: lr_lib.core_gui.group_param.main_gp.auto_param_creator(self),
+        )
 
         self.final_wnd_cbx = tk.Checkbutton(
-            self.toolbar, text='final', font=lr_vars.DefaultFont, variable=self.final_wnd_var)
+            self.toolbar, text='final', font=lr_vars.DefaultFont, variable=self.final_wnd_var,
+        )
 
         self.wrsp_setting = tk.Button(
             self.toolbar, text='wrsp_setting', font=lr_vars.DefaultFont + ' bold',
-            command=lambda *a: lr_lib.gui.widj.wrsp_setting.WrspSettingWindow(parent=self))
+            command=lambda *a: lr_lib.gui.widj.wrsp_setting.WrspSettingWindow(parent=self),
+        )
 
         self.resp_btn = tk.Button(
             self.toolbar, text='файлы ответов', font=lr_vars.DefaultFont,
-            command=lambda *a: lr_lib.core_gui.action_lib.snapshot_files(self.tk_text, i_num=1))
+            command=lambda *a: lr_lib.core_gui.action_lib.snapshot_files(self.tk_text, i_num=1),
+        )
 
         #
         self.force_ask_cbx = tk.Checkbutton(
@@ -55,29 +60,32 @@ class ActWin(lr_lib.gui.action.act_any.ActAny):
         #
         self.max_inf_cbx = tk.Checkbutton(
             self.toolbar, text='ограничить max inf', font=lr_vars.DefaultFont + ' bold', variable=self.max_inf_cbx_var,
-            command=self.max_inf_set)
+            command=self.max_inf_set,
+        )
         self.add_inf_cbx = tk.Checkbutton(
-            self.toolbar, anchor=tk.E, text='max inf mode', font=lr_vars.DefaultFont, variable=self.add_inf_cbx_var)
+            self.toolbar, anchor=tk.E, text='max inf mode', font=lr_vars.DefaultFont, variable=self.add_inf_cbx_var,
+        )
         self.force_yes_inf_checker_cbx = tk.Checkbutton(
             self.toolbar, text='fYes', font=lr_vars.DefaultFont, variable=self.force_yes_inf)
 
         #
-        self.lr_report_B = tk.Button(self.toolbar, text='reportB', font=lr_vars.DefaultFont,
-                                     command=lambda *a: lr_lib.gui.etc.gui_other.repB(self.tk_text))
-        self.lr_report_A = tk.Button(self.toolbar, text='reportA', font=lr_vars.DefaultFont,
-                                     command=lambda *a: lr_lib.gui.etc.gui_other.repA(self.tk_text))
+        self.lr_report_B = tk.Button(
+            self.toolbar, text='reportB', font=lr_vars.DefaultFont,
+            command=lambda *a: lr_lib.gui.etc.gui_other.repB(self.tk_text),
+        )
+        self.lr_report_A = tk.Button(
+            self.toolbar, text='reportA', font=lr_vars.DefaultFont,
+            command=lambda *a: lr_lib.gui.etc.gui_other.repA(self.tk_text),
+        )
 
         #
-        self.lr_legend = tk.Button(self.toolbar, text='web_legend', font=lr_vars.DefaultFont, command=self.legend)
+        self.lr_legend = tk.Button(
+            self.toolbar, text='web_legend', font=lr_vars.DefaultFont, command=self.legend,
+        )
         self.btn_all_files = tk.Button(
             self.toolbar, text='все файлы', font=lr_vars.DefaultFont,
-            command=lambda *a: lr_lib.gui.wrsp.top.top_allfiles.TopFolder(self))
-
-        #
-        self.secondary_param_spin = tk.Spinbox(
-            self.toolbar, width=2, justify='center', from_=0, to=99, textvariable=lr_vars.SecondaryParamLen,
-            font=lr_vars.DefaultFont,
-        )  # command=self.search_secondary_param,
+            command=lambda *a: lr_lib.gui.wrsp.top.top_allfiles.TopFolder(self),
+        )
 
         # запускать в конце
         self.post_init()

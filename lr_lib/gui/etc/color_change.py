@@ -7,7 +7,7 @@ from lr_lib.core.var import vars as lr_vars
 ColorCash = {}  # оригинальный цвет виджетов
 
 
-def background_color_set(self, color='', _types=('utton',), obs=None) -> None:
+def background_color_set(self, color='', _types=('Button',), obs=None) -> None:
     """поменять цвет всех виджетов"""
     if obs is None:
         wid = [self, lr_vars.Window, ]
@@ -54,7 +54,7 @@ def _rnd_color(self, color) -> str:
     return color
 
 
-def DiR(ob, _types=('utton', )):
+def DiR(ob, _types=('button', )):
     """объекты для смены цвета"""
     for attr in dir(ob):
         ga = getattr(ob, attr)

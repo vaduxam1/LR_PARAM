@@ -11,7 +11,7 @@ from lr_lib.core.var._var import Var
 #####################################
 # главные переменные
 
-VERSION = 'v11.4.1'
+VERSION = 'v11.5'
 lib_folder = 'lr_lib'
 Tk = tk.Tk()  # tkinter
 original_callback_exception = Tk.report_callback_exception
@@ -43,8 +43,12 @@ VarWRSPStats = tk.BooleanVar(value=False)  # для wrsp, создавать п�
 # поиск web_reg_save_param
 
 SecondaryParamLen = tk.IntVar(value=3)  # число первых символов, взятых из param, для использования их при поиске одноименных param
+
 MinParamLen = 3  # минимальная длина param
+_MinParamLen = tk.IntVar(value=MinParamLen)
 MinParamLen -= 1  # тк нумерация с 0
+
+MinParamNumsOnlyLen = tk.IntVar(value=5)  # минимальная длина param, состоящего только из цифр
 
 FindParamPOOLEnable = True  # использовать M_POOL, для поиска param, в файлах ответов
 VarStrongSearchInFile = tk.IntVar(value=True)  # принудительно использовать контроль LB/RB(на недопустимые символы), при поиске param, в файлах ответов
@@ -89,7 +93,7 @@ MaxFileStringWidth = 250  # макс ширина подсказки для фа
 DefaultActionForceAsk = False  # Автозамена - подтверждать любую замену
 DefaultActionNoVar = True  # Автозамена - Принудительно отвечать "Нет, для Всех" в вопросе замены
 DefaultActionMaxSnapshot = True  # ограничить диапазон поиска param - максимальный номер inf
-DefaultActionAddSnapshot = True  # ограничить максимальный inf, не номером(param_inf - 1), а самим param-inf номером
+DefaultActionAddSnapshot = tk.BooleanVar(value=True)  # ограничить максимальный inf, не номером(param_inf - 1), а самим param-inf номером
 DefaultActionForceYes = True  # отвечать "Да", при вопросе о создании param, если inf-номер запроса <= inf-номер web_reg_save_param
 DefaultActionFinalWind = True  # окно результата создания param
 

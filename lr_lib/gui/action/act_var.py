@@ -34,7 +34,7 @@ class ActVar(lr_lib.gui.action.act_toplevel.ActToplevel):
         self.force_ask_var = tk.BooleanVar(value=lr_vars.DefaultActionForceAsk)
         self.no_var = tk.BooleanVar(value=lr_vars.DefaultActionNoVar)
         self.max_inf_cbx_var = tk.BooleanVar(value=lr_vars.DefaultActionMaxSnapshot)
-        self.add_inf_cbx_var = tk.BooleanVar(value=lr_vars.DefaultActionAddSnapshot)
+        self.add_inf_cbx_var = lr_vars.DefaultActionAddSnapshot
         self.force_yes_inf = tk.BooleanVar(value=lr_vars.DefaultActionForceYes)
 
         self.font_var = tk.StringVar(value=lr_vars.DefaultActionHighlightFont)

@@ -8,68 +8,86 @@ import lr_lib.core.var.vars_highlight
 import lr_lib.core.var.vars_param
 import lr_lib.core_gui.group_param.core_gp
 import lr_lib.core_gui.group_param.gp_filter
-from lr_lib.core_gui.group_param.gp_var import K_FIND, K_SKIP
+import lr_lib.core_gui.group_param.gp_job
+import lr_lib.core.etc.lbrb_checker
+from lr_lib.gui.widj.dialog import K_FIND, K_SKIP, CREATE_or_FIND
 
 
-def group_param_search_by_act_re(action: 'lr_lib.gui.action.main_action.ActionWindow', wrsp_create=False) -> [str, ]:
+def group_param_search_by_act_re(
+        action: 'lr_lib.gui.action.main_action.ActionWindow',
+        params_source,
+        wrsp_create=False,
+        action_text=True,
+        ask=True,
+        ask2=True,
+) -> [str, ]:
     """
     group params поиск, на основе регулярных выражений
     """
-    y = lr_lib.gui.widj.dialog.YesNoCancel(
-        [K_FIND, K_SKIP],
-        title='3.1) запрос: action.c regexp',
-        is_text='\n'.join(lr_lib.core.var.vars_param.REGEXP_PARAMS),
-        text_before='3) Поиск param в [ ACTION.C ] тексте:\n\n'
-                    'Поиск re.findall(regexp, action_text) слов в action-тексте, например zkau_12 для "value=zkau_12".',
-        text_after='добавить/удалить',
-        parent=action,
-    )
-    ans = y.ask()
-    if ans == K_FIND:
-        yt = y.text.split('\n')
-        regexps = lr_lib.core_gui.group_param.gp_filter.param_filter(map(str.strip, yt))
+    if ask:
+        y = lr_lib.gui.widj.dialog.YesNoCancel(
+            [K_FIND, K_SKIP],
+            title='3.1) запрос: action.c regexp',
+            is_text='\n'.join(lr_lib.core.var.vars_param.REGEXP_PARAMS),
+            text_before='3) Поиск param в [ ACTION.C ] тексте:\n\n'
+                        'Поиск re.findall(regexp, text) слов в тексте, '
+                        'например zkau_12 для "value=zkau_12".',
+            text_after='добавить/удалить',
+            parent=action,
+        )
+        ans = y.ask()
+        if ans == K_FIND:
+            yt = y.text.split('\n')
+            regexps = lr_lib.core_gui.group_param.gp_filter.param_filter(map(str.strip, yt))
+        else:
+            return []
     else:
-        return []
+        regexps = lr_lib.core.var.vars_param.REGEXP_PARAMS
 
     params = []
     for rx in regexps:
-        prs = group_param_search_quotes(action, regexp=rx)
+        prs = group_param_search_quotes(params_source, regexp=rx)
         prs = lr_lib.core_gui.group_param.gp_filter._param_filter(prs)
         params.extend(prs)
         continue
 
-    params = lr_lib.core_gui.group_param.gp_filter.param_sort(params)
+    if action_text and (not isinstance(action_text, str)):
+        action_text = action.web_action._all_web_body_text()
+    params = lr_lib.core_gui.group_param.gp_filter.param_sort(params, action_text=action_text)
 
-    if params:
+    if not params:
+        return []
+
+    if ask2:
+        cf = CREATE_or_FIND(wrsp_create)
         y = lr_lib.gui.widj.dialog.YesNoCancel(
-            [K_FIND, K_SKIP],
+            [cf, K_SKIP],
             title='3.2) ответ',
             is_text='\n'.join(params),
             text_before='3) найдено {} шт'.format(len(params)),
             text_after='добавить/удалить',
             parent=action,
-            default_key=(K_SKIP if wrsp_create else K_FIND),
+            default_key=cf,
             color=lr_lib.core.var.vars_highlight.PopUpWindColor1,
         )
         ans = y.ask()
-        if ans == K_FIND:
-            params = y.text.split('\n')
-            params = lr_lib.core_gui.group_param.gp_filter.param_sort(params, deny_param_filter=False)
+        if ans != cf:
+            return []
+        params = y.text.split('\n')
+        params = lr_lib.core_gui.group_param.gp_filter.param_sort(params, deny_param_filter=False)
 
-            if wrsp_create:  # создать wrsp
-                lr_lib.core_gui.group_param.core_gp.group_param(None, params, widget=action.tk_text, ask=False)
-
-            return params
-    return []
+    if wrsp_create:  # создать wrsp
+        lr_lib.core_gui.group_param.core_gp.group_param(None, params, widget=action.tk_text, ask=False)
+    return params
 
 
-Filter = lr_lib.core.wrsp.param.wrsp_allow_symb.__contains__  # фильтр поиск param
+Filter = lr_lib.core.var.vars_param.param_valid_letters.__contains__  # фильтр поиск param
 RegExp = r'=(.+?)\"'  # re.findall по умолчанию
 
 
-def group_param_search_quotes(action: 'lr_lib.gui.action.main_action.ActionWindow', regexp=RegExp, ) -> iter((str,)):
+def group_param_search_quotes(params_source, regexp=RegExp, ) -> iter((str,)):
     """фильтр поиск param, внутри кавычек"""
-    params = _get_params(action, regexp=regexp)
+    params = _get_params(params_source, regexp=regexp)
     params = filter(str.strip, params)
     for param in params:
         if all(map(Filter, param)):
@@ -78,11 +96,11 @@ def group_param_search_quotes(action: 'lr_lib.gui.action.main_action.ActionWindo
     return
 
 
-def _get_params(action: 'lr_lib.gui.action.main_action.ActionWindow', regexp=RegExp, ) -> iter((str,)):
+def _get_params(params_source, regexp=RegExp, ) -> iter((str,)):
     """поиск param, внутри кавычек"""
-    for web_ in action.web_action.get_web_snapshot_all():
-        body = web_.get_body()
-        params = re.findall(regexp, body)
+    act_text_ = lr_lib.core_gui.group_param.gp_job._text_from_params_source(params_source)
+    for (name, text) in act_text_:
+        params = re.findall(regexp, text)
         yield from params
         continue
     return
