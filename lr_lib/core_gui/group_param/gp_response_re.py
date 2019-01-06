@@ -15,22 +15,22 @@ import lr_lib.core_gui.group_param.gp_job
 from lr_lib.gui.widj.dialog import K_FIND, K_SKIP, CREATE_or_FIND
 
 
-def param_from_str_1(stri: str) -> (str, str):
-    """" stri("'\w+.\w+.\w+','\w+',{") """
-    rs = stri.split("'")
-    item = (rs[1], rs[3])
+def param_from_str_1(stri: "'\\'zul.wnd.Window\\',\\'bJsP0\\',{'") -> (str, str):
+    """" '\w+.\w+.\w+','\w+',{ """
+    rs = stri.split("'")  # <class 'list'>: ['', 'zul.wnd.Window', ',', 'bJsP0', ',{']
+    item = (rs[1], rs[3])  # <class 'tuple'>: ('zul.wnd.Window', 'bJsP0')
     return item
 
 
-def param_from_str_2(stri: str) -> (str, str):
+def param_from_str_2(stri: "Value=bJsPk0&") -> (str, str):
     """" stri("dtid=\w+&") """
-    rs = stri.split("=", 1)
-    item = (rs[0], rs[1][:-1])
+    rs = stri.split("=", 1)  # <class 'list'>: ['Value', 'bJsPk0&']
+    item = (rs[0], rs[1][:-1])  # <class 'list'>: ['Value', 'bJsPk0&']
     return item
 
 
 Regxp = [
-    ["'\w+.\w+.\w+','\w+',{", param_from_str_1],
+    ["'\w+.\w+.\w+','\w+", param_from_str_1],
     ["dtid=\w+&", param_from_str_2],
     ['jsessionid=\w+"', param_from_str_2],
 ]
@@ -89,9 +89,16 @@ def group_param_search_by_resp_re(action: 'lr_lib.gui.action.main_action.ActionW
         action_text = action.web_action._all_web_body_text()
     in_action_param_only = lr_lib.core_gui.group_param.gp_filter.param_sort(all_p, action_text=action_text)
 
-    lr_vars.Logger.info('in_action_param_only/all: {}/{}\n{}'.format(
-        len(in_action_param_only), len(all_p), '\n'.join(
-            str([stri, len(params[stri]), params[stri]]) for stri in sorted(params))))
+    iapo = {k: {p for p in v if (p in in_action_param_only)} for (k, v) in params.items()}
+    iapo = {k: v for (k, v) in iapo.items() if v}
+
+    i = 'in_action_param_only/all: {lap}/{ap}\n\nВ action.c:\n{acdt}\n\nВсе:\n{adt}'.format(
+        lap=len(in_action_param_only),
+        ap=len(all_p),
+        adt='\n'.join(str([stri, len(params[stri]), params[stri]]) for stri in sorted(params)),
+        acdt='\n'.join(str([stri, len(iapo[stri]), iapo[stri]]) for stri in sorted(iapo)),
+    )
+    lr_vars.Logger.info(i)
 
     if ask2:
         text = '\n'.join(in_action_param_only)
