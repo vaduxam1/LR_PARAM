@@ -54,6 +54,8 @@ FindParamPOOLEnable = True  # использовать M_POOL, для поиск
 VarStrongSearchInFile = tk.IntVar(value=True)  # принудительно использовать контроль LB/RB(на недопустимые символы), при поиске param, в файлах ответов
 ReplaceParamDialogWindow = True  # вкл диалог окна(автозамены), для одиночной замены param в action.c
 
+AllowOnlyNumericParam = tk.BooleanVar(value=True)  # разрешить имена {param}, состоящие только из цифр
+
 VarFileSortKey1 = Var(value='Snapshot')  # сортировка файлов
 VarFileSortKey2 = Var(value='Nums')  # сортировка файлов
 VarFirstLastFile = tk.IntVar(value=0)  # 0=первый, выбрать последний или первый файл из FilesWithParam

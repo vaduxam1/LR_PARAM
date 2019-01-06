@@ -76,14 +76,15 @@ DENY_PARAMS_LOWER = {
     'webkitRequestFullscreen', '_columns', 'loadCertificateContent', 'doFocus_',  'ZK-SID',  'before_center',  'Trim',
     'table-wrapper',  '_closable',  'PATCH',  '_posInfo',  '_resizable',  'padding-',  'dialog',  'z-paging-next',
     '_columnsgroup',  'beforeSize',  'common-scroller', 'item-content',  '_running',  'z-paging-first',  'expand',
-    'timezone',  'DOMContentLoaded',  'mouseover',  'overrideTooltip',  'z-renderdefer', 'mailCount',
+    'timezone',  'DOMContentLoaded',  'mouseover',  'overrideTooltip',  'z-renderdefer', 'mailCount', 'multipart',
     'zIndex', '_rows',  'head',  'Italic',  'getValue',  'zk_download', 'udu-webcenter', 'natural', 'checkJinn',
     'visibility', 'rowspan',  '_doClick',  'ZK-Error',  '_visible',  'onload',  'ru_RU', 'unlink', 'cryptoProPlugin',
-    'Bold', '_src', 'icon', 'year', 'west', 'Blob', 'rows', 'Busy', 'Host', 'color', 'panel', 'outer', 'fixed',
-    'unload', 'content_script', 'woff', 'ARP', 'signAttributes', 'MODApplet', 'selectedRowKeys', '_afrVblRws',
+    'Bold', '_src', 'icon', 'year', 'west', 'Blob', 'rows', 'Busy', 'Host', 'color', 'panel', 'outer', 'fixed', 'zhtml',
+    'unload', 'content_script', 'woff', 'ARP', 'signAttributes', 'MODApplet', 'selectedRowKeys', '_afrVblRws', 'bear',
     'getValueFromArrayById', 'zkau', 'username',  'styleClass',  'desktop',  'Content-Type',  'Resource',  'zk',
-    'json',  'styles',  'sortDirection', 'charCode', 'autoSubmit', 'polling', 'xonLoadCal', 'valueChange',
-    'combobox', 'blank', 'outcome', 'renderOnly', 'clientKey', 'clientId',
+    'json',  'styles',  'sortDirection', 'charCode', 'autoSubmit', 'polling', 'xonLoadCal', 'valueChange', 'message',
+    'combobox', 'blank', 'outcome', 'renderOnly', 'clientKey', 'clientId', 'editWindow', 'zkTheme', 'landscape',
+    'portrait', 'keyCode',
 }  # не использовать в качестве параметров
 
 
@@ -121,7 +122,7 @@ MutableLBRegs = [
 ]  # дополнитеные "вариативные" LB для поиска param
 
 # LB/RB обрежутся до этих строк
-_SplitList0 = list('{},=$')
+_SplitList0 = list('{},=$?')
 _SplitList1 = list('{}=$;,')
 _SplitList2 = ['\\n', '\\', '"']
 _SplitList_3 = (_SplitList1 + _SplitList2)

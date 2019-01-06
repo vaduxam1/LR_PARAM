@@ -1,5 +1,8 @@
 # -*- coding: UTF-8 -*-
 # фильтрация и сортировка param
+
+import string
+
 import lr_lib.core
 from lr_lib.core.var.vars_param import DENY_Startswitch_PARAMS, DENY_PARAMS_LOWER, param_splitters, \
     param_valid_letters, DENY_Force_Startswitch_PARAMS
@@ -23,10 +26,18 @@ def param_sort(params: [str, ], reverse=True, _filter=True, deny_param_filter=Tr
     return params
 
 
-def param_filter(params: [str, ], deny_param_filter=True, ) -> iter((str,)):
+_PFDeny_1 = ('-' + string.ascii_lowercase)  # не {param} слова "-321" или "t11"
+
+
+def param_filter(params: [str, ], deny_param_filter=True, action=None, ) -> iter((str,)):
     """отфильтровать лишние param"""
     params = filter(str.strip, params)
     params = set(params)
+
+    deny_numeric = (not lr_vars.AllowOnlyNumericParam.get())
+
+    if not action:
+        action = lr_vars.Window.get_main_action()
 
     if not deny_param_filter:
         yield from params
@@ -36,24 +47,27 @@ def param_filter(params: [str, ], deny_param_filter=True, ) -> iter((str,)):
         len_p = len(param)
 
         if len_p < lr_vars.MinParamLen:
-            continue  # чтото 1-2 символьное
+            continue
         elif any(map(param.startswith, DENY_Force_Startswitch_PARAMS)):
             continue
+        elif not all(map(param_valid_letters.__contains__, param)):
+            continue  # "asd wer*&3"
         elif param.lower() in DENY_PARAMS_LOWER:
             continue
         elif filter_deny_onUpper(param):
             continue  # "onScreen"
-        elif not all(map(param_valid_letters.__contains__, param)):
-            continue  # "asd wer*&3"
+        elif deny_numeric and all(map(str.isnumeric, param)):
+            continue  # имена только из цифр, например порт "8888"
         elif param.endswith('px') and (len_p > 2) and all(map(str.isnumeric, param[:-2])):
             continue  # "224px"
         elif param.startswith('JSESSIONID') and (len_p > 10) and all(map(str.isnumeric, param[10:])):
             continue  # "JSESSIONID2" - уже найденный LoadRunner-ом параметр
-        elif param.startswith('-') and (len_p > 2) and all(map(str.isnumeric, param[1:])):
+        elif any(map(param.startswith, _PFDeny_1)) and (len_p > 1) and all(map(str.isnumeric, param[1:])):
             continue  # "-310"
-
-        # иначе это param - вернуть
-        yield param
+        elif action and (param in action.web_action.websReport.wrsp_and_param_names):
+            continue  # уже найденное имя WRSP
+        else:
+            yield param  # иначе это param - вернуть
         continue
     return
 

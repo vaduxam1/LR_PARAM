@@ -117,7 +117,7 @@ def createToolTip(widget, text: str) -> None:
         Lock.acquire()
         try:
             lr_vars.Tk.after_cancel(ActiveTips[toolTip])
-        except (KeyError, ValueError):
+        except (KeyError, ValueError, tk.TclError):
             return
         finally:
             toolTip.hidetip()

@@ -211,13 +211,25 @@ def lb_rb_split_list_set(__lb: str, __rb: str, lb: str, rb: str) -> (str, str):
     if lr_vars.VarSplitListLB.get():
         i_lb = lr_vars.VarSplitListNumLB.get()
         for word in lb_combo:
-            lb = (lb[:-i_lb].rsplit(word, 1)[-1] + lb[-i_lb:])
+            lb_add = lb[:-i_lb]
+            lb_main = lb[-i_lb:]
+
+            lb_add = lb_add.rsplit(word, 1)
+            lb_add = lb_add[-1]
+
+            lb = (lb_add + lb_main)  # add_main_lb_{param}_rb_main_add
             continue
 
     if lr_vars.VarSplitListRB.get():
         i_rb = lr_vars.VarSplitListNumRB.get()
         for word in rb_combo:
-            rb = (rb[:i_rb] + rb[i_rb:].split(word, 1)[0])
+            rb_main = rb[:i_rb]
+            rb_add = rb[i_rb:]
+
+            rb_add = rb_add.split(word, 1)
+            rb_add = rb_add[0]
+
+            rb = (rb_main + rb_add)  # add_main_lb_{param}_rb_main_add
             continue
 
     lr_vars.VarSplitListNumRB.set(VarSplitListNumRB)  # вернуть

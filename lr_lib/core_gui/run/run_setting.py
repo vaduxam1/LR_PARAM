@@ -156,6 +156,16 @@ class RunSettingWindow(tk.Toplevel):
         )
         lr_lib.gui.widj.tooltip.createToolTip(self.add_inf_cbx, self.action._T1)
 
+        # Checkbutton
+        self.only_numeric = tk.Checkbutton(
+            self.tool_label, anchor=tk.E, text='numeric', font=lr_vars.DefaultFont,
+            variable=lr_vars.AllowOnlyNumericParam,
+        )
+        tt20 = 'Разрешить имена {param}, состоящие только из цифр\n например: 11235432\n\n' \
+               'Запретить, если какие-либо методы поиска {param}, находят порты 18080 и подобное.\n' \
+               'Либо ограничичь, минимильную длину param из цифр, спинбоксом.'
+        lr_lib.gui.widj.tooltip.createToolTip(self.only_numeric, tt20)
+
         # grid
         self.main_label.grid(row=0, column=0)
 
@@ -169,12 +179,14 @@ class RunSettingWindow(tk.Toplevel):
         self.btn_run.grid(row=0, column=4, sticky=tk.NSEW, rowspan=1, columnspan=10, )
         self.tool_label.grid(row=0, column=0, sticky=tk.NSEW, rowspan=1, columnspan=4, )
 
-        self.secondary_param_spin.grid(row=5, column=4, sticky=tk.NSEW, rowspan=10, columnspan=1)
-        self.min_param_spin.grid(row=5, column=5, sticky=tk.NSEW, rowspan=10, columnspan=1)
+        self.secondary_param_spin.grid(row=5, column=2, sticky=tk.NSEW, rowspan=10, columnspan=1)
+        self.min_param_spin.grid(row=5, column=7, sticky=tk.NSEW, rowspan=10, columnspan=1)
+
         self.min_num_param_spin.grid(row=5, column=6, sticky=tk.NSEW, rowspan=10, columnspan=1)
+        self.only_numeric.grid(row=5, column=5, sticky=tk.NSEW, rowspan=10, columnspan=1)
 
         self.cbxFirstLastFile.grid(row=5, column=3, sticky=tk.NSEW, rowspan=10, columnspan=1)
-        self.add_inf_cbx.grid(row=5, column=2, sticky=tk.NSEW, rowspan=10, columnspan=1)
+        self.add_inf_cbx.grid(row=5, column=4, sticky=tk.NSEW, rowspan=10, columnspan=1)
 
         #
         lr_lib.gui.etc.gui_other.center_widget(self)
