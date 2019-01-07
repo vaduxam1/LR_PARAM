@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# окно настройки каментов и имени wrsp
+# окно настройки
 
 import tkinter as tk
 
@@ -18,7 +18,17 @@ class WrspSettingWindow(tk.Toplevel):
         self.resizable(width=False, height=False)
         self.title('настройка каментов и имени wrsp')
 
-        laf = tk.LabelFrame(self, text='{t1}\n{t2}\n'.format(t1='', t2=TTR), font='Arial 7', labelanchor=tk.NW, bd=3)
+        t1 = '''для web_: //lr: IN(7)<-[2]: aFFX9(P:5/84|S:72=[1:875]|T:41), azzR3(P:2/2|S:1=[1]|T:1)
+        для web_: //lr: OUT(2)-> aAB20(P:3|S:2=[2:4]|T:2), aFFT7(P:874|S:874=[1:875]|T:41)
+        для WRSP: //lr: (login: 3=[1:3]) -> Param:3 | Snapshots:2=[2:4] | Transactions=2:['login', 'logout']'''
+        t2 = '''
+        * расшишровка(есть разные, но смысл тот же) для aFFX9(P:1/874|S:874=[1:875]|T:41) :
+            "aFFX9" - исходный param, для WRSP имени "{P_6637_2__login__Button__aFFX9__auth}"
+            "P:5/84" - кол-во использований aFFX9 : "в текущем Snapshot"(необязат) / "во всх Snapshot's"
+            "S:72=[1:875]" - кол-во Snapshot's, использующих aFFX9 : кол-во=[мин_номер : макс_номер(необязат)]
+            "T:41" - кол-во транзакций, использующих aFFX9'''
+
+        laf = tk.LabelFrame(self, text='{t1}\n{t2}\n'.format(t1=t1, t2=t2), font='Arial 7', labelanchor=tk.NW, bd=3)
         t3 = '{p}\n{w}\n'.format(p='{P_6637_2__login__Button__a_FFX_9__auth}', w=lr_lib.core.wrsp.param.WEB_REG_NUM)
         _lab = tk.LabelFrame(self, text=t3, bd=3)
         _lab1 = tk.LabelFrame(_lab, text='{letter}')
@@ -30,21 +40,29 @@ class WrspSettingWindow(tk.Toplevel):
         _lab7 = tk.LabelFrame(_lab, text='{rb_name}')
         _lab8 = tk.LabelFrame(_lab, text='"aFFX9" -> "a_FFX_9"')
 
-        VarWebStatsTransac = tk.Checkbutton(
-            laf, text=tt_stat, font='Arial 7', variable=lr_vars.VarWebStatsTransac, justify='left',
-        )
-        VarWebStatsIn = tk.Checkbutton(
-            laf, text=tt_in, font='Arial 7', justify='left', variable=lr_vars.VarWebStatsIn,
-        )
-        VarWebStatsOut = tk.Checkbutton(
-            laf, text=tt_out, font='Arial 7', justify='left', variable=lr_vars.VarWebStatsOut,
-        )
-        VarWebStatsWarn = tk.Checkbutton(
-            laf, text=tt_warn, font='Arial 7', justify='left', variable=lr_vars.VarWebStatsWarn,
-        )
-        VarWRSPStatsTransacNames = tk.Checkbutton(
-            laf, text=tt_wrsp_trn, font='Arial 7', justify='left', variable=lr_vars.VarWRSPStatsTransacNames,
-        )
+        tt_stat = 'коментарии с именем транзакции\n//lr: "login"(1/3=[1:3])'
+        VarWebStatsTransac = tk.Checkbutton(laf, text=tt_stat, font='Arial 7',
+                                            variable=lr_vars.VarWebStatsTransac, justify='left')
+
+        tt_in = 'IN коментарии\n//lr: IN(7)<-[2]: aFFX9( ...'
+        VarWebStatsIn = tk.Checkbutton(laf, text=tt_in, font='Arial 7', justify='left',
+                                       variable=lr_vars.VarWebStatsIn)
+
+        tt_out = 'OUT коментарии\n//lr: OUT(2)-> aAB20( ...'
+        VarWebStatsOut = tk.Checkbutton(laf, text=tt_out, font='Arial 7', justify='left',
+                                        variable=lr_vars.VarWebStatsOut)
+
+        tt_warn = "WARNING коментарии\n//lr: WARNING: NO ASCII Symbols(rus?)"
+        VarWebStatsWarn = tk.Checkbutton(laf, text=tt_warn, font='Arial 7', justify='left',
+                                         variable=lr_vars.VarWebStatsWarn)
+
+        tt_wrsp_trn = "WRSP, имена транзакций, использующих param\n" \
+                      "<< ... :['login', 'logout']"
+        VarWRSPStatsTransacNames = tk.Checkbutton(laf, text=tt_wrsp_trn, font='Arial 7', justify='left',
+                                                  variable=lr_vars.VarWRSPStatsTransacNames)
+
+        tt_wrsp_transac = 'статистика использования WRSP\n' \
+                          '//lr: (login: 3=[1:3]) -> Param:3 ...ons=2'
 
         def set_WRSPStatsTransac() -> None:
             """VarWRSPStatsTransacNames state='disabled"""
@@ -55,20 +73,21 @@ class WrspSettingWindow(tk.Toplevel):
             return
 
         set_WRSPStatsTransac()
-        VarWRSPStatsTransac = tk.Checkbutton(
-            laf, text=tt_wrsp_transac, font='Arial 7', justify='left', variable=lr_vars.VarWRSPStatsTransac,
-            command=set_WRSPStatsTransac,
-        )
+        VarWRSPStatsTransac = tk.Checkbutton(laf, text=tt_wrsp_transac, font='Arial 7', justify='left',
+                                             variable=lr_vars.VarWRSPStatsTransac, command=set_WRSPStatsTransac)
 
-        VarWRSPStats = tk.Checkbutton(
-            laf, text=tt_wrsp_st, font='Arial 7', justify='left', variable=lr_vars.VarWRSPStats,
-        )
-        SnapshotInName = tk.Checkbutton(
-            _lab3, text=tt_SnapshotInName, font='Arial 7', justify='left', variable=lr_vars.SnapshotInName,
-        )
-        TransactionInNameMax = tk.Spinbox(
-            _lab4, font='Arial 7', from_=-1, to=1000, textvariable=lr_vars.TransactionInNameMax,
-        )
+        tt_wrsp_st = 'WRSP, подробные/короткие коментарии\n' \
+                     'Изменится при пересоздании param\nкороткие(off): // PARAM["aFFX5"] // Snap[1]'
+        VarWRSPStats = tk.Checkbutton(laf, text=tt_wrsp_st, font='Arial 7', justify='left',
+                                      variable=lr_vars.VarWRSPStats)
+
+        tt_SnapshotInName = 'Snapshot-родителя в имени WRSP\nИзменится при пересоздании param\n' \
+                            'P_6637__aFFX9 -> P_6637_2__aFFX9'
+        SnapshotInName = tk.Checkbutton(_lab3, text=tt_SnapshotInName, font='Arial 7', justify='left',
+                                        variable=lr_vars.SnapshotInName)
+
+        TransactionInNameMax = tk.Spinbox(_lab4, font='Arial 7', from_=-1, to=1000,
+                                          textvariable=lr_vars.TransactionInNameMax)
 
         MaxLbWrspName = tk.Spinbox(_lab5, textvariable=lr_vars.MaxLbWrspName, font='Arial 7', from_=-1, to=1000)
         MaxRbWrspName = tk.Spinbox(_lab7, textvariable=lr_vars.MaxRbWrspName, font='Arial 7', from_=-1, to=1000)
@@ -78,9 +97,8 @@ class WrspSettingWindow(tk.Toplevel):
         wrsp_name_splitter = tk.Entry(_lab8, textvariable=lr_vars.wrsp_name_splitter, font='Arial 7')
         WrspNameFirst = tk.Entry(_lab1, textvariable=lr_vars.WrspNameFirst, font='Arial 7')
 
-        apply_btn = tk.Button(
-            self, font='Arial 8 bold', text='Применить', command=lambda: self.parent.save_action_file(file_name=False),
-        )
+        apply_btn = tk.Button(self, font='Arial 8 bold', text='Применить',
+                              command=lambda: self.parent.save_action_file(file_name=False))
         wrsp_rename_btn = tk.Button(
             self, font='Arial 7', text='wrsp_rename',
             command=lambda *_: lr_lib.core_gui.rename.all_wrsp_rename(self.parent, parent=self),
@@ -204,71 +222,3 @@ class WrspSettingWindow(tk.Toplevel):
 
         lr_lib.gui.etc.gui_other.center_widget(self)
         return
-
-
-TTR = '''
-* расшишровка(есть разные, но смысл тот же) для aFFX9(P:1/874|S:874=[1:875]|T:41) :
-
-  "aFFX9" - исходный param, для WRSP имени "{P_6637_2__login__Button__aFFX9__auth}"
-  "P:5/84" - кол-во использований aFFX9 : "в текущем Snapshot"(необязат) / "во всх Snapshot's"
-  "S:72=[1:875]" - кол-во Snapshot's, использующих aFFX9 : кол-во=[мин_номер : макс_номер(необязат)]
-  "T:41" - кол-во транзакций, использующих aFFX9
-'''.strip()
-
-tt_stat = '''
-Коментарии с именем транзакции.
-    //lr: "Choice_status"(5/8=[25:32])
-    web_submit_data("...
-'''.strip()
-
-tt_in = '''
-IN коментарии.
-    //lr: IN(3)<-[2]: z__5j(P:1/34|S:34=[2:35]|T:6),
-                     bJsP2c(P:2/2|S:1=[13]|T:1)
-    web_submit_data("...
-'''.strip()
-
-tt_out = '''
-OUT коментарии.
-    //lr: OUT(1)-> bJsPec(P:1|S:1=[14]|T:1)
-    web_submit_data("...
-'''.strip()
-
-tt_warn = '''
-WARNING коментарии.
-    //lr: WARNING: NO ASCII Symbols(rus?)
-    web_submit_data("...
-'''.strip()
-
-tt_wrsp_trn = '''
-WRSP, имена транзакций, использующих param
- //lr: (NoTransaction_3: 18=[7:24]) -> ...
-            | Transactions=1:['Choice_status']
- web_reg_save_param(...
-'''.strip()
-
-tt_wrsp_transac = '''
-Статистика использования WRSP.
- //lr: (NoTransaction_3: 18=[7:24]) ->
-    Param:3 | Snapshots:1=[26] | Transactions=1:
- web_reg_save_param(...
-'''.strip()
-
-tt_wrsp_st = '''
-WRSP, короткие/подробные коментарии. Изменится при пересоздании param.
-
- Короткие (Off) однострочные:
-    // PARAM["bJsP2h"] // Snap[23] // FILE["t23.txt"]
-    web_reg_save_param(...
-
- Подробные (On) двухстрочные:
-    // Snap[23], [1:35]=35 -> [23:32]=5 | FILE["t23.txt"], with_param = 1/5 | 20:42:01-07/12/18
-    // PARAM["bJsP2h"], count=1/1, NA=0 | LB[21~21] NA=0, RB[22~22] NA=0
-    web_reg_save_param(...
-'''
-
-tt_SnapshotInName = '''
-Snapshot-родителя в имени WRSP.
-Изменится при пересоздании param.
-  P_3080__bJsP2h -> P_3080_23__bJsP2h
-'''.strip()
