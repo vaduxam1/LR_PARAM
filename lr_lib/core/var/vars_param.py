@@ -128,6 +128,10 @@ _SplitList2 = ['\\n', '\\', '"']
 _SplitList_3 = (_SplitList1 + _SplitList2)
 SplitList = tuple(_SplitList0 + _SplitList2 + list(string.digits))
 
+RbStartswithBoundFixed = (
+    '&',
+)  # если RB начинается так, дальше не брать, оставить это же
+
 StripLBEnd1 = ['{', '}', '[', ']', ]
 StripLBEnd2 = ['},', ]
 StripLBEnd3 = ['{', ',', ]
