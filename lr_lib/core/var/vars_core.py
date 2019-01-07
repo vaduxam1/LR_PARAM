@@ -207,8 +207,7 @@ def lb_rb_split_list_set(__lb: str, __rb: str, lb: str, rb: str) -> (str, str):
     except AttributeError:
         rb_combo = lr_lib.core.var.vars_param.SplitList
 
-    # обрезать из SplitList
-    # LB
+    # LB обрезать из SplitList
     if lr_vars.VarSplitListLB.get():
         i_lb = lr_vars.VarSplitListNumLB.get()
         for word in lb_combo:
@@ -221,15 +220,18 @@ def lb_rb_split_list_set(__lb: str, __rb: str, lb: str, rb: str) -> (str, str):
             lb = (lb_add + lb_main)  # add_main_lb_{param}_rb_main_add
             continue
 
-    # RB
-    for bound in lr_lib.core.var.vars_param.RbStartswithBoundFixed:
-        if rb.startswith(bound):
-            rb = bound
-            break
-        continue
+    # RB обрезать из SplitList
+    if lr_vars.VarSplitListRB.get():
+        check = False
 
-    if rb not in lr_lib.core.var.vars_param.RbStartswithBoundFixed:
-        if lr_vars.VarSplitListRB.get():
+        for bound in lr_lib.core.var.vars_param.RbStartswithBoundFixed:
+            if rb.startswith(bound):
+                rb = bound
+                check = True
+                break
+            continue
+
+        if not check:
             i_rb = lr_vars.VarSplitListNumRB.get()
             for word in rb_combo:
                 rb_main = rb[:i_rb]
