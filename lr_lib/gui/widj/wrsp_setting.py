@@ -13,13 +13,13 @@ class WrspSettingWindow(tk.Toplevel):
     """настройка каментов и имени wrsp"""
     def __init__(self, parent: 'lr_lib.gui.action.main_action.ActionWindow'):
         super().__init__(padx=0, pady=0)
-        self.parent = parent
+        self.title('настройка каментов и имени wrsp')
         self.transient(self.parent)
         self.resizable(width=False, height=False)
-        self.title('настройка каментов и имени wrsp')
+
+        self.parent = parent
 
         laf = tk.LabelFrame(self, text='{t1}\n{t2}\n'.format(t1='', t2=TTR), font='Arial 7', labelanchor=tk.NW, bd=3)
-        t3 = '{p}\n{w}\n'.format(p='{P_6637_2__login__Button__a_FFX_9__auth}', w=lr_lib.core.wrsp.param.WEB_REG_NUM)
         _lab = tk.LabelFrame(self, text=t3, bd=3)
         _lab1 = tk.LabelFrame(_lab, text='{letter}')
         _lab2 = tk.LabelFrame(_lab, text='{wrsp_rnd_num}')
@@ -272,3 +272,5 @@ Snapshot-родителя в имени WRSP.
 Изменится при пересоздании param.
   P_3080__bJsP2h -> P_3080_23__bJsP2h
 '''.strip()
+
+t3 = '{p}\n{w}\n'.format(p='{P_6637_2__login__Button__a_FFX_9__auth}', w=lr_lib.core.wrsp.param.WEB_REG_NUM)
