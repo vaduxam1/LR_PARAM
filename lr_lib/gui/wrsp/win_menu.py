@@ -2,14 +2,14 @@
 # меню gui окна
 
 import tkinter as tk
-
 from tkinter import filedialog
 
 import lr_lib
-import lr_lib.gui.wrsp.win_folder
-import lr_lib.gui.wrsp.top.top_pool
-import lr_lib.gui.wrsp.top.top_encode
 import lr_lib.core.var.vars as lr_vars
+import lr_lib.gui.widj.setting
+import lr_lib.gui.wrsp.top.top_encode
+import lr_lib.gui.wrsp.top.top_pool
+import lr_lib.gui.wrsp.win_folder
 
 
 class WinMenu(lr_lib.gui.wrsp.win_folder.WinFolder):
@@ -29,6 +29,10 @@ class WinMenu(lr_lib.gui.wrsp.win_folder.WinFolder):
         """menubar"""
         filemenu = tk.Menu(self.menubar, tearoff=0)
 
+        filemenu.add_command(
+            label="Setting",
+            command=lambda: lr_lib.gui.widj.setting.Setting(parent=self),
+        )
         filemenu.add_command(label="Select Encode",
                              command=lambda: lr_lib.gui.wrsp.top.top_encode.TopEncoding(self))
         filemenu.add_command(label="Pools",
