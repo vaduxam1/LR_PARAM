@@ -2,6 +2,7 @@
 # окно настройки
 
 import json
+import inspect
 import tkinter as tk
 import tkinter.ttk as ttk
 
@@ -11,6 +12,7 @@ import lr_lib.core.var.vars_highlight
 import lr_lib.core.var.vars_param
 import lr_lib.core.var.vars_other
 import lr_lib.core.var.vars_highlight
+import lr_lib.gui.widj.tooltip
 import lr_lib.core_gui.rename
 import lr_lib.core.wrsp.param
 
@@ -38,6 +40,10 @@ class Setting(tk.Toplevel):
         ]
 
         for module in modeles:
+            _source = inspect.getsource(module)
+            source = _source.split('\n')
+            source = list(filter(bool, map(str.strip, source)))
+
             col += 1
             row = 0
             self.buttons[col] = {}
@@ -49,8 +55,8 @@ class Setting(tk.Toplevel):
             dt = module.__dict__
             attrs = attr_filter(dt)
 
-            for at in attrs:
-                val = dt[at]
+            for attr in attrs:
+                val = dt[attr]
 
                 row += 1
                 if row > max_row:
@@ -61,17 +67,20 @@ class Setting(tk.Toplevel):
                     lab = tk.Label(self, text=module.__name__, )
                     lab.grid(row=0, column=col, sticky=tk.NSEW)
 
-                # Button
-                try:
+                try:  # len
                     lenv = len(val)
                 except Exception as ex:
                     lenv = None
                 ln = (' {}'.format(lenv) if (lenv is not None) else '')
-                btxt = '{at} : {t}{ln}'.format(t=val.__class__.__name__, at=at, ln=ln, )
-                command = lambda dt=dt, at=at: _var_editor(self, dt, at, )
+                btxt = '{at} : {t}{ln}'.format(t=val.__class__.__name__, at=attr, ln=ln, )
 
-                apply_btn = tk.Button(self, font=font, text=btxt, command=command,)
+                # Button
+                cmd = lambda dt=dt, at=attr: _var_editor(self, dt, at, )  # cmd
+                apply_btn = tk.Button(self, font=font, text=btxt, command=cmd,)
                 apply_btn.grid(row=row, column=col, sticky=tk.NSEW)
+
+                var_source = _get_source_var_comment(source, attr)
+                lr_lib.gui.widj.tooltip.createToolTip(apply_btn, var_source)
 
                 self.buttons[col][row] = apply_btn
                 continue
@@ -79,6 +88,41 @@ class Setting(tk.Toplevel):
 
         lr_lib.gui.etc.gui_other.center_widget(self)
         return
+
+
+def _get_source_var_comment(source: [str, ], attr: str) -> str:
+    """подсказки к кнопкам насройки vars из каментов исходного кода"""
+    vs = '{} ='.format(attr)
+    _vs = [v for v in source if v.startswith(vs)]
+    vs1 = _vs[0]
+
+    ind = source.index(vs1)
+    vs0 = source[ind - 1]  # + пред строка
+    if vs0.startswith('#'):
+        vs0 = (vs0 + '\n')
+    else:
+        vs0 = ''
+
+    if '#' in vs1:
+        vs1 = vs1.split('#', 1)
+        vs1 = vs1[1]
+    else:
+        vs1 = ''
+
+    var_source = (vs0 + vs1).strip()
+
+    if not var_source:  # искать до первого #
+        for line in source[ind:]:
+            if '#' in line:
+                ls = line.split('#', 1)
+                if len(ls) == 2:
+                    var_source = ls[1]
+                else:
+                    var_source = '?'
+                break
+            continue
+
+    return var_source
 
 
 TkVars = (tk.IntVar, tk.StringVar, tk.BooleanVar,)
@@ -118,7 +162,7 @@ def _var_editor(parent, var_dict, var_name, ) -> None:
         # Toplevel
     top_level = tk.Toplevel(parent)
     top_level.attributes('-topmost', True)
-    title = 'type({tp}) | len({ln})'.format(tp=type(var), ln=lenv, )
+    title = '{n} | type({tp}) | len({ln})'.format(tp=type(var), ln=lenv, n=var_name, )
     top_level.title(title)
 
     top_level.grid_columnconfigure(0, weight=1)
