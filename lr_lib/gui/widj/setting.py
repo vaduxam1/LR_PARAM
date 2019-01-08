@@ -17,7 +17,7 @@ import lr_lib.core.wrsp.param
 
 class Setting(tk.Toplevel):
     """настройка var"""
-    def __init__(self, parent: 'lr_lib.gui.action.main_action.ActionWindow', max_row=15, ):
+    def __init__(self, parent: 'lr_lib.gui.action.main_action.ActionWindow', ):
         super().__init__(padx=0, pady=0)
         self.parent = parent
         self.transient(self.parent)
@@ -25,41 +25,52 @@ class Setting(tk.Toplevel):
         self.title('настройка var')
         self.buttons = {}
 
+        self.init()
+        return
+
+    def init(self, max_row=30, font='Arial 7', ) -> None:
         col = 0
         modeles = [
-            lr_lib.core.var.vars_param,
-            lr_lib.core.var.vars_highlight,
             lr_vars,
+            lr_lib.core.var.vars_highlight,
             lr_lib.core.wrsp.param,
+            lr_lib.core.var.vars_param,
         ]
 
         for module in modeles:
             col += 1
             row = 0
             self.buttons[col] = {}
-
             # Label
             name = module.__name__
-            lab = tk.Label(self, text=name, )
+            lab = tk.Label(self, text=name, font='Arial 10 bold', )
             lab.grid(row=0, column=col, sticky=tk.NSEW)
 
             dt = module.__dict__
             attrs = attr_filter(dt)
 
             for at in attrs:
+                val = dt[at]
+
                 row += 1
                 if row > max_row:
                     row = 1
                     col += 1
                     self.buttons[col] = {}
-
                     # Label
                     lab = tk.Label(self, text=module.__name__, )
                     lab.grid(row=0, column=col, sticky=tk.NSEW)
 
                 # Button
+                try:
+                    lenv = len(val)
+                except Exception as ex:
+                    lenv = None
+                ln = (' {}'.format(lenv) if (lenv is not None) else '')
+                btxt = '{at} : {t}{ln}'.format(t=val.__class__.__name__, at=at, ln=ln, )
                 command = lambda dt=dt, at=at: _var_editor(self, dt, at, )
-                apply_btn = tk.Button(self, font='Arial 8 bold', text=at, command=command,)
+
+                apply_btn = tk.Button(self, font=font, text=btxt, command=command,)
                 apply_btn.grid(row=row, column=col, sticky=tk.NSEW)
 
                 self.buttons[col][row] = apply_btn
@@ -70,7 +81,12 @@ class Setting(tk.Toplevel):
         return
 
 
-def attr_filter(dt: dict, allow_types=(str, tuple, list, set, dict, ), ) -> iter((str, )):
+TkVars = (tk.IntVar, tk.StringVar, tk.BooleanVar,)
+AllowTypes = [str, tuple, list, set, dict, ]
+AllowTypes.extend(TkVars)
+
+
+def attr_filter(dt: dict, allow_types=tuple(AllowTypes), ) -> iter((str, )):
     """исключить ненужные атрибуты"""
     for attr in dt:
         da = dt[attr]
@@ -81,14 +97,28 @@ def attr_filter(dt: dict, allow_types=(str, tuple, list, set, dict, ), ) -> iter
     return
 
 
+def to_json(var, _var: 'repr') -> str:
+    """преобразовать var в json-str"""
+    try:
+        txt = json.dumps(var, ensure_ascii=False, indent=2)
+    except Exception as ex:  # TypeError: Object of type set is not JSON serializable
+        txt = _var
+    return txt
+
+
 def _var_editor(parent, var_dict, var_name, ) -> None:
     """Toplevel tk.Text + scroll_XY"""
     var = var_dict[var_name]
 
-    # Toplevel
+    try:
+        lenv = len(var)
+    except Exception as ex:  # TypeError: object of type 'IntVar' has no len()
+        lenv = None
+
+        # Toplevel
     top_level = tk.Toplevel(parent)
     top_level.attributes('-topmost', True)
-    title = 'type({tp}) | len({ln})'.format(tp=type(var), ln=len(var), )
+    title = 'type({tp}) | len({ln})'.format(tp=type(var), ln=lenv, )
     top_level.title(title)
 
     top_level.grid_columnconfigure(0, weight=1)
@@ -100,11 +130,17 @@ def _var_editor(parent, var_dict, var_name, ) -> None:
         padx=0, pady=0, undo=True,
     )
 
-    _var = repr(var)
-    try:
-        tk_text.insert(tk.END, json.dumps(var, ensure_ascii=False, indent=2))
-    except Exception as ex:  # TypeError: Object of type set is not JSON serializable
-        tk_text.insert(tk.END, _var)
+    # var_default
+    if isinstance(var, TkVars):
+        var_default = var.get()
+        var_default = repr(var_default)
+    else:
+        var_default = repr(var)
+
+    # tk_text.insert
+    txt = to_json(var, var_default)
+    tk_text.insert(tk.END, txt)
+
     # Scrollbar
     text_scrolly = ttk.Scrollbar(top_level, orient=tk.VERTICAL, command=tk_text.yview)
     text_scrollx = ttk.Scrollbar(top_level, orient=tk.HORIZONTAL, command=tk_text.xview)
@@ -123,22 +159,27 @@ def _var_editor(parent, var_dict, var_name, ) -> None:
     filemenu = tk.Menu(top_level, tearoff=0)
     menubar.add_cascade(label="reset/save", menu=filemenu)
 
+    def _save(value_txt) -> None:
+        """пересохранить var"""
+        value = eval(value_txt)
+        if isinstance(var, TkVars):
+            var_dict[var_name].set(value)
+        else:
+            var_dict[var_name] = value
+        return
+
     def var_save() -> None:
         """сохранить изменения в var"""
         txt = tk_text.get(1.0, tk.END)
-        et = eval(txt)
-        var_dict[var_name] = et
+        _save(txt)
         return
 
     def var_reset() -> None:
-        """сбросить изменения в tk.Text"""
+        """сбросить изменения в tk.Text и var"""
         tk_text.delete(1.0, tk.END)
-        try:
-            tk_text.insert(tk.END, json.dumps(var, ensure_ascii=False, indent=2))
-        except Exception as ex:  # TypeError: Object of type set is not JSON serializable
-            tk_text.insert(tk.END, _var)
-        et = eval(_var)
-        var_dict[var_name] = et
+        txt = to_json(var, var_default)
+        tk_text.insert(tk.END, txt)
+        _save(txt)
         return
 
     filemenu.add_command(
@@ -151,4 +192,3 @@ def _var_editor(parent, var_dict, var_name, ) -> None:
     )
 
     return
-

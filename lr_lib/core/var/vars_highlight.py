@@ -6,11 +6,11 @@ import itertools
 import random
 import string
 
-from lr_lib.core.var._var import Var
-from lr_lib.core.var.vars import lib_folder
-from lr_lib.core.var.vars_other import _unpunct
-from lr_lib.core.var.vars_param import LB_PARAM_FIND_LIST, DENY_WEB_
-from lr_lib.etc.help import COLORS, HEX
+import lr_lib.core.var._var
+import lr_lib.core.var.vars
+import lr_lib.core.var.vars_other
+import lr_lib.core.var.vars_param
+import lr_lib.etc.help
 
 HighlightOn = True  # включить подсветку
 HighlightAfter0 = 1500  # задержка(мс), перед перезапуском проверки необходимости подсветки
@@ -19,11 +19,11 @@ HighlightAfter2 = 250  # задержка(мс), перед подсветкой
 Background = 'khaki'
 ColorProgressDelay = 0.5  # мс - чем меньше тем быстрее смена цветов "гирлянды"
 
-highlight_words_folder = os.path.join(lib_folder, 'etc')
+highlight_words_folder = os.path.join(lr_lib.core.var.vars.lib_folder, 'etc')
 highlight_words_main_file = os.path.join(highlight_words_folder, 'highlight_words.txt')
 highlight_words_files_startswith = 'highlight_words'
 
-_COLORS = itertools.cycle(COLORS.keys())
+_COLORS = itertools.cycle(lr_lib.etc.help.COLORS.keys())
 
 
 def random_color(ckeck=True, all_color='ABCDEF1234567890', r=6, ) -> str:
@@ -42,9 +42,9 @@ def random_color(ckeck=True, all_color='ABCDEF1234567890', r=6, ) -> str:
 
 
 ColorIterator = random_color()
-VarColorTeg = Var(value=set(COLORS.keys()))
+VarColorTeg = lr_lib.core.var._var.Var(value=set(lr_lib.etc.help.COLORS.keys()))
 _LB_LIST_highlight = {'uuid_', 'dtid', 'sessionid', 'Snapshot', 'Snapshot=t', 'EXTRARES', '.inf', }
-_LB_LIST_highlight.update(_unpunct(s) for s in LB_PARAM_FIND_LIST)
+_LB_LIST_highlight.update(lr_lib.core.var.vars_other._unpunct(s) for s in lr_lib.core.var.vars_param.LB_PARAM_FIND_LIST)
 tnrvf = set('\\{}'.format(s) for s in 'tnrvf')
 PopUpWindColor1 = 'LightGrey'  # просто какойто общий цвет для выделения PopUpWindow
 highlight_words = set()  # слова для подсветки
@@ -63,8 +63,8 @@ def init_highlight_words() -> None:
                     continue
         continue
 
-    highlight_words.update(COLORS.keys())
-    highlight_words.update(HEX)
+    highlight_words.update(lr_lib.etc.help.COLORS.keys())
+    highlight_words.update(lr_lib.etc.help.HEX)
     for s in string.digits:
         highlight_words.add('Value={\\"\\":%s' % s)
         continue
@@ -76,7 +76,7 @@ def init_highlight_words() -> None:
 rd = {
     '/*', '*/', 'WARNING',
 }
-rd.update(DENY_WEB_)
+rd.update(lr_lib.core.var.vars_param.DENY_WEB_)
 
 VarDefaultColorTeg = {
     'background': {
