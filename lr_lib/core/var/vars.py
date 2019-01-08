@@ -239,3 +239,4 @@ github = 'https://github.com/vaduxam1/LR_PARAM'
 github_vars = '/blob/master/lr_lib/core/var/vars.py'
 GitHub = (github + github_vars)
 GitUpdPeriod = (60 * 60 * 4)  # сек, период проверки
+githubCheckUpdateEnable = True
