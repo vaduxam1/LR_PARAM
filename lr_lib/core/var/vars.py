@@ -11,10 +11,10 @@ import lr_lib.core.var._var
 #####################################
 # главные переменные
 
-VERSION = 'v11.5.3'
-lib_folder = 'lr_lib'
+VERSION = 'v11.5.3'  # версия утилиты
+lib_folder = 'lr_lib'  # каталог py-файлов утилиты
 Tk = tk.Tk()  # tkinter
-original_callback_exception = Tk.report_callback_exception
+original_callback_exception = Tk.report_callback_exception  # переопределение обработчика raise
 
 Window = None  # класс gui окна # lr_lib.gui.wrsp.main_window.Window
 AllFiles = []  # все файлы ответов
@@ -45,7 +45,7 @@ VarWRSPStats = tk.BooleanVar(value=False)  # для wrsp, создавать п�
 SecondaryParamLen = tk.IntVar(value=3)  # число первых символов, взятых из param, для использования их при поиске одноименных param
 
 MinParamLen = 3  # минимальная длина param
-_MinParamLen = tk.IntVar(value=MinParamLen)
+_MinParamLen = tk.IntVar(value=MinParamLen)  # минимальная длина param
 MinParamLen -= 1  # тк нумерация с 0
 
 MinParamNumsOnlyLen = tk.IntVar(value=5)  # минимальная длина param, состоящего только из цифр
@@ -148,17 +148,17 @@ InfoLabelUpdateTime = tk.IntVar(value=1500)  # (мс) обновление linen
 
 DefaultActionHighlightFont = 'Eras Medium ITC'  # шрифт подсвеченного текста action
 DefaultActionHighlightFontSize = 9  # размер подсвеченного шрифта текста action
-DefaultActionHighlightFontBold = False  #
-DefaultHighlightActionFontOverstrike = False  #
-DefaultActionHighlightFontUnderline = False  #
-DefaultHighlightActionFontSlant = False  #
+DefaultActionHighlightFontBold = False  # шрифт подсвеченного текста action
+DefaultHighlightActionFontOverstrike = False  # шрифт подсвеченного текста action
+DefaultActionHighlightFontUnderline = False  # шрифт подсвеченного текста action
+DefaultHighlightActionFontSlant = False  # шрифт подсвеченного текста action
 
 DefaultActionNoHighlightFont = 'Georgia'  # шрифт текста action
 DefaultActionNoHighlightFontSize = 9  # размер шрифта текста action
-DefaultActionNoHighlightFontBold = False  #
-DefaultActionNoHighlightFontOverstrike = False  #
-DefaultActionNoHighlightFontUnderline = False  #
-DefaultActionNoHighlightFontSlant = True  #
+DefaultActionNoHighlightFontBold = False  # шрифт текста action
+DefaultActionNoHighlightFontOverstrike = False  # шрифт текста action
+DefaultActionNoHighlightFontUnderline = False  # шрифт текста action
+DefaultActionNoHighlightFontSlant = True  # шрифт текста action
 
 var_bar_1 = False  # show/hide main bar
 var_bar_2 = False  # show/hide navigation bar
@@ -169,12 +169,12 @@ var_bar_3 = False  # show/hide info bar
 
 BackupActionFile = 100  # макс(по кругу) кол-во backup файлов
 BackupFolder = 'lr_backup'
-BackupName = '{i}_backup_{ind}_action.c'
+BackupName = '{i}_backup_{ind}_action.c'  # Backup
 
 #####################################
 # область выделения двойным кликом мыши
-tcl_wordchars = '[a-zA-Z0-9_.!-]'
-tcl_nonwordchars = '[^a-zA-Z0-9_.!-]'
+tcl_wordchars = '[a-zA-Z0-9_.!-]'  # область выделения двойным кликом мыши
+tcl_nonwordchars = '[^a-zA-Z0-9_.!-]'  # область выделения двойным кликом мыши
 
 # #####################################
 # логирование
@@ -185,7 +185,7 @@ logFolder = 'lr_logs'
 logName = 'server_%s.log' % time.strftime('%d.%m')
 logPath = os.path.join(os.getcwd(), logFolder)
 logFullName = os.path.join(logPath, logName)
-logger_level = 1  # loggingLevels
+logger_level = 1  # logging
 
 VarWindowLogger = tk.StringVar(value='INFO')  # минимальный уровень вывода сообщений в gui
 EHE = (EHOME, EEND) = [3, 1]  # при ошибке, показать строк выше/ниже, строки в файле-кода
@@ -194,7 +194,7 @@ EHE = (EHOME, EEND) = [3, 1]  # при ошибке, показать строк
 # поиск файлов ответов, при старте
 
 DEFAULT_FILES_FOLDER = 'data'  # каталог поиска
-DEFAULT_FILES_FOLDER = os.path.realpath(DEFAULT_FILES_FOLDER) if os.path.isdir(DEFAULT_FILES_FOLDER) else os.getcwd()
+DEFAULT_FILES_FOLDER = (os.path.realpath(DEFAULT_FILES_FOLDER) if os.path.isdir(DEFAULT_FILES_FOLDER) else os.getcwd())
 
 VarFilesFolder = tk.StringVar(value=DEFAULT_FILES_FOLDER)  # каталог с файлами
 VarIsSnapshotFiles = tk.BooleanVar(value=True)  # брать файлы, проаписанные в inf файлах каталога / или все файлы
@@ -237,6 +237,6 @@ FIND_PARAM_HOTKEY = 'ctrl+shift+c'  # хоткей "найти(2) param"
 # проверка наличия обновленной версии
 github = 'https://github.com/vaduxam1/LR_PARAM'
 github_vars = '/blob/master/lr_lib/core/var/vars.py'
-GitHub = (github + github_vars)
+GitHub = (github + github_vars)  #
 GitUpdPeriod = (60 * 60 * 4)  # сек, период проверки
-githubCheckUpdateEnable = True
+githubCheckUpdateEnable = True  # вкл/выкл проверку обновлений утилиты

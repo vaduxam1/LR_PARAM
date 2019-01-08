@@ -21,9 +21,9 @@ ColorProgressDelay = 0.5  # мс - чем меньше тем быстрее с�
 
 highlight_words_folder = os.path.join(lr_lib.core.var.vars.lib_folder, 'etc')
 highlight_words_main_file = os.path.join(highlight_words_folder, 'highlight_words.txt')
-highlight_words_files_startswith = 'highlight_words'
+highlight_words_files_startswith = 'highlight_words'  #
 
-_COLORS = itertools.cycle(lr_lib.etc.help.COLORS.keys())
+_COLORS = itertools.cycle(lr_lib.etc.help.COLORS.keys())  #
 
 
 def random_color(ckeck=True, all_color='ABCDEF1234567890', r=6, ) -> str:
@@ -45,7 +45,7 @@ ColorIterator = random_color()
 VarColorTeg = lr_lib.core.var._var.Var(value=set(lr_lib.etc.help.COLORS.keys()))
 _LB_LIST_highlight = {'uuid_', 'dtid', 'sessionid', 'Snapshot', 'Snapshot=t', 'EXTRARES', '.inf', }
 _LB_LIST_highlight.update(lr_lib.core.var.vars_other._unpunct(s) for s in lr_lib.core.var.vars_param.LB_PARAM_FIND_LIST)
-tnrvf = set('\\{}'.format(s) for s in 'tnrvf')
+tnrvf = set('\\{}'.format(s) for s in 'tnrvf')  #
 PopUpWindColor1 = 'LightGrey'  # просто какойто общий цвет для выделения PopUpWindow
 highlight_words = set()  # слова для подсветки
 
@@ -76,7 +76,7 @@ def init_highlight_words() -> None:
 rd = {
     '/*', '*/', 'WARNING',
 }
-rd.update(lr_lib.core.var.vars_param.DENY_WEB_)
+rd.update(lr_lib.core.var.vars_param.DENY_WEB_)  # background/orange
 
 VarDefaultColorTeg = {
     'background': {
@@ -99,7 +99,7 @@ RusTag = 'backgroundorange'
 wrsp_color1 = 'chartreuse'
 wrsp_color2 = 'darkblue'
 color_transactions_names = 'darkslategrey'
-color_warn_wrsp = 'red'
+color_warn_wrsp = 'red'  #
 ForceOlive = (
     'value=xon', 'value=on', 'value={\\"left\\', 'value=i"', 'value={}', 'value={\\"', 'value=dummy',
     'value={\\"command',

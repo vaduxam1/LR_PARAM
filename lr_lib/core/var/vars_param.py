@@ -9,6 +9,7 @@ import lr_lib.core.var.vars_highlight
 
 ########
 # param
+
 Params_names = {
     'zkau_', 'Desktop_', 'index_', 'editWindow_', 'zul_', 'z_', 'nV0', 'iEK', 'aFF', 'adv_upload_',
 }  # "начало" имен для поиска param(1)
@@ -126,7 +127,7 @@ _SplitList0 = list('{},=$?')
 _SplitList1 = list('{}=$;,')
 _SplitList2 = ['\\n', '\\', '"']
 _SplitList_3 = (_SplitList1 + _SplitList2)
-SplitList = tuple(_SplitList0 + _SplitList2 + list(string.digits))
+SplitList = tuple(_SplitList0 + _SplitList2 + list(string.digits))  # LB/RB обрежутся до этих строк
 
 RbStartswithBoundFixed = [
     '&',
@@ -137,7 +138,7 @@ StripLBEnd2 = ['},', ]
 StripLBEnd3 = ['{', ',', ]
 StripRBEnd1 = ['{', '}', '[', ']', ]
 StripRBEnd2 = [',{', ]
-StripRBEnd3 = ['{', ',']
+StripRBEnd3 = ['{', ',']  # символы обрезки для конца строка LB/RB
 
 Screening = ['\\', '"', ]  # символы для экранирования слешем
 AddAllowParamSymb = '_!-'  # символы, которые могут входить в имя param, кроме букв и цифр
@@ -150,28 +151,33 @@ param_splitters = (string.punctuation + string.whitespace)
 for s in AddAllowParamSymb:
     param_splitters = param_splitters.replace(s, '')
     continue
-param_splitters = set(param_splitters)
+param_splitters = set(param_splitters)  # символы обрезки автозамены
 
 ########
 # web
+
 DENY_WEB_ = {
     'google.com', 'yandex.ru', 'mail.ru',
 }  # web_ запросы, содержащие эти слова, помечять WARNING
 
 ########
 # файлы
+
 _FileOptions = (
     'FileName',
     'ResponseHeaderFile',
     'SnapshotXmlFile',
-)
+)  # секции ini LoarRunner файла для Response файлов
+
 FileOptionsStartswith = set(map(str.lower, _FileOptions))  # секции в inf-файле, c файлами-ответов
+
 DENY_FILES = {
     'CodeGenerationLog.txt', 'CorrelationLog.txt',
 }  # файлы, исключенные из поиска param
 DENY_PART_NAME = {
     '_RequestHeader', '_RequestBody',
-}
+}  # не испоьлзовать как файлы ответов
+
 DENY_EXT = {
     '.inf', '.ico', '.gif', '.jpg', '.jpeg', '.bmp', '.tif', '.png', '.zip', '.rar', '.7z', '.gz', '.tar', '.c', '.css',
-}
+}  # запрещенные расширения файлов, для файлов-ответов
