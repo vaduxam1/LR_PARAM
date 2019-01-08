@@ -13,11 +13,12 @@ class WrspSettingWindow(tk.Toplevel):
     """настройка каментов и имени wrsp"""
     def __init__(self, parent: 'lr_lib.gui.action.main_action.ActionWindow'):
         super().__init__(padx=0, pady=0)
+
+        self.parent = parent
+
         self.title('настройка каментов и имени wrsp')
         self.transient(self.parent)
         self.resizable(width=False, height=False)
-
-        self.parent = parent
 
         laf = tk.LabelFrame(self, text='{t1}\n{t2}\n'.format(t1='', t2=TTR), font='Arial 7', labelanchor=tk.NW, bd=3)
         _lab = tk.LabelFrame(self, text=t3, bd=3)
