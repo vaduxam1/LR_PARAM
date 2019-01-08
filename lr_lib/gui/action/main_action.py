@@ -152,7 +152,7 @@ class ActionWindow(lr_lib.gui.action.act_win.ActWin):
             label="2) по regexp",
             command=lambda: lr_lib.core.var.vars_other.T_POOL_decorator(progress_decor(
                 group_param_search_by_act_re, self))(
-                self, [['web', self], 'all'], wrsp_create=True, texts_for_lb=None,
+                self, [['web', self], 'all'], wrsp_create=True,
             )
         )
 
