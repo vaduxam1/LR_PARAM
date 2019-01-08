@@ -252,23 +252,40 @@ class WebLegend(tk.Toplevel):
         """показать соответствие номеров(из окна легенды) и имен транзакций"""
         transacts = [(a, b) for (a, b) in self.tr if b]
         if transacts:
-            tw = tk.Toplevel(self)
-            tw.attributes('-topmost', True)
-            tw.title('{} транзакций - соответствие номеров и имен'.format(len(transacts)))
-            tw.grid_columnconfigure(0, weight=1)
-            tw.grid_rowconfigure(0, weight=1)
-
-            tk_text = tk.Text(
-                tw, foreground='grey', background=lr_lib.core.var.vars_highlight.Background, wrap=tk.NONE, padx=0, pady=0, undo=True,)
-
-            text_scrolly = ttk.Scrollbar(tw, orient=tk.VERTICAL, command=tk_text.yview)
-            text_scrollx = ttk.Scrollbar(tw, orient=tk.HORIZONTAL, command=tk_text.xview)
-            tk_text.configure(
-                yscrollcommand=text_scrolly.set, xscrollcommand=text_scrollx.set, bd=0, padx=0, pady=0)
-
-            tk_text.insert(tk.END, '\n'.join('({}): {}'.format(a, b) for (a, b) in transacts))
-
-            tk_text.grid(row=0, column=0, sticky=tk.NSEW)
-            text_scrolly.grid(row=0, column=1, sticky=tk.NSEW)
-            text_scrollx.grid(row=1, column=0, sticky=tk.NSEW)
+            self.transac(transacts)
             return
+
+    def transac(self, transacts) -> None:
+        """соответствие номеров(из окна легенды) и имен транзакций"""
+        text = '\n'.join('({}): {}'.format(a, b) for (a, b) in transacts)
+        title = '{} транзакций - соответствие номеров и имен'.format(len(transacts))
+        _set_transacts(self, text, title)
+        return
+
+
+def _set_transacts(parent, text='', title='', ):
+    """Toplevel tk.Text + scroll_XY"""
+    top_level = tk.Toplevel(parent)
+    top_level.attributes('-topmost', True)
+    top_level.title(title)
+
+    top_level.grid_columnconfigure(0, weight=1)
+    top_level.grid_rowconfigure(0, weight=1)
+
+    tk_text = tk.Text(
+        top_level, foreground='grey', background=lr_lib.core.var.vars_highlight.Background, wrap=tk.NONE,
+        padx=0, pady=0, undo=True,
+    )
+
+    text_scrolly = ttk.Scrollbar(top_level, orient=tk.VERTICAL, command=tk_text.yview)
+    text_scrollx = ttk.Scrollbar(top_level, orient=tk.HORIZONTAL, command=tk_text.xview)
+    tk_text.configure(
+        yscrollcommand=text_scrolly.set, xscrollcommand=text_scrollx.set, bd=0, padx=0, pady=0,
+    )
+
+    tk_text.insert(tk.END, text)
+
+    tk_text.grid(row=0, column=0, sticky=tk.NSEW)
+    text_scrolly.grid(row=0, column=1, sticky=tk.NSEW)
+    text_scrollx.grid(row=1, column=0, sticky=tk.NSEW)
+    return tk_text

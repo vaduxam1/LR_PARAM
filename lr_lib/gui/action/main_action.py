@@ -16,6 +16,7 @@ import lr_lib.gui.wrsp.top.top_allfiles
 import lr_lib.gui.etc.gui_other
 import lr_lib.core_gui.group_param.core_gp
 import lr_lib.gui.widj.wrsp_setting
+import lr_lib.gui.widj.setting
 import lr_lib.core_gui.action_lib
 import lr_lib.core_gui.run.run_setting
 import lr_lib.core.var.vars as lr_vars
@@ -90,6 +91,10 @@ class ActionWindow(lr_lib.gui.action.act_win.ActWin):
         filemenu.add_command(
             label="WRSP Setting",
             command=lambda: lr_lib.gui.widj.wrsp_setting.WrspSettingWindow(parent=self),
+        )
+        filemenu.add_command(
+            label="Setting",
+            command=lambda: lr_lib.gui.widj.setting.Setting(parent=self),
         )
         filemenu.add_command(label="Web Legend Window", command=self.legend)
         filemenu.add_command(label="show/hide main bar", command=self.show_hide_bar_1)
