@@ -53,7 +53,7 @@ class Setting(tk.Toplevel):
             lab.grid(row=0, column=col, sticky=tk.NSEW)
 
             dt = module.__dict__
-            attrs = attr_filter(dt)
+            attrs = sorted(attr_filter(dt))
 
             for attr in attrs:
                 val = dt[attr]
@@ -76,7 +76,7 @@ class Setting(tk.Toplevel):
 
                 # Button
                 cmd = lambda dt=dt, at=attr: _var_editor(self, dt, at, )  # cmd
-                apply_btn = tk.Button(self, font=font, text=btxt, command=cmd,)
+                apply_btn = tk.Button(self, font=font, text=btxt, command=cmd, anchor="w")
                 apply_btn.grid(row=row, column=col, sticky=tk.NSEW)
 
                 var_source = _get_source_var_comment(source, attr)
