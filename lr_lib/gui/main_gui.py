@@ -5,7 +5,7 @@ import threading
 
 import lr_lib.core.var.vars as lr_vars
 import lr_lib.core.var.vars_highlight
-import lr_lib.gui.etc.git
+import lr_lib.gui.etc.git_update
 import lr_lib.gui.wrsp.main_window
 import lr_lib.gui.etc.gui_other
 
@@ -15,7 +15,7 @@ def init(c_args=None) -> None:
     lr_vars.Window = lr_lib.gui.wrsp.main_window.Window()  # main Gui
     lr_lib.gui.etc.gui_other.wordBreakAfter()  # область выделения двойным кликом мыши
 
-    threading.Thread(target=lr_lib.gui.etc.git._git_update_check).start()  # проверить обновление
+    threading.Thread(target=lr_lib.gui.etc.git_update._git_update_check).start()  # проверить обновление
     return
 
 
