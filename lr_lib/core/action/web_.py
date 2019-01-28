@@ -137,7 +137,9 @@ class WebAny:
 
         warn = self.check_for_warnings()
         text = '{warn}\n{coment}\n{snap_text}'.format(
-            coment=comments, snap_text='\n'.join(self.lines_list), warn=warn,
+            coment=comments,
+            snap_text='\n'.join(self.lines_list),
+            warn=warn,
         )
         return text.strip('\n')
 
