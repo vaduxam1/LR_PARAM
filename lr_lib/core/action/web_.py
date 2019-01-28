@@ -2,6 +2,7 @@
 # классы lr web_ запросов
 
 import lr_lib
+import lr_lib.core.etc.lbrb_checker
 import lr_lib.core.var.vars as lr_vars
 
 
@@ -133,7 +134,8 @@ class WebAny:
             if (len(self.lines_list) > 2) and (not self.snapshot.inf):
                 comments += '\n\t{} WARNING: no "Snapshot=t.inf" (del?)'.format(lr_lib.core.wrsp.param.LR_COMENT)
 
-        text = '{coment}\n{snap_text}'.format(coment=comments, snap_text='\n'.join(self.lines_list))
+        warn = self.check_for_warnings()
+        text = '{warn}\n{coment}\n{snap_text}'.format(coment=comments, snap_text='\n'.join(self.lines_list), warn=warn,)
         return text.strip('\n')
 
     def _read_name(self, name='') -> str:
@@ -246,6 +248,37 @@ class WebAny:
             return self._set_body(body, 1, -1)
         else:
             return self._set_body(body, 0, mx)
+
+    def check_for_warnings(self) -> str:
+        """wrsp могут быть неправильно заменены, например кем-то внучную или LR, в виде '{wrsp_name}_1' """
+        warnings = []
+        for w in self.ActionWebsAndLines.websReport.wrsp_and_param_names:
+            wn = ('{%s}' % w)
+            body = self.get_body()
+
+            if wn in body:
+                bs = body.split(wn)
+                if len(body) == 2:
+                    if not lr_lib.core.etc.lbrb_checker.check_bound_lb_rb(*bs):
+                        warnings.append('Неправильное использование WRSP: {lb}{wrsp}{rb}'.format(
+                            wrsp=wn, lb=bs[0][-3:], rb=bs[1][:3],
+                        ))
+                else:
+                    for sb in zip(bs, bs[1:]):
+                        if not lr_lib.core.etc.lbrb_checker.check_bound_lb_rb(*sb):
+                            warnings.append('Неправильное использование WRSP: {lb}{wrsp}{rb}'.format(
+                                wrsp=wn, lb=bs[0][-3:], rb=bs[1][:3],
+                            ))
+                        continue
+            continue
+
+        if warnings:
+            s = '\n\t{c} WARNING: '.format(c=lr_lib.core.wrsp.param.LR_COMENT, )
+            warn = s.join(warnings)
+            warn = (s + warn)
+        else:
+            warn = ''
+        return warn
 
 
 class WebSnapshot(WebAny):

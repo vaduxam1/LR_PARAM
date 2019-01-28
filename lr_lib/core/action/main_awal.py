@@ -204,16 +204,22 @@ class ActionWebsAndLines:
                     transaction = self.transactions._current()
 
                     if w_type.startswith('web_reg_save_param'):
-                        web_ = lr_lib.core.action.web_.WebRegSaveParam(self, web_list, COMMENT, transaction=transaction, _type=w_type)
+                        web_ = lr_lib.core.action.web_.WebRegSaveParam(
+                            self, web_list, COMMENT, transaction=transaction, _type=w_type,
+                        )
                         RegParamList.append(web_)
 
                     else:
                         if (len(web_list) < 3) or (not any(lr_lib.core.wrsp.param.Snap1 in ln for ln in web_list)):
-                            web_ = lr_lib.core.action.web_.WebAny(self, web_list, COMMENT, transaction=transaction, _type=w_type)
+                            web_ = lr_lib.core.action.web_.WebAny(
+                                self, web_list, COMMENT, transaction=transaction, _type=w_type,
+                            )
                             self._add_to_text_list(web_)
 
                         else:
-                            web_ = lr_lib.core.action.web_.WebSnapshot(self, web_list, COMMENT, transaction=transaction, _type=w_type)
+                            web_ = lr_lib.core.action.web_.WebSnapshot(
+                                self, web_list, COMMENT, transaction=transaction, _type=w_type,
+                            )
                             web_.web_reg_save_param_list = RegParamList
                             RegParamList = []
                             self._add_to_text_list(web_)
@@ -221,7 +227,9 @@ class ActionWebsAndLines:
                     COMMENT = ''
 
                 elif any(map(SLINE.endswith, lw_end)):  # однострочные web_
-                    web_ = lr_lib.core.action.web_.WebAny(self, web_list, COMMENT, transaction=self.transactions._current(), _type=w_type)
+                    web_ = lr_lib.core.action.web_.WebAny(
+                        self, web_list, COMMENT, transaction=self.transactions._current(), _type=w_type,
+                    )
                     self._add_to_text_list(web_)
                     COMMENT = ''
 
@@ -267,7 +275,8 @@ class ActionWebsAndLines:
                 self.transactions.stop_transaction(transac)
         return
 
-    def web_reg_save_param_insert(self, wrsp_dict_or_snapshot: (dict or int), wrsp='') -> lr_lib.core.action.web_.WebRegSaveParam:
+    def web_reg_save_param_insert(self, wrsp_dict_or_snapshot: (dict or int),
+                                  wrsp='') -> lr_lib.core.action.web_.WebRegSaveParam:
         """вставить web_reg_save_param"""
         if isinstance(wrsp_dict_or_snapshot, dict):
             inf = wrsp_dict_or_snapshot['inf_nums'][0]
@@ -294,7 +303,9 @@ class ActionWebsAndLines:
             w_lines = wrsp
 
         w_lines = w_lines.split('\n')
-        wrsp_web_ = lr_lib.core.action.web_.WebRegSaveParam(self, w_lines, comments, transaction=web_.transaction, parent_snapshot=web_)
+        wrsp_web_ = lr_lib.core.action.web_.WebRegSaveParam(
+            self, w_lines, comments, transaction=web_.transaction, parent_snapshot=web_,
+        )
         web_.web_reg_save_param_list.append(wrsp_web_)
 
         return wrsp_web_
