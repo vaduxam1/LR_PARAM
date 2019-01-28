@@ -30,7 +30,11 @@ def group_param_search_by_lb_post(
         Затем при помощи полученных LB, найти новые имена {param}, обычным LB-способом.
     """
     if not exist_params:
-        exist_params = lr_lib.core.var.vars_param.Params_names
+        exist_params = set(
+            list(lr_lib.core.var.vars_param.Params_names) +
+            list(action.web_action.websReport.wrsp_and_param_names.keys()) +
+            list(action.web_action.websReport.wrsp_and_param_names.values())
+        )
 
     lb_items = set()
     source = lr_lib.core_gui.group_param.gp_job._text_from_params_source(params_source)
@@ -45,7 +49,7 @@ def group_param_search_by_lb_post(
         y = lr_lib.gui.widj.dialog.YesNoCancel(
             [K_FIND, K_SKIP],
             title='6.1) пост LB запрос',
-            is_text='6.1) {}'.format('\n'.join(lb_items)),
+            is_text='\n'.join(lb_items),
             text_before=lr_lib.core_gui.run.r_texts.TT_LBP,
             text_after='добавить/удалить',
             parent=action,

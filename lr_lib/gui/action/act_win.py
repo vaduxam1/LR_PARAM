@@ -18,6 +18,7 @@ import lr_lib.core_gui.group_param.core_gp
 import lr_lib.gui.wrsp.top.top_allfiles
 import lr_lib.core_gui.action_lib
 import lr_lib.gui.etc.gui_other
+import lr_lib.core_gui.run.run_setting
 import lr_lib.core.var.vars as lr_vars
 
 
@@ -34,7 +35,7 @@ class ActWin(lr_lib.gui.action.act_any.ActAny):
 
         self.auto_param_creator_button = tk.Button(
             self.toolbar, text='Найти и Создать\nparam WRSP', background='orange', font=lr_vars.DefaultFont + ' bold',
-            command=lambda: lr_lib.core_gui.group_param.main_gp.auto_param_creator(self),
+            command=lambda: lr_lib.core_gui.run.run_setting.RunSettingWindow(self),
         )
 
         self.final_wnd_cbx = tk.Checkbutton(
