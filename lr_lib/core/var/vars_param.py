@@ -59,7 +59,7 @@ DENY_Startswitch_PARAMS = (
 
 DENY_Force_Startswitch_PARAMS = (
     'X-Atmosphere', 'Accept-', 'Adf-', 'X-Cache', 'click', 'selected', 'content-', 'doc-content', 'suppress',
-    'disclosed', '_adfp_', '_afrLocal', 'viewport', 'adfport', 'User-', 'Transfer-',
+    'disclosed', '_adfp_', '_afrLocal', 'viewport', 'adfport', 'User-', 'Transfer-', 'vertical', 'z-slider',
 )  # не использовать в качестве параметров, если начинаются так
 
 DENY_PARAMS_LOWER = {
@@ -85,7 +85,8 @@ DENY_PARAMS_LOWER = {
     'getValueFromArrayById', 'zkau', 'username',  'styleClass',  'desktop',  'Content-Type',  'Resource',  'zk',
     'json',  'styles',  'sortDirection', 'charCode', 'autoSubmit', 'polling', 'xonLoadCal', 'valueChange', 'message',
     'combobox', 'blank', 'outcome', 'renderOnly', 'clientKey', 'clientId', 'editWindow', 'zkTheme', 'landscape',
-    'portrait', 'keyCode',
+    'portrait', 'keyCode', 'WebkitTransform', 'ZKClientInfo', 'ZKMatchMedia',
+    'doTooltipOver_',
 }  # не использовать в качестве параметров
 
 
