@@ -7,6 +7,7 @@ import lr_lib.core.action.transac
 import lr_lib.core.action.web_
 import lr_lib.core.var.vars as lr_vars
 import lr_lib.core.wrsp.param
+import lr_lib.gui.action.main_action
 
 
 class ActionWebsAndLines:
