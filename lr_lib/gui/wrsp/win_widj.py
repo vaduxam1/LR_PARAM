@@ -23,17 +23,17 @@ class WinWidj(lr_lib.gui.wrsp.win_part_lbrb.WinPartsLbRb):
     def __init__(self):
         lr_lib.gui.wrsp.win_part_lbrb.WinPartsLbRb.__init__(self)
 
-        self.t0 = tk.Label(self.find_frame, text='?', font=lr_vars.DefaultFont + ' italic', padx=0, pady=0,
+        self.t0 = tk.Label(self.find_frame, text='?', font=(lr_vars.DefaultFont + ' italic'), padx=0, pady=0,
                            foreground='grey')
-        self.t01 = tk.Label(self.show_param_frame, text='?', font=lr_vars.DefaultFont + ' italic', padx=0, pady=0,
+        self.t01 = tk.Label(self.show_param_frame, text='?', font=(lr_vars.DefaultFont + ' italic'), padx=0, pady=0,
                             foreground='grey')
-        self.t02 = tk.Label(self.mid_frame, text='?', font=lr_vars.DefaultFont + ' italic', padx=0, pady=0,
+        self.t02 = tk.Label(self.mid_frame, text='?', font=(lr_vars.DefaultFont + ' italic'), padx=0, pady=0,
                             foreground='grey')
-        self.t1 = tk.Label(self.find_frame, text='(1)', font=lr_vars.DefaultFont + ' italic bold', padx=0, pady=0,
+        self.t1 = tk.Label(self.find_frame, text='(1)', font=(lr_vars.DefaultFont + ' italic bold'), padx=0, pady=0,
                            foreground='brown')
-        self.t2 = tk.Label(self.show_param_frame, text='(2)', font=lr_vars.DefaultFont + ' italic bold', padx=0, pady=0,
-                           foreground='brown')
-        self.t3 = tk.Label(self.mid_frame, text='(3)', font=lr_vars.DefaultFont + ' italic bold', padx=0, pady=0,
+        self.t2 = tk.Label(self.show_param_frame, text='(2)', font=(lr_vars.DefaultFont + ' italic bold'),
+                           padx=0, pady=0, foreground='brown')
+        self.t3 = tk.Label(self.mid_frame, text='(3)', font=(lr_vars.DefaultFont + ' italic bold'), padx=0, pady=0,
                            foreground='brown')
 
         # (1)
@@ -49,7 +49,7 @@ class WinWidj(lr_lib.gui.wrsp.win_part_lbrb.WinPartsLbRb):
         self.comboFiles = ttk.Combobox(self.mid_frame, state="readonly", justify='center', font=lr_vars.DefaultFont)
 
         # (6)
-        self.t6 = tk.Label(self.mid_frame, text='(6)', font=lr_vars.DefaultFont + ' italic bold', padx=0, pady=0,
+        self.t6 = tk.Label(self.mid_frame, text='(6)', font=(lr_vars.DefaultFont + ' italic bold'), padx=0, pady=0,
                            foreground='brown')
 
         #

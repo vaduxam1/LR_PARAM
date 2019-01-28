@@ -136,8 +136,9 @@ class WebAny:
                 comments += '\n\t{} WARNING: no "Snapshot=t.inf" (del?)'.format(lr_lib.core.wrsp.param.LR_COMENT)
 
         warn = self.check_for_warnings()
-        text = '{warn}\n{coment}\n{snap_text}'.format(coment=comments, snap_text='\n'.join(self.lines_list),
-                                                      warn=warn, )
+        text = '{warn}\n{coment}\n{snap_text}'.format(
+            coment=comments, snap_text='\n'.join(self.lines_list), warn=warn,
+        )
         return text.strip('\n')
 
     def _read_name(self, name='') -> str:
@@ -170,15 +171,21 @@ class WebAny:
                 raise UserWarning('Прервано!\n{}'.format('\n\t###\n'.join((param, replace, left, right, ask_dict))))
             return ask_dict.get(nta) or ask_dict.get(yta)
 
-        t2 = 'хотя строка и содержит param-имя "{p}"\nоно является частью другого, более длинного имени:\nЗаменить на "{r}" ?'.format(
-            p=param, r=replace)
+        t2 = 'хотя строка и содержит param-имя "{p}"\nоно является частью другого, более длинного имени:\n' \
+             'Заменить на "{r}" ?'.format(p=param, r=replace)
         t1 = 'заменяемая строка:\n{prev}{p}{part}'.format(
-            prev=left[-lr_vars.AskLbRbMaxLen:].rsplit('\n', 1)[-1].lstrip(), p=param,
-            part=right[:lr_vars.AskLbRbMaxLen].split('\n', 1)[0].rstrip())
-        y = lr_lib.gui.widj.dialog.YesNoCancel(buttons=buttons, text_before=t1, text_after=t2,
-                                               title='автозамена "{s}" на "{r}"'.format(
-                                                   s=param, r=replace), parent=self.ActionWebsAndLines.action,
-                                               default_key=nta, focus=self.ActionWebsAndLines.action.tk_text)
+            prev=left[-lr_vars.AskLbRbMaxLen:].rsplit('\n', 1)[-1].lstrip(),
+            p=param,
+            part=right[:lr_vars.AskLbRbMaxLen].split('\n', 1)[0].rstrip(),
+        )
+        y = lr_lib.gui.widj.dialog.YesNoCancel(
+            buttons=buttons,
+            text_before=t1,
+            text_after=t2,
+            title='автозамена "{s}" на "{r}"'.format(s=param, r=replace),
+            parent=self.ActionWebsAndLines.action,
+            default_key=nta, focus=self.ActionWebsAndLines.action.tk_text,
+        )
         a = y.ask()
 
         if ask_dict and (a in dk):
@@ -335,7 +342,8 @@ class WebSnapshot(WebAny):
                 continue
             if bad_wrsp:
                 text = '\t{c} WARNING: WrspInAndOutUsage: {lp}={p}\n{t}'.format(
-                    t=text, c=lr_lib.core.wrsp.param.LR_COMENT, p=bad_wrsp, lp=len(bad_wrsp))
+                    t=text, c=lr_lib.core.wrsp.param.LR_COMENT, p=bad_wrsp, lp=len(bad_wrsp),
+                )
 
         wrsps = ''.join(map(WebRegSaveParam.to_str, self.web_reg_save_param_list))
         txt = '{wrsp}{stat_string}\n{text}'.format(stat_string=stat_string, text=text, wrsp=wrsps)
@@ -367,10 +375,8 @@ class WebRegSaveParam(WebAny):
     def _read_param(self, param='') -> str:
         try:
             if lr_lib.core.wrsp.param.wrsp_start in self.comments:
-                param = \
-                    self.comments.split(lr_lib.core.wrsp.param.wrsp_start, 1)[1].split(lr_lib.core.wrsp.param.wrsp_end,
-                                                                                       1)[
-                        0]
+                p = self.comments.split(lr_lib.core.wrsp.param.wrsp_start, 1)
+                param = p[1].split(lr_lib.core.wrsp.param.wrsp_end, 1)[0]
             elif 'PARAM["' in self.comments:
                 param = self.comments.split('PARAM["', 1)[1].split(lr_lib.core.wrsp.param.wrsp_end, 1)[0]
 
@@ -423,8 +429,14 @@ class WebRegSaveParam(WebAny):
         else:
             tn = ''
 
-        s = '{c} ({w_transac}: {t_snap}) -> Param:{p_all} | Snapshots:{snap} | Transactions={len_transac}:{transac_names}'.format(
-            wrsp_name=self.transaction, p_all=ps['param_count'], snap=ps['minmax_snapshots'],
-            c=lr_lib.core.wrsp.param.LR_COMENT, len_transac=ps['transaction_count'], transac_names=tn,
-            w_transac=self.transaction, t_snap=t_snap)
+        s = '{c} ({w_tr}: {t_snap}) -> Param:{p_all} | Snapshots:{snap} | Transactions={len_tr}:{tr_names}'.format(
+            wrsp_name=self.transaction,
+            p_all=ps['param_count'],
+            snap=ps['minmax_snapshots'],
+            c=lr_lib.core.wrsp.param.LR_COMENT,
+            len_tr=ps['transaction_count'],
+            tr_names=tn,
+            w_tr=self.transaction,
+            t_snap=t_snap,
+        )
         return s

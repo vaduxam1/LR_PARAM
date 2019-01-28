@@ -175,16 +175,24 @@ class WebReport:
         if not params_in:
             return ''
 
-        def get(wr_name: str, format='{param}(P:{p_in}/{p_all}|S:{snap}|T:{transac})'.format):
+        def get(wr_name: str) -> str:
+            """param статистика для join в строке"""
             ps = self.param_statistic[wr_name]
-            s = format(param=self.wrsp_and_param_names[wr_name], p_in=params_in[wr_name], p_all=ps['param_count'],
-                       snap=ps['minmax_snapshots'], transac=ps['transaction_count'])
+            s = '{param}(P:{p_in}/{p_all}|S:{snap}|T:{transac})'.format(
+                param=self.wrsp_and_param_names[wr_name],
+                p_in=params_in[wr_name],
+                p_all=ps['param_count'],
+                snap=ps['minmax_snapshots'],
+                transac=ps['transaction_count'],
+            )
             return s
 
-        statistic = (get(wr_name) for wr_name in sorted(params_in, key=len))
-        s = '\n\t{c} IN({i})<-[{ui}]: {st}'.format(
-            st=', '.join(statistic), c=lr_lib.core.wrsp.param.LR_COMENT, i=sum(params_in[w] for w in params_in),
-            ui=len(params_in), )
+        s = '\n\t{cmnt} IN({sim_params_in})<-[{len_params_in}]: {statistic}'.format(
+            statistic=', '.join(map(get, sorted(params_in, key=len))),
+            cmnt=lr_lib.core.wrsp.param.LR_COMENT,
+            sim_params_in=sum(params_in.values() or [0]),
+            len_params_in=len(params_in),
+        )
         return s
 
     def stats_out_web(self, snapshot: int) -> str:
@@ -198,12 +206,20 @@ class WebReport:
         for wr in sorted(web.web_reg_save_param_list, key=lambda w: len(w.param)):
             ps = self.param_statistic[wr.name]
             pss = '{p}(P:{p_all}|S:{snap}|T:{transac})'.format(
-                p=wr.param, p_all=ps['param_count'], snap=ps['minmax_snapshots'], transac=ps['transaction_count'])
+                p=wr.param,
+                p_all=ps['param_count'],
+                snap=ps['minmax_snapshots'],
+                transac=ps['transaction_count'],
+            )
             statistic.append(pss)
             continue
 
-        return '\n\t{c} OUT({n})-> {s}'.format(s=', '.join(statistic), c=lr_lib.core.wrsp.param.LR_COMENT,
-                                               n=len(statistic))
+        s = '\n\t{c} OUT({n})-> {s}'.format(
+            s=', '.join(statistic),
+            c=lr_lib.core.wrsp.param.LR_COMENT,
+            n=len(statistic),
+        )
+        return s
 
     def stats_transaction_web(self, web: lr_lib.core.action.web_.WebSnapshot) -> str:
         """'статистика transaction, для web"""
