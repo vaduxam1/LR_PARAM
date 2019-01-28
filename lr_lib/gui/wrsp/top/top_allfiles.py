@@ -2,7 +2,6 @@
 # Toplevel окно файлов
 
 import subprocess
-
 import tkinter as tk
 import tkinter.ttk as ttk
 
@@ -12,6 +11,7 @@ import lr_lib.core.var.vars as lr_vars
 
 class TopFolder(tk.Toplevel):
     """окно списка всех файлов"""
+
     def __init__(self, action: 'lr_lib.gui.wrsp.main_window.Window', mx=150):
         tk.Toplevel.__init__(self)
         self.action = action
@@ -30,8 +30,9 @@ class TopFolder(tk.Toplevel):
 
         comboAllFilesFolder.bind("<<ComboboxSelected>>", ttip)
         lr_lib.gui.widj.tooltip.createToolTip(buttonAllFilesFolder, 'открыть выбранный файл')
-        lr_lib.gui.widj.tooltip.createToolTip(comboAllFilesFolder, 'список всех файлов, в которых производится поиск {param}'
-                                                      '\n\t# Window.folder_wind\n\t# lr_vars.AllFiles')
+        lr_lib.gui.widj.tooltip.createToolTip(comboAllFilesFolder,
+                                              'список всех файлов, в которых производится поиск {param}'
+                                              '\n\t# Window.folder_wind\n\t# lr_vars.AllFiles')
 
         files = list(f['File']['FullName'] for f in lr_vars.AllFiles)
         comboAllFilesFolder['values'] = files

@@ -2,18 +2,18 @@
 # разное
 
 import subprocess
-
 import tkinter as tk
 import tkinter.ttk as ttk
 
 import lr_lib
+import lr_lib.core.var.vars as lr_vars
 import lr_lib.core.var.vars_other
 import lr_lib.gui.wrsp.win_filesort
-import lr_lib.core.var.vars as lr_vars
 
 
 class WinOther(lr_lib.gui.wrsp.win_filesort.WinFileSort):
     """разное"""
+
     def __init__(self):
         lr_lib.gui.wrsp.win_filesort.WinFileSort.__init__(self)
 

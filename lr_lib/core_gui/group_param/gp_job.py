@@ -18,12 +18,11 @@
 #           за счет синтаксиса, можно вытаскивать только то что надо
 
 import lr_lib
-import lr_lib.core.etc.lbrb_checker
 import lr_lib.core
+import lr_lib.core.etc.lbrb_checker
 import lr_lib.core.var.vars_param
 from lr_lib.core.var import vars as lr_vars
 from lr_lib.core_gui.group_param.gp_var import responce_files_texts
-from lr_lib.gui.widj.dialog import K_FIND, K_SKIP
 
 
 def _get_text_for_web(mode: str, action: 'lr_lib.gui.action.main_action.ActionWindow') -> iter(([str, str],)):
@@ -54,7 +53,7 @@ name_check3 = lambda file_name: (not (name_check1(file_name) or name_check2(file
 
 def _text_from_params_source(
         params_source: 'str or lr_lib.gui.action.main_action.ActionWindow',
-) -> iter(([str, str], )):
+) -> iter(([str, str],)):
     """тексты для поиска param"""
     if isinstance(params_source, str):
         params_source = [params_source, ]
@@ -93,7 +92,7 @@ def _group_param_search_by_exist_param(
     return
 
 
-def _group_param_search_by_lb(lb_items: [str, ], params_source) -> iter((str, )):
+def _group_param_search_by_lb(lb_items: [str, ], params_source) -> iter((str,)):
     """поиск по LB"""
     yield from _group_param_search_by_param_part(lb_items, params_source, part_mode=False)
     return
@@ -171,7 +170,7 @@ def _params_by_part(
     return
 
 
-def all_lb_from(text: str, param: str) -> iter((str, )):
+def all_lb_from(text: str, param: str) -> iter((str,)):
     checks = lr_lib.core.etc.lbrb_checker.check_in_text_param_all_bound_lb_rb(text=text, param=param)
 
     for (index, check) in enumerate(checks, start=1):

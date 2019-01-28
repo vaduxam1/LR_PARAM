@@ -17,8 +17,9 @@ CREATE_or_FIND = lambda x: (K_CREATE if x else '')
 
 class YesNoCancel(tk.Toplevel):
     """диалог окно, тк велосипед, работает только в потоке"""
+
     def __init__(self, buttons: [str, ], text_before: str, text_after: str, title: str, parent=None, default_key='',
-                 is_text=None, focus=None, combo_dict=None, t_enc=False, color=None,):
+                 is_text=None, focus=None, combo_dict=None, t_enc=False, color=None, ):
         super().__init__(master=parent, padx=0, pady=0)
         buttons = list(filter(bool, buttons))
 
@@ -63,7 +64,8 @@ class YesNoCancel(tk.Toplevel):
                 if n == K_CREATE:
                     if tkinter.messagebox.askokcancel('Продолжить?', K_CREATE, parent=self):
                         self.queue.put(n)
-                    else:pass  # оставаться в диалог окне
+                    else:
+                        pass  # оставаться в диалог окне
                 else:
                     self.queue.put(n)
                 return

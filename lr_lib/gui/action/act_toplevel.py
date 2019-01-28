@@ -2,7 +2,6 @@
 # action.с окно - Toplevel
 
 import tkinter as tk
-
 from tkinter import messagebox
 
 import lr_lib.core.var.vars as lr_vars

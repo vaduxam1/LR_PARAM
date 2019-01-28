@@ -10,6 +10,7 @@ import lr_lib.core.var.vars as lr_vars
 
 class MainThreadUpdater:
     """выполнить из main потока(например если что-то нельзя(RuntimeError) выполнять в потоке)"""
+
     def __init__(self):
         self.working = None
         self.queue_in = queue.Queue()  # очередь выполнения callback
@@ -52,6 +53,7 @@ class MainThreadUpdater:
 
 class NoPool:
     """заглушка пула для однопоточного выполнения, для POOL_"""
+
     @staticmethod
     def map(fn: callable, args: tuple) -> iter:
         yield from map(fn, args)
@@ -59,7 +61,6 @@ class NoPool:
 
     def submit(self, func: callable, *args, **kwargs):
         return func(*args, **kwargs)
-
 
 # @asyncio.coroutine
 # def async_worker(executor: callable, fn: callable, args: tuple, e=None):

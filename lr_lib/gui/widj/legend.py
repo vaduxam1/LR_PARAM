@@ -1,22 +1,21 @@
 # -*- coding: UTF-8 -*-
 # web_ леленда
 
-import itertools
 import collections
-
+import itertools
 import tkinter as tk
 import tkinter.ttk as ttk
 
 import lr_lib
+import lr_lib.core.var.vars as lr_vars
 import lr_lib.core.var.vars_highlight
 import lr_lib.gui.widj.tooltip_canvas
-import lr_lib.core.var.vars as lr_vars
 
 
 def clrs() -> [str, ]:
     """цвет"""
     cs = sorted(c for c in lr_lib.core.var.vars_highlight.VarColorTeg.get() if not any((r >= 0) for r in map(
-         c.find, {'white', 'black', 'navy', 'grey', 'alice'})))
+        c.find, {'white', 'black', 'navy', 'grey', 'alice'})))
     return cs
 
 
@@ -25,6 +24,7 @@ Colors = iter(itertools.cycle(clrs()))
 
 class WebLegend(tk.Toplevel):
     """окно web_ леленды"""
+
     def __init__(self, parent: 'lr_lib.gui.action.main_action.ActionWindow'):
         super().__init__(master=parent, padx=0, pady=0)
         self.geometry('{}x{}'.format(*lr_vars._Tk_LegendWIND_SIZE))
@@ -74,7 +74,8 @@ class WebLegend(tk.Toplevel):
         self.tr = []  # [(0, 'NoTransaction_1'), (1, 'login'),...
         self.tr_but = tk.Button(self, text='transac', command=self.show_transac)
         self.tr_but.pack()
-        lr_lib.gui.widj.tooltip.createToolTip(self.tr_but, 'показать соответствие номеров(из окна легенды) и имен транзакций')
+        lr_lib.gui.widj.tooltip.createToolTip(self.tr_but,
+                                              'показать соответствие номеров(из окна легенды) и имен транзакций')
 
         self.top_var = tk.BooleanVar(value=True)
         self.top_cbx = tk.Checkbutton(self, text='onTop', command=self._set_on_top, variable=self.top_var)
@@ -92,7 +93,7 @@ class WebLegend(tk.Toplevel):
     def _configure_interior(self, *args) -> None:
         """update the scrollbars to match the size of the inner frame"""
         size = (max(self.interior.winfo_reqwidth(), self.minimal_canvas_size[0]),
-                max(self.interior.winfo_reqheight(), self.minimal_canvas_size[1]), )
+                max(self.interior.winfo_reqheight(), self.minimal_canvas_size[1]),)
         self.canvas.config(scrollregion=('0 0 %s %s' % size), )
         if self.interior.winfo_reqwidth() != self.canvas.winfo_width():
             self.canvas.config(width=self.interior.winfo_reqwidth())
@@ -140,7 +141,7 @@ class WebLegend(tk.Toplevel):
                 text = '<-{}'.format(lt)
 
             self.canvas.create_text((sep + 40), 10, text=text)
-            if color in ('grey', 'yellow', ):
+            if color in ('grey', 'yellow',):
                 lcolor = 'black'
 
             st = 'Snap: {}\nout: {}'.format(i, len(wdt[i].web_reg_save_param_list))
@@ -174,11 +175,13 @@ class WebLegend(tk.Toplevel):
                 if c:
                     c -= 1
                 cl = (colrs[c:] + colrs[:c])
-                onObjectClick1 = lambda event, i=i, cl=cl, *k: onObjectClick1(event, i=i, colors=iter(itertools.cycle(cl)))
-                onObjectClick2 = lambda event, i=i, cl=cl, *k: onObjectClick2(event, i=i, colors=iter(itertools.cycle(cl)))
+                onObjectClick1 = lambda event, i=i, cl=cl, *k: onObjectClick1(event, i=i,
+                                                                              colors=iter(itertools.cycle(cl)))
+                onObjectClick2 = lambda event, i=i, cl=cl, *k: onObjectClick2(event, i=i,
+                                                                              colors=iter(itertools.cycle(cl)))
             else:
                 cmd = self.canvas.create_rectangle
-            xy1 = (lcolor, sep, 20, (width + sep + w_), (20 + height), )
+            xy1 = (lcolor, sep, 20, (width + sep + w_), (20 + height),)
 
             shape_1 = cmd(*xy1[1:], fill=color, width=2)
 
@@ -200,7 +203,7 @@ class WebLegend(tk.Toplevel):
                 cmd = self.canvas.create_oval
             else:  # пометить, что внутри не используются {param}
                 cmd = self.canvas.create_rectangle
-            xy2 = (sep, H, (width + sep + w_), (H + height), )
+            xy2 = (sep, H, (width + sep + w_), (H + height),)
 
             shape_2 = cmd(*xy2, fill=color, width=2)
 
@@ -232,7 +235,7 @@ class WebLegend(tk.Toplevel):
 
                             xy2 = self.web_canavs[i][2]
                             line = self.canvas.create_line(
-                                (xy1[2]-x), xy1[3], (xy2[0]+x), xy2[1], fill=color, arrow=tk.LAST, width=2)
+                                (xy1[2] - x), xy1[3], (xy2[0] + x), xy2[1], fill=color, arrow=tk.LAST, width=2)
 
                             def onObjectClick(event, word='"{}"'.format(name)) -> None:
                                 self.parent.search_in_action(word=word, hist=False)

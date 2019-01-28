@@ -4,10 +4,9 @@
 import threading
 
 import lr_lib.core.var.vars as lr_vars
-import lr_lib.core.var.vars_highlight
 import lr_lib.gui.etc.git_update
-import lr_lib.gui.wrsp.main_window
 import lr_lib.gui.etc.gui_other
+import lr_lib.gui.wrsp.main_window
 
 
 def init(c_args=None) -> None:

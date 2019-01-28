@@ -11,6 +11,7 @@ import lr_lib.core_gui.rename
 
 class WrspSettingWindow(tk.Toplevel):
     """настройка каментов и имени wrsp"""
+
     def __init__(self, parent: 'lr_lib.gui.action.main_action.ActionWindow'):
         super().__init__(padx=0, pady=0)
 
@@ -75,7 +76,7 @@ class WrspSettingWindow(tk.Toplevel):
         MaxRbWrspName = tk.Spinbox(_lab7, textvariable=lr_vars.MaxRbWrspName, font='Arial 7', from_=-1, to=1000)
         MaxParamWrspName = tk.Spinbox(_lab6, textvariable=lr_vars.MaxParamWrspName, font='Arial 7', from_=-1, to=1000)
         MinWrspRnum = tk.Spinbox(_lab2, textvariable=lr_vars.MinWrspRnum, font='Arial 7', from_=-1, to=1000)
-        MaxWrspRnum = tk.Spinbox(_lab2, textvariable=lr_vars.MaxWrspRnum, font='Arial 7', from_=-1, to=10**5)
+        MaxWrspRnum = tk.Spinbox(_lab2, textvariable=lr_vars.MaxWrspRnum, font='Arial 7', from_=-1, to=10 ** 5)
         wrsp_name_splitter = tk.Entry(_lab8, textvariable=lr_vars.wrsp_name_splitter, font='Arial 7')
         WrspNameFirst = tk.Entry(_lab1, textvariable=lr_vars.WrspNameFirst, font='Arial 7')
 
@@ -159,7 +160,7 @@ class WrspSettingWindow(tk.Toplevel):
             wrsp_rename_btn,
             'скопом переименовать, все уже созданные web_reg_save_param\n'
             'имена слева, не трогать\nимена справа, переименовать, либо не трогать'
-                                              )
+        )
         lr_lib.gui.widj.tooltip.createToolTip(
             wrsp_auto_rename_btn,
             'автоматически переименовать(пересоздание имени), '

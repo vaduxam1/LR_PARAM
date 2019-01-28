@@ -3,11 +3,11 @@
 # получения web_reg_save_param, для всех возможных вариантов VarPartNum/VarFile
 
 import lr_lib
-import lr_lib.core.wrsp.param
 import lr_lib.core.var.vars as lr_vars
+import lr_lib.core.wrsp.param
 
 
-def all_wrsp_variant() -> iter(([dict, str], )):
+def all_wrsp_variant() -> iter(([dict, str],)):
     """получить web_reg_save_param, для всех вариантов VarPartNum/VarFile"""
     for _ in next_part_or_file():
         item = wrsp_item()
@@ -24,7 +24,7 @@ def wrsp_item() -> [dict, str]:
     return item
 
 
-def next_part_or_file(_work=True) -> iter((bool, )):
+def next_part_or_file(_work=True) -> iter((bool,)):
     """
     все варианты param-вхождений и файлов
     True - смена вхождения(4) / False - смена файла(3)

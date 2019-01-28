@@ -10,8 +10,8 @@ import lr_lib.core.var.vars_highlight
 import lr_lib.core.var.vars_param
 import lr_lib.core_gui.group_param.core_gp
 import lr_lib.core_gui.group_param.gp_filter
-from lr_lib.core.var import vars as lr_vars
 import lr_lib.core_gui.group_param.gp_job
+from lr_lib.core.var import vars as lr_vars
 from lr_lib.gui.widj.dialog import K_FIND, K_SKIP, CREATE_or_FIND
 
 
@@ -58,7 +58,7 @@ def group_param_search_by_resp_re(action: 'lr_lib.gui.action.main_action.ActionW
             title='4) запрос: Поиск param по regexp с постобработкой',
             is_text=text,
             text_before='4) Поиск param в тексте {ps}:\n\nпо regexp и дальнейшей обработке результата.\n'
-                        'Например в "zul.sel.Treecell" конструкциях.'.format(ps=params_source,),
+                        'Например в "zul.sel.Treecell" конструкциях.'.format(ps=params_source, ),
             text_after='Можно попытатся поменять regexp, но добавлять/удалять нельзя.',
             parent=action,
             color=lr_lib.core.var.vars_highlight.PopUpWindColor1,

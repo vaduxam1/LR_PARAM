@@ -4,8 +4,6 @@
 # VarParam ->> VarFileName -> VarFile -> VarFileText ->> VarPartNum ->> VarLB/VarRB -> VarWrspDict ->>
 #                                                                                       ->> lr_param.web_reg_save_param
 
-import string  # через gui, используется в eval splitters_combo(), не удалять !
-
 import lr_lib
 import lr_lib.core.var.vars as lr_vars
 import lr_lib.core.var.vars_other
@@ -263,7 +261,7 @@ def gui_updater_comboFiles() -> None:
     return
 
 
-NF3 = ('%s\nNEXT файл(3), при {text} в (5):\n {indx}-> {ni}/{len_files} : {f} -> {next_file}' % ('_'*50))
+NF3 = ('%s\nNEXT файл(3), при {text} в (5):\n {indx}-> {ni}/{len_files} : {f} -> {next_file}' % ('_' * 50))
 NP4 = ' next вхождение(4), при {text} в (5):\n\t\t[ {num}-> {n}/{pc} ] : {f}'
 UW = '''
 Все возможные LB/RB(5), для формирования param "{p}", пустые/недопустимые.
@@ -322,4 +320,3 @@ def splitters_combo(combo) -> [str, ]:
 
     e = eval(splitter)
     return e
-

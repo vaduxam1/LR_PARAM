@@ -138,6 +138,7 @@ if __name__ == '__main__':
 
     import random
 
+
     def further_text():
         info_text = ('\n\nGo over any rectangle with your mouse pointer to see it '
                      'changing to yellow and stay on it long enough (less than '

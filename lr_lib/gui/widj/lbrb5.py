@@ -6,8 +6,8 @@ import tkinter.ttk as ttk
 
 import lr_lib
 import lr_lib.core.var.vars as lr_vars
-import lr_lib.core.var.vars_other
 import lr_lib.core.var.vars_highlight
+import lr_lib.core.var.vars_other
 
 
 class LBRBText(tk.Text):
@@ -23,7 +23,8 @@ class LBRBText(tk.Text):
         self.label_info.grid_rowconfigure(0, weight=1)
         self.label_info.grid_columnconfigure(0, weight=1)
 
-        super().__init__(self.label_info, height=lr_vars.DEFAULT_LB_RB_MIN_HEIGHT, background=lr_lib.core.var.vars_highlight.Background,
+        super().__init__(self.label_info, height=lr_vars.DEFAULT_LB_RB_MIN_HEIGHT,
+                         background=lr_lib.core.var.vars_highlight.Background,
                          font=lr_vars.DefaultLBRBFont, wrap=tk.NONE, padx=0, pady=0)
         self.name = name
 

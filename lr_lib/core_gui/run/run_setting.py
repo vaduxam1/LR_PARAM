@@ -9,11 +9,11 @@ import lr_lib.core.var.vars as lr_vars
 import lr_lib.core_gui.group_param.core_gp
 import lr_lib.core_gui.group_param.gp_act_lb
 import lr_lib.core_gui.group_param.gp_act_re
+import lr_lib.core_gui.group_param.gp_act_resp_split
 import lr_lib.core_gui.group_param.gp_act_start
 import lr_lib.core_gui.group_param.gp_filter
-import lr_lib.core_gui.group_param.gp_response_re
-import lr_lib.core_gui.group_param.gp_act_resp_split
 import lr_lib.core_gui.group_param.gp_lb_post
+import lr_lib.core_gui.group_param.gp_response_re
 import lr_lib.core_gui.rename
 import lr_lib.gui.widj.dialog
 import lr_lib.gui.widj.tooltip
@@ -21,12 +21,13 @@ from lr_lib.core.var.vars_other import T_POOL_decorator
 from lr_lib.core_gui.run.r_item import RItem
 from lr_lib.core_gui.run.r_other import block
 from lr_lib.core_gui.run.r_texts import TT_N, TT_PN, TT_MinP, TT_LB, TT_SPL, TT_RE, TT_REP, TT_LBP
-from lr_lib.gui.widj.dialog import K_FIND, K_SKIP
 from lr_lib.gui.etc.color_progress import progress_decor
+from lr_lib.gui.widj.dialog import K_FIND, K_SKIP
 
 
 class RunSettingWindow(tk.Toplevel):
     """Настраиваемый запуск поиска WRSP"""
+
     def __init__(self, parent: 'lr_lib.gui.action.main_action.ActionWindow'):
         super().__init__(padx=0, pady=0)
         self.action = parent

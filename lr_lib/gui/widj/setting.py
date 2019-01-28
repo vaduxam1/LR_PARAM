@@ -1,24 +1,25 @@
 # -*- coding: UTF-8 -*-
 # окно настройки
 
-import json
 import inspect
+import json
 import tkinter as tk
 import tkinter.ttk as ttk
 
 import lr_lib
 import lr_lib.core.var.vars as lr_vars
 import lr_lib.core.var.vars_highlight
-import lr_lib.core.var.vars_param
-import lr_lib.core.var.vars_other
 import lr_lib.core.var.vars_highlight
-import lr_lib.gui.widj.tooltip
-import lr_lib.core_gui.rename
+import lr_lib.core.var.vars_other
+import lr_lib.core.var.vars_param
 import lr_lib.core.wrsp.param
+import lr_lib.core_gui.rename
+import lr_lib.gui.widj.tooltip
 
 
 class Setting(tk.Toplevel):
     """настройка var"""
+
     def __init__(self, parent: 'lr_lib.gui.action.main_action.ActionWindow', ):
         super().__init__(padx=0, pady=0)
         self.parent = parent
@@ -130,7 +131,7 @@ AllowTypes = [str, tuple, list, set, dict, ]
 AllowTypes.extend(TkVars)
 
 
-def attr_filter(dt: dict, allow_types=tuple(AllowTypes), ) -> iter((str, )):
+def attr_filter(dt: dict, allow_types=tuple(AllowTypes), ) -> iter((str,)):
     """исключить ненужные атрибуты"""
     for attr in dt:
         da = dt[attr]

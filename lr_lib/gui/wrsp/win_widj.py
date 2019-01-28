@@ -2,16 +2,15 @@
 # основные виджеты (1) (2) (3) (6)
 
 import time
-
 import tkinter as tk
 import tkinter.ttk as ttk
 
 import lr_lib
+import lr_lib.core.var.vars as lr_vars
 import lr_lib.core.var.vars_other
+import lr_lib.core.wrsp.files
 import lr_lib.gui.widj.lbrb5
 import lr_lib.gui.wrsp.win_part_lbrb
-import lr_lib.core.wrsp.files
-import lr_lib.core.var.vars as lr_vars
 
 
 class WinWidj(lr_lib.gui.wrsp.win_part_lbrb.WinPartsLbRb):
@@ -111,8 +110,9 @@ class WinWidj(lr_lib.gui.wrsp.win_part_lbrb.WinPartsLbRb):
         self.comboPartsFill()
         self.comboParts.set(part if part else 0)
         self.comboParts_change()
-        lr_lib.gui.widj.tooltip.createToolTip(self.comboFiles, lr_lib.core.etc.other.file_string(lr_lib.core.wrsp.files.get_file_with_kwargs(
-            lr_vars.FilesWithParam, Name=name)))
+        lr_lib.gui.widj.tooltip.createToolTip(self.comboFiles, lr_lib.core.etc.other.file_string(
+            lr_lib.core.wrsp.files.get_file_with_kwargs(
+                lr_vars.FilesWithParam, Name=name)))
         return
 
     def comboPartsFill(self) -> None:
@@ -132,7 +132,8 @@ class WinWidj(lr_lib.gui.wrsp.win_part_lbrb.WinPartsLbRb):
         lr_vars.VarLB.set(self.LB.get())
         lr_vars.VarRB.set(self.RB.get())
         # с учетом редактирования LB/RB(5)
-        web_reg_save_param = lr_lib.core.wrsp.param.create_web_reg_save_param(lr_lib.core.wrsp.param.wrsp_dict_creator())
+        web_reg_save_param = lr_lib.core.wrsp.param.create_web_reg_save_param(
+            lr_lib.core.wrsp.param.wrsp_dict_creator())
 
         if web_reg_save_param:
             if self.cbxNotepadWrsp.get():

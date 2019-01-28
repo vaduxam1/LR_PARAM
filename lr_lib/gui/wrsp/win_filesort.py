@@ -2,15 +2,15 @@
 # осортировка файлов, файловыми ключами
 
 import itertools
-
 import tkinter.ttk as ttk
 
-import lr_lib.gui.wrsp.win_maxmin
 import lr_lib.core.var.vars as lr_vars
+import lr_lib.gui.wrsp.win_maxmin
 
 
 class WinFileSort(lr_lib.gui.wrsp.win_maxmin.WinMaxMin):
     """сортировка файлов, файловыми ключами"""
+
     def __init__(self):
         lr_lib.gui.wrsp.win_maxmin.WinMaxMin.__init__(self)
 

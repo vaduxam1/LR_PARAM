@@ -2,13 +2,12 @@
 # проверка LB RB (5) полей, на корректность
 
 
-import lr_lib
 import lr_lib.core.var.vars as lr_vars
 import lr_lib.core.var.vars_highlight
 import lr_lib.core.var.vars_param
 
 
-def check_in_text_param_all_bound_lb_rb(text=None, param=None) -> iter((bool, )):
+def check_in_text_param_all_bound_lb_rb(text=None, param=None) -> iter((bool,)):
     """проверить корректность всех вхождений param в text"""
     if text is None:
         action = lr_vars.Window.get_main_action()

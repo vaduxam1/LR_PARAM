@@ -2,15 +2,14 @@
 # action.с окно - преобразование action-текста(tk_text) во внутреннее представление(web_action), и обратно"
 
 import os
-
 import tkinter as tk
 
 import lr_lib
+import lr_lib.core.var.vars as lr_vars
 import lr_lib.core.var.vars_other
-import lr_lib.gui.etc.gui_other
 import lr_lib.gui.action._other
 import lr_lib.gui.action.act_backup
-import lr_lib.core.var.vars as lr_vars
+import lr_lib.gui.etc.gui_other
 from lr_lib.gui.etc.color_progress import progress_decor
 
 

@@ -3,14 +3,13 @@
 
 import os
 import time
-
 import tkinter as tk
-import tkinter.ttk as ttk
 import tkinter.messagebox
+import tkinter.ttk as ttk
 
+import lr_lib.core.var.vars as lr_vars
 import lr_lib.core.var.vars_param
 import lr_lib.gui.action.act_goto
-import lr_lib.core.var.vars as lr_vars
 
 
 class ActAny(lr_lib.gui.action.act_goto.ActGoto):

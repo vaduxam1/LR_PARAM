@@ -2,30 +2,29 @@
 # action.с окно - главный
 
 import os
-
 import tkinter as tk
 import tkinter.messagebox
 
 import lr_lib
+import lr_lib.core.var.vars as lr_vars
 import lr_lib.core.var.vars_other
-import lr_lib.gui.action.act_win
+import lr_lib.core_gui.action_lib
+import lr_lib.core_gui.group_param.core_gp
 import lr_lib.core_gui.group_param.main_gp
 import lr_lib.core_gui.rename
-import lr_lib.gui.widj.tooltip
-import lr_lib.gui.wrsp.top.top_allfiles
-import lr_lib.gui.etc.gui_other
-import lr_lib.core_gui.group_param.core_gp
-import lr_lib.gui.widj.wrsp_setting
-import lr_lib.gui.widj.setting
-import lr_lib.core_gui.action_lib
 import lr_lib.core_gui.run.run_setting
-import lr_lib.core.var.vars as lr_vars
-from lr_lib.core_gui.group_param.gp_lb_post import group_param_search_by_lb_post
+import lr_lib.gui.action.act_win
+import lr_lib.gui.etc.gui_other
+import lr_lib.gui.widj.setting
+import lr_lib.gui.widj.tooltip
+import lr_lib.gui.widj.wrsp_setting
+import lr_lib.gui.wrsp.top.top_allfiles
 from lr_lib.core_gui.group_param.gp_act_lb import group_param_search_by_lb
-from lr_lib.core_gui.group_param.gp_act_start import group_param_search_by_name, group_param_search_by_exist_param
-from lr_lib.core_gui.group_param.gp_response_re import group_param_search_by_resp_re
 from lr_lib.core_gui.group_param.gp_act_re import group_param_search_by_act_re
 from lr_lib.core_gui.group_param.gp_act_resp_split import group_param_search_by_split
+from lr_lib.core_gui.group_param.gp_act_start import group_param_search_by_exist_param
+from lr_lib.core_gui.group_param.gp_lb_post import group_param_search_by_lb_post
+from lr_lib.core_gui.group_param.gp_response_re import group_param_search_by_resp_re
 from lr_lib.gui.etc.color_progress import progress_decor
 
 
@@ -52,7 +51,7 @@ class ActionWindow(lr_lib.gui.action.act_win.ActWin):
         """удалить все созданные WRSP"""
         if not tkinter.messagebox.askokcancel(
                 'Удаление WRSP', 'Удалить все web_reg_save_param из action.c?',
-                parent=lr_vars.Window.get_main_action(),):
+                parent=lr_vars.Window.get_main_action(), ):
             return
 
         w_list = list(self.web_action.get_web_reg_save_param_all())
@@ -184,7 +183,7 @@ class ActionWindow(lr_lib.gui.action.act_win.ActWin):
         filemenu4.add_command(
             label="6) LAST: по LB известных",
             command=lambda: lr_lib.core.var.vars_other.T_POOL_decorator(progress_decor(
-                group_param_search_by_lb_post, self))(self, [['web', self], 'all'], wrsp_create=True,),
+                group_param_search_by_lb_post, self))(self, [['web', self], 'all'], wrsp_create=True, ),
         )
 
         self.menubar.add_cascade(label="Запуск", menu=filemenu4)
@@ -408,7 +407,7 @@ class ActionWindow(lr_lib.gui.action.act_win.ActWin):
         )
         lr_lib.gui.widj.tooltip.createToolTip(
             self.font_combo, 'шрифт\n\t'
-            '# font_combo'
+                             '# font_combo'
         )
         lr_lib.gui.widj.tooltip.createToolTip(
             self.font_size_entry,

@@ -1,17 +1,15 @@
 # -*- coding: UTF-8 -*-
 # нахождение param, пост LB
 
-import re
-
 import lr_lib
+import lr_lib.core.etc.lbrb_checker
 import lr_lib.core.var.vars_highlight
 import lr_lib.core.var.vars_param
 import lr_lib.core_gui.group_param.core_gp
+import lr_lib.core_gui.group_param.gp_act_lb
 import lr_lib.core_gui.group_param.gp_filter
 import lr_lib.core_gui.group_param.gp_job
 import lr_lib.core_gui.run.r_texts
-import lr_lib.core.etc.lbrb_checker
-import lr_lib.core_gui.group_param.gp_act_lb
 from lr_lib.gui.widj.dialog import K_FIND, K_SKIP, CREATE_or_FIND
 
 

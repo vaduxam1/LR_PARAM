@@ -1,15 +1,15 @@
 # -*- coding: UTF-8 -*-
 # M_POOL(процессы), T_POOL(потоки) пулы
 
-import contextlib
 import concurrent.futures
-import multiprocessing.pool
+import contextlib
 import multiprocessing.dummy
+import multiprocessing.pool
 import tkinter
 
-import lr_lib.etc.pool.sthread
-import lr_lib.etc.pool.other
 import lr_lib.core.var.vars as lr_vars
+import lr_lib.etc.pool.other
+import lr_lib.etc.pool.sthread
 
 
 class POOL:

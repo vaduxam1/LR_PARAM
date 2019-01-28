@@ -2,16 +2,15 @@
 # action.с окно - замена и удаление текста
 
 import tkinter as tk
-
 from tkinter import messagebox
 
 import lr_lib
+import lr_lib.core.var.vars as lr_vars
 import lr_lib.core.var.vars_other
 import lr_lib.core.var.vars_param
 import lr_lib.etc.template
-import lr_lib.gui.widj.dialog
 import lr_lib.gui.action.act_search
-import lr_lib.core.var.vars as lr_vars
+import lr_lib.gui.widj.dialog
 
 
 class ActReplaceRemove(lr_lib.gui.action.act_search.ActSearch):
@@ -183,7 +182,7 @@ class ActReplaceRemove(lr_lib.gui.action.act_search.ActSearch):
         m = '"{:<%s}" -> "{}"' % mx
         all_transaction = '\n'.join(m.format(old, new) for old, new in zip(transactions, transactions))
         y = lr_lib.gui.widj.dialog.YesNoCancel(['Переименовать', 'Отмена'], 'Переименовать transaction слева',
-                                  'в transaction справа', 'transaction',
+                                               'в transaction справа', 'transaction',
                                                parent=self, is_text=all_transaction)
         st = 'lr_start_transaction("'
         en = 'lr_end_transaction("'

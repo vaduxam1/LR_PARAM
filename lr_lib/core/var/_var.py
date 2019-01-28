@@ -9,6 +9,7 @@ def default_callback(value, *args, **kwargs) -> None:
 
 class Var:
     """переменная, по типу tkiner.StringVar, + callback"""
+
     def __init__(self, value=None, callback_set=default_callback):
         self.value_ = self.default_value = value
         self.callback_set = callback_set  # выполнить callback при установке

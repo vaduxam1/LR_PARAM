@@ -10,6 +10,7 @@ final_str = '{state} | создано сейчас = {param} / fail={fail} : {un
 
 class ProgressBar:
     """рекурсивный асинхронный progressbar"""
+
     def __init__(self, len_params: int, widget):
         self.widget = widget
         self.len_params = len_params

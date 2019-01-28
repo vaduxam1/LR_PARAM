@@ -71,19 +71,19 @@ DENY_PARAMS_LOWER = {
     'checkbox', 'tabpanel', 'embedded', 'dblclick', 'padding', 'boolean', 'checked', 'option', 'hidden', 'string',
     'normal', 'script', 'newPos', 'inline', 'number', 'before', 'radio', 'input', 'popup', 'self', 'cmd', 'advcheckbox',
     'margin', 'windowY', 'windowX', 'formatBlock', 'propertychange', 'plugin_resolved', 'uploadInfo', 'granted',
-    'tmpobj', 'QTWeb', 'nodom', 'day', 'toolbar',  'Accept-Language',  'print_scroller',  'installCheckResult',
+    'tmpobj', 'QTWeb', 'nodom', 'day', 'toolbar', 'Accept-Language', 'print_scroller', 'installCheckResult',
     'timeZoneOffset', 'mouseleave', 'cls', 'setConstraint', 'dialog-edit', 'exitFullscreen', 'scrollable', 'between',
     'insertChildHTML_', 'zmousedown', '_target', '_minsize', 'DOMMouseScroll', 'resetSize_', 'z-paging', 'shortName',
-    'webkitRequestFullscreen', '_columns', 'loadCertificateContent', 'doFocus_',  'ZK-SID',  'before_center',  'Trim',
-    'table-wrapper',  '_closable',  'PATCH',  '_posInfo',  '_resizable',  'padding-',  'dialog',  'z-paging-next',
-    '_columnsgroup',  'beforeSize',  'common-scroller', 'item-content',  '_running',  'z-paging-first',  'expand',
-    'timezone',  'DOMContentLoaded',  'mouseover',  'overrideTooltip',  'z-renderdefer', 'mailCount', 'multipart',
-    'zIndex', '_rows',  'head',  'Italic',  'getValue',  'zk_download', 'udu-webcenter', 'natural', 'checkJinn',
-    'visibility', 'rowspan',  '_doClick',  'ZK-Error',  '_visible',  'onload',  'ru_RU', 'unlink', 'cryptoProPlugin',
+    'webkitRequestFullscreen', '_columns', 'loadCertificateContent', 'doFocus_', 'ZK-SID', 'before_center', 'Trim',
+    'table-wrapper', '_closable', 'PATCH', '_posInfo', '_resizable', 'padding-', 'dialog', 'z-paging-next',
+    '_columnsgroup', 'beforeSize', 'common-scroller', 'item-content', '_running', 'z-paging-first', 'expand',
+    'timezone', 'DOMContentLoaded', 'mouseover', 'overrideTooltip', 'z-renderdefer', 'mailCount', 'multipart',
+    'zIndex', '_rows', 'head', 'Italic', 'getValue', 'zk_download', 'udu-webcenter', 'natural', 'checkJinn',
+    'visibility', 'rowspan', '_doClick', 'ZK-Error', '_visible', 'onload', 'ru_RU', 'unlink', 'cryptoProPlugin',
     'Bold', '_src', 'icon', 'year', 'west', 'Blob', 'rows', 'Busy', 'Host', 'color', 'panel', 'outer', 'fixed', 'zhtml',
     'unload', 'content_script', 'woff', 'ARP', 'signAttributes', 'MODApplet', 'selectedRowKeys', '_afrVblRws', 'bear',
-    'getValueFromArrayById', 'zkau', 'username',  'styleClass',  'desktop',  'Content-Type',  'Resource',  'zk',
-    'json',  'styles',  'sortDirection', 'charCode', 'autoSubmit', 'polling', 'xonLoadCal', 'valueChange', 'message',
+    'getValueFromArrayById', 'zkau', 'username', 'styleClass', 'desktop', 'Content-Type', 'Resource', 'zk',
+    'json', 'styles', 'sortDirection', 'charCode', 'autoSubmit', 'polling', 'xonLoadCal', 'valueChange', 'message',
     'combobox', 'blank', 'outcome', 'renderOnly', 'clientKey', 'clientId', 'editWindow', 'zkTheme', 'landscape',
     'portrait', 'keyCode', 'WebkitTransform', 'ZKClientInfo', 'ZKMatchMedia',
     'doTooltipOver_',
@@ -144,8 +144,8 @@ StripRBEnd3 = ['{', ',']  # символы обрезки для конца ст
 Screening = ['\\', '"', ]  # символы для экранирования слешем
 AddAllowParamSymb = '_!-'  # символы, которые могут входить в имя param, кроме букв и цифр
 
-param_valid_letters = (string.ascii_letters + string.digits + AddAllowParamSymb)  # символы из которых, может состоять param
-
+param_valid_letters = (
+            string.ascii_letters + string.digits + AddAllowParamSymb)  # символы из которых, может состоять param
 
 # символы обрезки автозамены
 param_splitters = (string.punctuation + string.whitespace)

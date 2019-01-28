@@ -1,9 +1,8 @@
 ﻿# -*- coding: UTF-8 -*-
 # Highlight переменные, настройки
 
-import os
 import itertools
-import random
+import os
 import string
 
 import lr_lib.core.var._var

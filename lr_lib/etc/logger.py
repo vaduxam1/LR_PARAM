@@ -1,12 +1,11 @@
 # -*- coding: UTF-8 -*-
 # вывод сообщений
 
-import os
-import queue
 import contextlib
 import logging
 import logging.handlers
-
+import os
+import queue
 from tkinter import messagebox
 
 import lr_lib
@@ -19,6 +18,7 @@ datefmt = "%H:%M:%S"
 
 class GuiHandler(logging.Handler):
     """logging в Window"""
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.setFormatter(logging.Formatter(formatter, datefmt=datefmt))
@@ -32,6 +32,7 @@ class GuiHandler(logging.Handler):
 
 class ConsoleHandler(logging.StreamHandler):
     """logging в Console"""
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.setFormatter(logging.Formatter(formatter, datefmt=datefmt))
@@ -92,7 +93,8 @@ def LoggerLevelCreator(levels: {str: int}) -> None:
 
 
 @contextlib.contextmanager
-def init(name='__main__', encoding='cp1251', levels=lr_lib.core.var.vars_other.loggingLevels) -> iter((logging.getLogger,)):
+def init(name='__main__', encoding='cp1251', levels=lr_lib.core.var.vars_other.loggingLevels) -> iter(
+    (logging.getLogger,)):
     LoggerLevelCreator(levels)
 
     (Logger, listener) = LoggerCreator(name, encoding=encoding)

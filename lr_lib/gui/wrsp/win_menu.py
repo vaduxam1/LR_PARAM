@@ -14,6 +14,7 @@ import lr_lib.gui.wrsp.win_folder
 
 class WinMenu(lr_lib.gui.wrsp.win_folder.WinFolder):
     """меню"""
+
     def __init__(self):
         lr_lib.gui.wrsp.win_folder.WinFolder.__init__(self)
 

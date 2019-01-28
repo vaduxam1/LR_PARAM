@@ -1,21 +1,20 @@
 # -*- coding: UTF-8 -*-
 # gui виджет цветного текста с номерами линий
 
-import re
 import copy
-
+import re
 import tkinter as tk
-
 from tkinter.font import Font
 
 import lr_lib
+import lr_lib.core.var.vars as lr_vars
 import lr_lib.core.var.vars_highlight
 import lr_lib.gui.widj.highlight
-import lr_lib.core.var.vars as lr_vars
 
 
 class HighlightText(tk.Text):
     """Colored tk.Text + line_numbers"""
+
     def __init__(self, action: 'lr_lib.gui.action.main_action.ActionWindow', *args, **kwargs):
         super().__init__(action, *args, **kwargs)
         self.cursor_position = self.index(tk.INSERT)  # координаты текущей позиции в tk.Text
@@ -164,12 +163,14 @@ class HighlightText(tk.Text):
             self.action.report_position()  # показать
         return
 
-    def get_tegs_names(self) -> {str: {str,}}:
+    def get_tegs_names(self) -> {str: {str, }}:
         """_tegs_names + \\xCE\\xE1"""
         tegs_names = {}
-        hex_unicode_words = re.compile(lr_lib.core.var.vars_highlight.hex_unicode_words).findall(self.get(1.0, tk.END))  # \\xCE\\xE1
+        hex_unicode_words = re.compile(lr_lib.core.var.vars_highlight.hex_unicode_words).findall(
+            self.get(1.0, tk.END))  # \\xCE\\xE1
         self.highlight_dict.setdefault(
-            lr_lib.core.var.vars_highlight.hex_unicode_ground, dict()).setdefault(lr_lib.core.var.vars_highlight.hex_unicode_color, set()).update(hex_unicode_words)
+            lr_lib.core.var.vars_highlight.hex_unicode_ground, dict()).setdefault(
+            lr_lib.core.var.vars_highlight.hex_unicode_color, set()).update(hex_unicode_words)
 
         for ground in self.highlight_dict:
             colors = self.highlight_dict[ground]
@@ -210,7 +211,8 @@ class HighlightText(tk.Text):
 
         if isinstance(web_, lr_lib.core.action.web_.WebRegSaveParam):
             m = lr_lib.core.var.vars_highlight.web_reg_highlight_len
-            self.highlight_mode('{}'.format(web_.name[:m]), option='background', color=lr_lib.core.var.vars_highlight.wrsp_color1)
+            self.highlight_mode('{}'.format(web_.name[:m]), option='background',
+                                color=lr_lib.core.var.vars_highlight.wrsp_color1)
             self.highlight_mode(web_.name[m:], option='foreground', color=lr_lib.core.var.vars_highlight.wrsp_color2)
             self.highlight_mode(web_.param, option='foreground', color=lr_lib.core.var.vars_highlight.wrsp_color2)
             for line in web_.lines_list[1:]:
@@ -232,6 +234,7 @@ class HighlightText(tk.Text):
 
 class TextLineNumbers(tk.Canvas):
     """номера линий tk.Text"""
+
     def __init__(self, tk_text: HighlightText):
         super().__init__(tk_text.action, background=lr_lib.core.var.vars_highlight.Background)
         self.linenum = -1

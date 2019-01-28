@@ -1,5 +1,6 @@
 # -*- coding: UTF-8 -*-
 # окно Настраиваемый запуск поиска WRSP
+
 import contextlib
 import tkinter as tk
 
@@ -61,6 +62,7 @@ def item_getattr(item, state: str) -> None:
 
 def set_state_widg(var, widgs: list) -> 'callable':
     """widg: normal/disabled"""
+
     def _set_state_widg(*args, **kwargs) -> None:
         v = var.get()
         s = ('normal' if v else 'disabled')
@@ -72,9 +74,12 @@ def set_state_widg(var, widgs: list) -> 'callable':
                     for ob in w.winfo_children():
                         try:
                             ob.config(state=s)
-                        except:pass
+                        except:
+                            pass
                         continue
-                except:pass
+                except:
+                    pass
             continue
         return
+
     return _set_state_widg

@@ -66,7 +66,7 @@ class Window(lr_lib.gui.wrsp.win_menu.WinMenu):
         lr_lib.gui.widj.tooltip.createToolTip(self.t4, t4)
         lr_lib.gui.widj.tooltip.createToolTip(self.t6, t6)
         lr_lib.gui.widj.tooltip.createToolTip(self.ButtonShowParam, t6)
-        
+
         lr_lib.gui.widj.tooltip.createToolTip(
             self.sortKey1,
             'sortKey1\nпри выборе - Формирует sortKey2.\nНекоторые ключи формируются после поиска(2)\n\t'

@@ -15,6 +15,7 @@ AllowWidj = (
 
 class WinBlock(lr_lib.gui.wrsp.win_act.WinAct):
     """блокировать виджеты"""
+
     def __init__(self):
         lr_lib.gui.wrsp.win_act.WinAct.__init__(self)
 

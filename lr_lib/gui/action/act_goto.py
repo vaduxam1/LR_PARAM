@@ -5,8 +5,8 @@ import tkinter as tk
 import tkinter.ttk as ttk
 
 import lr_lib
-import lr_lib.gui.action.act_font
 import lr_lib.core.var.vars as lr_vars
+import lr_lib.gui.action.act_font
 
 
 class ActGoto(lr_lib.gui.action.act_font.ActFont):

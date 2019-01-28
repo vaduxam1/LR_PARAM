@@ -1,21 +1,21 @@
 ﻿# -*- coding: UTF-8 -*-
 # всяко разно
 
-import re
-import os
-import json
-import types
-import string
-import itertools
-import time
-import tempfile
-import subprocess
 import functools
+import itertools
+import json
+import os
+import re
+import string
+import subprocess
+import tempfile
+import time
+import types
 
 import lr_lib.core.var.vars as lr_vars
 
 
-def _chunks(iterable: list, chunk_size: int) -> iter([iter,]):
+def _chunks(iterable: list, chunk_size: int) -> iter([iter, ]):
     """Yield successive n-sized chunks from l. - не работает с генераторами"""
     for i in range(0, len(iterable), chunk_size):
         val = iterable[i:(i + chunk_size)]
@@ -37,7 +37,7 @@ def chunks(iterable: iter, chunk_size: int) -> iter((iter,)):
     return
 
 
-def _chunks_range(chunk_range: (int, ), iterable):
+def _chunks_range(chunk_range: (int,), iterable):
     try:
         for _ in chunk_range:
             yield next(iterable)
@@ -155,7 +155,7 @@ def get_files_infs(files: [dict, ]) -> iter({int, }):
     return
 
 
-def only_ascii_symbols(item: (str, ), allow=set(string.printable).__contains__) -> iter:
+def only_ascii_symbols(item: (str,), allow=set(string.printable).__contains__) -> iter:
     for s in item:
         if allow(s):
             yield s
@@ -191,6 +191,7 @@ def openTextInEditor(text: str) -> None:
 
 def exec_time(func: callable) -> callable:
     """время выполнения func"""
+
     @functools.wraps(func)
     def wrap(*args, **kwargs):
         t = time.time()
@@ -199,6 +200,7 @@ def exec_time(func: callable) -> callable:
         t = (time.time() - t)
         lr_vars.Logger.trace('<- {t} сек: {f}'.format(f=func, t=round(t, 1)))
         return out
+
     return wrap
 
 

@@ -1,16 +1,15 @@
 # -*- coding: UTF-8 -*-
 # action.с окно - переменные которые надо создать первыми
 
-import os
 import configparser
-
+import os
 import tkinter as tk
 
 import lr_lib
 import lr_lib.core.action.main_awal
+import lr_lib.core.var.vars as lr_vars
 import lr_lib.core.var.vars_highlight
 import lr_lib.gui.action.act_toplevel
-import lr_lib.core.var.vars as lr_vars
 
 
 class ActVar(lr_lib.gui.action.act_toplevel.ActToplevel):
@@ -52,4 +51,3 @@ class ActVar(lr_lib.gui.action.act_toplevel.ActToplevel):
         config = configparser.ConfigParser()
         config.read(os.path.join(os.getcwd(), self.usr_file))
         return config
-

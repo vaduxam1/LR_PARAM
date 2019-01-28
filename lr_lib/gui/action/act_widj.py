@@ -4,9 +4,9 @@
 import tkinter as tk
 import tkinter.ttk as ttk
 
+import lr_lib.core.var.vars as lr_vars
 import lr_lib.core.var.vars_highlight
 import lr_lib.gui.action.act_var
-import lr_lib.core.var.vars as lr_vars
 
 
 class ActWidj(lr_lib.gui.action.act_var.ActVar):

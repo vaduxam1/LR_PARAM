@@ -45,7 +45,6 @@ web_submit_data("
 LAST);
     '''
 
-
 WebDummyTemplate_2 = '''
 web_submit_data("
     "Action=http://
@@ -56,7 +55,6 @@ web_submit_data("
     ITEMDATA,
     LAST);
 '''
-
 
 WebDummyTemplate_3 = '''
 web_custom_request("
@@ -74,12 +72,10 @@ web_custom_request("
     LAST);
 '''
 
-
 WebDummyTemplate_List = [WebDummyTemplate_1, WebDummyTemplate_2, WebDummyTemplate_3]
 
 # проинициализировать
 Dummy.setattrs(WebDummyTemplate_1)
-
 
 WebDummyTemplate_Part_Endswith = '''
   ITEMDATA, 

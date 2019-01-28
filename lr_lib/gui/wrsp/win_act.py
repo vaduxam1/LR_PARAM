@@ -2,17 +2,17 @@
 # связь окна с lr_lib.gui.action.main_action.ActionWindow
 
 import collections
-
 import tkinter as tk
 
 import lr_lib
+import lr_lib.core.var.vars as lr_vars
 import lr_lib.gui.action.main_action
 import lr_lib.gui.wrsp.win_frame
-import lr_lib.core.var.vars as lr_vars
 
 
 class WinAct(lr_lib.gui.wrsp.win_frame.WinFrame):
     """связь с lr_lib.gui.action.main_action.ActionWindow"""
+
     def __init__(self):
         lr_lib.gui.wrsp.win_frame.WinFrame.__init__(self)
         self.action_windows = collections.OrderedDict()  # {id: lr_lib.gui.action.main_action.ActionWindow, }

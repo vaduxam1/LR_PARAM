@@ -3,13 +3,12 @@
 
 import tkinter as tk
 import tkinter.ttk as ttk
-
 from tkinter import messagebox
 
-import lr_lib.core.var.vars_highlight
-import lr_lib.gui.widj.tooltip
-import lr_lib.gui.action.act_serializ
 import lr_lib.core.var.vars as lr_vars
+import lr_lib.core.var.vars_highlight
+import lr_lib.gui.action.act_serializ
+import lr_lib.gui.widj.tooltip
 
 
 class ActSearch(lr_lib.gui.action.act_serializ.TkTextWebSerialization):

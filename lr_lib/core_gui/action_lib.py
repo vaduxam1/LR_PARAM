@@ -1,27 +1,26 @@
 # -*- coding: UTF-8 -*-
 # команды из меню мыши
 
+import codecs
+import html
 import os
 import re
-import html
-import codecs
+import tkinter as tk
 import urllib.parse
 
-import tkinter as tk
-
 import lr_lib
-import lr_lib.core.var.vars_core
 import lr_lib.core.action.web_
+import lr_lib.core.var.vars_core
 import lr_lib.core.var.vars_highlight
 import lr_lib.core.var.vars_other
 import lr_lib.gui.widj.responce_files
-import lr_lib.core.var.vars as lr_vars
 from lr_lib.core.var import vars as lr_vars
 
 
 @lr_lib.core.var.vars_other.T_POOL_decorator
-def mouse_web_reg_save_param(widget: lr_lib.gui.widj.highlight_text.HighlightText, param: str,
-                             mode=('SearchAndReplace', 'highlight', ), wrsp=None, wrsp_dict=None, set_param=True) -> None:
+def mouse_web_reg_save_param(widget: 'lr_lib.gui.widj.highlight_text.HighlightText', param: str,
+                             mode=('SearchAndReplace', 'highlight',), wrsp=None, wrsp_dict=None,
+                             set_param=True) -> None:
     """в окне action.c, для param, автозамена, залить цветом, установить виджеты"""
     with widget.action.block():
         if 'SearchAndReplace' in mode:
@@ -156,7 +155,8 @@ def encoder(event, action=None) -> None:
     }
 
     parent = (action or widget)
-    y = lr_lib.gui.widj.dialog.YesNoCancel(['заменить', 'Отмена'], 'декодер выделения', 'encode', 'decode', parent=parent,
+    y = lr_lib.gui.widj.dialog.YesNoCancel(['заменить', 'Отмена'], 'декодер выделения', 'encode', 'decode',
+                                           parent=parent,
                                            is_text=selection, combo_dict=combo_dict)
     if y.ask() == 'заменить':
         new_name = y.text.strip()
@@ -212,7 +212,8 @@ def rClick_add_highlight(event, option: str, color: str, val: str, find=False) -
     return
 
 
-def snapshot_files(widget: lr_lib.gui.widj.highlight_text.HighlightText, folder_record='', i_num=0, selection='') -> None:
+def snapshot_files(widget: 'lr_lib.gui.widj.highlight_text.HighlightText', folder_record='', i_num=0,
+                   selection='') -> None:
     """показать окно файлов snapshot"""
     if not folder_record:
         folder_record = lr_vars.VarFilesFolder.get()

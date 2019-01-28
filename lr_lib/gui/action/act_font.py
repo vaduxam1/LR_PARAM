@@ -1,15 +1,14 @@
 # -*- coding: UTF-8 -*-
 # action.с окно - шрифты и цвет
 
-import itertools
 import tkinter as tk
 import tkinter.ttk as ttk
 
 import lr_lib
+import lr_lib.core.var.vars as lr_vars
 import lr_lib.core.var.vars_highlight
 import lr_lib.gui.action.act_replace
 import lr_lib.gui.etc.color_change
-import lr_lib.core.var.vars as lr_vars
 
 
 class ActFont(lr_lib.gui.action.act_replace.ActReplaceRemove):
@@ -79,7 +78,7 @@ class ActFont(lr_lib.gui.action.act_replace.ActReplaceRemove):
             ))
         self.background_color_combo.bind(
             "<<ComboboxSelected>>", lambda *a: lr_lib.gui.etc.color_change.background_color_set(
-            self, color=self.background_color_combo.get(), _types=('Text', 'rame', 'bel', ),
+                self, color=self.background_color_combo.get(), _types=('Text', 'rame', 'bel',),
             ))
         self.config(background=self.background_color_combo.get())
         return

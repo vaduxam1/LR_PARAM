@@ -3,16 +3,13 @@
 
 import sys
 import threading
-
 from queue import Empty, PriorityQueue
 
 import lr_lib
 import lr_lib.core.var.vars as lr_vars
 
-
 DLOCK = threading.Lock()
 QLOCK = threading.Lock()
-
 
 Text = '''
 target = {target}
@@ -26,7 +23,7 @@ kwargs = {kwargs}
 
 class Task:
     """задача для пула"""
-    __slots__ = ('target', 'args', 'kwargs', )
+    __slots__ = ('target', 'args', 'kwargs',)
 
     def __init__(self, target: callable, args: tuple, kwargs: dict):
         self.target = target
@@ -75,6 +72,7 @@ class SThreadIOQueue:
 class _NoPool:
     size = 1
     """заглушка пула для SThread"""
+
     def __getattr__(self, item):
         """self.pool.working -> True"""
         return [True]
@@ -116,7 +114,7 @@ class SThread(threading.Thread, SThreadIOQueue):
                         task.target(*task.args, **task.kwargs)
                         continue
 
-                    except Exception as ex :  # выход/ошибка
+                    except Exception as ex:  # выход/ошибка
                         if task is None:
                             return
                         lr_lib.etc.excepthook.excepthook(ex)
@@ -136,7 +134,7 @@ class SThread(threading.Thread, SThreadIOQueue):
 
 class SThreadPool(SThreadIOQueue):
     """threading.Thread пул"""
-    __slots__ = ('_qsize', 'threads', 'parent', 'working', 'size', )
+    __slots__ = ('_qsize', 'threads', 'parent', 'working', 'size',)
 
     def __init__(self, size=lr_vars.cpu_count, parent=None):
         self.parent = parent

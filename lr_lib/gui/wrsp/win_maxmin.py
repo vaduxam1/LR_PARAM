@@ -4,12 +4,13 @@
 import tkinter.ttk as ttk
 
 import lr_lib
-import lr_lib.gui.wrsp.win_widj
 import lr_lib.core.var.vars as lr_vars
+import lr_lib.gui.wrsp.win_widj
 
 
 class WinMaxMin(lr_lib.gui.wrsp.win_widj.WinWidj):
     """min_inf / max_inf"""
+
     def __init__(self):
         lr_lib.gui.wrsp.win_widj.WinWidj.__init__(self)
 

@@ -2,15 +2,16 @@
 # внутреннее предсталление action.c текста
 
 import lr_lib
-import lr_lib.core.wrsp.param
-import lr_lib.core.action.transac
 import lr_lib.core.action.report
+import lr_lib.core.action.transac
 import lr_lib.core.action.web_
 import lr_lib.core.var.vars as lr_vars
+import lr_lib.core.wrsp.param
 
 
 class ActionWebsAndLines:
     """внутреннее представление action.c текста, как список web_ объектов, и "неважного" текста между ними"""
+
     def __init__(self, action: 'lr_lib.gui.action.main_action.ActionWindow'):
         self.action = action
 
@@ -56,7 +57,7 @@ class ActionWebsAndLines:
             continue
         return
 
-    def get_web_by(self, webs: (lr_lib.core.action.web_.WebAny, ), **kwargs) -> iter((lr_lib.core.action.web_.WebAny,)):
+    def get_web_by(self, webs: (lr_lib.core.action.web_.WebAny,), **kwargs) -> iter((lr_lib.core.action.web_.WebAny,)):
         """объекты по kwargs условию: kwargs={'abc': [123]} -> web's.abc == [123]"""
         snapshot = kwargs.pop('snapshot', None)
         attrs = kwargs.items()
@@ -114,7 +115,7 @@ class ActionWebsAndLines:
             continue
         return
 
-    def replace_bodys_iter(self, web_actions: (lr_lib.core.action.web_.WebAny, ), is_wrsp=True) -> None:
+    def replace_bodys_iter(self, web_actions: (lr_lib.core.action.web_.WebAny,), is_wrsp=True) -> None:
         """заменить группу param, во всех web_ body - сопрограмма"""
         search_replace = yield
         while search_replace is not None:
@@ -154,7 +155,7 @@ class ActionWebsAndLines:
         self.drop_file_none_inf_num_in_action()
         return
 
-    def _set_text_list(self, iter_lines: (str, )) -> None:
+    def _set_text_list(self, iter_lines: (str,)) -> None:
         """создать все web_action объекты"""
         iter_lines = map(str.rstrip, iter_lines)
         self.webs_and_lines.clear()

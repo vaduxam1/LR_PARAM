@@ -2,9 +2,9 @@
 # формирование web_reg_save_param
 
 import copy
-import time
 import random
 import string
+import time
 
 import lr_lib
 import lr_lib.core.var.vars as lr_vars
@@ -99,9 +99,12 @@ def create_web_reg_save_param_and_dict(wrsp_dict=None) -> (str, dict):
     return s, wrsp_dict
 
 
-allow_lrb = set(string.ascii_letters + string.digits)  # из каких символов, может состоять lb rb части имени web_reg_save_param
-wrsp_deny_punctuation = {ord(c): '' for c in string.punctuation.replace('_', '')}  # из каких символов, не может состоять имя web_reg_save_param
-wrsp_deny_punctuation.update({ord(c): '' for c in string.whitespace})  # из каких символов, не может состоять имя web_reg_save_param
+allow_lrb = set(
+    string.ascii_letters + string.digits)  # из каких символов, может состоять lb rb части имени web_reg_save_param
+wrsp_deny_punctuation = {ord(c): '' for c in string.punctuation.replace('_',
+                                                                        '')}  # из каких символов, не может состоять имя web_reg_save_param
+wrsp_deny_punctuation.update(
+    {ord(c): '' for c in string.whitespace})  # из каких символов, не может состоять имя web_reg_save_param
 
 
 def wrsp_dict_creator(is_param=True) -> dict:
@@ -334,7 +337,7 @@ def create_files_with_search_data(files: (dict,), search_data: dict, action=None
     return
 
 
-def set_param_in_action_inf(action, param: str) -> iter((int, )):
+def set_param_in_action_inf(action, param: str) -> iter((int,)):
     """первый action-inf в котором расположен param, тк inf-номер запроса <= inf-номер web_reg_save_param"""
     for web_ in action.web_action.get_web_snapshot_all():
         (allow, deny) = web_.param_find_replace(param)
@@ -425,10 +428,12 @@ def param_not_found_err_text(action, files: [dict, ], search_data: dict, param: 
             'В action.c: Snapshot {ai}=[ t{a_min}:t{a_max} ] / Файлов={afa}\n' \
             'Поиск происходил в: Snapshot {lf}=[ t{min_iaf}:t{max_iaf} ] / файлах={f_}\n' \
             'Директория поиска: {folder}\nоткл чекб "strong", вероятно может помочь найти варианты'.format(
-        ai_min=min(tuple(lr_lib.core.etc.other.get_files_infs(lr_vars.AllFiles))), ai=lai, afa=afa, f_=len(files), param=param,
-        ai_max=max(lr_lib.core.etc.other.get_files_infs(lr_vars.AllFiles)), folder=lr_vars.VarFilesFolder.get(), i=files_infs,
-        min_iaf=min_iaf, max_iaf=max_iaf, a_min=a_min, a_max=a_max, d=search_data, f=len(lr_vars.AllFiles), lf=lenfi,)
-    
+        ai_min=min(tuple(lr_lib.core.etc.other.get_files_infs(lr_vars.AllFiles))), ai=lai, afa=afa, f_=len(files),
+        param=param,
+        ai_max=max(lr_lib.core.etc.other.get_files_infs(lr_vars.AllFiles)), folder=lr_vars.VarFilesFolder.get(),
+        i=files_infs,
+        min_iaf=min_iaf, max_iaf=max_iaf, a_min=a_min, a_max=a_max, d=search_data, f=len(lr_vars.AllFiles), lf=lenfi, )
+
     return error
 
 

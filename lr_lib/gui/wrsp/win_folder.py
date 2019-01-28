@@ -2,16 +2,16 @@
 # выбор каталога файлов ответов
 
 import tkinter as tk
-
 from tkinter import filedialog
 
 import lr_lib
-import lr_lib.gui.wrsp.win_other
 import lr_lib.core.var.vars as lr_vars
+import lr_lib.gui.wrsp.win_other
 
 
 class WinFolder(lr_lib.gui.wrsp.win_other.WinOther):
     """выбор каталога файлов ответов"""
+
     def __init__(self):
         lr_lib.gui.wrsp.win_other.WinOther.__init__(self)
 

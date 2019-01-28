@@ -1,9 +1,9 @@
 ﻿# -*- coding: UTF-8 -*-
 # action.c статистика
 
+import collections
 import copy
 import string
-import collections
 
 import lr_lib
 import lr_lib.core.action.web_
@@ -15,6 +15,7 @@ is_ascii = set(string.printable)
 
 class WebReport:
     """статистика использования web_reg_save_param"""
+
     def __init__(self, parent_: 'lr_lib.core.action.main_awal.ActionWebsAndLines'):
         self.ActionWebsAndLines = parent_
 
@@ -136,7 +137,7 @@ class WebReport:
 
         web_snapshot_all = tuple(self.ActionWebsAndLines.get_web_snapshot_all())
 
-        def get_stats(name: str, deny=('snapshots', 'transaction_names', 'snapshots_count', )) -> iter:
+        def get_stats(name: str, deny=('snapshots', 'transaction_names', 'snapshots_count',)) -> iter:
             wps = self.param_statistic[name]
             for k in wps:
                 if k not in deny:
@@ -144,7 +145,7 @@ class WebReport:
                 continue
             return
 
-        def web_reg(snapshot: int) -> iter((str, dict),):
+        def web_reg(snapshot: int) -> iter((str, dict), ):
             web = self.ActionWebsAndLines.get_web_by(web_snapshot_all, snapshot=snapshot)
             web = next(web)
             for wrsp in web.web_reg_save_param_list:
@@ -201,7 +202,8 @@ class WebReport:
             statistic.append(pss)
             continue
 
-        return '\n\t{c} OUT({n})-> {s}'.format(s=', '.join(statistic), c=lr_lib.core.wrsp.param.LR_COMENT, n=len(statistic))
+        return '\n\t{c} OUT({n})-> {s}'.format(s=', '.join(statistic), c=lr_lib.core.wrsp.param.LR_COMENT,
+                                               n=len(statistic))
 
     def stats_transaction_web(self, web: lr_lib.core.action.web_.WebSnapshot) -> str:
         """'статистика transaction, для web"""
@@ -229,7 +231,8 @@ class WebReport:
                 continue
             dtt = next(self.get_sub_transaction_dt(t, self.all_in_one))
 
-            if (not dtt) and (t not in self.web_transaction):  # считается пустой(без snapshot), только если не содержит подтранзакций
+            if (not dtt) and (
+                    t not in self.web_transaction):  # считается пустой(без snapshot), только если не содержит подтранзакций
                 result['info'].append('Пустая транзакция "{}"'.format(t))
             if t not in self.ActionWebsAndLines.transactions.start_stop['start']:
                 result['warning'].append('Отсутствует транзакция start_transaction("{}")'.format(t))
@@ -265,4 +268,3 @@ def snapshot_diapason_string(infs: [int, ]) -> str:
         diapason = '{count}=[{min_inf}:{max_inf}]'.format(min_inf=min_inf, max_inf=max_inf, count=len(infs))
 
     return diapason
-

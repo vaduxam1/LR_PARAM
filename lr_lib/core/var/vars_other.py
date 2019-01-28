@@ -57,6 +57,7 @@ def T_POOL_decorator(func: callable):
             raise AttributeError('у пула({p}) нет атрибута submit или apply_async\n{f}\n{a}\n{k}'.format(
                 f=func, a=args, k=kwargs, p=lr_lib.core.var.vars.T_POOL.pool))
         return out
+
     return wrap
 
 

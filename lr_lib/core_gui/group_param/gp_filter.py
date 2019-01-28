@@ -4,9 +4,9 @@
 import string
 
 import lr_lib.core
+from lr_lib.core.var import vars as lr_vars
 from lr_lib.core.var.vars_param import DENY_Startswitch_PARAMS, DENY_PARAMS_LOWER, param_splitters, \
     param_valid_letters, DENY_Force_Startswitch_PARAMS
-from lr_lib.core.var import vars as lr_vars
 
 
 def param_sort(params: [str, ], reverse=True, _filter=True, deny_param_filter=True, action_text=None, ) -> [str, ]:

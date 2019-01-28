@@ -2,7 +2,6 @@
 # подсветка текста
 
 import string
-
 import tkinter as tk
 
 import lr_lib
@@ -12,7 +11,8 @@ import lr_lib.core.var.vars_highlight
 
 class HighlightLines:
     """подсветка линий текста"""
-    def __init__(self, tk_text: 'lr_lib.gui.widj.highlight_text.HighlightText', tegs_names: {str, (str, ), }):
+
+    def __init__(self, tk_text: 'lr_lib.gui.widj.highlight_text.HighlightText', tegs_names: {str, (str,), }):
         self.tk_text = tk_text
         self.id = id(self)
 
@@ -40,6 +40,7 @@ class HighlightLines:
 
     def set_thread_attrs(self) -> None:
         """взять настройки подсветки, из виджетов"""
+
         def set() -> None:
             """lr_vars.MainThreadUpdater.submit(set)"""
             try:
@@ -112,7 +113,8 @@ class HighlightLines:
 
         if lr_lib.core.var.vars_highlight.OliveChildTeg in line_indxs:  # удалить из Olive тега все индексы, принадлежищие любому другому тегу
             other_tegs = (line_indxs.keys() - lr_lib.core.var.vars_highlight.minus_teg)
-            line_indxs[lr_lib.core.var.vars_highlight.OliveChildTeg] -= set(i for t in other_tegs for i in line_indxs[t])
+            line_indxs[lr_lib.core.var.vars_highlight.OliveChildTeg] -= set(
+                i for t in other_tegs for i in line_indxs[t])
 
         # подсветить
         tag_add = self.tk_text.tag_add
@@ -126,7 +128,7 @@ class HighlightLines:
         return
 
 
-def join_indxs(index: int, *indxs: sorted) -> iter((int, int),):
+def join_indxs(index: int, *indxs: sorted) -> iter((int, int), ):
     """ join_indxs(*sorted(indxs))
     объединить идущие подряд индексы, увеличить посл.индекс (+1):
      indxs = {1, 2, 3, 4, 7, 9, 10, 11} -> (1, 4(+1)), (7, 7(+1)), (9, 11(+1)) -> (1, 5), (7, 8), (9, 12)"""

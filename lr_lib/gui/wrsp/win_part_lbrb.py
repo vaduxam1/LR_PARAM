@@ -2,20 +2,20 @@
 # основные виджеты (4) (5)LB (5)RB
 
 import string
-
 import tkinter as tk
 import tkinter.ttk as ttk
 
 import lr_lib
+import lr_lib.core.var.vars as lr_vars
 import lr_lib.core.var.vars_highlight
 import lr_lib.core.var.vars_other
 import lr_lib.core.var.vars_param
 import lr_lib.gui.wrsp.win_text
-import lr_lib.core.var.vars as lr_vars
 
 
 class WinPartsLbRb(lr_lib.gui.wrsp.win_text.WinText):
     """основные виджеты: (4) (5)LB (5)RB"""
+
     def __init__(self):
         lr_lib.gui.wrsp.win_text.WinText.__init__(self)
 
@@ -42,7 +42,8 @@ class WinPartsLbRb(lr_lib.gui.wrsp.win_text.WinText):
         )
 
         spl = [
-            lr_lib.core.var.vars_param.SplitList, lr_lib.core.var.vars_param._SplitList0, lr_lib.core.var.vars_param._SplitList1,
+            lr_lib.core.var.vars_param.SplitList, lr_lib.core.var.vars_param._SplitList0,
+            lr_lib.core.var.vars_param._SplitList1,
             lr_lib.core.var.vars_param._SplitList2, lr_lib.core.var.vars_param._SplitList_3,
             list(string.whitespace), 'list(string.ascii_letters)', 'list(string.digits)', 'list(string.punctuation)',
         ]
@@ -61,13 +62,13 @@ class WinPartsLbRb(lr_lib.gui.wrsp.win_text.WinText):
             self.last_frameCbx1, variable=lr_vars.VarRusLB, text='ascii', font=lr_vars.DefaultFont + ' italic',
             command=self.comboParts_change, padx=0, pady=0,
         )
-        self.lb_split_label = tk.LabelFrame(self.last_frameCbx1, bd=1, padx=0, pady=0,)
+        self.lb_split_label = tk.LabelFrame(self.last_frameCbx1, bd=1, padx=0, pady=0, )
 
         self.LBcbx_SplitList = tk.Checkbutton(
             self.lb_split_label, variable=lr_vars.VarSplitListLB, text='split', font=lr_vars.DefaultFont + ' bold',
             command=self.spl_cbx_cmd_lb, padx=0, pady=0,
         )
-        self.LBent_SplitList = ttk.Combobox(self.lb_split_label, font=lr_vars.DefaultFont, width=2,)
+        self.LBent_SplitList = ttk.Combobox(self.lb_split_label, font=lr_vars.DefaultFont, width=2, )
         self.LBent_SplitList['values'] = list(split_list)
         self.LBent_SplitList.current(0)
 
@@ -129,7 +130,7 @@ class WinPartsLbRb(lr_lib.gui.wrsp.win_text.WinText):
             self.rb_split_label, variable=lr_vars.VarSplitListRB, text='split', font=lr_vars.DefaultFont + ' bold',
             command=self.spl_cbx_cmd_rb, padx=0, pady=0,
         )
-        self.RBent_SplitList = ttk.Combobox(self.rb_split_label, font=lr_vars.DefaultFont, width=2,)
+        self.RBent_SplitList = ttk.Combobox(self.rb_split_label, font=lr_vars.DefaultFont, width=2, )
         self.RBent_SplitList['values'] = list(split_list)
         self.RBent_SplitList.current(0)
 

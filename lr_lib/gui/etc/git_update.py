@@ -6,30 +6,29 @@ import tkinter.messagebox
 import urllib.request
 
 import lr_lib.core.var.vars as lr_vars
-import lr_lib.gui.wrsp.main_window
+# import lr_lib.gui.wrsp.main_window
 
 
-def init(c_args=None) -> None:
-    """создать gui"""
-    print(c_args)
-    lr_vars.Window = lr_lib.gui.wrsp.main_window.Window()  # main Gui
-
-
-    return
+# def init(c_args=None) -> None:
+#     """создать gui"""
+#     print(c_args)
+#     lr_vars.Window = lr_lib.gui.wrsp.main_window.Window()  # main Gui
+#
+#     return
+#
+#
+# def start(action=True, lock=True) -> None:
+#     """action + lock"""
+#     if action:  # action Gui
+#         lr_vars.Window.new_action_window()  # lr_lib.gui.action.main_action.ActionWindow()
+#     if lock:  # main thread lock
+#         lr_vars.Tk.mainloop()
+#     return
 
 
 def _git_update_check():
     t = threading.Thread(target=check_git_ver)
     t.start()
-    return
-
-
-def start(action=True, lock=True) -> None:
-    """action + lock"""
-    if action:  # action Gui
-        lr_vars.Window.new_action_window()  # lr_lib.gui.action.main_action.ActionWindow()
-    if lock:  # main thread lock
-        lr_vars.Tk.mainloop()
     return
 
 
@@ -58,6 +57,6 @@ def check_git_ver():
         tkinter.messagebox.showwarning(
             "Для версии {v} доступно обновление".format(v=lr_vars.VERSION),
             "По адресу {a} доступно последнее [{v}] обновление утилиты.".format(
-                v=GVER,a=lr_vars.github,
+                v=GVER, a=lr_vars.github,
             ))
     return

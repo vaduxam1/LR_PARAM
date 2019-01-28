@@ -2,24 +2,23 @@
 # action.с окно - родитель lr_lib.gui.action.main_action.ActionWindow
 
 import os
-
 import tkinter as tk
 
 import lr_lib
-import lr_lib.core.var.vars_other
-import lr_lib.gui.action.act_any
-import lr_lib.core_gui.group_param.main_gp
-import lr_lib.core_gui.group_param.gp_act_re
-import lr_lib.gui.widj.legend
-import lr_lib.gui.widj.dialog
-import lr_lib.gui.widj.wrsp_setting
-import lr_lib.gui.etc.sub_menu
-import lr_lib.core_gui.group_param.core_gp
-import lr_lib.gui.wrsp.top.top_allfiles
-import lr_lib.core_gui.action_lib
-import lr_lib.gui.etc.gui_other
-import lr_lib.core_gui.run.run_setting
 import lr_lib.core.var.vars as lr_vars
+import lr_lib.core.var.vars_other
+import lr_lib.core_gui.action_lib
+import lr_lib.core_gui.group_param.core_gp
+import lr_lib.core_gui.group_param.gp_act_re
+import lr_lib.core_gui.group_param.main_gp
+import lr_lib.core_gui.run.run_setting
+import lr_lib.gui.action.act_any
+import lr_lib.gui.etc.gui_other
+import lr_lib.gui.etc.sub_menu
+import lr_lib.gui.widj.dialog
+import lr_lib.gui.widj.legend
+import lr_lib.gui.widj.wrsp_setting
+import lr_lib.gui.wrsp.top.top_allfiles
 
 
 class ActWin(lr_lib.gui.action.act_any.ActAny):
@@ -126,7 +125,7 @@ class ActWin(lr_lib.gui.action.act_any.ActAny):
                         'Snapshot=t{p}.inf, в котором расположен,\nпервый заменяемый "{prm}"\n\n'
                         'не может быть({p} <= {inf_nums}) меньше или равен,\n\n'
                         'Snapshot=t{w}.inf, перед которым вставляется:'.format(
-                            prm=wrsp_dict['param'], p=max_action_inf, w=inf_nums[0], inf_nums=inf_nums,))
+                            prm=wrsp_dict['param'], p=max_action_inf, w=inf_nums[0], inf_nums=inf_nums, ))
             except Exception as ex:
                 self.search_in_action(word=lr_lib.core.wrsp.param.Snap.format(num=max_action_inf), hist=False)
                 qb = 'param: "{p}"\nweb_reg_save_param: "{n}"'.format(

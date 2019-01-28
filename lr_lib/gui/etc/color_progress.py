@@ -4,15 +4,16 @@ import threading
 import time
 
 import lr_lib
+import lr_lib.core.var.vars_highlight
 import lr_lib.gui.etc.color_change
 from lr_lib.core.var import vars as lr_vars
-import lr_lib.core.var.vars_highlight
 
 
 class ColorProgress:
     """
     менять цвет action.c окна при "работе" поиска всех вариантов создания web_reg_save_param
     """
+
     def __init__(self, action: 'lr_lib.gui.action.main_action.ActionWindow',
                  **color_set_kwargs):
         self.is_work = [True]
@@ -62,6 +63,7 @@ class ColorProgress:
 
 def progress_decor(func, action=None):
     """декоратор - навесить цветной прогрессбар"""
+
     def wrap(*args, **kwargs):
         p = ColorProgress(args[0] if (action is None) else action)
         p.__enter__()
@@ -69,4 +71,5 @@ def progress_decor(func, action=None):
             return func(*args, **kwargs)
         finally:
             p.__exit__(None, None, None, )
+
     return wrap

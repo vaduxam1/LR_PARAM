@@ -5,7 +5,6 @@ import tkinter as tk
 
 import lr_lib
 import lr_lib.core.var.vars_other
-from lr_lib.core.var import vars as lr_vars
 
 ABounds = [
     ('"LB=', '"RB='),
@@ -42,7 +41,7 @@ def all_wrsp_auto_rename(gui: 'lr_lib.gui.action.main_action.ActionWindow', *arg
     return
 
 
-def _lbrb_wrsps(wrsps: ('lr_lib.core.action.web_.WebRegSaveParam',)) -> iter((str, )):
+def _lbrb_wrsps(wrsps: ('lr_lib.core.action.web_.WebRegSaveParam',)) -> iter((str,)):
     """для всех wrsps, найти LR/RB из wrsp текста, и сформировать новое имя wrsp"""
     for wr in wrsps:
         lb = rb = ''
@@ -170,7 +169,7 @@ def all_wrsp_rename(gui: 'lr_lib.gui.action.main_action.ActionWindow', parent=No
     m = ('"{:<%s}" -> "{}"' % mx)
     all_wrsps = '\n'.join(m.format(old, new) for (old, new) in zip(wrsps, wrsps))
     y = lr_lib.gui.widj.dialog.YesNoCancel(['Переименовать', 'Отмена'], 'Переименовать wrsp слева',
-                              'в wrsp справа', 'wrsp', parent=parent, is_text=all_wrsps)
+                                           'в wrsp справа', 'wrsp', parent=parent, is_text=all_wrsps)
 
     if y.ask() == 'Переименовать':
         new_wrsps = [t.split('-> "', 1)[1].split('"', 1)[0].strip() for t in y.text.strip().split('\n')]

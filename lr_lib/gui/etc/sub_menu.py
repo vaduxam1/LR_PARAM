@@ -9,10 +9,10 @@ import lr_lib.core.var.vars_highlight
 import lr_lib.core.var.vars_other
 import lr_lib.core_gui.action_lib
 import lr_lib.core_gui.all_wrsp
-import lr_lib.core_gui.rename
-import lr_lib.gui.etc.color_progress
 import lr_lib.core_gui.group_param.gp_act_lb
 import lr_lib.core_gui.group_param.gp_act_start
+import lr_lib.core_gui.rename
+import lr_lib.gui.etc.color_progress
 from lr_lib.gui.etc.color_progress import progress_decor
 
 
@@ -93,7 +93,7 @@ def rClicker(event) -> str:
                 command=lambda e=event: lr_lib.core.var.vars_other.T_POOL_decorator(
                     progress_decor(lr_lib.core_gui.group_param.gp_act_lb.group_param_search_by_lb, e.widget.action))(
                     e.widget.action, [['web', e.widget.action], 'all'], wrsp_create=True,
-                    lb_items=[e.widget.selection_get(),], ask=False, MutableLBRegs=(),
+                    lb_items=[e.widget.selection_get(), ], ask=False, MutableLBRegs=(),
                 ),
             )
 

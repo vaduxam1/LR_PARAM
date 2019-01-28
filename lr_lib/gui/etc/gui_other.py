@@ -23,7 +23,8 @@ def repA(widget) -> None:
     rep = widget.action.web_action.websReport.all_in_one
     t = 'transac_len={}, param_len={}'.format(len(rep), len(widget.action.web_action.websReport.wrsp_and_param_names))
     y = lr_lib.gui.widj.dialog.YesNoCancel(buttons=['OK'], text_before='repA', text_after='websReport.all_in_one',
-                                           is_text=lr_lib.core.etc.other.get_json(rep), title=t, parent=widget.action, t_enc=True, )
+                                           is_text=lr_lib.core.etc.other.get_json(rep), title=t, parent=widget.action,
+                                           t_enc=True, )
     lr_lib.core.var.vars_other.T_POOL_decorator(y.ask)()
     return
 

@@ -13,7 +13,7 @@ from lr_lib.gui.widj.dialog import K_CANCEL, K_CREATE
 
 
 @lr_lib.core.var.vars_other.T_POOL_decorator
-def auto_param_creator(action: 'lr_lib.gui.action.main_action.ActionWindow',) -> None:
+def auto_param_creator(action: 'lr_lib.gui.action.main_action.ActionWindow', ) -> None:
     """
     group params по кнопке PARAM - по LB + по началу имени
     """
@@ -21,7 +21,7 @@ def auto_param_creator(action: 'lr_lib.gui.action.main_action.ActionWindow',) ->
 
     # поиск по началу имени, в action.c
     ps = lr_lib.core_gui.group_param.gp_act_start.group_param_search_by_name(
-        action, [action, 'all'], action_text=True,)
+        action, [action, 'all'], action_text=True, )
     params.update(ps)
 
     if (not ps) and isinstance(ps, tuple):

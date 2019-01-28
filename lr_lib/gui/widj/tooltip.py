@@ -1,9 +1,8 @@
 # -*- coding: UTF-8 -*-
 # всплывающие подсказки
 
-import threading
 import collections
-
+import threading
 import tkinter as tk
 
 import lr_lib.core.var.vars as lr_vars
@@ -31,6 +30,7 @@ def tt_clear() -> None:
 
 class ToolTip(object):
     """всплывающие подсказки"""
+
     def __init__(self, widget):
         self.widget = widget
         self.tip = None

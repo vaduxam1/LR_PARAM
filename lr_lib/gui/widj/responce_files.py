@@ -2,20 +2,19 @@
 # окно файлов ответов, для i_num-snapshot
 
 import os
-
 import tkinter as tk
 import tkinter.ttk as ttk
-
 from tkinter import filedialog
 
 import lr_lib
 import lr_lib.core.var.vars as lr_vars
-import lr_lib.core.var.vars_other
 import lr_lib.core.var.vars_highlight
+import lr_lib.core.var.vars_other
 
 
 class RespFiles(tk.Toplevel):
     """окно файлов ответов, для i_num-snapshot"""
+
     def __init__(self, widget, i_num: int, folder_record: str, folder_response: str):
         super().__init__(padx=0, pady=0)
         self.widget = widget
@@ -39,7 +38,8 @@ class RespFiles(tk.Toplevel):
             lr_lib.core.etc.other._openTextInEditor(full_name)
 
         file_dt = lr_lib.core.wrsp.files.file_dict_creator(
-            ent.get(), full_name, inf_num=0, enc=lr_lib.core.var.vars_other.VarEncode.get(), inf_key='', deny=True, stats=True)
+            ent.get(), full_name, inf_num=0, enc=lr_lib.core.var.vars_other.VarEncode.get(), inf_key='', deny=True,
+            stats=True)
         del file_dt['Param']
         del file_dt['Snapshot']
 
@@ -93,7 +93,8 @@ class RespFiles(tk.Toplevel):
             return
 
         inf_var = tk.StringVar(value=self.inf_file)
-        inf_cmb = ttk.Combobox(lab, background=lr_lib.core.var.vars_highlight.Background, font='Arial 7', textvariable=inf_var)
+        inf_cmb = ttk.Combobox(lab, background=lr_lib.core.var.vars_highlight.Background, font='Arial 7',
+                               textvariable=inf_var)
         inf_cmb['values'] = list(sorted(get_inf_files(), key=lr_lib.core.etc.other.numericalSort))
         inf_cmb.bind("<<ComboboxSelected>>", set_inf)
         inf_cmb.config(width=max(len(i) for i in (inf_cmb['values'] or [''])))

@@ -7,7 +7,6 @@ from lr_lib.core.var.vars_other import T_POOL_decorator
 from lr_lib.core_gui.run.r_other import set_state_widg, block
 from lr_lib.gui.etc.color_progress import progress_decor
 
-
 ColorHide = 'DimGrey'
 
 

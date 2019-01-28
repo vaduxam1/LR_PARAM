@@ -152,15 +152,16 @@ if __name__ == '__main__':
 
     import random
 
+
     def further_text():
         # texts generated at http://lorem-ipsum.perbang.dk/
         short_text = ('Lorem ipsum dolor sit amet, mauris tellus, '
-                     'porttitor torquent eu. Magna aliquet lorem, '
-                     'cursus sit ac, in in. Dolor aliquet, cum integer. '
-                     'Proin aliquet, porttitor pulvinar mauris. Tellus '
-                     'lectus, amet cras, neque lacus quis. Malesuada '
-                     'nibh. Eleifend nam, in eget a. Nec turpis, erat '
-                     'wisi semper')
+                      'porttitor torquent eu. Magna aliquet lorem, '
+                      'cursus sit ac, in in. Dolor aliquet, cum integer. '
+                      'Proin aliquet, porttitor pulvinar mauris. Tellus '
+                      'lectus, amet cras, neque lacus quis. Malesuada '
+                      'nibh. Eleifend nam, in eget a. Nec turpis, erat '
+                      'wisi semper')
         medium_text = ('Lorem ipsum dolor sit amet, suspendisse aenean '
                        'ipsum sollicitudin, pellentesque nunc ultrices ac '
                        'ut, arcu elit turpis senectus convallis. Ac orci '
@@ -204,6 +205,7 @@ if __name__ == '__main__':
         text = random.choice([short_text, medium_text, long_text, long_text])
 
         return '\nFurther info: ' + text
+
 
     def main_01(wraplength=200):
 
@@ -263,6 +265,7 @@ if __name__ == '__main__':
         root.mainloop()
         return
 
+
     def main():
         print('Trying out three different wraplengths:')
         for (i, wl) in enumerate((200, 250, 400), 1):
@@ -271,5 +274,6 @@ if __name__ == '__main__':
             continue
         print('Done.')
         return
+
 
     main()

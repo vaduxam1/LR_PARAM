@@ -38,7 +38,7 @@ def read_web_type(first_line: str, s1='("', s2='(') -> str:
         raise UserWarning('{fl} не содержит {s}'.format(fl=first_line, s=[s1, s2]))
 
 
-def _body_replace(body_split: [str, ], len_body_split: int, search: str, replace: str, is_wrsp=True) -> iter((str, )):
+def _body_replace(body_split: [str, ], len_body_split: int, search: str, replace: str, is_wrsp=True) -> iter((str,)):
     """замена search в body"""
     yield body_split[0]
 
@@ -112,7 +112,8 @@ class WebAny:
         try:
             for line in self.lines_list[1:-1]:
                 strip_line = line.strip()
-                if strip_line.startswith(lr_lib.core.wrsp.param.Snap1) and strip_line.endswith(lr_lib.core.wrsp.param.Snap2):
+                if strip_line.startswith(lr_lib.core.wrsp.param.Snap1) and strip_line.endswith(
+                        lr_lib.core.wrsp.param.Snap2):
                     inf_num = line.split(lr_lib.core.wrsp.param.Snap1, 1)
                     inf_num = inf_num[-1]
                     inf_num = inf_num.rsplit(lr_lib.core.wrsp.param.Snap2, 1)
@@ -135,7 +136,8 @@ class WebAny:
                 comments += '\n\t{} WARNING: no "Snapshot=t.inf" (del?)'.format(lr_lib.core.wrsp.param.LR_COMENT)
 
         warn = self.check_for_warnings()
-        text = '{warn}\n{coment}\n{snap_text}'.format(coment=comments, snap_text='\n'.join(self.lines_list), warn=warn,)
+        text = '{warn}\n{coment}\n{snap_text}'.format(coment=comments, snap_text='\n'.join(self.lines_list),
+                                                      warn=warn, )
         return text.strip('\n')
 
     def _read_name(self, name='') -> str:
@@ -173,8 +175,10 @@ class WebAny:
         t1 = 'заменяемая строка:\n{prev}{p}{part}'.format(
             prev=left[-lr_vars.AskLbRbMaxLen:].rsplit('\n', 1)[-1].lstrip(), p=param,
             part=right[:lr_vars.AskLbRbMaxLen].split('\n', 1)[0].rstrip())
-        y = lr_lib.gui.widj.dialog.YesNoCancel(buttons=buttons, text_before=t1, text_after=t2, title='автозамена "{s}" на "{r}"'.format(
-            s=param, r=replace), parent=self.ActionWebsAndLines.action, default_key=nta, focus=self.ActionWebsAndLines.action.tk_text)
+        y = lr_lib.gui.widj.dialog.YesNoCancel(buttons=buttons, text_before=t1, text_after=t2,
+                                               title='автозамена "{s}" на "{r}"'.format(
+                                                   s=param, r=replace), parent=self.ActionWebsAndLines.action,
+                                               default_key=nta, focus=self.ActionWebsAndLines.action.tk_text)
         a = y.ask()
 
         if ask_dict and (a in dk):
@@ -198,7 +202,8 @@ class WebAny:
             return
 
         def normal_replace(indx: int, left: str, right: str, ask=(not action.no_var.get())) -> None:
-            if lr_lib.core.etc.lbrb_checker.check_bound_lb_rb(left, right) or (ask and self.ask_replace(param, replace, left, right, ask_dict)):
+            if lr_lib.core.etc.lbrb_checker.check_bound_lb_rb(left, right) or (
+                    ask and self.ask_replace(param, replace, left, right, ask_dict)):
                 chunk_indxs.append(indx)
             return
 
@@ -283,6 +288,7 @@ class WebAny:
 
 class WebSnapshot(WebAny):
     """web со snapshot > 0, те содержащие файлы ответов"""
+
     def __init__(self, parent_: 'lr_lib.core.action.main_awal.ActionWebsAndLines', lines_list: list, comments: str,
                  transaction='', _type='', web_reg_save_param_list=None):
         super().__init__(parent_, lines_list, comments, transaction=transaction, _type=_type)
@@ -346,6 +352,7 @@ class WebSnapshot(WebAny):
 
 class WebRegSaveParam(WebAny):
     """web web_reg_save_param*"""
+
     def __init__(self, parent_: 'lr_lib.core.action.main_awal.ActionWebsAndLines', lines_list: list, comments: str,
                  transaction='', _type='', parent_snapshot=None):
         self.parent_snapshot = parent_snapshot  # WebSnapshot
@@ -360,7 +367,10 @@ class WebRegSaveParam(WebAny):
     def _read_param(self, param='') -> str:
         try:
             if lr_lib.core.wrsp.param.wrsp_start in self.comments:
-                param = self.comments.split(lr_lib.core.wrsp.param.wrsp_start, 1)[1].split(lr_lib.core.wrsp.param.wrsp_end, 1)[0]
+                param = \
+                    self.comments.split(lr_lib.core.wrsp.param.wrsp_start, 1)[1].split(lr_lib.core.wrsp.param.wrsp_end,
+                                                                                       1)[
+                        0]
             elif 'PARAM["' in self.comments:
                 param = self.comments.split('PARAM["', 1)[1].split(lr_lib.core.wrsp.param.wrsp_end, 1)[0]
 

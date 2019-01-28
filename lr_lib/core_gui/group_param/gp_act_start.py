@@ -10,7 +10,7 @@ import lr_lib.core_gui.group_param.gp_filter
 import lr_lib.core_gui.group_param.gp_job
 import lr_lib.gui.widj.dialog
 from lr_lib.core.var import vars as lr_vars
-from lr_lib.gui.widj.dialog import K_FIND, K_SKIP, K_CANCEL, K_CREATE, CREATE_or_FIND
+from lr_lib.gui.widj.dialog import K_FIND, K_SKIP, K_CANCEL, CREATE_or_FIND
 
 
 def group_param_search_by_name(

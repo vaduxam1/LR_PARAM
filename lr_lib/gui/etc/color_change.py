@@ -54,7 +54,7 @@ def _rnd_color(self, color) -> str:
     return color
 
 
-def DiR(ob, _types=('button', )):
+def DiR(ob, _types=('button',)):
     """объекты для смены цвета"""
     for attr in dir(ob):
         ga = getattr(ob, attr)

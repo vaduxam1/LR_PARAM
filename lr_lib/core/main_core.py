@@ -6,8 +6,8 @@ import argparse
 import lr_lib
 import lr_lib.core.var.vars as lr_vars
 import lr_lib.core.var.vars_highlight
-import lr_lib.core.var.vars_param
 import lr_lib.core.var.vars_other
+import lr_lib.core.var.vars_param
 
 
 def init(as_console: bool) -> dict:

@@ -1,25 +1,26 @@
 # -*- coding: UTF-8 -*-
 # AllFiles, создание словарей файлов
 
-import os
-import time
-import string
-import configparser
 import collections
+import configparser
+import os
+import string
+import time
 
 import lr_lib
 import lr_lib.core.etc.other
+import lr_lib.core.var.vars as lr_vars
 import lr_lib.core.var.vars_other
 import lr_lib.core.var.vars_param
 import lr_lib.etc.excepthook
-import lr_lib.core.var.vars as lr_vars
 
 
 def is_responce_file(name: str) -> (str, str):
     """вернуть файлы ответов, отбраковать "вероятно ненужные" файлы"""
     (n, ext) = os.path.splitext(name)
-    if (name in lr_lib.core.var.vars_param.DENY_FILES) or (ext in lr_lib.core.var.vars_param.DENY_EXT) or any((p in n) for p in
-                                                                                                              lr_lib.core.var.vars_param.DENY_PART_NAME):
+    if (name in lr_lib.core.var.vars_param.DENY_FILES) or (ext in lr_lib.core.var.vars_param.DENY_EXT) or any(
+            (p in n) for p in
+            lr_lib.core.var.vars_param.DENY_PART_NAME):
         return
     else:
         return n, ext
@@ -89,7 +90,7 @@ def get_inf_file_num(file: str) -> int:
     return
 
 
-def get_folder_infs(folder: str) -> iter((str, int),):
+def get_folder_infs(folder: str) -> iter((str, int), ):
     """inf файлы/номера каталога"""
     for file in next(os.walk(folder))[2]:
         num = get_inf_file_num(file)
@@ -101,8 +102,9 @@ def get_folder_infs(folder: str) -> iter((str, int),):
 
 def create_files_from_infs(folder: str, enc: str, allow_deny: bool, statistic: bool) -> iter([dict, ]):
     """создать файлы ответов, из всех t*.ini файлов"""
-    arg = (folder, enc, allow_deny, statistic, )
-    chunks = ((arg, files) for files in lr_lib.core.etc.other.chunks(get_folder_infs(folder), lr_vars.FilesCreatePortionSize))
+    arg = (folder, enc, allow_deny, statistic,)
+    chunks = ((arg, files) for files in
+              lr_lib.core.etc.other.chunks(get_folder_infs(folder), lr_vars.FilesCreatePortionSize))
     executer = (lr_vars.M_POOL.imap_unordered if lr_vars.SetFilesPOOLEnable else map)
 
     # создать файлы ответов
@@ -118,7 +120,7 @@ def create_files_from_infs(folder: str, enc: str, allow_deny: bool, statistic: b
     return
 
 
-def get_files_portions(args: [(str, str, bool, bool), ((str, int), )]) -> [dict, ]:
+def get_files_portions(args: [(str, str, bool, bool), ((str, int),)]) -> [dict, ]:
     """создать файлы, для порции inf-файлов"""
     (arg, files) = args
     files_gen = map(_create_files_from_inf, ((arg, file) for file in files))
