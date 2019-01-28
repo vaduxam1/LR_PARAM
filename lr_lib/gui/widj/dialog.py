@@ -63,8 +63,7 @@ class YesNoCancel(tk.Toplevel):
                 if n == K_CREATE:
                     if tkinter.messagebox.askokcancel('Продолжить?', K_CREATE, parent=self):
                         self.queue.put(n)
-                    else:
-                        self.queue.put(K_CANCEL)
+                    else:pass  # оставаться в диалог окне
                 else:
                     self.queue.put(n)
                 return

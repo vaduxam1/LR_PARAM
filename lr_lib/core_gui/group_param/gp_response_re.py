@@ -25,7 +25,7 @@ def param_from_str_1(stri: "'\\'zul.wnd.Window\\',\\'bJsP0\\',{'") -> (str, str)
 def param_from_str_2(stri: "Value=bJsPk0&") -> (str, str):
     """" stri("dtid=\w+&") """
     rs = stri.split("=", 1)  # <class 'list'>: ['Value', 'bJsPk0&']
-    item = (rs[0], rs[1][:-1])  # <class 'list'>: ['Value', 'bJsPk0&']
+    item = (rs[0], rs[1][:-1])
     return item
 
 

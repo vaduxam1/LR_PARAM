@@ -364,8 +364,9 @@ class WebRegSaveParam(WebAny):
         else:
             usage_string = ''
 
-        txt = '{usage_string}{coment_text}\n{snap_text}'.format(usage_string=usage_string, coment_text=comments,
-                                                                snap_text='\n'.join(self.lines_list))
+        txt = '{usage_string}{coment_text}\n{snap_text}'.format(
+            usage_string=usage_string, coment_text=comments, snap_text='\n'.join(self.lines_list),
+        )
         return '\n{}\n'.format(txt.strip('\n'))
 
     def usage_string(self, _all_stat=False) -> str:
