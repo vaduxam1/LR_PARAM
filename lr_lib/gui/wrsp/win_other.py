@@ -148,7 +148,8 @@ class WinOther(lr_lib.gui.wrsp.win_filesort.WinFileSort):
 
     def last_frame_text_set(self) -> None:
         """отображение всякой информации"""
-        t = 'inf={i}: файлов={f} | MP: {pool}[{p_size}] | T: {tpool}[{tpool_size}] | {d}'.format(
+        s = 'inf={i}: файлов={f} | MP: {pool}[{p_size}] | T: {tpool}[{tpool_size}] | {d}'
+        t = s.format(
             d=lr_vars.VarFilesFolder.get(),
             f=len(lr_vars.AllFiles),
             pool=lr_vars.M_POOL._name,

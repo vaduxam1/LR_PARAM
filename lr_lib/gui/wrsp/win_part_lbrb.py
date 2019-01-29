@@ -42,10 +42,15 @@ class WinPartsLbRb(lr_lib.gui.wrsp.win_text.WinText):
         )
 
         spl = [
-            lr_lib.core.var.vars_param.SplitList, lr_lib.core.var.vars_param._SplitList0,
+            lr_lib.core.var.vars_param.SplitList,
+            lr_lib.core.var.vars_param._SplitList0,
             lr_lib.core.var.vars_param._SplitList1,
-            lr_lib.core.var.vars_param._SplitList2, lr_lib.core.var.vars_param._SplitList_3,
-            list(string.whitespace), 'list(string.ascii_letters)', 'list(string.digits)', 'list(string.punctuation)',
+            lr_lib.core.var.vars_param._SplitList2,
+            lr_lib.core.var.vars_param._SplitList_3,
+            list(string.whitespace),
+            'list(string.ascii_letters)',
+            'list(string.digits)',
+            'list(string.punctuation)',
         ]
         split_list = tuple(map(str, spl))
 
@@ -192,7 +197,9 @@ class WinPartsLbRb(lr_lib.gui.wrsp.win_text.WinText):
         """смена комбо(4)"""
         if not lr_vars.FilesWithParam:
             return
-        lr_vars.VarPartNum.set(int(self.comboParts.get()))
+        i = self.comboParts.get()
+        i = int(i)
+        lr_vars.VarPartNum.set(i)
         lr_lib.gui.widj.lbrb5.LBRBText.set_LB_RB()
         self.show_frame_info_file()
         return
@@ -201,14 +208,15 @@ class WinPartsLbRb(lr_lib.gui.wrsp.win_text.WinText):
         """отображение всякой информации"""
         dt = lr_vars.VarWrspDict.get()
 
-        lr_vars.Tk.title(
-            '"{param}", {Name}, {inf_nums} > Файлы(из {files_all} найдено {file_index}/{param_files}) '
-            '| Вхождения({param_part}/{param_count}, всего {param_all} в {_param_inf_all} inf) | {ver}'.format(
-                ver=lr_vars.VERSION, **dt)
-        )
+        t1 = '"{param}", {Name}, {inf_nums} > Файлы(из {files_all} найдено {file_index}/{param_files}) ' \
+             '| Вхождения({param_part}/{param_count}, всего {param_all} в {_param_inf_all} inf) | {ver}'
 
-        self.main_frame['text'] = 'Snapshot{inf_nums}, Файл[{file_index}/{param_files}], ' \
-                                  'Часть[{param_part}/{param_count}], {len} символов.'.format(**dt)
+        lr_vars.Tk.title(t1.format(ver=lr_vars.VERSION, **dt))
+
+        t2 = 'Snapshot{inf_nums}, Файл[{file_index}/{param_files}], ' \
+             'Часть[{param_part}/{param_count}], {len} символов.'
+
+        self.main_frame['text'] = t2.format(**dt)
         return
 
     def spl_cbx_cmd_lb(self, *a) -> None:
@@ -246,5 +254,6 @@ class WinPartsLbRb(lr_lib.gui.wrsp.win_text.WinText):
     @lr_lib.core.var.vars_other.T_POOL_decorator
     def lr_note(self, ob) -> None:
         """открыть в блокноте"""
-        lr_lib.core.etc.other.openTextInEditor(ob.get())
+        t = ob.get()
+        lr_lib.core.etc.other.openTextInEditor(t)
         return

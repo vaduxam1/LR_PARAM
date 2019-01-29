@@ -24,18 +24,20 @@ class WinText(lr_lib.gui.wrsp.win_block.WinBlock):
         self.text_scrolly = ttk.Scrollbar(self, orient=tk.VERTICAL, command=self.tk_text.yview)
         self.text_scrollx = ttk.Scrollbar(self, orient=tk.HORIZONTAL, command=self.tk_text.xview)
         self.tk_text.configure(
-            yscrollcommand=self.text_scrolly.set, xscrollcommand=self.text_scrollx.set, bd=0, padx=0, pady=0)
+            yscrollcommand=self.text_scrolly.set, xscrollcommand=self.text_scrollx.set, bd=0, padx=0, pady=0,
+        )
         return
 
     def add_message(self, levelname: str, text: str) -> None:
         """сообщения в конец текста gui"""
-        if lr_lib.core.var.vars_other.loggingLevels[lr_vars.VarWindowLogger.get()] <= \
-                lr_lib.core.var.vars_other.loggingLevels[levelname]:
+        lg = lr_vars.VarWindowLogger.get()
+        if lr_lib.core.var.vars_other.loggingLevels[lg] <= lr_lib.core.var.vars_other.loggingLevels[levelname]:
             self.tk_text.insert(tk.END, '{}\n'.format(text))
             self.tk_text.see(tk.END)
         return
 
     def print(self, levelname: str, text: str) -> None:
         """сообщения в конец текста gui, в main потоке"""
-        lr_vars.MainThreadUpdater.submit(lambda: self.add_message(levelname, text))
+        cmd = lambda: self.add_message(levelname, text)
+        lr_vars.MainThreadUpdater.submit(cmd)
         return

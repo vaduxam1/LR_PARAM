@@ -77,7 +77,7 @@ class WinWidj(lr_lib.gui.wrsp.win_part_lbrb.WinPartsLbRb):
         self.comboParam.current(0)
 
         self.comboFiles.bind("<<ComboboxSelected>>", self.comboFiles_change)
-        self.comboFiles['values'] = [self.no_files_text]
+        self.comboFiles['values'] = [self.no_files_text, ]
         self.comboFiles.current(0)
         return
 
