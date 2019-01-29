@@ -131,7 +131,8 @@ def wrsp_dict_creator(is_param=True) -> dict:
         (param_ord, param_index) = (-1, -1)
 
     snapshots = file['Snapshot']['Nums']
-    wrsp_name = wrsp_name_creator(param, Lb, Rb, snapshots[0])
+    s0 = snapshots[0]
+    wrsp_name = wrsp_name_creator(param, Lb, Rb, s0)
 
     search_key = 'All'
     # if file['Snapshot']['inf_key'] == 'ResponseHeaderFile':
@@ -168,11 +169,14 @@ def wrsp_dict_creator(is_param=True) -> dict:
     )
 
     (m1, m2) = (file['Param']['inf_min'], file['Param']['inf_max'])
-    web_reg_save_param_dict['search_inf_len'] = len(list(i for i in all_infs if (m1 <= i <= m2)))
+    li = list(i for i in all_infs if (m1 <= i <= m2))
+    web_reg_save_param_dict['search_inf_len'] = len(li)
     # file['File'] ключи
-    web_reg_save_param_dict.update(file['File'])
+    fd = file['File']
+    web_reg_save_param_dict.update(fd)
     # param_* ключи - file['Param']
-    d = {'param_{}'.format(k): v for (k, v) in file['Param'].items() if (k != 'Name')}
+    pd = file['Param']
+    d = {'param_{}'.format(k): v for (k, v) in pd.items() if (k != 'Name')}
     web_reg_save_param_dict.update(d)
 
     return web_reg_save_param_dict
@@ -182,7 +186,8 @@ def wrsp_name_creator(param: str, Lb: str, Rb: str, snapshot: int) -> str:
     """сформировать имя для web_reg_save_param(6)"""
     MaxLbWrspName = lr_vars.MaxLbWrspName.get()
     MaxRbWrspName = lr_vars.MaxRbWrspName.get()
-    infs = (snapshot if lr_vars.SnapshotInName.get() else '')
+    g = lr_vars.SnapshotInName.get()
+    infs = (snapshot if g else '')
 
     if (MaxLbWrspName >= 0) and (len(Lb) > 2):
         lbn = ['']
@@ -192,8 +197,11 @@ def wrsp_name_creator(param: str, Lb: str, Rb: str, snapshot: int) -> str:
             elif lbn[-1]:
                 lbn.append('')
             continue
-        lbn = [b for b in filter(bool, lbn) if (b not in lr_lib.core.var.vars_param.LRB_rep_list)]
-        lb_name = '_'.join(sorted(set(lbn), key=lbn.index))[-MaxLbWrspName:]
+
+        lbn = filter(bool, lbn)
+        lbn = [b for b in lbn if (b not in lr_lib.core.var.vars_param.LRB_rep_list)]
+        sd = sorted(set(lbn), key=lbn.index)
+        lb_name = '_'.join(sd)[-MaxLbWrspName:]
     else:
         lb_name = ''
 
@@ -205,24 +213,29 @@ def wrsp_name_creator(param: str, Lb: str, Rb: str, snapshot: int) -> str:
             elif rbn[-1]:
                 rbn.append('')
             continue
-        rbn = [b for b in filter(bool, rbn) if (b not in lr_lib.core.var.vars_param.LRB_rep_list)]
-        rb_name = '_'.join(sorted(set(rbn), key=rbn.index))[:MaxRbWrspName]
+
+        rbn = filter(bool, rbn)
+        rbn = [b for b in rbn if (b not in lr_lib.core.var.vars_param.LRB_rep_list)]
+        rd = sorted(set(rbn), key=rbn.index)
+        rb_name = '_'.join(rd)[:MaxRbWrspName]
     else:
         rb_name = ''
 
     p = tuple(filter(allow_lrb.__contains__, param))  # печатные символы искомого param
-    jp = [p[0], ''.join(p[1:-1]), p[-1]]
-    wrsp_param_name = lr_vars.wrsp_name_splitter.get().join(jp)
-    MaxParamWrspName = lr_vars.MaxParamWrspName.get()
-    if MaxParamWrspName >= 0:
-        wrsp_param_name = wrsp_param_name[:MaxParamWrspName]
+    s = ''.join(p[1:-1])
+    jp = [p[0], s, p[-1]]
+    ns = lr_vars.wrsp_name_splitter.get()
+    wrsp_param_name = ns.join(jp)
+    pma = lr_vars.MaxParamWrspName.get()
+    if pma >= 0:
+        wrsp_param_name = wrsp_param_name[:pma]
 
-    MaxWrspRnum = lr_vars.MaxWrspRnum.get()
-    MinWrspRnum = lr_vars.MinWrspRnum.get()
-    wrsp_rnd_num = (random.randrange(MinWrspRnum, MaxWrspRnum) if (MaxWrspRnum and (MinWrspRnum >= 0)) else '')
+    maw = lr_vars.MaxWrspRnum.get()
+    miw = lr_vars.MinWrspRnum.get()
+    wrsp_rnd_num = (random.randrange(miw, maw) if (maw and (miw >= 0)) else '')
 
-    TransactionInNameMax = lr_vars.TransactionInNameMax.get()
-    if (TransactionInNameMax >= 0) and lr_vars.Window and lr_vars.Window.action_windows:
+    tma = lr_vars.TransactionInNameMax.get()
+    if (tma >= 0) and lr_vars.Window and lr_vars.Window.action_windows:
         action = lr_vars.Window.get_main_action()
         web_action = action.web_action
         al = web_action.get_web_snapshot_all()
@@ -230,9 +243,10 @@ def wrsp_name_creator(param: str, Lb: str, Rb: str, snapshot: int) -> str:
         w = next(wa)
 
         if w and w.transaction and (not w.transaction.startswith(web_action.transactions._no_transaction_name)):
-            s = (''.join(filter(str.isalnum, t)).translate(lr_lib.etc.help.TRANSLIT_DT) for t in w.transaction.split())
+            wts = w.transaction.split()
+            s = (''.join(filter(str.isalnum, t)).translate(lr_lib.etc.help.TRANSLIT_DT) for t in wts)
             transaction = '_'.join(s)
-            transaction = transaction[:TransactionInNameMax]
+            transaction = transaction[:tma]
         else:
             transaction = ''
     else:
@@ -271,7 +285,8 @@ def _search_param_in_file(file: dict) -> dict:
     Param = file['Param']
     param = Param['Name']
 
-    with open(File['FullName'], encoding=File['encoding'], errors='ignore') as text:
+    ff = File['FullName']
+    with open(ff, encoding=File['encoding'], errors='ignore') as text:
         count = sum(line.count(param) for line in text)
         if count:
             Param['Count'] = count
@@ -287,24 +302,29 @@ def search_param_in_file(file: dict) -> (dict or None):
     Param['Count'] = 0
     Param['Count_indexs'] = []
 
-    with open(File['FullName'], encoding=File['encoding'], errors='ignore') as text:
-        split_line = text.read().split(param)
-        split_len = len(split_line)
-        if split_len < 2:
-            return
+    ff = File['FullName']
+    with open(ff, encoding=File['encoding'], errors='ignore') as text:
+        tx = text.read()
 
-        indx = 0
-        for indx in range(1, split_len):
-            i = (indx - 1)
-            left = split_line[i]
-            right = split_line[indx]
-            if lr_lib.core.etc.lbrb_checker.check_bound_lb_rb(left, right):
-                Param['Count_indexs'].append(i)
-            continue
+    split_line = tx.split(param)
+    split_len = len(split_line)
+    if split_len < 2:
+        return
+
+    indx = 0
+    for indx in range(1, split_len):
+        i = (indx - 1)
+        left = split_line[i]
+        right = split_line[indx]
+        if lr_lib.core.etc.lbrb_checker.check_bound_lb_rb(left, right):
+            ci = Param['Count_indexs']
+            ci.append(i)
+        continue
 
     if Param['Count_indexs']:
         Param['Count'] = indx
-        Param['Count_indexs_len'] = len(Param['Count_indexs'])
+        ci = Param['Count_indexs']
+        Param['Count_indexs_len'] = len(ci)
         return file
     return
 
@@ -321,7 +341,9 @@ def create_files_with_search_data(files: (dict,), search_data: dict, action=None
 
         inf_min = dt['inf_min'] = min(action_infs or [-1])
         inf_max = dt['inf_max'] = max(action_infs or [-1])
-        dt['max_action_inf'] = param_inf = next(set_param_in_action_inf(action, dt['Name']), -1)
+        n = dt['Name']
+        sp = set_param_in_action_inf(action, n)
+        dt['max_action_inf'] = param_inf = next(sp, -1)
 
         ai = action.add_inf_cbx_var.get()
         if (not ai) and (param_inf > 1):
@@ -334,13 +356,16 @@ def create_files_with_search_data(files: (dict,), search_data: dict, action=None
     for __file in files:
         inf_list = []
 
-        for n in __file['Snapshot']['Nums']:
+        ns = __file['Snapshot']['Nums']
+        for n in ns:
             if ((n in action_infs) or (not action_infs)) and (inf_min <= n <= inf_max):
                 inf_list.append(n)
+            continue
 
         if inf_list:
             file = copy.deepcopy(__file)  # не изменять оригинальный файл
             file['Snapshot']['Nums'] = sorted(inf_list)
+
             for data in search_data:  # обновить(не заменить) ключи
                 dt = search_data[data]
                 file[data].update(dt)
@@ -348,6 +373,7 @@ def create_files_with_search_data(files: (dict,), search_data: dict, action=None
 
             yield file
             continue
+
         continue
     return
 
@@ -356,9 +382,11 @@ def set_param_in_action_inf(action, param: str) -> iter((int,)):
     """первый action-inf в котором расположен param, тк inf-номер запроса <= inf-номер web_reg_save_param"""
     webs = action.web_action.get_web_snapshot_all()
     for web_ in webs:
-        (allow, deny) = web_.param_find_replace(param)
+        wr = web_.param_find_replace(param)
+        (allow, deny) = wr
         if allow:
-            yield web_.snapshot.inf
+            i = web_.snapshot.inf
+            yield i
         continue
     return 0
 
@@ -388,7 +416,8 @@ def get_files_with_param(param: str, action=None, set_file=True) -> None:
     files = tuple(create_files_with_search_data(lr_vars.AllFiles, search_data, action=action))
     assert files, 'Не найдены файлы, подходящие, под условия поиска. {}\nsearch_data: {}'.format(action, search_data)
 
-    param_searcher = (search_param_in_file if lr_vars.VarStrongSearchInFile.get() else _search_param_in_file)
+    g = lr_vars.VarStrongSearchInFile.get()
+    param_searcher = (search_param_in_file if g else _search_param_in_file)
     execute = (lr_vars.M_POOL.imap_unordered if lr_vars.FindParamPOOLEnable else map)
 
     # (2) поиск
@@ -396,7 +425,8 @@ def get_files_with_param(param: str, action=None, set_file=True) -> None:
     executer = filter(bool, executer)
     lr_vars.FilesWithParam = sorted(executer, key=lr_lib.core.etc.other.sort_files)
     if not lr_vars.FilesWithParam:
-        raise UserWarning(param_not_found_err_text(action, files, search_data, param))
+        p = param_not_found_err_text(action, files, search_data, param)
+        raise UserWarning(p)
 
     if lr_vars.VarFirstLastFile.get():
         lr_vars.FilesWithParam.reverse()
@@ -421,7 +451,8 @@ def get_files_with_param(param: str, action=None, set_file=True) -> None:
         lr_vars.VarFileName.set(name)  # (3)
 
     if lr_vars.VarFileNamesNumsShow.get():
-        lr_vars.Logger.info(lr_lib.core.etc.other.param_files_info())
+        i = lr_lib.core.etc.other.param_files_info()
+        lr_vars.Logger.info(i)
     return
 
 
@@ -440,28 +471,44 @@ search_data: {d}
 
 def param_not_found_err_text(action, files: [dict, ], search_data: dict, param: str) -> str:
     """текст ошибки - param не найден"""
+    laf = len(lr_vars.AllFiles)
     if action:
         action_infs = action.web_action.action_infs
         (lai, a_min, a_max, afa) = (len(action_infs), min(action_infs), max(action_infs),
-                                    (len(lr_vars.AllFiles) - len(action.web_action.drop_files)))
+                                    (laf - len(action.web_action.drop_files)))
     else:
         lai = a_min = a_max = afa = None
 
     if files:
         f0 = files[0]
-        min_iaf = f0['Param']['inf_min']
-        max_iaf = f0['Param']['inf_max']
+        fp = f0['Param']
+        min_iaf = fp['inf_min']
+        max_iaf = fp['inf_max']
     else:
         min_iaf = max_iaf = '?'
 
     tal = tuple(lr_lib.core.etc.other.get_files_infs(lr_vars.AllFiles))
     files_infs = len(tal)
-    lenfi = len(tuple(lr_lib.core.etc.other.get_files_infs(files)))
+    tu = tuple(lr_lib.core.etc.other.get_files_infs(files))
+    lenfi = len(tu)
+    fld = lr_vars.VarFilesFolder.get()
 
     error = Err.format(
-        ai_min=min(tal), ai=lai, afa=afa, f_=len(files), param=param, ai_max=max(tal),
-        folder=lr_vars.VarFilesFolder.get(), i=files_infs, min_iaf=min_iaf, max_iaf=max_iaf, a_min=a_min, a_max=a_max,
-        d=search_data, f=len(lr_vars.AllFiles), lf=lenfi,
+        ai_min=min(tal),
+        ai=lai,
+        afa=afa,
+        f_=len(files),
+        param=param,
+        ai_max=max(tal),
+        folder=fld,
+        i=files_infs,
+        min_iaf=min_iaf,
+        max_iaf=max_iaf,
+        a_min=a_min,
+        a_max=a_max,
+        d=search_data,
+        f=laf,
+        lf=lenfi,
     )
     return error
 
@@ -476,7 +523,16 @@ def find_param_ord() -> (int, int):
     if ord_index:
         return ord_index
 
-    raise UserWarning('Ord не найден\n{f}\n{w}'.format(f=lr_vars.VarFile.get(), w=lr_vars.VarWrspDict.get()))
+    t = 'Ord не найден\n{f}\n{w}'.format(f=lr_vars.VarFile.get(), w=lr_vars.VarWrspDict.get())
+    raise UserWarning(t)
+
+
+AIE1 = '''Формирование Ord для web_reg_save_param невозможно, тк поле пусто
+[param, lb, rb, text] == {empty}
+VarWrspDict={wrsp}\nVarPartNum={pn}, max={len_lbti}
+VarFile={fl}'''
+
+AIE2 = 'Формирование web_reg_save_param невозможно, тк файл не содержит LB(5)\n{wrsp}'
 
 
 def new_find_param_ord() -> (int, int):
@@ -488,16 +544,14 @@ def new_find_param_ord() -> (int, int):
     lb_text_index = [len(part) for part in text.split(lb)]  # индексы для определения param в тексте
     len_lbti = len(lb_text_index)
 
-    assert all(Items), 'Формирование Ord для web_reg_save_param невозможно, тк поле пусто\n' \
-                       '[param, lb, rb, text] == {empty}\n' \
-                       'VarWrspDict={wrsp}\nVarPartNum={pn}, max={len_lbti}\n' \
-                       'VarFile={fl}'.format(
-        wrsp=lr_vars.VarWrspDict.get(), empty=list(map(bool, Items)), pn=lr_vars.VarPartNum.get(), len_lbti=len_lbti,
+    assert all(Items), AIE1.format(
+        wrsp=lr_vars.VarWrspDict.get(),
+        empty=list(map(bool, Items)),
+        pn=lr_vars.VarPartNum.get(),
+        len_lbti=len_lbti,
         fl=lr_vars.VarFile.get(),
     )
-    assert (len_lbti > 1), 'Формирование web_reg_save_param невозможно, тк файл не содержит LB(5)\n{wrsp}'.format(
-        wrsp=lr_vars.VarWrspDict.get(),
-    )
+    assert (len_lbti > 1), AIE2.format(wrsp=lr_vars.VarWrspDict.get(),)
 
     (Ord, index) = (0, 0)  # искомый Ord, текущий LB index
     iter_index = iter(lb_text_index)  # следующий LB index
@@ -511,7 +565,8 @@ def new_find_param_ord() -> (int, int):
         if add_index < param_rb_len:
             add_index = param_rb_len
 
-        part = text[index:(index + add_index)]  # text[текущий : следующий] LB index
+        end = (index + add_index)
+        part = text[index:end]  # text[текущий : следующий] LB index
         if rb in part:
             Ord += 1
             if part.startswith(param_rb):
