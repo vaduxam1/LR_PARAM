@@ -160,7 +160,7 @@ class TopPoolSetting(tk.Toplevel):
             return
 
         y = lr_lib.gui.widj.dialog.YesNoCancel(
-            ['выйти'],
+            ['выйти', ],
             'T_POOL\nмонитор',
             'инфо о задачах, выполняющихся в SThread потоках',
             title=lr_vars.VERSION,

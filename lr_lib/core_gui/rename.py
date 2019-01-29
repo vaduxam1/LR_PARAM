@@ -84,7 +84,8 @@ def _get_bound(line, spl, _s='",') -> str:
     """
     sl = line.split(spl, 1)
     ln = sl[1].rsplit(_s, 1)
-    return ln[0]
+    ln = ln[0]
+    return ln
 
 
 def _split_rename(text: str) -> iter((str,)):
@@ -140,7 +141,7 @@ def rename_transaction(event, parent=None, s='lr_start_transaction("', e='lr_end
             pass
 
     y = lr_lib.gui.widj.dialog.YesNoCancel(
-        ['Переименовать', 'Отмена'],
+        ['Переименовать', 'Отмена', ],
         'Переименовать выделенную(линию) transaction',
         'указать только новое имя transaction',
         'transaction',
@@ -178,7 +179,7 @@ def all_wrsp_rename(gui: 'lr_lib.gui.action.main_action.ActionWindow', parent=No
     m = ('"{:<%s}" -> "{}"' % mx)
     all_wrsps = '\n'.join(m.format(old, new) for (old, new) in zip(wrsps, wrsps))
     y = lr_lib.gui.widj.dialog.YesNoCancel(
-        ['Переименовать', 'Отмена'],
+        ['Переименовать', 'Отмена', ],
         'Переименовать wrsp слева',
         'в wrsp справа',
         'wrsp',

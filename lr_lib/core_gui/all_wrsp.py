@@ -178,7 +178,8 @@ def _create_wrsp_web_(text: str, param: str, action: 'lr_lib.gui.action.main_act
 
         if first_only:
             p = (param, wrsp_web_.name)
-            action.web_action.replace_bodys([p])  # заменить в телах web's
+            bs = [p, ]
+            action.web_action.replace_bodys(bs)  # заменить в телах web's
             first_name = wrsp_web_.name
             first_only = False
 
@@ -198,7 +199,8 @@ def _wrsp_name_replace(web_text: str, new_name: str) -> str:
     for line in web_text.split('\n'):
         if line.lstrip().startswith(lr_lib.core.wrsp.param.wrsp_lr_start):
             new_line = (lr_lib.core.wrsp.param.wrsp_lr_start + new_name + lr_lib.core.wrsp.param.wrsp_lr_end)
-            return web_text.replace(line, new_line)
+            st = web_text.replace(line, new_line)
+            return st
         continue
 
     lr_vars.Logger.debug('Ошибка замены имени wrsp "{n}" - не найдена web_reg_save_param линия.\n{t}'.format(
