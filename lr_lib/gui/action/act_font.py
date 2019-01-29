@@ -24,13 +24,14 @@ class ActFont(lr_lib.gui.action.act_replace.ActReplaceRemove):
 
         self.font_size_entry.bind("<KeyRelease-Return>", self.tk_text.set_font)
 
+        cmd3 = lambda *a: self.tk_text.set_tegs(parent=self, remove=False)
         self.selection_font_size_entry = tk.Spinbox(
             self.font_toolbar, width=2, justify='center', from_=0, to=99, textvariable=self.size_var,
-            font=lr_vars.DefaultFont, command=lambda *a: self.tk_text.set_tegs(parent=self, remove=False),
+            font=lr_vars.DefaultFont, command=cmd3,
         )
 
-        cmd = lambda *a: self.tk_text.set_tegs(parent=self, remove=False)
-        self.selection_font_size_entry.bind("<KeyRelease-Return>", cmd)
+        cmd4 = lambda *a: self.tk_text.set_tegs(parent=self, remove=False)
+        self.selection_font_size_entry.bind("<KeyRelease-Return>", cmd4)
 
         self.bold_cbx = tk.Checkbutton(
             self.font_toolbar, text='', font=(lr_vars.DefaultFont + ' bold'),
@@ -90,14 +91,16 @@ class ActFont(lr_lib.gui.action.act_replace.ActReplaceRemove):
         )
         self.background_color_combo['values'] = list(sorted(lr_lib.etc.help.COLORS.keys()))
 
-        self.background_color_combo.bind(
-            "<KeyRelease-Return>", lambda *a: lr_lib.gui.etc.color_change.background_color_set(
-                self, color=self.background_color_combo.get(), obs=[self.tk_text, ], )
-        )
-        self.background_color_combo.bind(
-            "<<ComboboxSelected>>", lambda *a: lr_lib.gui.etc.color_change.background_color_set(
-                self, color=self.background_color_combo.get(), _types=('Text', 'rame', 'bel',), )
-        )
+        def cmd0(*a, t=(self.tk_text, )) -> None:
+            lr_lib.gui.etc.color_change.background_color_set(self, color=self.background_color_combo.get(), obs=t, )
+            return
+        self.background_color_combo.bind("<KeyRelease-Return>", cmd0)
+
+        def cmd1(*a, t=('Text', 'rame', 'bel',), ) -> None:
+            lr_lib.gui.etc.color_change.background_color_set(self, color=self.background_color_combo.get(), _types=t)
+            return
+        self.background_color_combo.bind("<<ComboboxSelected>>", cmd1)
+
         self.config(background=self.background_color_combo.get())
         return
 

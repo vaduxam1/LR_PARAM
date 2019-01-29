@@ -30,33 +30,28 @@ class WinMenu(lr_lib.gui.wrsp.win_folder.WinFolder):
         """menubar"""
         filemenu = tk.Menu(self.menubar, tearoff=0)
 
-        filemenu.add_command(
-            label="Setting", command=lambda: lr_lib.gui.widj.setting.Setting(parent=self),
-        )
-        filemenu.add_command(
-            label="Select Encode", command=lambda: lr_lib.gui.wrsp.top.top_encode.TopEncoding(self),
-        )
-        filemenu.add_command(
-            label="Pools", command=lambda: lr_lib.gui.wrsp.top.top_pool.TopPoolSetting(self),
-        )
-        filemenu.add_command(
-            label="Select Editor", command=self._select_editor,
-        )
-        filemenu.add_command(
-            label="Select Folder", command=self.change_folder_ask,
-        )
-        filemenu.add_command(
-            label="AllFiles list", command=lambda: lr_lib.gui.wrsp.top.top_allfiles.TopFolder(self),
-        )
-        filemenu.add_command(
-            label="LoadRunner action.c", command=self.new_action_window,
-        )
-        filemenu.add_command(
-            label="Help", command=lambda: lr_vars.Logger.info(lr_lib.etc.help.CODE + '\n' + lr_lib.etc.help.HELP),
-        )
-        filemenu.add_command(
-            label="Exit", command=lr_vars.Tk.destroy,
-        )
+        cmd1 = lambda: lr_lib.gui.widj.setting.Setting(parent=self)
+        filemenu.add_command(label="Setting", command=cmd1,)
+
+        cmd2 = lambda: lr_lib.gui.wrsp.top.top_encode.TopEncoding(self)
+        filemenu.add_command(label="Select Encode", command=cmd2,)
+
+        cmd3 = lambda: lr_lib.gui.wrsp.top.top_pool.TopPoolSetting(self)
+        filemenu.add_command(label="Pools", command=cmd3,)
+
+        filemenu.add_command(label="Select Editor", command=self._select_editor,)
+
+        filemenu.add_command(label="Select Folder", command=self.change_folder_ask,)
+
+        cmd6 = lambda: lr_lib.gui.wrsp.top.top_allfiles.TopFolder(self)
+        filemenu.add_command(label="AllFiles list", command=cmd6,)
+
+        filemenu.add_command(label="LoadRunner action.c", command=self.new_action_window,)
+
+        cmd8 = lambda: lr_vars.Logger.info(lr_lib.etc.help.CODE + '\n' + lr_lib.etc.help.HELP)
+        filemenu.add_command(label="Help", command=cmd8,)
+
+        filemenu.add_command(label="Exit", command=lr_vars.Tk.destroy,)
 
         self.menubar.add_cascade(label="Menu", menu=filemenu)
         return

@@ -57,9 +57,10 @@ class WinWidj(lr_lib.gui.wrsp.win_part_lbrb.WinPartsLbRb):
         )
 
         # (2)
+        cmd1 = lambda *a: lr_vars.Tk.after(0, self.get_files)
         self.ButtonFindParamFiles = tk.Button(
             self.show_param_frame, text='поиск {param} в файлах ответов', font=(lr_vars.DefaultFont + ' italic bold'),
-            padx=0, pady=0, command=lambda *a: lr_vars.Tk.after(0, self.get_files), background='orange',
+            padx=0, pady=0, command=cmd1, background='orange',
         )
 
         # (3)

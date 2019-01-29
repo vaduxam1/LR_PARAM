@@ -26,28 +26,30 @@ class ActWin(lr_lib.gui.action.act_any.ActAny):
     def __init__(self):
         lr_lib.gui.action.act_any.ActAny.__init__(self)
 
+        cmd1 = lambda: lr_lib.core.etc.other.openTextInEditor(self.tk_text.get(1.0, tk.END))
         self.editor_button = tk.Button(
             self.file_bar, text='editor', font=(lr_vars.DefaultFont + ' bold'),
-            command=lambda: lr_lib.core.etc.other.openTextInEditor(self.tk_text.get(1.0, tk.END)),
+            command=cmd1,
         )
 
+        cmd2 = lambda: lr_lib.core_gui.run.run_setting.RunSettingWindow(self)
         self.auto_param_creator_button = tk.Button(
             self.toolbar, text='Найти и Создать\nparam WRSP', background='orange', font=(lr_vars.DefaultFont + ' bold'),
-            command=lambda: lr_lib.core_gui.run.run_setting.RunSettingWindow(self),
+            command=cmd2,
         )
 
         self.final_wnd_cbx = tk.Checkbutton(
             self.toolbar, text='final', font=lr_vars.DefaultFont, variable=self.final_wnd_var,
         )
 
+        cmd3 = lambda *a: lr_lib.gui.widj.wrsp_setting.WrspSettingWindow(parent=self)
         self.wrsp_setting = tk.Button(
-            self.toolbar, text='wrsp_setting', font=(lr_vars.DefaultFont + ' bold'),
-            command=lambda *a: lr_lib.gui.widj.wrsp_setting.WrspSettingWindow(parent=self),
+            self.toolbar, text='wrsp_setting', font=(lr_vars.DefaultFont + ' bold'), command=cmd3,
         )
 
+        cmd4 = lambda *a: lr_lib.core_gui.action_lib.snapshot_files(self.tk_text, i_num=1)
         self.resp_btn = tk.Button(
-            self.toolbar, text='файлы ответов', font=lr_vars.DefaultFont,
-            command=lambda *a: lr_lib.core_gui.action_lib.snapshot_files(self.tk_text, i_num=1),
+            self.toolbar, text='файлы ответов', font=lr_vars.DefaultFont, command=cmd4,
         )
 
         #
@@ -71,22 +73,22 @@ class ActWin(lr_lib.gui.action.act_any.ActAny):
         )
 
         #
+        cmd5 = lambda *a: lr_lib.gui.etc.gui_other.repB(self.tk_text)
         self.lr_report_B = tk.Button(
-            self.toolbar, text='reportB', font=lr_vars.DefaultFont,
-            command=lambda *a: lr_lib.gui.etc.gui_other.repB(self.tk_text),
+            self.toolbar, text='reportB', font=lr_vars.DefaultFont, command=cmd5,
         )
+        cmd6 = lambda *a: lr_lib.gui.etc.gui_other.repA(self.tk_text)
         self.lr_report_A = tk.Button(
-            self.toolbar, text='reportA', font=lr_vars.DefaultFont,
-            command=lambda *a: lr_lib.gui.etc.gui_other.repA(self.tk_text),
+            self.toolbar, text='reportA', font=lr_vars.DefaultFont, command=cmd6,
         )
 
         #
         self.lr_legend = tk.Button(
             self.toolbar, text='web_legend', font=lr_vars.DefaultFont, command=self.legend,
         )
+        cmd7 = lambda *a: lr_lib.gui.wrsp.top.top_allfiles.TopFolder(self)
         self.btn_all_files = tk.Button(
-            self.toolbar, text='все файлы', font=lr_vars.DefaultFont,
-            command=lambda *a: lr_lib.gui.wrsp.top.top_allfiles.TopFolder(self),
+            self.toolbar, text='все файлы', font=lr_vars.DefaultFont, command=cmd7,
         )
 
         # запускать в конце

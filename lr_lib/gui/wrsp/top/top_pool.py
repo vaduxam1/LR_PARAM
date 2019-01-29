@@ -32,7 +32,8 @@ class TopPoolSetting(tk.Toplevel):
             font=(lr_vars.DefaultFont + ' italic'),
         )
         entryMPName['values'] = list(lr_vars.T_POOL.pools.keys())
-        entryMPName.bind("<<ComboboxSelected>>", lambda *a: self.set_pool(lr_vars.M_POOL))
+        cmd1 = lambda *a: self.set_pool(lr_vars.M_POOL)
+        entryMPName.bind("<<ComboboxSelected>>", cmd1)
         lr_lib.gui.widj.tooltip.createToolTip(entryMPName, 'тип MP пула(любые стандартные(process))')
         entryMPName.grid(row=2, column=0, columnspan=7)
 
@@ -52,7 +53,8 @@ class TopPoolSetting(tk.Toplevel):
             background=lr_lib.core.var.vars_highlight.Background, font=(lr_vars.DefaultFont + ' italic'),
         )
         entryTName['values'] = list(lr_vars.T_POOL.pools.keys())
-        entryTName.bind("<<ComboboxSelected>>", lambda *a: self.set_pool(lr_vars.T_POOL))
+        cmd2 = lambda *a: self.set_pool(lr_vars.T_POOL)
+        entryTName.bind("<<ComboboxSelected>>", cmd2)
         lr_lib.gui.widj.tooltip.createToolTip(entryTName, 'тип T пула(чтото из thread)')
         entryTName.grid(row=4, column=0, columnspan=7)
 

@@ -20,16 +20,16 @@ class ActReplaceRemove(lr_lib.gui.action.act_search.ActSearch):
         lr_lib.gui.action.act_search.ActSearch.__init__(self)
 
         self.lr_think_time = tk.Button(
-            self.toolbar, text='lr_think_time', font=lr_vars.DefaultFont + ' bold', command=self.thinktime_remove,
+            self.toolbar, text='lr_think_time', font=(lr_vars.DefaultFont + ' bold'), command=self.thinktime_remove,
         )
 
         self.transaction_rename = tk.Button(
-            self.toolbar, text='rename\ntransaction', font=lr_vars.DefaultFont + ' bold', background='orange',
+            self.toolbar, text='rename\ntransaction', font=(lr_vars.DefaultFont + ' bold'), background='orange',
             command=self.all_transaction_rename,
         )
 
         self.dummy_button = tk.Button(
-            self.toolbar, text="Snapshot remove", font=lr_vars.DefaultFont + ' bold', background='orange',
+            self.toolbar, text="Snapshot remove", font=(lr_vars.DefaultFont + ' bold'), background='orange',
             command=self.remove_web_dummy_template,
         )
         return

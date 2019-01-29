@@ -84,8 +84,9 @@ class WinPartsLbRb(lr_lib.gui.wrsp.win_text.WinText):
             self.last_frameCbx1, from_=1, to=99, textvariable=self.LB.heightVar, width=2, command=self.LB.set_height,
             font=(lr_vars.DefaultFont + ' italic'), background=lr_lib.core.var.vars_highlight.Background,
         )
+        cmd1 = lambda: self.lr_note(self.LB)
         self.ButtonLB_note = tk.Button(
-            self.last_frameCbx1, text='note', command=lambda: self.lr_note(self.LB), width=3,
+            self.last_frameCbx1, text='note', command=cmd1, width=3,
             font=(lr_vars.DefaultFont + ' italic'), padx=0, pady=0, relief='groove',
         )
         self.partNumEmptyLbNext = tk.Checkbutton(
@@ -155,8 +156,9 @@ class WinPartsLbRb(lr_lib.gui.wrsp.win_text.WinText):
             self.last_frameCbx2, from_=1, to=99, textvariable=self.RB.heightVar, width=2, command=self.RB.set_height,
             font=(lr_vars.DefaultFont + ' italic'), background=lr_lib.core.var.vars_highlight.Background,
         )
+        cmd2 = lambda: self.lr_note(self.RB)
         self.ButtonRB_note = tk.Button(
-            self.last_frameCbx2, text='note', command=lambda: self.lr_note(self.RB), width=3,
+            self.last_frameCbx2, text='note', command=cmd2, width=3,
             font=(lr_vars.DefaultFont + ' italic'), padx=0, pady=0, relief='groove',
         )
         self.RbB1Cbx = tk.Checkbutton(
@@ -202,7 +204,8 @@ class WinPartsLbRb(lr_lib.gui.wrsp.win_text.WinText):
         lr_vars.Tk.title(
             '"{param}", {Name}, {inf_nums} > Файлы(из {files_all} найдено {file_index}/{param_files}) '
             '| Вхождения({param_part}/{param_count}, всего {param_all} в {_param_inf_all} inf) | {ver}'.format(
-                ver=lr_vars.VERSION, **dt))
+                ver=lr_vars.VERSION, **dt)
+        )
 
         self.main_frame['text'] = 'Snapshot{inf_nums}, Файл[{file_index}/{param_files}], ' \
                                   'Часть[{param_part}/{param_count}], {len} символов.'.format(**dt)

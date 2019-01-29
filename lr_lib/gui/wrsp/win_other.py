@@ -37,20 +37,22 @@ class WinOther(lr_lib.gui.wrsp.win_filesort.WinFileSort):
             relief='groove',
         )
 
+        cmd1 = lambda: self.tk_text.delete(0.0, 'end')
         self.ButtonClearUp = tk.Button(
-            self.last_frame, text='clearT', command=lambda: self.tk_text.delete(0.0, 'end'),
+            self.last_frame, text='clearT', command=cmd1,
             font=(lr_vars.DefaultFont + ' italic'), padx=0, pady=0, relief='groove',
         )
 
+        cmd2 = lambda: lr_lib.core.etc.other.openTextInEditor(self.tk_text.get('1.0', tk.END))
         self.ButtonNote = tk.Button(
-            self.last_frame, text='text',
-            command=lambda: lr_lib.core.etc.other.openTextInEditor(self.tk_text.get('1.0', tk.END)),
+            self.last_frame, text='text', command=cmd2,
             font=(lr_vars.DefaultFont + ' italic'), padx=0, pady=0, relief='groove',
         )
 
+        cmd3 = lambda: subprocess.Popen([lr_vars.EDITOR['exe'], lr_vars.logFullName])
         self.ButtonLog = tk.Button(
             self.last_frame, text='log', font=(lr_vars.DefaultFont + ' italic'), padx=0, pady=0,
-            command=lambda: subprocess.Popen([lr_vars.EDITOR['exe'], lr_vars.logFullName]), relief='groove',
+            command=cmd3, relief='groove',
         )
 
         self.ButtonParamFileOpen = tk.Button(
@@ -71,7 +73,8 @@ class WinOther(lr_lib.gui.wrsp.win_filesort.WinFileSort):
             width=5, style="BW.TButton",
         )
         self.comboLogger['values'] = log_vals
-        self.comboLogger.bind("<<ComboboxSelected>>", lambda *a: lr_vars.VarWindowLogger.set(self.comboLogger.get()))
+        cmd4 = lambda *a: lr_vars.VarWindowLogger.set(self.comboLogger.get())
+        self.comboLogger.bind("<<ComboboxSelected>>", cmd4)
 
         self.ButtonShowParam = tk.Button(
             self.mid_frame, text='сформировать web_reg_save_param ', command=self.show_LR_Param, padx=0, pady=0,

@@ -16,8 +16,9 @@ class ActBlock(lr_lib.gui.action.act_scroll.ActScrollText):
     def __init__(self):
         lr_lib.gui.action.act_scroll.ActScrollText.__init__(self)
 
+        cmd = lambda *a: self._block(False)
         self.unblock = tk.Button(
-            self.file_bar, text='unblock', font=(lr_vars.DefaultFont + ' bold'), command=lambda *a: self._block(False),
+            self.file_bar, text='unblock', font=(lr_vars.DefaultFont + ' bold'), command=cmd,
         )
         return
 

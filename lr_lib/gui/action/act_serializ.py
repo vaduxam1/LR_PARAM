@@ -19,9 +19,10 @@ class TkTextWebSerialization(lr_lib.gui.action.act_backup.ActBackup):
     def __init__(self):
         lr_lib.gui.action.act_backup.ActBackup.__init__(self)
 
+        cmd = lambda *a: self.open_action_dialog(title=True, folder=lr_vars.BackupFolder)
         self.backup_open_button = tk.Button(
             self.file_bar, text='backup_open', background='orange', font=(lr_vars.DefaultFont + ' bold'),
-            command=lambda *a: self.open_action_dialog(title=True, folder=lr_vars.BackupFolder),
+            command=cmd,
         )
 
         self.save_action_button = tk.Button(
