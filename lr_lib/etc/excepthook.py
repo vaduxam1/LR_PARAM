@@ -13,7 +13,8 @@ def excepthook(*args) -> None:
     len_args = len(args)
 
     if len_args == 1:
-        (exc_type, exc_val, exc_tb) = (type(args[0]), args[0], args[0].__traceback__)
+        a0 = args[0]
+        (exc_type, exc_val, exc_tb) = (type(a0), a0, a0.__traceback__)
     elif len_args == 3:
         (exc_type, exc_val, exc_tb) = args
     else:
@@ -42,7 +43,8 @@ def full_tb_write(*args):
         (exc_type, exc_val, exc_tb) = (exc_.__class__, exc_, exc_.__traceback__)
     else:
         a = list(zip(args, (map(type, args))))
-        raise UserWarning('{e}\n{a}'.format(e=sys.exc_info(), a=a, ))
+        e = '{e}\n{a}'.format(e=sys.exc_info(), a=a, )
+        raise UserWarning(e)
 
     # в консоль
     traceback.print_tb(exc_tb)
@@ -60,7 +62,8 @@ def full_tb_write(*args):
 def get_tb(exc_type, exc_val, exc_tb, err_name: str) -> str:
     """traceback + исходный код"""
     if not exc_tb:
-        return '{} {} {}'.format(exc_type, exc_val, exc_tb)
+        i = '{} {} {}'.format(exc_type, exc_val, exc_tb)
+        return i
     exc_lines = traceback.format_exception(exc_type, exc_val, exc_tb)
 
     def get_code(lib='\{}\\'.format(lr_vars.lib_folder)) -> str:
