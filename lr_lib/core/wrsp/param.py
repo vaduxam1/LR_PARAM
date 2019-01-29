@@ -342,7 +342,8 @@ def create_files_with_search_data(files: (dict,), search_data: dict, action=None
             file = copy.deepcopy(__file)  # не изменять оригинальный файл
             file['Snapshot']['Nums'] = sorted(inf_list)
             for data in search_data:  # обновить(не заменить) ключи
-                file[data].update(search_data[data])
+                dt = search_data[data]
+                file[data].update(dt)
                 continue
 
             yield file
@@ -353,7 +354,8 @@ def create_files_with_search_data(files: (dict,), search_data: dict, action=None
 
 def set_param_in_action_inf(action, param: str) -> iter((int,)):
     """первый action-inf в котором расположен param, тк inf-номер запроса <= inf-номер web_reg_save_param"""
-    for web_ in action.web_action.get_web_snapshot_all():
+    webs = action.web_action.get_web_snapshot_all()
+    for web_ in webs:
         (allow, deny) = web_.param_find_replace(param)
         if allow:
             yield web_.snapshot.inf
@@ -391,7 +393,8 @@ def get_files_with_param(param: str, action=None, set_file=True) -> None:
 
     # (2) поиск
     executer = execute(param_searcher, files)
-    lr_vars.FilesWithParam = sorted(filter(bool, executer), key=lr_lib.core.etc.other.sort_files)
+    executer = filter(bool, executer)
+    lr_vars.FilesWithParam = sorted(executer, key=lr_lib.core.etc.other.sort_files)
     if not lr_vars.FilesWithParam:
         raise UserWarning(param_not_found_err_text(action, files, search_data, param))
 
@@ -403,7 +406,8 @@ def get_files_with_param(param: str, action=None, set_file=True) -> None:
         files_list = []
         warn_inf = []
         for f in lr_vars.FilesWithParam:  # z_k620
-            s = f['Snapshot']['Nums'][0]
+            s = f['Snapshot']['Nums']
+            s = s[0]
             ob = (warn_inf if (s == mai) else files_list)
             ob.append(f)
             continue
@@ -489,10 +493,11 @@ def new_find_param_ord() -> (int, int):
                        'VarWrspDict={wrsp}\nVarPartNum={pn}, max={len_lbti}\n' \
                        'VarFile={fl}'.format(
         wrsp=lr_vars.VarWrspDict.get(), empty=list(map(bool, Items)), pn=lr_vars.VarPartNum.get(), len_lbti=len_lbti,
-        fl=lr_vars.VarFile.get(), )
-
+        fl=lr_vars.VarFile.get(),
+    )
     assert (len_lbti > 1), 'Формирование web_reg_save_param невозможно, тк файл не содержит LB(5)\n{wrsp}'.format(
-        wrsp=lr_vars.VarWrspDict.get())
+        wrsp=lr_vars.VarWrspDict.get(),
+    )
 
     (Ord, index) = (0, 0)  # искомый Ord, текущий LB index
     iter_index = iter(lb_text_index)  # следующий LB index
@@ -536,6 +541,7 @@ def old_find_param_ord() -> (int, int):
             Ord += 1
             if part.startswith(param_rb):
                 _param_text_index = (text.index(lb + param_rb) + len(lb))
-                return Ord, _param_text_index
+                item = (Ord, _param_text_index)
+                return item
         continue
     return
