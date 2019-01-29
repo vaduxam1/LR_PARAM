@@ -137,9 +137,14 @@ class TopPoolSetting(tk.Toplevel):
                 y.after(lr_vars._SThreadMonitorUpdate.get(), thread_info_updater, y)
             return
 
-        y = lr_lib.gui.widj.dialog.YesNoCancel(['выйти'], 'T_POOL\nмонитор',
-                                               'инфо о задачах, выполняющихся в SThread потоках',
-                                               title=lr_vars.VERSION, parent=self.action, is_text=pool_state_string())
+        y = lr_lib.gui.widj.dialog.YesNoCancel(
+            ['выйти'],
+            'T_POOL\nмонитор',
+            'инфо о задачах, выполняющихся в SThread потоках',
+            title=lr_vars.VERSION,
+            parent=self.action,
+            is_text=pool_state_string(),
+        )
         y.after(100, thread_info_updater, y)
         y.ask()
         return

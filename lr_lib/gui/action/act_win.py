@@ -133,13 +133,14 @@ class ActWin(lr_lib.gui.action.act_any.ActAny):
                 if self.force_yes_inf.get():
                     lr_vars.Logger.warning('{q}\n\n{e}{wrsp}'.format(e=ex, q=qb, wrsp=wrsp))
                 else:
-                    y = lr_lib.gui.widj.dialog.YesNoCancel(
+                    yc = lr_lib.gui.widj.dialog.YesNoCancel(
                         buttons=['Создать', 'Пропустить'],
                         text_after=qb,
                         text_before=str(ex),
                         title='создать web_reg_save_param ?',
                         parent=self,
-                    ).ask()
+                    )
+                    y = yc.ask()
                     if y == 'Пропустить':
                         raise
                     else:

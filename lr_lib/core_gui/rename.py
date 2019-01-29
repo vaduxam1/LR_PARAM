@@ -32,8 +32,13 @@ def all_wrsp_auto_rename(gui: 'lr_lib.gui.action.main_action.ActionWindow', *arg
     all_wrsps = '\n'.join(m.format(old, new) for (old, new) in zip(wrsps, wrsps_new))
 
     y = lr_lib.gui.widj.dialog.YesNoCancel(
-        ['Переименовать', 'Отмена'], 'Переименовать wrsp слева', 'в wrsp справа', 'wrsp',
-        parent=gui, is_text=all_wrsps, )
+        ['Переименовать', 'Отмена'],
+        'Переименовать wrsp слева',
+        'в wrsp справа',
+        'wrsp',
+        parent=gui,
+        is_text=all_wrsps,
+    )
 
     if y.ask() == 'Переименовать':
         with gui.block():
@@ -135,8 +140,12 @@ def rename_transaction(event, parent=None, s='lr_start_transaction("', e='lr_end
             pass
 
     y = lr_lib.gui.widj.dialog.YesNoCancel(
-        ['Переименовать', 'Отмена'], 'Переименовать выделенную(линию) transaction',
-        'указать только новое имя transaction', 'transaction', parent=parent, is_text=old_name,
+        ['Переименовать', 'Отмена'],
+        'Переименовать выделенную(линию) transaction',
+        'указать только новое имя transaction',
+        'transaction',
+        parent=parent,
+        is_text=old_name,
     )
     s1 = (s + old_name)
     s2 = (e + old_name)
@@ -168,8 +177,14 @@ def all_wrsp_rename(gui: 'lr_lib.gui.action.main_action.ActionWindow', parent=No
     mx = max(map(len, wrsps or ['']))
     m = ('"{:<%s}" -> "{}"' % mx)
     all_wrsps = '\n'.join(m.format(old, new) for (old, new) in zip(wrsps, wrsps))
-    y = lr_lib.gui.widj.dialog.YesNoCancel(['Переименовать', 'Отмена'], 'Переименовать wrsp слева',
-                                           'в wrsp справа', 'wrsp', parent=parent, is_text=all_wrsps)
+    y = lr_lib.gui.widj.dialog.YesNoCancel(
+        ['Переименовать', 'Отмена'],
+        'Переименовать wrsp слева',
+        'в wrsp справа',
+        'wrsp',
+        parent=parent,
+        is_text=all_wrsps,
+    )
 
     if y.ask() == 'Переименовать':
         new_wrsps = [t.split('-> "', 1)[1].split('"', 1)[0].strip() for t in y.text.strip().split('\n')]

@@ -22,9 +22,15 @@ def repA(widget) -> None:
     """отчет сокращенный"""
     rep = widget.action.web_action.websReport.all_in_one
     t = 'transac_len={}, param_len={}'.format(len(rep), len(widget.action.web_action.websReport.wrsp_and_param_names))
-    y = lr_lib.gui.widj.dialog.YesNoCancel(buttons=['OK'], text_before='repA', text_after='websReport.all_in_one',
-                                           is_text=lr_lib.core.etc.other.get_json(rep), title=t, parent=widget.action,
-                                           t_enc=True, )
+    y = lr_lib.gui.widj.dialog.YesNoCancel(
+        buttons=['OK'],
+        text_before='repA',
+        text_after='websReport.all_in_one',
+        is_text=lr_lib.core.etc.other.get_json(rep),
+        title=t,
+        parent=widget.action,
+        t_enc=True,
+    )
     lr_lib.core.var.vars_other.T_POOL_decorator(y.ask)()
     return
 
@@ -48,8 +54,13 @@ def repB(widget, counter=None, st='\n----\n') -> None:
         e=e, ao=ao[e - 1], st=st, ob=lr_lib.core.etc.other.get_json(ob)) for (e, ob) in enumerate(obj, start=1))
 
     y = lr_lib.gui.widj.dialog.YesNoCancel(
-        buttons=['OK'], text_before=tb, text_after='{} шт'.format(counter), is_text='\n\n{}'.format(ta),
-        title='создано: {} шт.'.format(counter), parent=widget.action, t_enc=True,
+        buttons=['OK'],
+        text_before=tb,
+        text_after='{} шт'.format(counter),
+        is_text='\n\n{}'.format(ta),
+        title='создано: {} шт.'.format(counter),
+        parent=widget.action,
+        t_enc=True,
     )
     lr_lib.core.var.vars_other.T_POOL_decorator(y.ask)()
     # lr_vars.Logger.trace('{}\n\n{}'.format(tb, ta))

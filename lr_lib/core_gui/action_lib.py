@@ -155,9 +155,15 @@ def encoder(event, action=None) -> None:
     }
 
     parent = (action or widget)
-    y = lr_lib.gui.widj.dialog.YesNoCancel(['заменить', 'Отмена'], 'декодер выделения', 'encode', 'decode',
-                                           parent=parent,
-                                           is_text=selection, combo_dict=combo_dict)
+    y = lr_lib.gui.widj.dialog.YesNoCancel(
+        buttons=['заменить', 'Отмена'],
+        text_before='декодер выделения',
+        text_after='encode',
+        title='decode',
+        parent=parent,
+        is_text=selection,
+        combo_dict=combo_dict,
+    )
     if y.ask() == 'заменить':
         new_name = y.text.strip()
 

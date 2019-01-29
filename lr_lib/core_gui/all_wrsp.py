@@ -132,10 +132,13 @@ def _ask_wrsp_create(param: str, action: 'lr_lib.gui.action.main_action.ActionWi
 
     is_true_ask = 'Создать'
     y = lr_lib.gui.widj.dialog.YesNoCancel(
-        buttons=[is_true_ask, 'Выйти'], text_after=text_after, default_key='Выйти',
+        buttons=[is_true_ask, 'Выйти'],
+        text_after=text_after,
+        default_key='Выйти',
         text_before=text_before.format(s=len(infs), p=param, mi=min(infs), ma=max(infs)),
         is_text='\n\n'.join(w[1] for w in lr_vars.VarWrspDictList),
-        title=Title.format(s=param, l=len(param), f=len_dl), parent=action,
+        title=Title.format(s=param, l=len(param), f=len_dl),
+        parent=action,
     )
     ask = y.ask()
 

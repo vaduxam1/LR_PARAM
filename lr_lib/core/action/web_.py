@@ -186,7 +186,8 @@ class WebAny:
             text_after=t2,
             title='автозамена "{s}" на "{r}"'.format(s=param, r=replace),
             parent=self.ActionWebsAndLines.action,
-            default_key=nta, focus=self.ActionWebsAndLines.action.tk_text,
+            default_key=nta,
+            focus=self.ActionWebsAndLines.action.tk_text,
         )
         a = y.ask()
 

@@ -49,13 +49,19 @@ class ActReplaceRemove(lr_lib.gui.action.act_search.ActSearch):
                 if not del_all:
                     gws = str(self.web_action.websReport.google_webs)[:50]
                     wt = ''.join(web.to_str())
+                    dw = {k: wt.count(k) for k in lr_lib.core.var.vars_param.DENY_WEB_}
                     sn = '"Snapshot=t{}.inf"'.format(web.snapshot.inf)
-                    yask = lr_lib.gui.widj.dialog.YesNoCancel(
+
+                    y = lr_lib.gui.widj.dialog.YesNoCancel(
                         ['Удалить текущий', "Удалить все Snapshot's {}".format(gws), 'Пропустить', 'Выход'],
-                        "удалить {sn} содержащий {d}".format(d={k: wt.count(k) for k in
-                                                                lr_lib.core.var.vars_param.DENY_WEB_}, sn=sn),
+                        "удалить {sn} содержащий {d}".format(d=dw, sn=sn),
                         'всего можно удалить {} шт'.format(len(self.web_action.websReport.google_webs)),
-                        parent=self, is_text=wt, title=sn).ask()
+                        parent=self,
+                        is_text=wt,
+                        title=sn,
+                    )
+                    yask = y.ask()
+
                     del_all = yask.startswith('Удалить все')
                 if del_all or yask.startswith('Удалить'):
                     self.web_action.webs_and_lines.remove(web)
@@ -114,22 +120,26 @@ class ActReplaceRemove(lr_lib.gui.action.act_search.ActSearch):
             buttons = ['Удалить/Пересканировать', 'Пропустить', 'Выход']
             n1, n2, n3, n4 = '{}|Snapshot|строк|символов'.format(_type).split('|')
 
+            tx1 = 'Удалить {cd} шт. "dummy" - {web_name} из action.c текста?\n' \
+                  'Если изменить web_dummy_template текст,\n' \
+                  'action.c пересканируется, с повторным показом диалог окна.\n' \
+                  'inf удаляется, если его строки, начинаются\n' \
+                  'на соответствующие им строки, в web_dummy_template,\n' \
+                  'без учета начальных пробелов.'
+            tx2 = 'action.c до и после удаления {web_name}:\n' \
+                  '{n1:>20} {n2:>20} {n3:>20} {n4:>20}\n' \
+                  '{lwnt:>20} | {t1:>20} | {ltn:>20} | {d:>20} |\n' \
+                  '{lwnd:>20} | {t2:>20} | {ldn:>20} | {nd:>20} |'
+
             ync = lr_lib.gui.widj.dialog.YesNoCancel(
-                buttons=buttons, text_before='Удалить {cd} шт. "dummy" - {web_name} из action.c текста?\n'
-                                             'Если изменить web_dummy_template текст,\n'
-                                             'action.c пересканируется, с повторным показом диалог окна.\n'
-                                             'inf удаляется, если его строки, начинаются\n'
-                                             'на соответствующие им строки, в web_dummy_template,\n'
-                                             'без учета начальных пробелов.'.format(web_name=_type, cd=cd),
-                text_after='action.c до и после удаления {web_name}:\n'
-                           '{n1:>20} {n2:>20} {n3:>20} {n4:>20}\n'
-                           '{lwnt:>20} | {t1:>20} | {ltn:>20} | {d:>20} |\n'
-                           '{lwnd:>20} | {t2:>20} | {ldn:>20} | {nd:>20} |'.format(
-                    n1=n1, n2=n2, n3=n3, n4=n4, lwnt=lwnt, lwnd=lwnd, d=dum_len, nd=no_dum_len, t1=t1, t2=t2,
-                    ltn=ltn,
-                    ldn=ldn, web_name=_type),
+                buttons=buttons,
+                text_before=tx1.format(web_name=_type, cd=cd),
+                text_after=tx2.format(n1=n1, n2=n2, n3=n3, n4=n4, lwnt=lwnt, lwnd=lwnd, d=dum_len, nd=no_dum_len,
+                                      t1=t1, t2=t2, ltn=ltn, ldn=ldn, web_name=_type),
                 title='web_dummy_template | удалить {rem} шт ?'.format(rem=rem),
-                is_text=lr_lib.etc.template.Dummy.web_dummy_template, parent=self)
+                is_text=lr_lib.etc.template.Dummy.web_dummy_template,
+                parent=self,
+            )
 
             y = ync.ask()
             if y == buttons[2]:
@@ -181,9 +191,14 @@ class ActReplaceRemove(lr_lib.gui.action.act_search.ActSearch):
         mx = max(map(len, transactions or ['']))
         m = '"{:<%s}" -> "{}"' % mx
         all_transaction = '\n'.join(m.format(old, new) for old, new in zip(transactions, transactions))
-        y = lr_lib.gui.widj.dialog.YesNoCancel(['Переименовать', 'Отмена'], 'Переименовать transaction слева',
-                                               'в transaction справа', 'transaction',
-                                               parent=self, is_text=all_transaction)
+        y = lr_lib.gui.widj.dialog.YesNoCancel(
+            ['Переименовать', 'Отмена'],
+            'Переименовать transaction слева',
+            'в transaction справа',
+            'transaction',
+            parent=self,
+            is_text=all_transaction,
+        )
         st = 'lr_start_transaction("'
         en = 'lr_end_transaction("'
         if y.ask() == 'Переименовать':
