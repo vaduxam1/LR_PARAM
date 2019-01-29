@@ -124,17 +124,14 @@ class ActWin(lr_lib.gui.action.act_any.ActAny):
                 if not max_action_inf:
                     raise UserWarning('Перед param, не найдено никаких блоков c inf запросами.')
                 elif max_action_inf <= min(wrsp_dict['inf_nums']):
-                    inf_nums = wrsp_dict['inf_nums'] or [-2]
-                    raise UserWarning(
-                        'Snapshot=t{p}.inf, в котором расположен,\nпервый заменяемый "{prm}"\n\n'
-                        'не может быть({p} <= {inf_nums}) меньше или равен,\n\n'
-                        'Snapshot=t{w}.inf, перед которым вставляется:'.format(
-                            prm=wrsp_dict['param'], p=max_action_inf, w=inf_nums[0], inf_nums=inf_nums, )
-                    )
+                    infs = (wrsp_dict['inf_nums'] or [-2])
+                    e = ERR2.format(prm=wrsp_dict['param'], p=max_action_inf, w=infs[0], inf_nums=infs, )
+                    raise UserWarning(e)
             except Exception as ex:
-                self.search_in_action(word=lr_lib.core.wrsp.param.Snap.format(num=max_action_inf), hist=False)
-                qb = 'param: "{p}"\nweb_reg_save_param: "{n}"'.format(
-                    p=wrsp_dict['param'], n='{%s}' % wrsp_dict['web_reg_name'])
+                w = lr_lib.core.wrsp.param.Snap.format(num=max_action_inf)
+                self.search_in_action(word=w, hist=False)
+                i = 'param: "{p}"\nweb_reg_save_param: "{n}"'
+                qb = i.format(p=wrsp_dict['param'], n=('{%s}' % wrsp_dict['web_reg_name']), )
 
                 if self.force_yes_inf.get():
                     lr_vars.Logger.warning('{q}\n\n{e}{wrsp}'.format(e=ex, q=qb, wrsp=wrsp))
@@ -186,10 +183,14 @@ class ActWin(lr_lib.gui.action.act_any.ActAny):
                 continue
 
             if rep_stat:
-                lr_vars.Logger.debug(search + ':\n' + '\n'.join('{} inf: заменено [да|нет] раз: [{}|{}]'.format(
-                    k, *stats[k]) for k in sorted(stats)))
+                s = '{} inf: заменено [да|нет] раз: [{}|{}]'
+                i = (search + ':\n')
+                i += '\n'.join(s.format(k, *stats[k]) for k in sorted(stats))
+                lr_vars.Logger.debug(i)
+
         else:  # "быстрая" замена
-            self.web_action.replace_bodys([(search, replace), ])
+            b = (search, replace)
+            self.web_action.replace_bodys([b, ])
 
         if is_wrsp:  # вставить web_reg_save_param
             self.web_action.web_reg_save_param_insert(wrsp_dict, wrsp)
@@ -205,10 +206,7 @@ class ActWin(lr_lib.gui.action.act_any.ActAny):
         results_xml = os.path.join(folder, results_xml)  # 'C:\\SCR\\LR_10\\LR_PARAM\\result1\\Results.xml'
 
         if not os.path.isfile(results_xml):
-            lr_vars.Logger.error(
-                'Не найдены LoadRunner файлы, ответов при воспроизведении, например "LR_scr\\result1\\Results.xml".\n'
-                'Для появления файлов ответов, необходимо хотябы один раз, запустить action.c скрипт в LoadRunner.\n'
-                'Путь директории последнего воспроизведения, берется из "LR_scr\\имя_скрипта.usr" LoadRunner файла.')
+            lr_vars.Logger.error(ERR1)
         with open(results_xml) as f:
             text = f.read()
 
@@ -217,7 +215,8 @@ class ActWin(lr_lib.gui.action.act_any.ActAny):
         text = text.rsplit('t', 1)
         rdir = text[0].rsplit('\\', 2)
         rdir = rdir[1]
-        return os.path.join(folder, rdir)
+        ps = os.path.join(folder, rdir)
+        return ps
 
     def no_var_cmd(self, *args) -> None:
         """force_ask_var"""
@@ -249,8 +248,24 @@ class ActWin(lr_lib.gui.action.act_any.ActAny):
     def _start_auto_update_action_info_lab(self):
         """автообновление self.scroll_lab2"""
         lr_lib.gui.action._other.auto_update_action_info_lab(
-            self=self, config=self.scroll_lab2.config, tk_text=self.tk_text, id_=self.id_,
-            timeout=lr_vars.InfoLabelUpdateTime.get(), check_run=lr_vars.Window.action_windows.__contains__,
-            title=self.title, _set_title=self._set_title,
+            self=self,
+            config=self.scroll_lab2.config,
+            tk_text=self.tk_text,
+            id_=self.id_,
+            timeout=lr_vars.InfoLabelUpdateTime.get(),
+            check_run=lr_vars.Window.action_windows.__contains__,
+            title=self.title,
+            _set_title=self._set_title,
         )
         return
+
+
+ERR1 = '''Не найдены LoadRunner файлы, ответов при воспроизведении, например "LR_scr\\result1\\Results.xml".
+Для появления файлов ответов, необходимо хотябы один раз, запустить action.c скрипт в LoadRunner.
+Путь директории последнего воспроизведения, берется из "LR_scr\\имя_скрипта.usr" LoadRunner файла.'''
+
+ERR2 = '''Snapshot=t{p}.inf, в котором расположен,\nпервый заменяемый "{prm}"
+
+не может быть({p} <= {inf_nums}) меньше или равен,
+
+Snapshot=t{w}.inf, перед которым вставляется:'''
