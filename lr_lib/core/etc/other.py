@@ -17,8 +17,10 @@ import lr_lib.core.var.vars as lr_vars
 
 def _chunks(iterable: list, chunk_size: int) -> iter([iter, ]):
     """Yield successive n-sized chunks from l. - не работает с генераторами"""
-    for i in range(0, len(iterable), chunk_size):
-        val = iterable[i:(i + chunk_size)]
+    len_ = len(iterable)
+    for i in range(0, len_, chunk_size):
+        ic = (i + chunk_size)
+        val = iterable[i:ic]
         yield val
         continue
     return
@@ -29,18 +31,21 @@ def chunks(iterable: iter, chunk_size: int) -> iter((iter,)):
     if isinstance(iterable, types.GeneratorType):
         chunk_range = range(chunk_size - 1)
         for i in iterable:
-            val = tuple(itertools.chain([i], _chunks_range(chunk_range, iterable)))
+            it = _chunks_range(chunk_range, iterable)
+            val = tuple(itertools.chain([i], it))
             yield val
             continue
     else:
-        yield from _chunks(iterable, chunk_size)
+        it = _chunks(iterable, chunk_size)
+        yield from it
     return
 
 
 def _chunks_range(chunk_range: (int,), iterable):
     try:
         for _ in chunk_range:
-            yield next(iterable)
+            it = next(iterable)
+            yield it
             continue
     except Exception as ex:
         pass
@@ -51,7 +56,8 @@ def numericalSort(value: str, numbers=re.compile(r'(\d+)')) -> list:
     """корректная сортировка файлов с inf-номерами в имени"""
     value = _snapshot_file_name(value)
     parts = numbers.split(value)
-    parts[1::2] = map(int, parts[1::2])
+    ps = parts[1::2]
+    parts[1::2] = map(int, ps)
     return parts
 
 
@@ -59,13 +65,15 @@ def _snapshot_file_name(name: str) -> str:
     """корректная сортировка snapshot файлов"""
     if name.startswith('snapshot') and '_' in name:
         (nam, num) = name.split('_', 1)
-        return 't{num}_{nam}'.format(num=num, nam=nam)
+        t = 't{num}_{nam}'.format(num=num, nam=nam)
+        return t
     return name
 
 
 def sort_files(file: dict):
     """сортировка файлов, по ключам"""
-    val = file.get(lr_vars.VarFileSortKey1.get())
+    k = lr_vars.VarFileSortKey1.get()
+    val = file.get(k)
     if val:
         k2 = lr_vars.VarFileSortKey2.get()
         if k2 in val:
@@ -85,6 +93,7 @@ def file_string(file=None, deny=(), min_width=25, max_width=50) -> str:
 
     len_all = [len(k) for v in file.values() for k in v.keys()]
     width = (sum(len_all) // len(len_all))
+
     if width > max_width:
         width = max_width
     elif width < min_width:
@@ -92,8 +101,8 @@ def file_string(file=None, deny=(), min_width=25, max_width=50) -> str:
 
     st = '{:<%s}\t{}' % width
     _st = '{} {}'
-    sep = lambda a: (st if (len(a) < width) else _st)
 
+    sep = lambda a: (st if (len(a) < width) else _st)
     vmax = lambda b, mx=lr_vars.MaxFileStringWidth: ('{} ...'.format(b[:mx]) if (len(b) > mx) else b)
     val = lambda dt: '\n'.join(sep(a).format('{}:'.format(a), vmax(str(dt[a]))) for a in sorted(dt) if (a not in deny))
 
@@ -124,12 +133,11 @@ def all_files_info() -> str:
     except ZeroDivisionError:
         sl = 0
 
-    r = '\n\t'.join('{} = {} симв.'.format(*a) for a in sorted(_r, key=lambda b: b[1], reverse=True))
-    r = ('\n\t' + r)
-    txt = '{s}{r}\n\t' \
-          'всего = {sa} byte\n\t' \
-          '(мин/сред/макс) = ({mn}/{sl}/{mx} ) byte'.format(s=st_, r=r, mn=mn, mx=mx, sl=round(sl, 3), sa=sa)
-
+    s = sorted(_r, key=lambda b: b[1], reverse=True)
+    r = '\n\t'
+    r += r.join('{} = {} симв.'.format(*a) for a in s)
+    tsx = '{s}{r}\n\tвсего = {sa} byte\n\tмин/сред/макс) = ({mn}/{sl}/{mx} ) byte'
+    txt = tsx.format(s=st_, r=r, mn=mn, mx=mx, sl=round(sl, 3), sa=sa, )
     return txt
 
 
@@ -137,22 +145,30 @@ def param_files_info() -> str:
     """инфо о param файлах"""
     res = [(str(f['Snapshot']['Nums']), f['File']['Name'], str(f['Param']['Count'])) for f in lr_vars.FilesWithParam]
     m = max(len(n) for r in res for n in r)
+
     if m > 25:
         m = 25
     elif m < 10:
         m = 10
-    s = ('{:<%s} | {:<%s} | {:<%s}' % (m, m, m))
 
-    i = '\n'.join(map(str, chunks(tuple(get_files_infs(lr_vars.FilesWithParam)), 15)))
-    r = '"{p}" Snapshots{i}:\n{sep}\n{t}\n{res}\n{sep}'.format(
-        sep=lr_vars.PRINT_SEPARATOR, t=s.format('Snapshot', 'FileName', 'Кол-во вариантов WRSP'),
-        p=lr_vars.VarParam.get(), res='\n'.join(s.format(*r) for r in res), i=i)
+    s = ('{:<%s} | {:<%s} | {:<%s}' % (m, m, m))
+    rs = '"{p}" Snapshots{i}:\n{sep}\n{t}\n{res}\n{sep}'
+    ts = tuple(get_files_infs(lr_vars.FilesWithParam))
+
+    r = rs.format(
+        sep=lr_vars.PRINT_SEPARATOR,
+        t=s.format('Snapshot', 'FileName', 'Кол-во вариантов WRSP'),
+        p=lr_vars.VarParam.get(),
+        res='\n'.join(s.format(*r) for r in res),
+        i='\n'.join(map(str, chunks(ts, 15))),
+    )
     return r
 
 
 def get_files_infs(files: [dict, ]) -> iter({int, }):
     """inf-номера файлов"""
-    yield from sorted(set(n for file in files for n in file['Snapshot']['Nums']))
+    s = set(n for file in files for n in file['Snapshot']['Nums'])
+    yield from sorted(s)
     return
 
 
@@ -171,12 +187,14 @@ def iter_to_list(item: iter) -> list:
     if isinstance(item, (list, tuple)):
         return item
     else:
-        return list(item)
+        li = list(item)
+        return li
 
 
 def _openTextInEditor(file: str):
     """открытие файл в Блокноте"""
-    s = subprocess.Popen([lr_vars.EDITOR['exe'], file])
+    exe = lr_vars.EDITOR['exe']
+    s = subprocess.Popen([exe, file])
     return s
 
 
