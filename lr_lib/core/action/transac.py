@@ -34,7 +34,8 @@ class Transactions:
             if n not in self.start_stop['stop']:
                 return n
             continue
-        return self.__no_transaction_name()
+        nm = self.__no_transaction_name()
+        return nm
 
     def start_transaction(self, transaction: str) -> None:
         if self.__is_no_transaction_name:
@@ -42,8 +43,8 @@ class Transactions:
             self.__is_no_transaction_name = ''
 
         if transaction in self.names:
-            lr_vars.Logger.error(
-                'транзакция: start после start\nПовторное использование start_transaction("{}")'.format(transaction))
+            t = 'транзакция: start после start\nПовторное использование start_transaction("{}")'.format(transaction)
+            lr_vars.Logger.error(t)
         else:
             dt = self.sub_transaction
             for t in self.names:
@@ -53,13 +54,15 @@ class Transactions:
             dt[transaction] = collections.OrderedDict()
 
             self.names.append(transaction)
-            self.start_stop['start'].append(transaction)
+            s = self.start_stop['start']
+            s.append(transaction)
         return
 
     def stop_transaction(self, transaction: str) -> None:
         if transaction not in self.names:
-            lr_vars.Logger.error(
-                'транзакция: stop перед start\nОтсутствует start_transaction("{}")'.format(transaction))
+            t = 'транзакция: stop перед start\nОтсутствует start_transaction("{}")'.format(transaction)
+            lr_vars.Logger.error(t)
         else:
-            self.start_stop['stop'].append(transaction)
+            s = self.start_stop['stop']
+            s.append(transaction)
         return

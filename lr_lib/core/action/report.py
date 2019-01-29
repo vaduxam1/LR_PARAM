@@ -104,7 +104,8 @@ class WebReport:
             self.web_snapshot_param_in_count[snapshot] = in_count = {}
 
             for wr_name in self.wrsp_and_param_names:
-                param_in_count = body.count(lr_lib.core.wrsp.param.param_bounds_setter(wr_name))
+                bs = lr_lib.core.wrsp.param.param_bounds_setter(wr_name)
+                param_in_count = body.count(bs)
                 if param_in_count:
                     in_count[wr_name] = param_in_count
                     statistic = self.param_statistic[wr_name]
@@ -116,7 +117,8 @@ class WebReport:
 
         for k in self.wrsp_and_param_names:
             psk = self.param_statistic[k]
-            psk['transaction_names'] = sorted(set(psk['transaction_names']), key=self.web_transaction_sorted.index)
+            tn = set(psk['transaction_names'])
+            psk['transaction_names'] = sorted(tn, key=self.web_transaction_sorted.index)
             continue
 
         for wr_name in self.param_statistic:
@@ -132,7 +134,8 @@ class WebReport:
             continue
 
         for dt in self.web_transaction.values():
-            dt['minmax_snapshots'] = snapshot_diapason_string(dt['snapshots'])  # для transac comment
+            sn = dt['snapshots']
+            dt['minmax_snapshots'] = snapshot_diapason_string(sn)  # для transac comment
             continue
 
         web_snapshot_all = tuple(self.ActionWebsAndLines.get_web_snapshot_all())
@@ -141,7 +144,8 @@ class WebReport:
             wps = self.param_statistic[name]
             for k in wps:
                 if k not in deny:
-                    yield k, wps[k]
+                    item = (k, wps[k])
+                    yield item
                 continue
             return
 
@@ -150,22 +154,30 @@ class WebReport:
             web = next(web)
             for wrsp in web.web_reg_save_param_list:
                 name = wrsp.name
-                pdt = {'param': wrsp.param, 'stats': dict(get_stats(name))}
-                yield name, pdt
+                gsn = dict(get_stats(name))
+                pdt = {'param': wrsp.param, 'stats': gsn}
+                item = (name, pdt)
+                yield item
                 continue
             return
 
         for t in self.web_transaction:
-            dtt = next(self.get_sub_transaction_dt(t, self.all_in_one))
-            dtt.update(copy.deepcopy(self.web_transaction[t]))
-            dtt['snapshots'] = {s: dict(web_reg(s)) for s in dtt['snapshots']}
+            gn = self.get_sub_transaction_dt(t, self.all_in_one)
+            dtt = next(gn)
+            wt = self.web_transaction[t]
+            wt_ = copy.deepcopy(wt)
+            dtt.update(wt_)
+            sn = {s: dict(web_reg(s)) for s in dtt['snapshots']}
+            dtt['snapshots'] = sn
             continue
 
         dt = self.checker_warn()
         for lvl in dt:
             msgs = dt[lvl]
             if msgs:
-                getattr(lr_vars.Logger, lvl)('\n'.join(msgs))
+                m = '\n'.join(msgs)
+                ga = getattr(lr_vars.Logger, lvl)
+                ga(m)
             continue
         return
 
@@ -187,23 +199,28 @@ class WebReport:
             )
             return s
 
+        spi = sorted(params_in, key=len)
         s = '\n\t{cmnt} IN({sim_params_in})<-[{len_params_in}]: {statistic}'.format(
-            statistic=', '.join(map(get, sorted(params_in, key=len))),
+            statistic=', '.join(map(get, spi)),
             cmnt=lr_lib.core.wrsp.param.LR_COMENT,
-            sim_params_in=sum(params_in.values() or [0]),
+            sim_params_in=sum(params_in.values()),
             len_params_in=len(params_in),
         )
         return s
 
     def stats_out_web(self, snapshot: int) -> str:
         """'статистика по web_reg_save_param, созданным в web.snapshot"""
-        web = next(self.ActionWebsAndLines.get_web_snapshot_by(snapshot=snapshot))
+        gn = self.ActionWebsAndLines.get_web_snapshot_by(snapshot=snapshot)
+        web = next(gn)
 
         if not web.web_reg_save_param_list:
             return ''
 
         statistic = []
-        for wr in sorted(web.web_reg_save_param_list, key=lambda w: len(w.param)):
+        skey = lambda w: len(w.param)
+        sd = sorted(web.web_reg_save_param_list, key=skey)
+
+        for wr in sd:
             ps = self.param_statistic[wr.name]
             pss = '{p}(P:{p_all}|S:{snap}|T:{transac})'.format(
                 p=wr.param,
@@ -245,10 +262,11 @@ class WebReport:
         for t in self.ActionWebsAndLines.transactions.names:
             if t.startswith(lr_lib.core.action.transac.Transactions._no_transaction_name):
                 continue
-            dtt = next(self.get_sub_transaction_dt(t, self.all_in_one))
+            al = self.get_sub_transaction_dt(t, self.all_in_one)
+            dtt = next(al)
 
-            if (not dtt) and (
-                    t not in self.web_transaction):  # считается пустой(без snapshot), только если не содержит подтранзакций
+            # считается пустой(без snapshot), только если не содержит подтранзакций
+            if (not dtt) and (t not in self.web_transaction):
                 result['info'].append('Пустая транзакция "{}"'.format(t))
             if t not in self.ActionWebsAndLines.transactions.start_stop['start']:
                 result['warning'].append('Отсутствует транзакция start_transaction("{}")'.format(t))
