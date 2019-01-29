@@ -47,7 +47,9 @@ def _all_wrsp_dict_web_reg_save_param(action: 'lr_lib.gui.action.main_action.Act
     lr_vars.VarParam.set(param, action=action, set_file=True)
 
     lr_vars.VarWrspDictList.clear()
-    lr_vars.VarWrspDictList.extend(filter(_check_wrsp_duplicate, _all_wrsp(action)))
+    wrsp_all = _all_wrsp(action)
+    wrsp_all = filter(_check_wrsp_duplicate, wrsp_all)
+    lr_vars.VarWrspDictList.extend(wrsp_all)
     assert lr_vars.VarWrspDictList, 'Ничего не найдено'
 
     answ_text = _ask_wrsp_create(param, action)
@@ -74,7 +76,7 @@ def _wrsp_text_delta_remove(wr: (dict, str), ) -> str:
     return without_delta
 
 
-def _all_wrsp(action: 'lr_lib.gui.action.main_action.ActionWindow') -> None:
+def _all_wrsp(action: 'lr_lib.gui.action.main_action.ActionWindow') -> iter(([dict, str], )):
     """поиск всех возможных wrsp"""
     with lr_lib.gui.etc.color_progress.ColorProgress(action):
         wr = _wr_create()  # первый/текущий wrsp
