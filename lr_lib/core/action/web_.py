@@ -74,7 +74,8 @@ def bodys_replace(replace_args: ({int: str}, [(str, str), ]), is_wrsp=True) -> [
     (body_portion, replace_list) = replace_args
     for i in body_portion:
         for (search, replace) in replace_list:
-            body_portion[i] = body_replace(body_portion[i], search, replace, is_wrsp=is_wrsp)
+            bp = body_replace(body_portion[i], search, replace, is_wrsp=is_wrsp)
+            body_portion[i] = bp
             continue
         continue
     return body_portion
@@ -158,7 +159,8 @@ class WebAny:
             for line in self.lines_list:
                 sline = line.strip().split(s, 1)
                 if len(sline) == 2:
-                    name = sline[1].split('"', 1)[0]
+                    name = sline[1]
+                    name = name.split('"', 1)[0]
                     break
                 continue
 

@@ -157,6 +157,7 @@ def _create_wrsp_web_(text: str, param: str, action: 'lr_lib.gui.action.main_act
     action.backup()
     first_only = True  # если создается несколько wrsp_web_
     first_name = ''
+    wrsp_web_ = None
 
     for part in text.split(Word):
         part = part.lstrip()
@@ -189,10 +190,9 @@ def _create_wrsp_web_(text: str, param: str, action: 'lr_lib.gui.action.main_act
 
     # вставить в action.c
     action.web_action_to_tk_text(websReport=True)
-    try:
+    try:  # перейти к первому
         action.search_in_action(word=wrsp_web_.name)
-    except:
-        pass
+    except:pass
     return
 
 

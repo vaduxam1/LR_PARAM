@@ -95,7 +95,7 @@ def file_string(file=None, deny=(), min_width=25, max_width=50) -> str:
     sep = lambda a: (st if (len(a) < width) else _st)
 
     vmax = lambda b, mx=lr_vars.MaxFileStringWidth: ('{} ...'.format(b[:mx]) if (len(b) > mx) else b)
-    val = lambda dt: '\n'.join(sep(a).format('{}:'.format(a), vmax(str(dt[a]))) for a in sorted(dt) if a not in deny)
+    val = lambda dt: '\n'.join(sep(a).format('{}:'.format(a), vmax(str(dt[a]))) for a in sorted(dt) if (a not in deny))
 
     s = '\n'.join('\t[ {k} ] :\n{v}'.format(k=k, v=val(file[k])) for k in sorted(file))
     return s
@@ -124,7 +124,8 @@ def all_files_info() -> str:
     except ZeroDivisionError:
         sl = 0
 
-    r = '\n\t' + '\n\t'.join('{} = {} симв.'.format(*a) for a in sorted(_r, key=lambda b: b[1], reverse=True))
+    r = '\n\t'.join('{} = {} симв.'.format(*a) for a in sorted(_r, key=lambda b: b[1], reverse=True))
+    r = ('\n\t' + r)
     txt = '{s}{r}\n\t' \
           'всего = {sa} byte\n\t' \
           '(мин/сред/макс) = ({mn}/{sl}/{mx} ) byte'.format(s=st_, r=r, mn=mn, mx=mx, sl=round(sl, 3), sa=sa)

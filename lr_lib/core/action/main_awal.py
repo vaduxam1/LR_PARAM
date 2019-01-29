@@ -37,8 +37,8 @@ class ActionWebsAndLines:
 
         for file in lr_vars.AllFiles:
             check = False
-
-            for inf in file['Snapshot']['Nums']:
+            nums = file['Snapshot']['Nums']
+            for inf in nums:
                 if inf in self.action_infs:
                     check = True
                 else:
@@ -46,7 +46,8 @@ class ActionWebsAndLines:
                 continue
 
             if not check:
-                self.drop_files.append(file['File']['Name'])
+                name = file['File']['Name']
+                self.drop_files.append(name)
             continue
         return
 
@@ -72,7 +73,8 @@ class ActionWebsAndLines:
 
     def get_web_snapshot_all(self) -> iter((lr_lib.core.action.web_.WebSnapshot,)):
         """snapshot объекты"""
-        for web in self.get_web_all():
+        webs = self.get_web_all()
+        for web in webs:
             if web.snapshot.inf:
                 yield web
             continue
@@ -80,21 +82,26 @@ class ActionWebsAndLines:
 
     def get_web_snapshot_by(self, **kwargs) -> iter((lr_lib.core.action.web_.WebSnapshot,)):
         """snapshot объекты по kwargs условию"""
-        for web in self.get_web_by(self.get_web_snapshot_all(), **kwargs):
+        al = self.get_web_snapshot_all()
+        webs = self.get_web_by(al, **kwargs)
+        for web in webs:
             yield web
             continue
         return
 
     def get_web_reg_save_param_all(self) -> iter((lr_lib.core.action.web_.WebRegSaveParam,)):
         """web_reg_save_param объекты"""
-        for web in self.get_web_snapshot_all():
+        webs = self.get_web_snapshot_all()
+        for web in webs:
             yield from web.web_reg_save_param_list
             continue
         return
 
     def get_web_reg_save_param_by(self, **kwargs) -> iter((lr_lib.core.action.web_.WebRegSaveParam,)):
         """web_reg_save_param объекты по kwargs условию"""
-        for web_wrsp in self.get_web_by(self.get_web_reg_save_param_all(), **kwargs):
+        al = self.get_web_reg_save_param_all()
+        webs = self.get_web_by(al, **kwargs)
+        for web_wrsp in webs:
             yield web_wrsp
             continue
         return
@@ -153,6 +160,7 @@ class ActionWebsAndLines:
 
         if websReport:  # статистика использования WRSP
             self.websReport.create()
+
         self.drop_file_none_inf_num_in_action()
         return
 
@@ -281,7 +289,8 @@ class ActionWebsAndLines:
                                   wrsp='') -> lr_lib.core.action.web_.WebRegSaveParam:
         """вставить web_reg_save_param"""
         if isinstance(wrsp_dict_or_snapshot, dict):
-            inf = wrsp_dict_or_snapshot['inf_nums'][0]
+            inf = wrsp_dict_or_snapshot['inf_nums']
+            inf = inf[0]
             if not wrsp:
                 wrsp = lr_lib.core.wrsp.param.create_web_reg_save_param(wrsp_dict_or_snapshot)
         elif isinstance(wrsp_dict_or_snapshot, int):
@@ -293,7 +302,8 @@ class ActionWebsAndLines:
             raise UserWarning('тип wrsp_dict_or_snapshot {} | {} | {} | {}'.format(
                 wrsp_dict_or_snapshot, type(wrsp_dict_or_snapshot), wrsp, type(wrsp)))
 
-        web_ = next(self.get_web_snapshot_by(snapshot=inf))
+        w = self.get_web_snapshot_by(snapshot=inf)
+        web_ = next(w)
 
         # разделить каменты и web текст
         ws = wrsp.split(lr_lib.core.wrsp.param.wrsp_lr_start, 1)
@@ -314,14 +324,16 @@ class ActionWebsAndLines:
 
     def web_reg_save_param_remove(self, name: str, keys=('param', 'name'), param=None, is_wrsp=False) -> str:
         """удалить web_reg_save_param, is_wrsp=False"""
-        for web_request in self.get_web_snapshot_all():
-            for wrsp_web in list(web_request.web_reg_save_param_list):
+        al = self.get_web_snapshot_all()
+        for web_request in al:
+            for wrsp_web in web_request.web_reg_save_param_list:
 
                 if any((getattr(wrsp_web, k) == name) for k in keys):
                     web_request.web_reg_save_param_list.remove(wrsp_web)
                     param = wrsp_web.param
                     wn = lr_lib.core.wrsp.param.param_bounds_setter(wrsp_web.name)
-                    replace_list = [(wn, param), ]
+                    rl = (wn, param)
+                    replace_list = [rl, ]
 
                     self.replace_bodys(replace_list, is_wrsp=is_wrsp)  # удалить из всех web
                 continue
@@ -332,7 +344,10 @@ class ActionWebsAndLines:
         """весь action текст как строка"""
         if websReport:
             self.websReport.create()
-        return ''.join(self._to_str()).strip()
+
+        s = self._to_str()
+        s = ''.join(s).strip()
+        return s
 
     def _to_str(self, sep=True) -> iter((str,)):
         """итератор - весь action текст как строка"""
@@ -354,5 +369,6 @@ class ActionWebsAndLines:
 
     def _all_web_body_text(self) -> str:
         """текст body всех web"""
-        text = '\n'.join(w.get_body() for w in self.get_web_all())
+        al = self.get_web_all()
+        text = '\n'.join(w.get_body() for w in al)
         return text
