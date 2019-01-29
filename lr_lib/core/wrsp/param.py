@@ -87,7 +87,8 @@ def create_web_reg_save_param(wrsp_dict=None) -> str:
     else:
         wrsp_string = _web_reg_save_param
 
-    return wrsp_string.format(**wrsp_dict)
+    s = wrsp_string.format(**wrsp_dict)
+    return s
 
 
 def create_web_reg_save_param_and_dict(wrsp_dict=None) -> (str, dict):
@@ -96,7 +97,8 @@ def create_web_reg_save_param_and_dict(wrsp_dict=None) -> (str, dict):
         wrsp_dict = lr_vars.VarWrspDict.get()
 
     s = create_web_reg_save_param(wrsp_dict=wrsp_dict)
-    return s, wrsp_dict
+    item = (s, wrsp_dict)
+    return item
 
 
 allow_lrb = set(
@@ -223,20 +225,28 @@ def wrsp_name_creator(param: str, Lb: str, Rb: str, snapshot: int) -> str:
     if (TransactionInNameMax >= 0) and lr_vars.Window and lr_vars.Window.action_windows:
         action = lr_vars.Window.get_main_action()
         web_action = action.web_action
-        w = next(web_action.get_web_by(web_action.get_web_snapshot_all(), snapshot=snapshot))
+        al = web_action.get_web_snapshot_all()
+        wa = web_action.get_web_by(al, snapshot=snapshot)
+        w = next(wa)
 
         if w and w.transaction and (not w.transaction.startswith(web_action.transactions._no_transaction_name)):
-            transaction = '_'.join(''.join(filter(str.isalnum, t)).translate(lr_lib.etc.help.TRANSLIT_DT)
-                                   for t in w.transaction.split())
+            s = (''.join(filter(str.isalnum, t)).translate(lr_lib.etc.help.TRANSLIT_DT) for t in w.transaction.split())
+            transaction = '_'.join(s)
             transaction = transaction[:TransactionInNameMax]
         else:
             transaction = ''
     else:
         transaction = ''
 
-    wrsp_name = WEB_REG_NUM.format(wrsp_rnd_num=wrsp_rnd_num, wrsp_name=wrsp_param_name, lb_name=lb_name,
-                                   rb_name=rb_name,
-                                   infs=infs, letter=lr_vars.WrspNameFirst.get(), transaction=transaction)
+    wrsp_name = WEB_REG_NUM.format(
+        wrsp_rnd_num=wrsp_rnd_num,
+        wrsp_name=wrsp_param_name,
+        lb_name=lb_name,
+        rb_name=rb_name,
+        infs=infs,
+        letter=lr_vars.WrspNameFirst.get(),
+        transaction=transaction,
+    )
 
     wrsp_name = str.translate(wrsp_name, wrsp_deny_punctuation).rstrip('_')
     while '___' in wrsp_name:
@@ -246,9 +256,13 @@ def wrsp_name_creator(param: str, Lb: str, Rb: str, snapshot: int) -> str:
     return wrsp_name
 
 
-def screening_wrsp(s: str, t={ord(c): '\\{}'.format(c) for c in lr_lib.core.var.vars_param.Screening}) -> str:
+SC = {ord(c): '\\{}'.format(c) for c in lr_lib.core.var.vars_param.Screening}
+
+
+def screening_wrsp(s: str) -> str:
     """экранирование для web_reg_save_param"""
-    return str.translate(s, t)
+    s = str.translate(s, SC)
+    return s
 
 
 def _search_param_in_file(file: dict) -> dict:
@@ -376,7 +390,8 @@ def get_files_with_param(param: str, action=None, set_file=True) -> None:
     execute = (lr_vars.M_POOL.imap_unordered if lr_vars.FindParamPOOLEnable else map)
 
     # (2) поиск
-    lr_vars.FilesWithParam = sorted(filter(bool, execute(param_searcher, files)), key=lr_lib.core.etc.other.sort_files)
+    executer = execute(param_searcher, files)
+    lr_vars.FilesWithParam = sorted(filter(bool, executer), key=lr_lib.core.etc.other.sort_files)
     if not lr_vars.FilesWithParam:
         raise UserWarning(param_not_found_err_text(action, files, search_data, param))
 
@@ -398,11 +413,25 @@ def get_files_with_param(param: str, action=None, set_file=True) -> None:
     if set_file:  # VarFileName.set
         file = lr_vars.FilesWithParam[0]
         assert isinstance(file, dict), len(lr_vars.FilesWithParam)
-        lr_vars.VarFileName.set(file['File']['Name'])  # (3)
+        name = file['File']['Name']
+        lr_vars.VarFileName.set(name)  # (3)
 
     if lr_vars.VarFileNamesNumsShow.get():
         lr_vars.Logger.info(lr_lib.core.etc.other.param_files_info())
     return
+
+
+Err = '''
+'Не найдены файлы содержащие param "{param}"
+
+search_data: {d}
+
+Всего Snapshot {i}=[ t{ai_min}:t{ai_max} ]/файлов={f}
+В action.c: Snapshot {ai}=[ t{a_min}:t{a_max} ] / Файлов={afa}
+Поиск происходил в: Snapshot {lf}=[ t{min_iaf}:t{max_iaf} ] / файлах={f_}
+Директория поиска: {folder}
+откл чекб "strong", вероятно может помочь найти варианты
+'''
 
 
 def param_not_found_err_text(action, files: [dict, ], search_data: dict, param: str) -> str:
@@ -415,25 +444,21 @@ def param_not_found_err_text(action, files: [dict, ], search_data: dict, param: 
         lai = a_min = a_max = afa = None
 
     if files:
-        min_iaf = files[0]['Param']['inf_min']
-        max_iaf = files[0]['Param']['inf_max']
+        f0 = files[0]
+        min_iaf = f0['Param']['inf_min']
+        max_iaf = f0['Param']['inf_max']
     else:
         min_iaf = max_iaf = '?'
 
-    files_infs = len(tuple(lr_lib.core.etc.other.get_files_infs(lr_vars.AllFiles)))
+    tal = tuple(lr_lib.core.etc.other.get_files_infs(lr_vars.AllFiles))
+    files_infs = len(tal)
     lenfi = len(tuple(lr_lib.core.etc.other.get_files_infs(files)))
 
-    error = 'Не найдены файлы содержащие param "{param}"\n\nsearch_data: {d}\n\n' \
-            'Всего Snapshot {i}=[ t{ai_min}:t{ai_max} ]/файлов={f}\n' \
-            'В action.c: Snapshot {ai}=[ t{a_min}:t{a_max} ] / Файлов={afa}\n' \
-            'Поиск происходил в: Snapshot {lf}=[ t{min_iaf}:t{max_iaf} ] / файлах={f_}\n' \
-            'Директория поиска: {folder}\nоткл чекб "strong", вероятно может помочь найти варианты'.format(
-        ai_min=min(tuple(lr_lib.core.etc.other.get_files_infs(lr_vars.AllFiles))), ai=lai, afa=afa, f_=len(files),
-        param=param,
-        ai_max=max(lr_lib.core.etc.other.get_files_infs(lr_vars.AllFiles)), folder=lr_vars.VarFilesFolder.get(),
-        i=files_infs,
-        min_iaf=min_iaf, max_iaf=max_iaf, a_min=a_min, a_max=a_max, d=search_data, f=len(lr_vars.AllFiles), lf=lenfi, )
-
+    error = Err.format(
+        ai_min=min(tal), ai=lai, afa=afa, f_=len(files), param=param, ai_max=max(tal),
+        folder=lr_vars.VarFilesFolder.get(), i=files_infs, min_iaf=min_iaf, max_iaf=max_iaf, a_min=a_min, a_max=a_max,
+        d=search_data, f=len(lr_vars.AllFiles), lf=lenfi,
+    )
     return error
 
 
@@ -485,7 +510,8 @@ def new_find_param_ord() -> (int, int):
         if rb in part:
             Ord += 1
             if part.startswith(param_rb):
-                return Ord, index
+                item = (Ord, index)
+                return item
         continue
     return
 
