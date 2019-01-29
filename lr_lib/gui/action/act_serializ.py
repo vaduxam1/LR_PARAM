@@ -20,14 +20,17 @@ class TkTextWebSerialization(lr_lib.gui.action.act_backup.ActBackup):
         lr_lib.gui.action.act_backup.ActBackup.__init__(self)
 
         self.backup_open_button = tk.Button(
-            self.file_bar, text='backup_open', background='orange', font=lr_vars.DefaultFont + ' bold',
-            command=lambda *a: self.open_action_dialog(title=True, folder=lr_vars.BackupFolder))
+            self.file_bar, text='backup_open', background='orange', font=(lr_vars.DefaultFont + ' bold'),
+            command=lambda *a: self.open_action_dialog(title=True, folder=lr_vars.BackupFolder),
+        )
 
         self.save_action_button = tk.Button(
-            self.file_bar, text='save', font=lr_vars.DefaultFont + ' bold', command=self.save_action_file)
+            self.file_bar, text='save', font=(lr_vars.DefaultFont + ' bold'), command=self.save_action_file,
+        )
 
         self.open_button = tk.Button(
-            self.file_bar, text='open', font=lr_vars.DefaultFont, command=self.open_action_dialog)
+            self.file_bar, text='open', font=lr_vars.DefaultFont, command=self.open_action_dialog,
+        )
         return
 
     @progress_decor
@@ -96,12 +99,14 @@ class TkTextWebSerialization(lr_lib.gui.action.act_backup.ActBackup):
     def open_action_dialog(self, *a, title=False, folder=os.getcwd()) -> None:
         """открыть файл"""
         if title:
-            af = tk.filedialog.askopenfilename(initialdir=folder, parent=self, filetypes=(
-                ("%s_backup_*.c" % self.id_, "%s_backup_*.c" % self.id_), ("all", "*.*")),
-                                               title='backup({})'.format(self.id_))
+            ft = (("%s_backup_*.c" % self.id_, "%s_backup_*.c" % self.id_), ("all", "*.*"))
+            af = tk.filedialog.askopenfilename(
+                initialdir=folder, parent=self, filetypes=ft, title='backup({})'.format(self.id_)
+            )
         else:
-            af = tk.filedialog.askopenfilename(initialdir=folder, parent=self, filetypes=(
-                ("action.c", "*.c"), ("all", "*.*")))
+            af = tk.filedialog.askopenfilename(
+                initialdir=folder, parent=self, filetypes=(("action.c", "*.c"), ("all", "*.*"))
+            )
         if af:
             self.open_action(file=af)
         return
@@ -124,12 +129,14 @@ class TkTextWebSerialization(lr_lib.gui.action.act_backup.ActBackup):
 
         t = "action.c web_* : любых={any_w}, (Snapshot's / файлов_ответов) = ({snap_w} / {files}) |" \
             " Удалено: ({dsnap_w} / {dfiles})".format(
-            any_w=any_w, snap_w=snap_w, files=files, dsnap_w=dsnap_w, dfiles=dfiles)
+            any_w=any_w, snap_w=snap_w, files=files, dsnap_w=dsnap_w, dfiles=dfiles,
+        )
         self.middle_bar['text'] = t
 
         if self.web_action.drop_infs or self.web_action.drop_files:
             lr_vars.Logger.debug('Удалено в action.c: inf: {il}, файлов : {fl} | Найдено: {ai} inf'.format(
-                il=dsnap_w, fl=dfiles, ai=snap_w), parent=self)
+                il=dsnap_w, fl=dfiles, ai=snap_w), parent=self,
+            )
         return
 
     def widj_reset(self) -> None:

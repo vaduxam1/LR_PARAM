@@ -17,9 +17,9 @@ class ActScrollText(lr_lib.gui.action.act_widj.ActWidj):
     def __init__(self):
         lr_lib.gui.action.act_widj.ActWidj.__init__(self)
 
-        self.tk_text = lr_lib.gui.widj.highlight_text.HighlightText(self,
-                                                                    background=lr_lib.core.var.vars_highlight.Background,
-                                                                    wrap=tk.NONE, bd=0)
+        self.tk_text = lr_lib.gui.widj.highlight_text.HighlightText(
+            self, background=lr_lib.core.var.vars_highlight.Background, wrap=tk.NONE, bd=0,
+        )
 
         self.text_scrolly = ttk.Scrollbar(self, orient=tk.VERTICAL, command=self.tk_text.yview)
         self.text_scrollx = ttk.Scrollbar(self, orient=tk.HORIZONTAL, command=self.tk_text.xview)
@@ -28,7 +28,8 @@ class ActScrollText(lr_lib.gui.action.act_widj.ActWidj):
         self.highlight_cbx = tk.Checkbutton(
             self.cbx_bar, text='highlight', font=lr_vars.DefaultFont,
             background=lr_lib.core.var.vars_highlight.Background,
-            variable=self.tk_text.highlight_var, command=self.tk_text.highlight_apply)
+            variable=self.tk_text.highlight_var, command=self.tk_text.highlight_apply,
+        )
 
         self.buttonColorReset = tk.Button(self.cbx_bar, text='reset', font=lr_vars.DefaultFont, command=self.resColor)
 

@@ -155,8 +155,8 @@ class YesNoCancel(tk.Toplevel):
         """center window on screen"""
         self.withdraw()
         self.update_idletasks()
-        x = (self.winfo_screenwidth() - self.winfo_reqwidth()) / 2
-        y = (self.winfo_screenheight() - self.winfo_reqheight()) / 2
+        x = ((self.winfo_screenwidth() - self.winfo_reqwidth()) / 2)
+        y = ((self.winfo_screenheight() - self.winfo_reqheight()) / 2)
         self.geometry("+%d+%d" % (x, y))
         self.deiconify()
         return

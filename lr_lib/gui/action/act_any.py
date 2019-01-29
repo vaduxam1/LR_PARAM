@@ -89,18 +89,21 @@ class ActAny(lr_lib.gui.action.act_goto.ActGoto):
 
         info = []
         t = time.strftime('%H:%M:%S %m.%d.%y', time.gmtime(os.path.getmtime(self.action_file)))
-        info.append('{f} : size={sa}, id={s}, create={t}'.format(
-            f=self.action_file, s=self.id_, sa=os.path.getsize(self.action_file), t=t))
+        e = '{f} : size={sa}, id={s}, create={t}'
+        a = e.format(f=self.action_file, s=self.id_, sa=os.path.getsize(self.action_file), t=t,)
+        info.append(a)
 
         if self.web_action.websReport.rus_webs:
-            info.append('В следующих номерах inf, обнаружены Русские(NoASCII) символы, возможно требуется '
-                        'перекодировка(выделение/encoding из меню мыши)\n{}'.format(
-                self.web_action.websReport.rus_webs))
+            s = 'В следующих номерах inf, обнаружены Русские(NoASCII) символы, ' \
+                'возможно требуется перекодировка(выделение/encoding из меню мыши)\n{}'
+            b = s.format(self.web_action.websReport.rus_webs)
+            info.append(b)
 
         if self.web_action.websReport.google_webs:
-            info.append('Возможно следующие номера inf лишние, тк содержат слова {s}\nих можно удалить('
-                        '+"сохр пользоват. измения в тексте" из меню мыши)\n{w}'.format(
-                w=self.web_action.websReport.google_webs, s=lr_lib.core.var.vars_param.DENY_WEB_))
+            r = 'Возможно следующие номера inf лишние, тк содержат слова {s}\nих можно удалить' \
+                '(+"сохр пользоват. измения в тексте" из меню мыши)\n{w}'
+            d = r.format(w=self.web_action.websReport.google_webs, s=lr_lib.core.var.vars_param.DENY_WEB_)
+            info.append(d)
 
         if info:
             lr_vars.Logger.info('\n\n'.join(info), parent=self)

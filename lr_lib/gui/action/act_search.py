@@ -25,37 +25,45 @@ class ActSearch(lr_lib.gui.action.act_serializ.TkTextWebSerialization):
         self._uptext = '<-up %s'
 
         self.search_button = tk.Button(
-            self.toolbar, text='> Поиск >', command=self.search_in_action, font=lr_vars.DefaultFont)
+            self.toolbar, text='> Поиск >', command=self.search_in_action, font=lr_vars.DefaultFont,
+        )
         self.search_entry = ttk.Combobox(
-            self.toolbar, textvariable=self.searchVar, font=lr_vars.DefaultFont + ' italic', justify='center')
+            self.toolbar, textvariable=self.searchVar, font=(lr_vars.DefaultFont + ' italic'), justify='center',
+        )
         self.search_entry.bind("<KeyRelease-Return>", self.search_in_action)
         self.search_entry['values'] = ['']
 
         self.search_res_combo = ttk.Combobox(
             self.toolbar, textvariable=self.searchPosVar, justify='center', font=lr_vars.DefaultFont,
-            background=lr_lib.core.var.vars_highlight.Background)
+            background=lr_lib.core.var.vars_highlight.Background,
+        )
 
         self.search_res_combo.bind("<<ComboboxSelected>>", self.tk_text_see)
         self.search_res_combo.bind("<KeyRelease-Return>", self.tk_text_see)
 
         self.up_search_button = tk.Button(
-            self.toolbar, text=self._uptext, command=self.search_up, font=lr_vars.DefaultFont)
+            self.toolbar, text=self._uptext, command=self.search_up, font=lr_vars.DefaultFont,
+        )
 
         self.down_search_button = tk.Button(
-            self.toolbar, text='down->', command=self.search_down, font=lr_vars.DefaultFont)
+            self.toolbar, text='down->', command=self.search_down, font=lr_vars.DefaultFont,
+        )
 
         self.SearchReplace_searchCombo = ttk.Combobox(
             self.toolbar, textvariable=self.SearchReplace_searchVar, justify='center', foreground="purple",
-            font=lr_vars.DefaultFont + ' italic')
+            font=(lr_vars.DefaultFont + ' italic'),
+        )
         self.SearchReplace_replaceCombo = ttk.Combobox(
             self.toolbar, textvariable=self.SearchReplace_replaceVar, justify='center', font=lr_vars.DefaultFont,
-            foreground="maroon")
+            foreground="maroon",
+        )
 
         self.SearchReplace_searchCombo['values'] = ['']
         self.SearchReplace_replaceCombo['values'] = ['']
 
         self.SearchReplace_button = tk.Button(
-            self.toolbar, text='> замена >', font=lr_vars.DefaultFont, command=self._replace_button_set)
+            self.toolbar, text='> замена >', font=lr_vars.DefaultFont, command=self._replace_button_set,
+        )
         return
 
     def search_down(self, *a) -> None:
@@ -224,8 +232,10 @@ class ActSearch(lr_lib.gui.action.act_serializ.TkTextWebSerialization):
 
     def _replace_button_set(self, *args) -> None:
         """кнопка замены(обычной как в блокноте) текста"""
-        if messagebox.askyesno(str(self), "action.c: Заменить ? :\n\n{s}\n\n на :\n\n{r}".format(
-                s=self.SearchReplace_searchVar.get(), r=self.SearchReplace_replaceVar.get()), parent=self):
+        t = "action.c: Заменить ? :\n\n{s}\n\n на :\n\n{r}".format(
+            s=self.SearchReplace_searchVar.get(), r=self.SearchReplace_replaceVar.get(),
+        )
+        if messagebox.askyesno(str(self), t, parent=self):
             self.backup()
             text = self.tk_text.get(1.0, tk.END)
             text = text.replace(self.SearchReplace_searchVar.get(), self.SearchReplace_replaceVar.get())

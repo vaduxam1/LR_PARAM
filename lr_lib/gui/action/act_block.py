@@ -17,7 +17,8 @@ class ActBlock(lr_lib.gui.action.act_scroll.ActScrollText):
         lr_lib.gui.action.act_scroll.ActScrollText.__init__(self)
 
         self.unblock = tk.Button(
-            self.file_bar, text='unblock', font=lr_vars.DefaultFont + ' bold', command=lambda *a: self._block(False))
+            self.file_bar, text='unblock', font=(lr_vars.DefaultFont + ' bold'), command=lambda *a: self._block(False),
+        )
         return
 
     @contextlib.contextmanager

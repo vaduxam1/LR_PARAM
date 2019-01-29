@@ -42,7 +42,8 @@ class ActBackup(lr_lib.gui.action.act_block.ActBlock):
 
     def backup_name(self) -> str:
         """имя backup-файла"""
-        i = os.path.join(lr_vars.BackupFolder, lr_vars.BackupName.format(i=self.id_, ind=self._backup_index))
+        n = lr_vars.BackupName.format(i=self.id_, ind=self._backup_index, )
+        i = os.path.join(lr_vars.BackupFolder, n)
         return i
 
     def destroy(self):

@@ -27,12 +27,12 @@ class ActWin(lr_lib.gui.action.act_any.ActAny):
         lr_lib.gui.action.act_any.ActAny.__init__(self)
 
         self.editor_button = tk.Button(
-            self.file_bar, text='editor', font=lr_vars.DefaultFont + ' bold',
+            self.file_bar, text='editor', font=(lr_vars.DefaultFont + ' bold'),
             command=lambda: lr_lib.core.etc.other.openTextInEditor(self.tk_text.get(1.0, tk.END)),
         )
 
         self.auto_param_creator_button = tk.Button(
-            self.toolbar, text='Найти и Создать\nparam WRSP', background='orange', font=lr_vars.DefaultFont + ' bold',
+            self.toolbar, text='Найти и Создать\nparam WRSP', background='orange', font=(lr_vars.DefaultFont + ' bold'),
             command=lambda: lr_lib.core_gui.run.run_setting.RunSettingWindow(self),
         )
 
@@ -41,7 +41,7 @@ class ActWin(lr_lib.gui.action.act_any.ActAny):
         )
 
         self.wrsp_setting = tk.Button(
-            self.toolbar, text='wrsp_setting', font=lr_vars.DefaultFont + ' bold',
+            self.toolbar, text='wrsp_setting', font=(lr_vars.DefaultFont + ' bold'),
             command=lambda *a: lr_lib.gui.widj.wrsp_setting.WrspSettingWindow(parent=self),
         )
 
@@ -52,20 +52,23 @@ class ActWin(lr_lib.gui.action.act_any.ActAny):
 
         #
         self.force_ask_cbx = tk.Checkbutton(
-            self.toolbar, text='Ask', font=lr_vars.DefaultFont, variable=self.force_ask_var, command=self.force_ask_cmd)
+            self.toolbar, text='Ask', font=lr_vars.DefaultFont, variable=self.force_ask_var, command=self.force_ask_cmd,
+        )
         self.no_cbx = tk.Checkbutton(
-            self.toolbar, text='NoAsk', font=lr_vars.DefaultFont, variable=self.no_var, command=self.no_var_cmd)
+            self.toolbar, text='NoAsk', font=lr_vars.DefaultFont, variable=self.no_var, command=self.no_var_cmd,
+        )
 
         #
         self.max_inf_cbx = tk.Checkbutton(
-            self.toolbar, text='ограничить max inf', font=lr_vars.DefaultFont + ' bold', variable=self.max_inf_cbx_var,
-            command=self.max_inf_set,
+            self.toolbar, text='ограничить max inf', font=(lr_vars.DefaultFont + ' bold'),
+            variable=self.max_inf_cbx_var, command=self.max_inf_set,
         )
         self.add_inf_cbx = tk.Checkbutton(
             self.toolbar, anchor=tk.E, text='max inf mode', font=lr_vars.DefaultFont, variable=self.add_inf_cbx_var,
         )
         self.force_yes_inf_checker_cbx = tk.Checkbutton(
-            self.toolbar, text='fYes', font=lr_vars.DefaultFont, variable=self.force_yes_inf)
+            self.toolbar, text='fYes', font=lr_vars.DefaultFont, variable=self.force_yes_inf,
+        )
 
         #
         self.lr_report_B = tk.Button(
@@ -124,7 +127,8 @@ class ActWin(lr_lib.gui.action.act_any.ActAny):
                         'Snapshot=t{p}.inf, в котором расположен,\nпервый заменяемый "{prm}"\n\n'
                         'не может быть({p} <= {inf_nums}) меньше или равен,\n\n'
                         'Snapshot=t{w}.inf, перед которым вставляется:'.format(
-                            prm=wrsp_dict['param'], p=max_action_inf, w=inf_nums[0], inf_nums=inf_nums, ))
+                            prm=wrsp_dict['param'], p=max_action_inf, w=inf_nums[0], inf_nums=inf_nums, )
+                    )
             except Exception as ex:
                 self.search_in_action(word=lr_lib.core.wrsp.param.Snap.format(num=max_action_inf), hist=False)
                 qb = 'param: "{p}"\nweb_reg_save_param: "{n}"'.format(

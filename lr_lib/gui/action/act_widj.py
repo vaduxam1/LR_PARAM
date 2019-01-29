@@ -17,23 +17,30 @@ class ActWidj(lr_lib.gui.action.act_var.ActVar):
 
         # bars
         self.toolbar = tk.LabelFrame(
-            self, relief='ridge', bd=5, labelanchor=tk.N, font=lr_vars.DefaultFont + ' italic',
-            text='для корректной работы, раскладку клавиатуры установить в ENG')
+            self, relief='ridge', bd=5, labelanchor=tk.N, font=(lr_vars.DefaultFont + ' italic'),
+            text='для корректной работы, раскладку клавиатуры установить в ENG',
+        )
 
-        self.middle_bar = tk.LabelFrame(self, relief='ridge', bd=2, text='', labelanchor=tk.S, font=lr_vars.DefaultFont)
+        self.middle_bar = tk.LabelFrame(
+            self, relief='ridge', bd=2, text='', labelanchor=tk.S, font=lr_vars.DefaultFont,
+        )
 
         self.transaction_bar = tk.LabelFrame(
-            self.middle_bar, relief='groove', bd=0, text='transaction', labelanchor=tk.S, font=lr_vars.DefaultFont)
+            self.middle_bar, relief='groove', bd=0, text='transaction', labelanchor=tk.S, font=lr_vars.DefaultFont,
+        )
 
         self.inf_bar = tk.LabelFrame(
-            self.middle_bar, relief='groove', bd=0, text='inf', labelanchor=tk.S, font=lr_vars.DefaultFont)
+            self.middle_bar, relief='groove', bd=0, text='inf', labelanchor=tk.S, font=lr_vars.DefaultFont,
+        )
 
         self.wrsp_bar = tk.LabelFrame(
             self.middle_bar, relief='groove', bd=0, text='web_reg_save_param', labelanchor=tk.S,
-            font=lr_vars.DefaultFont)
+            font=lr_vars.DefaultFont,
+        )
 
         self.font_toolbar = tk.LabelFrame(
-            self.toolbar, relief='groove', bd=0, text='', labelanchor=tk.S, font=lr_vars.DefaultFont)
+            self.toolbar, relief='groove', bd=0, text='', labelanchor=tk.S, font=lr_vars.DefaultFont,
+        )
 
         self.file_bar = tk.LabelFrame(self.toolbar, relief='groove', bd=0, text='', labelanchor=tk.N)
         self.cbx_bar = tk.LabelFrame(self.toolbar, relief='groove', bd=0, text='', labelanchor=tk.S)

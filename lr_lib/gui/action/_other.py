@@ -35,8 +35,8 @@ def auto_update_action_info_lab(self, config, tk_text, id_: int, timeout: int, c
 
     lines = tk_text.highlight_lines
     (top, bottom) = lines.on_sreen_line_nums
-    title(ttl(txt=_set_title(), top=top, bottom=bottom, v=ver, lmax=lines._max_line,
-              p=round(int(tk_text.linenumbers.linenum) // lines._max_line_proc)))
+    p = round(int(tk_text.linenumbers.linenum) // lines._max_line_proc)
+    title(ttl(txt=_set_title(), top=top, bottom=bottom, v=ver, lmax=lines._max_line, p=p))
 
     try:
         pt = ttt1(q_in=lr_vars.T_POOL.pool._qsize, t=lr_vars.T_POOL._size)
