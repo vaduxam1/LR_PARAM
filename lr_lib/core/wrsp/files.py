@@ -95,7 +95,8 @@ def get_folder_infs(folder: str) -> iter((str, int), ):
     for file in next(os.walk(folder))[2]:
         num = get_inf_file_num(file)
         if num:
-            yield file, num
+            item = (file, num)
+            yield item
         continue
     return
 
@@ -110,9 +111,11 @@ def create_files_from_infs(folder: str, enc: str, allow_deny: bool, statistic: b
     # создать файлы ответов
     for chunk_files in executer(get_files_portions, chunks):
         for new_file in filter(bool, chunk_files):
-            file = get_file_with_kwargs(lr_vars.AllFiles, Name=new_file['File']['Name'])
+            name = new_file['File']['Name']
+            file = get_file_with_kwargs(lr_vars.AllFiles, Name=name)
             if file:  # файл уже есть, те пришел из другого inf
-                file['Snapshot']['Nums'].update(new_file['Snapshot']['Nums'])
+                nums = new_file['Snapshot']['Nums']
+                file['Snapshot']['Nums'].update(nums)
             else:
                 lr_vars.AllFiles.append(new_file)
             continue
@@ -123,7 +126,8 @@ def create_files_from_infs(folder: str, enc: str, allow_deny: bool, statistic: b
 def get_files_portions(args: [(str, str, bool, bool), ((str, int),)]) -> [dict, ]:
     """создать файлы, для порции inf-файлов"""
     (arg, files) = args
-    files_gen = map(_create_files_from_inf, ((arg, file) for file in files))
+    gn = ((arg, file) for file in files)
+    files_gen = map(_create_files_from_inf, gn)
     files_ = tuple(file for portion in files_gen for file in portion)
     return files_
 

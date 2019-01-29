@@ -10,7 +10,6 @@ import lr_lib.core.var.vars as lr_vars
 import lr_lib.core.var.vars_other
 import lr_lib.core_gui.action_lib
 import lr_lib.core_gui.group_param.core_gp
-import lr_lib.core_gui.group_param.main_gp
 import lr_lib.core_gui.rename
 import lr_lib.core_gui.run.run_setting
 import lr_lib.gui.action.act_win
@@ -133,11 +132,6 @@ class ActionWindow(lr_lib.gui.action.act_win.ActWin):
             label="* Найти и Создать WRSP: расширенный вариант",
             command=lambda: lr_lib.core_gui.run.run_setting.RunSettingWindow(self)
         )
-
-        # filemenu4.add_command(
-        #     label="* Найти и Создать WRSP: вариантами 1)-5)",
-        #     command=lambda: progress_decor(lr_lib.core_gui.group_param.main_gp.auto_param_creator, self)(self)
-        # )
 
         filemenu4.add_command(
             label="1) по LB",

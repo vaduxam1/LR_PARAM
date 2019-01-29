@@ -10,7 +10,6 @@ import lr_lib.core.var.vars_other
 import lr_lib.core_gui.action_lib
 import lr_lib.core_gui.group_param.core_gp
 import lr_lib.core_gui.group_param.gp_act_re
-import lr_lib.core_gui.group_param.main_gp
 import lr_lib.core_gui.run.run_setting
 import lr_lib.gui.action.act_any
 import lr_lib.gui.etc.gui_other
