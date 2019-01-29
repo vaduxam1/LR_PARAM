@@ -13,17 +13,18 @@ def excepthook(*args) -> None:
     len_args = len(args)
 
     if len_args == 1:
-        exc_type, exc_val, exc_tb = type(args[0]), args[0], args[0].__traceback__
+        (exc_type, exc_val, exc_tb) = (type(args[0]), args[0], args[0].__traceback__)
     elif len_args == 3:
-        exc_type, exc_val, exc_tb = args
+        (exc_type, exc_val, exc_tb) = args
     else:
-        exc_type, exc_val, exc_tb = sys.exc_info()
+        (exc_type, exc_val, exc_tb) = sys.exc_info()
 
     full_tb_write(exc_type, exc_val, exc_tb)
 
     ern = exc_type.__name__
     if lr_vars.Window:
-        lr_vars.MainThreadUpdater.submit(lambda: lr_vars.Window.err_to_widgts(exc_type, exc_val, exc_tb, ern))
+        cmd = lambda: lr_vars.Window.err_to_widgts(exc_type, exc_val, exc_tb, ern)
+        lr_vars.MainThreadUpdater.submit(cmd)
 
     e = get_tb(exc_type, exc_val, exc_tb, ern)
     lr_vars.Logger.critical(e)
@@ -33,14 +34,15 @@ def excepthook(*args) -> None:
 def full_tb_write(*args):
     """логировать полный traceback"""
     if not args:
-        exc_type, exc_val, exc_tb = sys.exc_info()
+        (exc_type, exc_val, exc_tb) = sys.exc_info()
     elif len(args) == 3:
-        exc_type, exc_val, exc_tb = args
+        (exc_type, exc_val, exc_tb) = args
     elif len(args) == 1:
         exc_ = args[0]
-        exc_type, exc_val, exc_tb = exc_.__class__, exc_, exc_.__traceback__
+        (exc_type, exc_val, exc_tb) = (exc_.__class__, exc_, exc_.__traceback__)
     else:
-        raise UserWarning('{e}\n{a}'.format(e=sys.exc_info(), a=list(zip(args, (map(type, args))))))
+        a = list(zip(args, (map(type, args))))
+        raise UserWarning('{e}\n{a}'.format(e=sys.exc_info(), a=a, ))
 
     # в консоль
     traceback.print_tb(exc_tb)
@@ -51,7 +53,8 @@ def full_tb_write(*args):
         log.write('{t}\n{v}'.format(t=exc_type, v=exc_val))
         log.write('\n{0}\n\t<<< traceback.print_tb\n{0}\n'.format(lr_vars.PRINT_SEPARATOR))
 
-    return exc_type, exc_val, exc_tb
+    item = (exc_type, exc_val, exc_tb)
+    return item
 
 
 def get_tb(exc_type, exc_val, exc_tb, err_name: str) -> str:
@@ -95,8 +98,10 @@ def get_tb(exc_type, exc_val, exc_tb, err_name: str) -> str:
             code = '{l}\n{r}'.format(l='\n'.join(left), r='\n'.join(right))
             return code
         except Exception as ex:
-            return 'неудалось загрузить код файла\n{}'.format(ex)
+            v = 'неудалось загрузить код файла\n{}'.format(ex)
+            return v
 
     tb = ''.join(exc_lines[-1:]).rstrip()
     code = get_code().rstrip()
-    return '{tb}\n{s}\n{code}'.format(tb=tb, code=code, s=lr_vars.PRINT_SEPARATOR)
+    s = '{tb}\n{s}\n{code}'.format(tb=tb, code=code, s=lr_vars.PRINT_SEPARATOR)
+    return s
