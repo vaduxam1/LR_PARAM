@@ -211,8 +211,8 @@ class HighlightText(tk.Text):
 
         if isinstance(web_, lr_lib.core.action.web_.WebRegSaveParam):
             m = lr_lib.core.var.vars_highlight.web_reg_highlight_len
-            self.highlight_mode('{}'.format(web_.name[:m]), option='background',
-                                color=lr_lib.core.var.vars_highlight.wrsp_color1)
+            t = '{}'.format(web_.name[:m])
+            self.highlight_mode(t, option='background', color=lr_lib.core.var.vars_highlight.wrsp_color1,)
             self.highlight_mode(web_.name[m:], option='foreground', color=lr_lib.core.var.vars_highlight.wrsp_color2)
             self.highlight_mode(web_.param, option='foreground', color=lr_lib.core.var.vars_highlight.wrsp_color2)
             for line in web_.lines_list[1:]:

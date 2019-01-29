@@ -71,7 +71,8 @@ class YesNoCancel(tk.Toplevel):
                 return
 
             self.buttons[name] = tk.Button(
-                self, text=name, command=cmd, width=width, font='Arial 9 bold', padx=0, pady=0)
+                self, text=name, command=cmd, width=width, font='Arial 9 bold', padx=0, pady=0,
+            )
             self.buttons[name].bind("<KeyRelease-Return>", cmd)
             self.buttons[name].grid(row=i, column=0, sticky=tk.NSEW, columnspan=2, padx=0, pady=0)
             i += 1
@@ -110,7 +111,9 @@ class YesNoCancel(tk.Toplevel):
 
             if not focus:
                 self.buttons[self.default_key].focus_set()
-            self.buttons[self.default_key].configure(height=2, background='orange')
+
+            b = self.buttons[self.default_key]
+            b.configure(height=2, background='orange')
 
         self.center_widget()
         if focus:

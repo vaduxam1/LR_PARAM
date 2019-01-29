@@ -39,7 +39,8 @@ class RespFiles(tk.Toplevel):
 
         file_dt = lr_lib.core.wrsp.files.file_dict_creator(
             ent.get(), full_name, inf_num=0, enc=lr_lib.core.var.vars_other.VarEncode.get(), inf_key='', deny=True,
-            stats=True)
+            stats=True,
+        )
         del file_dt['Param']
         del file_dt['Snapshot']
 
@@ -52,8 +53,9 @@ class RespFiles(tk.Toplevel):
 
         lab = tk.LabelFrame(self, text=desc, font='Arial 7')
         btn = tk.Button(lab, text='folder', command=lambda: self.select_folder(folder), font='Arial 7')
-        lr_lib.gui.widj.tooltip.createToolTip(btn, 'выбор папки с файлами\nвнутри должен быть файл {i}\n{d}'.format(
-            i=self.inf_file, d=folder))
+        lr_lib.gui.widj.tooltip.createToolTip(
+            btn, 'выбор папки с файлами\nвнутри должен быть файл {i}\n{d}'.format(i=self.inf_file, d=folder)
+        )
 
         cbx_var = tk.BooleanVar(value=True)
         cbx = tk.Checkbutton(lab, text='', variable=cbx_var, font='Arial 7')
@@ -93,8 +95,9 @@ class RespFiles(tk.Toplevel):
             return
 
         inf_var = tk.StringVar(value=self.inf_file)
-        inf_cmb = ttk.Combobox(lab, background=lr_lib.core.var.vars_highlight.Background, font='Arial 7',
-                               textvariable=inf_var)
+        inf_cmb = ttk.Combobox(
+            lab, background=lr_lib.core.var.vars_highlight.Background, font='Arial 7', textvariable=inf_var,
+        )
         inf_cmb['values'] = list(sorted(get_inf_files(), key=lr_lib.core.etc.other.numericalSort))
         inf_cmb.bind("<<ComboboxSelected>>", set_inf)
         inf_cmb.config(width=max(len(i) for i in (inf_cmb['values'] or [''])))
@@ -118,7 +121,9 @@ class RespFiles(tk.Toplevel):
         elif w > w2:
             w = w2
         for i in range(len(self.resp_widj)):
-            self.resp_widj[i][3].config(width=w)
+            wi = self.resp_widj[i]
+            wd = wi[3]
+            wd.config(width=w)
             continue
         return
 

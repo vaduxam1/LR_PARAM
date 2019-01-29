@@ -113,8 +113,8 @@ class HighlightLines:
 
         if lr_lib.core.var.vars_highlight.OliveChildTeg in line_indxs:  # удалить из Olive тега все индексы, принадлежищие любому другому тегу
             other_tegs = (line_indxs.keys() - lr_lib.core.var.vars_highlight.minus_teg)
-            line_indxs[lr_lib.core.var.vars_highlight.OliveChildTeg] -= set(
-                i for t in other_tegs for i in line_indxs[t])
+            st = set(i for t in other_tegs for i in line_indxs[t])
+            line_indxs[lr_lib.core.var.vars_highlight.OliveChildTeg] -= st
 
         # подсветить
         tag_add = self.tk_text.tag_add

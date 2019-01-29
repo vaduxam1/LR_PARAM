@@ -24,10 +24,12 @@ class TopEncoding(tk.Toplevel):
 
         encodeEntry = ttk.Combobox(
             self, justify='center', textvariable=lr_lib.core.var.vars_other.VarEncode, width=65, foreground='grey',
-            background=lr_lib.core.var.vars_highlight.Background, font=lr_vars.DefaultFont + ' italic')
+            background=lr_lib.core.var.vars_highlight.Background, font=(lr_vars.DefaultFont + ' italic'),
+        )
 
         encodeEntry['values'] = lr_lib.core.var.vars_other.ENCODE_LIST
-        encodeEntry.bind("<<ComboboxSelected>>", lambda *a: self.action.comboFiles_change())
+        cmd = lambda *a: self.action.comboFiles_change()
+        encodeEntry.bind("<<ComboboxSelected>>", cmd)
 
         lr_lib.gui.widj.tooltip.createToolTip(encodeEntry, tt)
         encodeEntry.pack()

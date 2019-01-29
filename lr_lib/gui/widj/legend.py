@@ -45,7 +45,8 @@ class WebLegend(tk.Toplevel):
         hscrollbar.pack(fill=tk.X, side=tk.BOTTOM, expand=tk.FALSE)
 
         self.canvas = tk.Canvas(
-            self, bd=0, highlightthickness=0, yscrollcommand=vscrollbar.set, xscrollcommand=hscrollbar.set)
+            self, bd=0, highlightthickness=0, yscrollcommand=vscrollbar.set, xscrollcommand=hscrollbar.set,
+        )
         self.canvas.pack(side=tk.LEFT, fill=tk.BOTH, expand=tk.TRUE)
 
         vscrollbar.config(command=self.canvas.yview)
@@ -59,7 +60,8 @@ class WebLegend(tk.Toplevel):
         self.interior.bind('<Configure>', self._configure_interior)
 
         self.h_entry = tk.Spinbox(
-            self, width=4, justify='center', from_=0, to=10000, command=self.print, textvariable=self.H)
+            self, width=4, justify='center', from_=0, to=10000, command=self.print, textvariable=self.H,
+        )
         lr_lib.gui.widj.tooltip.createToolTip(self.h_entry, 'высота, между верхними и нижними объектами')
 
         def enter_H(*_) -> None:
@@ -74,8 +76,9 @@ class WebLegend(tk.Toplevel):
         self.tr = []  # [(0, 'NoTransaction_1'), (1, 'login'),...
         self.tr_but = tk.Button(self, text='transac', command=self.show_transac)
         self.tr_but.pack()
-        lr_lib.gui.widj.tooltip.createToolTip(self.tr_but,
-                                              'показать соответствие номеров(из окна легенды) и имен транзакций')
+        lr_lib.gui.widj.tooltip.createToolTip(
+            self.tr_but, 'показать соответствие номеров(из окна легенды) и имен транзакций'
+        )
 
         self.top_var = tk.BooleanVar(value=True)
         self.top_cbx = tk.Checkbutton(self, text='onTop', command=self._set_on_top, variable=self.top_var)
@@ -146,9 +149,11 @@ class WebLegend(tk.Toplevel):
 
             st = 'Snap: {}\nout: {}'.format(i, len(wdt[i].web_reg_save_param_list))
             r_in = 'транзакция: "{t}"\n{s}'.format(
-                s=self.parent.web_action.websReport.stats_in_web(i).strip(), t=transaction)
+                s=self.parent.web_action.websReport.stats_in_web(i).strip(), t=transaction,
+            )
             r_out = 'транзакция: "{t}"\n{s}'.format(
-                s=self.parent.web_action.websReport.stats_out_web(i).strip(), t=transaction)
+                s=self.parent.web_action.websReport.stats_out_web(i).strip(), t=transaction,
+            )
 
             def onObjectClick1(event, i=i, colors=colors) -> None:
                 """показать/удалить линии out"""
@@ -175,10 +180,12 @@ class WebLegend(tk.Toplevel):
                 if c:
                     c -= 1
                 cl = (colrs[c:] + colrs[:c])
-                onObjectClick1 = lambda event, i=i, cl=cl, *k: onObjectClick1(event, i=i,
-                                                                              colors=iter(itertools.cycle(cl)))
-                onObjectClick2 = lambda event, i=i, cl=cl, *k: onObjectClick2(event, i=i,
-                                                                              colors=iter(itertools.cycle(cl)))
+                onObjectClick1 = lambda event, i=i, cl=cl, *k: onObjectClick1(
+                    event, i=i, colors=iter(itertools.cycle(cl))
+                )
+                onObjectClick2 = lambda event, i=i, cl=cl, *k: onObjectClick2(
+                    event, i=i, colors=iter(itertools.cycle(cl))
+                )
             else:
                 cmd = self.canvas.create_rectangle
             xy1 = (lcolor, sep, 20, (width + sep + w_), (20 + height),)
@@ -244,8 +251,8 @@ class WebLegend(tk.Toplevel):
                             self.canvas.tag_bind(line, '<Button-3>', onObjectClick)
                             r = 'Snapshot=t{i}.inf\n{r}'.format(r='\n'.join(in_count), i=i)
                             lr_lib.gui.widj.tooltip_canvas.CanvasTooltip(self.canvas, line, text=r)
-                            self.canvas.tag_bind(line, '<ButtonPress-1>',
-                                                 lambda *a, r=r.replace('\n', ', '): self.title(r + self.ttl))
+                            cmd = lambda *a, r=r.replace('\n', ', '): self.title(r + self.ttl)
+                            self.canvas.tag_bind(line, '<ButtonPress-1>', cmd)
                         continue
                     continue
             continue
