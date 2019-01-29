@@ -36,19 +36,20 @@ class WinFrame(tk.Frame):
 
         # frame
         self.main_frame = tk.LabelFrame(
-            self, bd=2, labelanchor=tk.N, relief='groove', padx=0, pady=0, font=lr_vars.DefaultFont)
+            self, bd=2, labelanchor=tk.N, relief='groove', padx=0, pady=0, font=lr_vars.DefaultFont,
+        )
         self.mid_frame = tk.Frame(self.main_frame, )
         self.find_frame = tk.Frame(self.main_frame, )
         self.show_param_frame = tk.Frame(self.main_frame, )
         self.last_frame = tk.LabelFrame(
-            self, labelanchor=tk.S, bd=1, relief='groove', padx=0, pady=0, font=lr_vars.DefaultFont)
+            self, labelanchor=tk.S, bd=1, relief='groove', padx=0, pady=0, font=lr_vars.DefaultFont,
+        )
         return
 
     def on_closing(self) -> None:
         """не выходить, при открытых action.c окнах"""
-        if (not self.action_windows) or tk.messagebox.askokcancel(
-                'выход', "Есть открытые action.c окна\n{a}\nвсе равно выйти?".format(
-                    a=', '.join(map(str, self.action_windows)))):
+        tt = "Есть открытые action.c окна\n{a}\nвсе равно выйти?".format(a=', '.join(map(str, self.action_windows)))
+        if (not self.action_windows) or tk.messagebox.askokcancel('выход', tt):
             self.destroy()
             lr_vars.Tk.destroy()
         return

@@ -13,6 +13,15 @@ import lr_lib.gui.widj.lbrb5
 import lr_lib.gui.wrsp.win_part_lbrb
 
 
+LFT = '''
+Файлы({files_all}->{param_files}) | 
+Snapshot(все[{all_inf_min}:{all_inf_max}]={all_inf_len}->
+поиск[{param_inf_min}:{param_inf_max}]={search_inf_len}->
+найдено[{_param_inf_min}:{_param_inf_max}]={_param_inf_all}) | 
+Найдено {param_all} param
+'''.strip()
+
+
 class WinWidj(lr_lib.gui.wrsp.win_part_lbrb.WinPartsLbRb):
     """основные виджеты: (1) (2) (3) (6)"""
     cbxClearShowVar = tk.IntVar(value=lr_vars.cbxClearShowVar)  # перед (2), очищать центральный виджет текста
@@ -23,34 +32,45 @@ class WinWidj(lr_lib.gui.wrsp.win_part_lbrb.WinPartsLbRb):
     def __init__(self):
         lr_lib.gui.wrsp.win_part_lbrb.WinPartsLbRb.__init__(self)
 
-        self.t0 = tk.Label(self.find_frame, text='?', font=(lr_vars.DefaultFont + ' italic'), padx=0, pady=0,
-                           foreground='grey')
-        self.t01 = tk.Label(self.show_param_frame, text='?', font=(lr_vars.DefaultFont + ' italic'), padx=0, pady=0,
-                            foreground='grey')
-        self.t02 = tk.Label(self.mid_frame, text='?', font=(lr_vars.DefaultFont + ' italic'), padx=0, pady=0,
-                            foreground='grey')
-        self.t1 = tk.Label(self.find_frame, text='(1)', font=(lr_vars.DefaultFont + ' italic bold'), padx=0, pady=0,
-                           foreground='brown')
-        self.t2 = tk.Label(self.show_param_frame, text='(2)', font=(lr_vars.DefaultFont + ' italic bold'),
-                           padx=0, pady=0, foreground='brown')
-        self.t3 = tk.Label(self.mid_frame, text='(3)', font=(lr_vars.DefaultFont + ' italic bold'), padx=0, pady=0,
-                           foreground='brown')
+        self.t0 = tk.Label(
+            self.find_frame, text='?', font=(lr_vars.DefaultFont + ' italic'), padx=0, pady=0, foreground='grey',
+        )
+        self.t01 = tk.Label(
+            self.show_param_frame, text='?', font=(lr_vars.DefaultFont + ' italic'), padx=0, pady=0, foreground='grey',
+        )
+        self.t02 = tk.Label(
+            self.mid_frame, text='?', font=(lr_vars.DefaultFont + ' italic'), padx=0, pady=0, foreground='grey',
+        )
+        self.t1 = tk.Label(
+            self.find_frame, text='(1)', font=(lr_vars.DefaultFont + ' italic bold'), padx=0, pady=0,
+            foreground='brown',
+        )
+        self.t2 = tk.Label(
+            self.show_param_frame, text='(2)', font=(lr_vars.DefaultFont + ' italic bold'), padx=0, pady=0,
+            foreground='brown',
+        )
+        self.t3 = tk.Label(
+            self.mid_frame, text='(3)', font=(lr_vars.DefaultFont + ' italic bold'), padx=0, pady=0, foreground='brown',
+        )
 
         # (1)
-        self.comboParam = ttk.Combobox(self.find_frame, textvariable=lr_vars.VarParam, justify='center',
-                                       font=lr_vars.DefaultFont, width=54)
+        self.comboParam = ttk.Combobox(
+            self.find_frame, textvariable=lr_vars.VarParam, justify='center', font=lr_vars.DefaultFont, width=54,
+        )
 
         # (2)
         self.ButtonFindParamFiles = tk.Button(
-            self.show_param_frame, text='поиск {param} в файлах ответов', font=lr_vars.DefaultFont + ' italic bold',
-            padx=0, pady=0, command=lambda *a: lr_vars.Tk.after(0, self.get_files), background='orange')
+            self.show_param_frame, text='поиск {param} в файлах ответов', font=(lr_vars.DefaultFont + ' italic bold'),
+            padx=0, pady=0, command=lambda *a: lr_vars.Tk.after(0, self.get_files), background='orange',
+        )
 
         # (3)
-        self.comboFiles = ttk.Combobox(self.mid_frame, state="readonly", justify='center', font=lr_vars.DefaultFont)
+        self.comboFiles = ttk.Combobox(self.mid_frame, state="readonly", justify='center', font=lr_vars.DefaultFont,)
 
         # (6)
-        self.t6 = tk.Label(self.mid_frame, text='(6)', font=(lr_vars.DefaultFont + ' italic bold'), padx=0, pady=0,
-                           foreground='brown')
+        self.t6 = tk.Label(
+            self.mid_frame, text='(6)', font=(lr_vars.DefaultFont + ' italic bold'), padx=0, pady=0, foreground='brown',
+        )
 
         #
         self.comboParam.bind("<KeyRelease-Return>", self.get_files)
@@ -86,18 +106,13 @@ class WinWidj(lr_lib.gui.wrsp.win_part_lbrb.WinPartsLbRb):
         elif self.cbxWrspAutoCreate.get():
             self.show_LR_Param(callback)
 
-        self.last_frame['text'] = 'Файлы({files_all}->{param_files}) | ' \
-                                  'Snapshot(все[{all_inf_min}:{all_inf_max}]={all_inf_len}->' \
-                                  'поиск[{param_inf_min}:{param_inf_max}]={search_inf_len}->' \
-                                  'найдено[{_param_inf_min}:{_param_inf_max}]={_param_inf_all}) | ' \
-                                  'Найдено {param_all} param.'.format(**lr_vars.VarWrspDict.get())
+        self.last_frame['text'] = LFT.format(**lr_vars.VarWrspDict.get())
         return
 
     def firstOrLastFile(self, *args) -> None:
         """выбрать первый/последный файл в (3)"""
         if (not lr_vars.FilesWithParam) or (not self.comboParam.get()):
             return
-        # i = (len(self.comboFiles['values']) - 1) if lr_vars.VarFirstLastFile.get() else 0
         self.comboFiles.current(0)
         self.comboFiles_change()
         return
@@ -110,9 +125,11 @@ class WinWidj(lr_lib.gui.wrsp.win_part_lbrb.WinPartsLbRb):
         self.comboPartsFill()
         self.comboParts.set(part if part else 0)
         self.comboParts_change()
-        lr_lib.gui.widj.tooltip.createToolTip(self.comboFiles, lr_lib.core.etc.other.file_string(
-            lr_lib.core.wrsp.files.get_file_with_kwargs(
-                lr_vars.FilesWithParam, Name=name)))
+
+        lr_lib.gui.widj.tooltip.createToolTip(
+            self.comboFiles, lr_lib.core.etc.other.file_string(
+                lr_lib.core.wrsp.files.get_file_with_kwargs(lr_vars.FilesWithParam, Name=name))
+        )
         return
 
     def comboPartsFill(self) -> None:
@@ -122,9 +139,11 @@ class WinWidj(lr_lib.gui.wrsp.win_part_lbrb.WinPartsLbRb):
             self.comboParts['values'] = file['Param']['Count_indexs']
         else:
             self.comboParts['values'] = list(range(file['Param']['Count']))
+
         lr_lib.gui.widj.tooltip.createToolTip(
-            lr_vars.Window.comboFiles, lr_lib.core.etc.other.file_string(lr_lib.core.wrsp.files.get_file_with_kwargs(
-                lr_vars.FilesWithParam, Name=file['File']['Name'])))
+            lr_vars.Window.comboFiles, lr_lib.core.etc.other.file_string(
+                lr_lib.core.wrsp.files.get_file_with_kwargs(lr_vars.FilesWithParam, Name=file['File']['Name']))
+        )
         return
 
     def show_LR_Param(self, callback=None) -> str:
@@ -170,6 +189,7 @@ class WinWidj(lr_lib.gui.wrsp.win_part_lbrb.WinPartsLbRb):
     def show_frame_info_working(self) -> None:
         """отображение всякой информации"""
         self.main_frame['text'] = '{} | {} | ParamClipBoardSearchHotKey[{}]'.format(
-            lr_lib.core.var.vars_other.VarEncode.get(), time.strftime('%H:%M:%S'), lr_vars.FIND_PARAM_HOTKEY)
+            lr_lib.core.var.vars_other.VarEncode.get(), time.strftime('%H:%M:%S'), lr_vars.FIND_PARAM_HOTKEY,
+        )
         self.last_frame['text'] = 'working ... {}'.format(lr_vars.VarFilesFolder.get())
         return

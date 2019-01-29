@@ -16,11 +16,13 @@ class WinFileSort(lr_lib.gui.wrsp.win_maxmin.WinMaxMin):
 
         self.sortKey1 = ttk.Combobox(
             self.last_frame, textvariable=lr_vars.VarFileSortKey1, justify='center', width=10,
-            font=lr_vars.DefaultFont + ' italic', style="BW.TButton")
+            font=(lr_vars.DefaultFont + ' italic'), style="BW.TButton",
+        )
 
         self.sortKey2 = ttk.Combobox(
             self.last_frame, textvariable=lr_vars.VarFileSortKey2, justify='center',
-            font=lr_vars.DefaultFont + ' italic', style="BW.TButton")
+            font=(lr_vars.DefaultFont + ' italic'), style="BW.TButton",
+        )
 
         self.sortKey1.bind("<<ComboboxSelected>>", self.setSortKey1)
         self.sortKey2.bind("<<ComboboxSelected>>", self.setSortKey2)

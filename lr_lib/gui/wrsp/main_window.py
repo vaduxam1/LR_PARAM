@@ -7,6 +7,30 @@ import lr_lib
 import lr_lib.gui.wrsp.win_menu
 
 
+t0 = '(3) - выбор файла из результатов поиска (2):lr_vars.FilesWithParam\n\t' \
+     '# Window.comboFiles == lr_vars.FilesWithParam\n\t' \
+     '# lr_vars.VarFileName -> lr_vars.VarFile ->(4):lr_vars.VarFileText\n\t\t\t' \
+     '-> lr_vars.VarPartNum'
+
+t1 = '(1) Поле ввода {param}\n\t' \
+     '# Window.comboParam'
+
+t2 = '(2) найти файлы(3), содержащие {param}(1)\n\t' \
+     '# Window.ButtonFindParamFiles\n\t' \
+     '# lr_vars.VarParam.set->Window.comboParam->lr_vars.AllFiles->(3):lr_vars.FilesWithParam'
+
+t4 = '(4) - порядковый номер вхождения {param} в файл(3).\n' \
+     'param(1) в файле может встречатся несколько раз,\n' \
+     'с разными (5)LB/RB. Нумерация с 0.\n\t' \
+     '# Window.comboParts == file["Param"]["Count"]\n\t' \
+     '# lr_vars.VarPartNum -> lr_vars.VarLB/lr_vars.VarRB'
+
+t6 = '(6) получить web_reg_save_param, с учетом (1)-(5)\n\t' \
+     '# Window.ButtonShowParam\n\t' \
+     '# lr_vars.VarWrspDict' \
+     ' -> param.web_reg_save_param'
+
+
 class Window(lr_lib.gui.wrsp.win_menu.WinMenu):
     """главное окно скрипта
     Window
@@ -36,25 +60,6 @@ class Window(lr_lib.gui.wrsp.win_menu.WinMenu):
         lr_lib.gui.widj.tooltip.createToolTip(self.t0, lr_lib.etc.help.CODE)
         lr_lib.gui.widj.tooltip.createToolTip(self.t01, lr_lib.etc.help.WORK)
         lr_lib.gui.widj.tooltip.createToolTip(self.t02, lr_lib.etc.help.ADD)
-
-        t0 = '(3) - выбор файла из результатов поиска (2):lr_vars.FilesWithParam\n\t' \
-             '# Window.comboFiles == lr_vars.FilesWithParam\n\t' \
-             '# lr_vars.VarFileName -> lr_vars.VarFile ->(4):lr_vars.VarFileText\n\t\t\t' \
-             '-> lr_vars.VarPartNum'
-        t1 = '(1) Поле ввода {param}\n\t' \
-             '# Window.comboParam'
-        t2 = '(2) найти файлы(3), содержащие {param}(1)\n\t' \
-             '# Window.ButtonFindParamFiles\n\t' \
-             '# lr_vars.VarParam.set->Window.comboParam->lr_vars.AllFiles->(3):lr_vars.FilesWithParam'
-        t4 = '(4) - порядковый номер вхождения {param} в файл(3).\n' \
-             'param(1) в файле может встречатся несколько раз,\n' \
-             'с разными (5)LB/RB. Нумерация с 0.\n\t' \
-             '# Window.comboParts == file["Param"]["Count"]\n\t' \
-             '# lr_vars.VarPartNum -> lr_vars.VarLB/lr_vars.VarRB'
-        t6 = '(6) получить web_reg_save_param, с учетом (1)-(5)\n\t' \
-             '# Window.ButtonShowParam\n\t' \
-             '# lr_vars.VarWrspDict' \
-             ' -> param.web_reg_save_param'
 
         lr_lib.gui.widj.tooltip.createToolTip(self.t3, t0)
         lr_lib.gui.widj.tooltip.createToolTip(self.comboFiles, t0)

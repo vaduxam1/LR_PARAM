@@ -18,8 +18,9 @@ class WinAct(lr_lib.gui.wrsp.win_frame.WinFrame):
         self.action_windows = collections.OrderedDict()  # {id: lr_lib.gui.action.main_action.ActionWindow, }
 
         self.actionButton = tk.Button(
-            self.find_frame, text=' action.c  editor ', font=lr_vars.DefaultFont + ' italic bold', padx=0, pady=0,
-            command=self.new_action_window, relief='ridge', background='orange')
+            self.find_frame, text=' action.c  editor ', font=(lr_vars.DefaultFont + ' italic bold'), padx=0, pady=0,
+            command=self.new_action_window, relief='ridge', background='orange',
+        )
         return
 
     def get_main_action(self) -> lr_lib.gui.action.main_action.ActionWindow:

@@ -16,11 +16,13 @@ class WinMaxMin(lr_lib.gui.wrsp.win_widj.WinWidj):
 
         self.max_inf = ttk.Combobox(
             self.show_param_frame, width=10, textvariable=lr_vars.VarSearchMaxSnapshot, justify='center',
-            foreground='grey', font=lr_vars.DefaultFont, style="BW.TButton")
+            foreground='grey', font=lr_vars.DefaultFont, style="BW.TButton",
+        )
 
         self.min_inf = ttk.Combobox(
             self.show_param_frame, width=10, textvariable=lr_vars.VarSearchMinSnapshot, justify='center',
-            foreground='grey', font=lr_vars.DefaultFont, style="BW.TButton")
+            foreground='grey', font=lr_vars.DefaultFont, style="BW.TButton",
+        )
 
         self.max_inf.bind("<<ComboboxSelected>>", self._min_max_set)
         self.min_inf.bind("<<ComboboxSelected>>", self._min_max_set)

@@ -17,19 +17,23 @@ class WinFolder(lr_lib.gui.wrsp.win_other.WinOther):
 
         self.Button_change_folder = tk.Button(
             self.last_frame, text='folder', padx=0, pady=0, command=self.change_folder_ask,
-            font=lr_vars.DefaultFont + ' italic bold', relief='groove')
+            font=(lr_vars.DefaultFont + ' italic bold'), relief='groove',
+        )
 
         self.change_folder_cbx = tk.Checkbutton(
-            self.last_frame, variable=lr_vars.VarIsSnapshotFiles, padx=0, pady=0, font=lr_vars.DefaultFont + ' italic',
-            command=self.set_folder, text='lr')
+            self.last_frame, variable=lr_vars.VarIsSnapshotFiles, padx=0, pady=0,
+            font=(lr_vars.DefaultFont + ' italic'), command=self.set_folder, text='lr',
+        )
 
         self.deny_file_cbx = tk.Checkbutton(
-            self.last_frame, variable=lr_vars.VarAllowDenyFiles, padx=0, pady=0, font=lr_vars.DefaultFont + ' italic',
-            command=self.set_folder, text='deny')
+            self.last_frame, variable=lr_vars.VarAllowDenyFiles, padx=0, pady=0, font=(lr_vars.DefaultFont + ' italic'),
+            command=self.set_folder, text='deny',
+        )
 
         self.filesStats_cbx = tk.Checkbutton(
             self.last_frame, variable=lr_vars.VarAllFilesStatistic, padx=0, pady=0, text='stat',
-            font=lr_vars.DefaultFont + ' italic', command=self.set_folder)
+            font=(lr_vars.DefaultFont + ' italic'), command=self.set_folder,
+        )
         return
 
     def set_folder(self) -> None:
