@@ -26,17 +26,20 @@ class TopPoolSetting(tk.Toplevel):
         labMP.grid(row=1, column=1)
         lr_lib.gui.widj.tooltip.createToolTip(labMP, 'основной пул(process), поиск в файлах и тд')
 
-        entryMPName = ttk.Combobox(self, justify='center', textvariable=lr_vars.M_POOL.name, width=65,
-                                   foreground='grey',
-                                   background=lr_lib.core.var.vars_highlight.Background,
-                                   font=lr_vars.DefaultFont + ' italic')
+        entryMPName = ttk.Combobox(
+            self, justify='center', textvariable=lr_vars.M_POOL.name, width=65, foreground='grey',
+            background=lr_lib.core.var.vars_highlight.Background,
+            font=(lr_vars.DefaultFont + ' italic'),
+        )
         entryMPName['values'] = list(lr_vars.T_POOL.pools.keys())
         entryMPName.bind("<<ComboboxSelected>>", lambda *a: self.set_pool(lr_vars.M_POOL))
         lr_lib.gui.widj.tooltip.createToolTip(entryMPName, 'тип MP пула(любые стандартные(process))')
         entryMPName.grid(row=2, column=0, columnspan=7)
 
-        spinMP = tk.Spinbox(self, from_=0, to=999, textvariable=lr_vars.M_POOL.size, width=3, font=lr_vars.DefaultFont,
-                            command=lambda *a: self.set_pool(lr_vars.M_POOL))
+        spinMP = tk.Spinbox(
+            self, from_=0, to=999, textvariable=lr_vars.M_POOL.size, width=3, font=lr_vars.DefaultFont,
+            command=lambda *a: self.set_pool(lr_vars.M_POOL),
+        )
         spinMP.grid(row=2, column=7)
         lr_lib.gui.widj.tooltip.createToolTip(spinMP, 'размер MP пула')
 
@@ -44,67 +47,86 @@ class TopPoolSetting(tk.Toplevel):
         labT.grid(row=3, column=1)
         lr_lib.gui.widj.tooltip.createToolTip(labT, 'доп пул(thread only), выполнение в фоне, подсветка и тд')
 
-        entryTName = ttk.Combobox(self, justify='center', textvariable=lr_vars.T_POOL.name, width=65, foreground='grey',
-                                  background=lr_lib.core.var.vars_highlight.Background,
-                                  font=lr_vars.DefaultFont + ' italic')
+        entryTName = ttk.Combobox(
+            self, justify='center', textvariable=lr_vars.T_POOL.name, width=65, foreground='grey',
+            background=lr_lib.core.var.vars_highlight.Background, font=(lr_vars.DefaultFont + ' italic'),
+        )
         entryTName['values'] = list(lr_vars.T_POOL.pools.keys())
         entryTName.bind("<<ComboboxSelected>>", lambda *a: self.set_pool(lr_vars.T_POOL))
         lr_lib.gui.widj.tooltip.createToolTip(entryTName, 'тип T пула(чтото из thread)')
         entryTName.grid(row=4, column=0, columnspan=7)
 
-        spinT = tk.Spinbox(self, from_=0, to=999, textvariable=lr_vars.T_POOL.size, width=3, font=lr_vars.DefaultFont,
-                           command=self.set_pool(lr_vars.T_POOL))
+        spinT = tk.Spinbox(
+            self, from_=0, to=999, textvariable=lr_vars.T_POOL.size, width=3, font=lr_vars.DefaultFont,
+            command=self.set_pool(lr_vars.T_POOL),
+        )
         spinT.grid(row=4, column=7)
         lr_lib.gui.widj.tooltip.createToolTip(spinT, 'размер T пула')
 
-        spinSThreadAutoSizeTimeOut = tk.Spinbox(self, from_=0, to=(10 ** 5),
-                                                textvariable=lr_vars.SThreadAutoSizeTimeOut, width=4,
-                                                font=lr_vars.DefaultFont)
+        spinSThreadAutoSizeTimeOut = tk.Spinbox(
+            self, from_=0, to=(10 ** 5), textvariable=lr_vars.SThreadAutoSizeTimeOut, width=4, font=lr_vars.DefaultFont,
+        )
         spinSThreadAutoSizeTimeOut.grid(row=5, column=2)
-        lr_lib.gui.widj.tooltip.createToolTip(spinSThreadAutoSizeTimeOut,
-                                              'SThreadAutoSizeTimeOut отзывчивость(мсек) SThreadPool - '
-                                              'период опроса, для изменения размера пула')
+        lr_lib.gui.widj.tooltip.createToolTip(
+            spinSThreadAutoSizeTimeOut,
+            'SThreadAutoSizeTimeOut отзывчивость(мсек) SThreadPool - период опроса, для изменения размера пула',
+        )
 
-        spinMainThreadUpdateTime = tk.Spinbox(self, from_=0, to=(10 ** 5), textvariable=lr_vars.MainThreadUpdateTime,
-                                              width=4, font=lr_vars.DefaultFont)
+        spinMainThreadUpdateTime = tk.Spinbox(
+            self, from_=0, to=(10 ** 5), textvariable=lr_vars.MainThreadUpdateTime, width=4, font=lr_vars.DefaultFont,
+        )
         spinMainThreadUpdateTime.grid(row=5, column=0)
-        lr_lib.gui.widj.tooltip.createToolTip(spinMainThreadUpdateTime,
-                                              'MainThreadUpdateTime интервал(мс) проверки очереди выполнения для главного потока')
+        lr_lib.gui.widj.tooltip.createToolTip(
+            spinMainThreadUpdateTime,
+            'MainThreadUpdateTime интервал(мс) проверки очереди выполнения для главного потока',
+        )
 
-        spinSThreadPoolSizeMin = tk.Spinbox(self, from_=0, to=(10 ** 5), textvariable=lr_vars.SThreadPoolSizeMin,
-                                            width=4, font=lr_vars.DefaultFont)
+        spinSThreadPoolSizeMin = tk.Spinbox(
+            self, from_=0, to=(10 ** 5), textvariable=lr_vars.SThreadPoolSizeMin, width=4, font=lr_vars.DefaultFont,
+        )
         spinSThreadPoolSizeMin.grid(row=5, column=3)
         lr_lib.gui.widj.tooltip.createToolTip(spinSThreadPoolSizeMin, 'SThreadPool min size')
 
-        spinSThreadPoolSizeMax = tk.Spinbox(self, from_=0, to=(10 ** 5), textvariable=lr_vars.SThreadPoolSizeMax,
-                                            width=4, font=lr_vars.DefaultFont)
+        spinSThreadPoolSizeMax = tk.Spinbox(
+            self, from_=0, to=(10 ** 5), textvariable=lr_vars.SThreadPoolSizeMax, width=4, font=lr_vars.DefaultFont,
+        )
         spinSThreadPoolSizeMax.grid(row=5, column=4)
         lr_lib.gui.widj.tooltip.createToolTip(spinSThreadPoolSizeMax, 'SThreadPool max size (int>2)')
 
-        spinSThreadPoolAddMinQSize = tk.Spinbox(self, from_=0, to=(10 ** 5),
-                                                textvariable=lr_vars.SThreadPoolAddMinQSize, width=4,
-                                                font=lr_vars.DefaultFont)
+        spinSThreadPoolAddMinQSize = tk.Spinbox(
+            self, from_=0, to=(10 ** 5), textvariable=lr_vars.SThreadPoolAddMinQSize, width=4, font=lr_vars.DefaultFont,
+        )
         spinSThreadPoolAddMinQSize.grid(row=5, column=5)
-        lr_lib.gui.widj.tooltip.createToolTip(spinSThreadPoolAddMinQSize,
-                                              'SThreadPool - минимальная длина очереди, для добавления, более чем одного потока, за раз')
+        lr_lib.gui.widj.tooltip.createToolTip(
+            spinSThreadPoolAddMinQSize,
+            'SThreadPool - минимальная длина очереди, для добавления, более чем одного потока, за раз',
+        )
 
-        spinSThreadPooMaxAddThread = tk.Spinbox(self, from_=0, to=(10 ** 5),
-                                                textvariable=lr_vars.SThreadPooMaxAddThread, width=4,
-                                                font=lr_vars.DefaultFont)
+        spinSThreadPooMaxAddThread = tk.Spinbox(
+            self, from_=0, to=(10 ** 5), textvariable=lr_vars.SThreadPooMaxAddThread, width=4, font=lr_vars.DefaultFont,
+        )
         spinSThreadPooMaxAddThread.grid(row=5, column=6)
-        lr_lib.gui.widj.tooltip.createToolTip(spinSThreadPooMaxAddThread,
-                                              'SThreadPool - max число потоков, для добавления за один раз(до SThreadPoolSizeMax)')
+        lr_lib.gui.widj.tooltip.createToolTip(
+            spinSThreadPooMaxAddThread,
+            'SThreadPool - max число потоков, для добавления за один раз(до SThreadPoolSizeMax)',
+        )
 
-        spinSThreadExitTimeout = tk.Spinbox(self, from_=0, to=(10 ** 5), textvariable=lr_vars.SThreadExitTimeout,
-                                            width=4, font=lr_vars.DefaultFont)
+        spinSThreadExitTimeout = tk.Spinbox(
+            self, from_=0, to=(10 ** 5), textvariable=lr_vars.SThreadExitTimeout, width=4, font=lr_vars.DefaultFont,
+        )
         spinSThreadExitTimeout.grid(row=5, column=1)
-        lr_lib.gui.widj.tooltip.createToolTip(spinSThreadExitTimeout,
-                                              'SThreadPool таймаут(сек) выхода, бездействующих потоков(до SThreadPoolSizeMin)')
-        spinSThreadMonitorUpdate = tk.Spinbox(self, from_=0, to=(10 ** 5), textvariable=lr_vars._SThreadMonitorUpdate,
-                                              width=4, font=lr_vars.DefaultFont)
+        lr_lib.gui.widj.tooltip.createToolTip(
+            spinSThreadExitTimeout,
+            'SThreadPool таймаут(сек) выхода, бездействующих потоков(до SThreadPoolSizeMin)',
+        )
+        spinSThreadMonitorUpdate = tk.Spinbox(
+            self, from_=0, to=(10 ** 5), textvariable=lr_vars._SThreadMonitorUpdate, width=4, font=lr_vars.DefaultFont,
+        )
         spinSThreadMonitorUpdate.grid(row=5, column=7)
-        lr_lib.gui.widj.tooltip.createToolTip(spinSThreadMonitorUpdate,
-                                              'SThreadPool (мс) время обновления Window.pool_wind текста состояния пула')
+        lr_lib.gui.widj.tooltip.createToolTip(
+            spinSThreadMonitorUpdate,
+            'SThreadPool (мс) время обновления Window.pool_wind текста состояния пула',
+        )
 
         if lr_vars.T_POOL_NAME == 'SThreadPool(threading.Thread)':
             self.pool_state_updater()
