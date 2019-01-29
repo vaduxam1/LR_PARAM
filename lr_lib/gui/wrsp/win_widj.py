@@ -15,9 +15,7 @@ import lr_lib.gui.wrsp.win_part_lbrb
 
 LFT = '''
 Файлы({files_all}->{param_files}) | 
-Snapshot(все[{all_inf_min}:{all_inf_max}]={all_inf_len}->
-поиск[{param_inf_min}:{param_inf_max}]={search_inf_len}->
-найдено[{_param_inf_min}:{_param_inf_max}]={_param_inf_all}) | 
+Snapshot(все[{all_inf_min}:{all_inf_max}]={all_inf_len} -> поиск[{param_inf_min}:{param_inf_max}]={search_inf_len} -> найдено[{_param_inf_min}:{_param_inf_max}]={_param_inf_all}) | 
 Найдено {param_all} param
 '''.strip()
 
