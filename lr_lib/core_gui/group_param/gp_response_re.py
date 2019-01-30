@@ -25,7 +25,8 @@ def param_from_str_1(stri: "'\\'zul.wnd.Window\\',\\'bJsP0\\',{'") -> (str, str)
 def param_from_str_2(stri: "Value=bJsPk0&") -> (str, str):
     """" stri("dtid=\w+&") """
     rs = stri.split("=", 1)  # <class 'list'>: ['Value', 'bJsPk0&']
-    item = (rs[0], rs[1][:-1])
+    r = rs[1][:-1]
+    item = (rs[0], r)
     return item
 
 
@@ -76,7 +77,8 @@ def group_param_search_by_resp_re(action: 'lr_lib.gui.action.main_action.ActionW
             for stri in st:
                 try:  # "'zul.sel.Treecell','bJsPt4',"
                     (a, b) = cb(stri)
-                    params.setdefault(a, set()).add(b)
+                    s = params.setdefault(a, set())
+                    s.add(b)
                 except Exception as ex:
                     pass
                 continue

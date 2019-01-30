@@ -167,7 +167,8 @@ def _create_files_from_inf(args: [(str, str, bool, bool), (str, int)]) -> iter((
         with open(os.path.join(folder, file), encoding='utf-8', errors='ignore') as inf_file:
             (num, *lines) = inf_file.read().split('\n')
             try:  # inf номер '[t75]' -> 75
-                num = int(num[2:-1])
+                n = num[2:-1]
+                num = int(n)
             except:
                 num = -1
 
@@ -214,8 +215,9 @@ def init() -> None:
 
     for file in lr_vars.AllFiles:
         fs = file['Snapshot']
-        fs['Nums'] = sorted(fs['Nums'])  # set -> list
-        fs['len'] = len(fs['Nums'])
+        ns = fs['Nums']
+        fs['Nums'] = sorted(ns)  # set -> list
+        fs['len'] = len(ns)
         continue
 
     all_files_inf = tuple(lr_lib.core.etc.other.get_files_infs(lr_vars.AllFiles))
@@ -237,7 +239,8 @@ def init() -> None:
 def get_file_with_kwargs(files: (dict,), **kwargs) -> dict:
     """вернуть первый файл, содержащий kwargs"""
     if not kwargs:
-        kwargs = dict(Name=lr_vars.VarFileName.get())
+        n = lr_vars.VarFileName.get()
+        kwargs = dict(Name=n)
     for file in get_files_with_kwargs(files, **kwargs):
         return file
     return
@@ -261,13 +264,16 @@ def set_file_statistic(file: dict, as_text=False, errors='replace') -> dict:
     ff = file['File']
     full_name = ff['FullName']
     ff['Size'] = os.path.getsize(full_name)
-    ff['timeCreate'] = time.strftime('%H:%M:%S %m.%d.%y', time.gmtime(os.path.getmtime(full_name)))
+    ffn = os.path.getmtime(full_name)
+    ff['timeCreate'] = time.strftime('%H:%M:%S %m.%d.%y', time.gmtime(ffn))
 
     if as_text:  # есть текст файла
-        _set_fileFile_stats(ff, lr_vars.VarFileText.get())
+        t = lr_vars.VarFileText.get()
+        _set_fileFile_stats(ff, t)
     else:  # новый файл
         with open(full_name, encoding=ff['encoding'], errors=errors) as f:
-            _set_fileFile_stats(ff, f.read())
+            xt = f.read()
+        _set_fileFile_stats(ff, xt)
 
     return file
 

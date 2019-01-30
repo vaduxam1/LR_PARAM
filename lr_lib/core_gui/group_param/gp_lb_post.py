@@ -54,7 +54,8 @@ def group_param_search_by_lb_post(
         )
         ans = y.ask()
         if ans == K_FIND:
-            lb_items = set(filter(bool, y.text.split('\n')))
+            ts = y.text.split('\n')
+            lb_items = set(filter(bool, ts))
         else:
             return []
 

@@ -88,13 +88,15 @@ def _group_param_search_by_exist_param(
     else:
         return
 
-    yield from _group_param_search_by_param_part(param_parts, params_source, **kwargs)
+    gp = _group_param_search_by_param_part(param_parts, params_source, **kwargs)
+    yield from gp
     return
 
 
 def _group_param_search_by_lb(lb_items: [str, ], params_source) -> iter((str,)):
     """поиск по LB"""
-    yield from _group_param_search_by_param_part(lb_items, params_source, part_mode=False)
+    gp = _group_param_search_by_param_part(lb_items, params_source, part_mode=False)
+    yield from gp
     return
 
 
@@ -109,7 +111,8 @@ def _group_param_search_by_param_part(
     param_texts = _text_from_params_source(params_source)
     for (name, text) in param_texts:
         for param_part in param_parts:
-            yield from _params_by_part(param_part, text, **kwargs)
+            pp = _params_by_part(param_part, text, **kwargs)
+            yield from pp
             continue
         continue
     return

@@ -116,7 +116,8 @@ def group_param_search_by_exist_param(
         ans = y.ask()
         # создание param
         if ans == K_FIND:
-            exist_params = list(filter(bool, y.text.split('\n')))
+            ts = y.text.split('\n')
+            exist_params = list(filter(bool, ts))
         else:
             return []
 

@@ -61,13 +61,15 @@ class ProgressBar:
 
         else:  # выход - результаты работы
             param_counter = self.widget.action.param_counter(all_param_info=False)
-            self.widget.action.toolbar['text'] = final_str.format(
+            t = final_str.format(
                 state=str(not fail).upper(),
                 param_counter=param_counter,
                 fail=fail,
                 unsuc=(', '.join(unsuccess) if fail else ''),
                 param=(self.len_params - fail),
             )
+            self.widget.action.toolbar['text'] = t
+
             if unsuccess:
                 lr_vars.Logger.error('{} param не были обработаны:\n\t{}'.format(
                     fail, '\n\t'.join(unsuccess)), parent=self.widget.action)
