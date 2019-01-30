@@ -13,7 +13,7 @@ import lr_lib.core.var._var
 
 VERSION = 'v11.5.4'  # версия утилиты
 lib_folder = 'lr_lib'  # каталог py-файлов утилиты
-Tk = tk.Tk()  # tkinter
+Tk = tk.Tk()
 original_callback_exception = Tk.report_callback_exception  # переопределение обработчика raise
 
 Window = None  # класс gui окна # lr_lib.gui.wrsp.main_window.Window

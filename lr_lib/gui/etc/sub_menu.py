@@ -28,114 +28,86 @@ def rClicker(event) -> str:
         rmenu = tk.Menu(None, tearoff=False)
 
         if selection:
-            rmenu.add_cascade(
-                label='Web_Reg_Save_Param - все варианты', underline=0,
-                command=lambda e=event: lr_lib.core_gui.all_wrsp.all_wrsp_dict_web_reg_save_param(e),
-            )
-            rmenu.add_cascade(
-                label='Encoding : "РџРµСЂРІ" -> "Перв"', underline=0,
-                command=lambda e=event: lr_lib.core_gui.action_lib.encoder(e),
-            )
-            rmenu.add_cascade(
-                label='Копировать', underline=0,
-                command=lambda e=event: e.widget.event_generate('<Control-c>'),
-            )
-            rmenu.add_cascade(
-                label='Вырезать', underline=0,
-                command=lambda e=event: e.widget.event_generate('<Control-x>'),
-            )
-            rmenu.add_cascade(
-                label='Вставить', underline=0,
-                command=lambda e=event: e.widget.event_generate('<Control-v>'),
-            )
-            rmenu.add_cascade(
-                label='Поиск выделения в тексте', underline=0,
-                command=lambda e=event: lr_lib.core_gui.action_lib.rClick_Search(e),
-            )
+            cmd1 = lambda e=event: lr_lib.core_gui.all_wrsp.all_wrsp_dict_web_reg_save_param(e)
+            rmenu.add_cascade(label='Web_Reg_Save_Param - все варианты', underline=0, command=cmd1,)
+
+            cmd2 = lambda e=event: lr_lib.core_gui.action_lib.encoder(e)
+            rmenu.add_cascade(label='Encoding : "РџРµСЂРІ" -> "Перв"', underline=0, command=cmd2,)
+
+            cmd3 = lambda e=event: e.widget.event_generate('<Control-c>')
+            rmenu.add_cascade(label='Копировать', underline=0, command=cmd3,)
+
+            cmd4 = lambda e=event: e.widget.event_generate('<Control-x>')
+            rmenu.add_cascade(label='Вырезать', underline=0, command=cmd4,)
+
+            cmd5 = lambda e=event: e.widget.event_generate('<Control-v>')
+            rmenu.add_cascade(label='Вставить', underline=0, command=cmd5,)
+
+            cmd6 = lambda e=event: lr_lib.core_gui.action_lib.rClick_Search(e)
+            rmenu.add_cascade(label='Поиск выделения в тексте', underline=0, command=cmd6,)
 
             # open
             submenu_open = tk.Menu(rmenu, tearoff=False)
             rmenu.add_cascade(label='Открыть как текст', menu=submenu_open, underline=0)
 
-            submenu_open.add_cascade(
-                label='файл-ответа (выделить имя файла)', underline=0,
-                command=lambda e=event: lr_lib.core_gui.action_lib.file_from_selection(e),
-            )
-            submenu_open.add_cascade(
-                label='web_.Snapshot (номер из любых цифр выделения)', underline=0,
-                command=lambda e=event: lr_lib.core_gui.action_lib.snapshot_text_from_selection(e),
-            )
-            submenu_open.add_cascade(
-                label='WRSP (выделить имя wrsp/param)', underline=0,
-                command=lambda e=event: lr_lib.core_gui.action_lib.wrsp_text_from_selection(e),
-            )
+            cmd7 = lambda e=event: lr_lib.core_gui.action_lib.file_from_selection(e)
+            submenu_open.add_cascade(label='файл-ответа (выделить имя файла)', underline=0, command=cmd7,)
+
+            cmd8 = lambda e=event: lr_lib.core_gui.action_lib.snapshot_text_from_selection(e)
+            submenu_open.add_cascade(label='web_.Snapshot (номер из любых цифр выделения)', underline=0, command=cmd8,)
+
+            cmd9 = lambda e=event: lr_lib.core_gui.action_lib.wrsp_text_from_selection(e)
+            submenu_open.add_cascade(label='WRSP (выделить имя wrsp/param)', underline=0, command=cmd9,)
 
             # param
             submenu_param = tk.Menu(rmenu, tearoff=False)
             rmenu.add_cascade(label='web_reg_save_param', menu=submenu_param, underline=0)
 
-            submenu_param.add_cascade(
-                label='* одиночный -> найти и заменить', underline=0,
-                command=lambda e=event: progress_decor(
-                    lr_lib.core_gui.action_lib.rClick_Param, e.widget.action)(e, mode=['SearchAndReplace']),
-            )
+            cmd10 = lambda e=event: progress_decor(
+                lr_lib.core_gui.action_lib.rClick_Param, e.widget.action)(e, mode=['SearchAndReplace', ])
+            submenu_param.add_cascade(label='* одиночный -> найти и заменить', underline=0, command=cmd10,)
 
-            submenu_param.add_cascade(
-                label='группа(найти по налалу имени) -> найти и заменить', underline=0,
-                command=lambda e=event: lr_lib.core.var.vars_other.T_POOL_decorator(progress_decor(
+            cmd11 = lambda e=event: lr_lib.core.var.vars_other.T_POOL_decorator(progress_decor(
                     lr_lib.core_gui.group_param.gp_act_start.group_param_search_by_name, e.widget.action))(
                     e.widget.action, [['web', e.widget.action], 'all'], wrsp_create=True, text=e.widget.selection_get(),
-                ),
-            )
+                )
+            submenu_param.add_cascade(label='группа(по налалу имени) -> найти и заменить', underline=0, command=cmd11,)
 
-            submenu_param.add_cascade(
-                label='* группа(найти по LB=") -> найти и заменить', underline=0,
-                command=lambda e=event: lr_lib.core.var.vars_other.T_POOL_decorator(
+            cmd12 = lambda e=event: lr_lib.core.var.vars_other.T_POOL_decorator(
                     progress_decor(lr_lib.core_gui.group_param.gp_act_lb.group_param_search_by_lb, e.widget.action))(
                     e.widget.action, [['web', e.widget.action], 'all'], wrsp_create=True,
                     lb_items=[e.widget.selection_get(), ], ask=False, MutableLBRegs=(),
-                ),
-            )
+                )
+            submenu_param.add_cascade(label='* группа(по LB=") -> найти и заменить', underline=0, command=cmd12,)
 
-            submenu_param.add_cascade(
-                label='* готовый -> пересоздать, с измененными LB/RB', underline=0,
-                command=lambda e=event: progress_decor(
+            cmd13 = lambda e=event: progress_decor(
                     lr_lib.core_gui.action_lib.rClick_web_reg_save_param_regenerate, e.widget.action)(
                     e, new_lb_rb=True,
-                ),
-            )
+                )
+            submenu_param.add_cascade(label='* готовый -> пересоздать, с измененными LB/RB', underline=0,command=cmd13,)
 
-            submenu_param.add_cascade(
-                label='готовый -> пересоздать, с оригинальными LB/RB', underline=0,
-                command=lambda e=event: progress_decor(
+            cmd14 = lambda e=event: progress_decor(
                     lr_lib.core_gui.action_lib.rClick_web_reg_save_param_regenerate, e.widget.action)(
                     e, new_lb_rb=False,
-                ),
-            )
+                )
+            submenu_param.add_cascade(label='готовый -> пересоздать, с оригинальными LB/RB', underline=0,command=cmd14,)
 
-            submenu_param.add_cascade(
-                label='одиночный -> найти и подсветить', underline=0,
-                command=lambda e=event: progress_decor(lr_lib.core_gui.action_lib.rClick_Param, e.widget.action)(
+            cmd15 = lambda e=event: progress_decor(lr_lib.core_gui.action_lib.rClick_Param, e.widget.action)(
                     e, mode=['highlight'],
-                ),
-            )
+                )
+            submenu_param.add_cascade(label='одиночный -> найти и подсветить', underline=0, command=cmd15,)
 
-            submenu_param.add_cascade(
-                label='одиночный -> только найти', underline=0,
-                command=lambda e=event: progress_decor(lr_lib.core_gui.action_lib.rClick_Param, e.widget.action)(
+            cmd16 = lambda e=event: progress_decor(lr_lib.core_gui.action_lib.rClick_Param, e.widget.action)(
                     e, mode=[],
-                ),
-            )
+                )
+            submenu_param.add_cascade(label='одиночный -> только найти', underline=0, command=cmd16,)
 
-            submenu_param.add_cascade(
-                label='* одиночный -> удалить по wrsp или param имени', underline=0,
-                command=lambda e=event: progress_decor(
-                    lr_lib.core_gui.action_lib.remove_web_reg_save_param_from_action, e.widget.action)(e),
-            )
+            cmd17 = lambda e=event: progress_decor(
+                lr_lib.core_gui.action_lib.remove_web_reg_save_param_from_action, e.widget.action)(e)
+            submenu_param.add_cascade(label='* одиночный -> удалить по wrsp или param', underline=0, command=cmd17,)
 
-        nclst = [
-            ('Сохр. пользоват. изменения в тексте', lambda e=event: e.widget.action.save_action_file(file_name=False)),
-        ]
+        cmd_18 = lambda e=event: e.widget.action.save_action_file(file_name=False)
+        nclst = [('Сохр. пользоват. изменения в тексте', cmd_18), ]
         for (txt, cmd) in nclst:
             rmenu.add_command(label=txt, command=cmd)
             continue
@@ -152,7 +124,8 @@ def rClicker(event) -> str:
                 """перейти к _search обрасти в action.c"""
                 try:
                     event.widget.action.search_entry.set(_search)
-                    event.widget.action.search_in_action(event.widget.action.search_entry.get())
+                    ev = event.widget.action.search_entry.get()
+                    event.widget.action.search_in_action(ev)
                     event.widget.action.tk_text_see()
                 except (AttributeError, tk.TclError) as ex:
                     pass
@@ -165,38 +138,38 @@ def rClicker(event) -> str:
 
             if param:
                 p_wrsp = lr_lib.core.wrsp.param.wrsp_start_end.format(param=param)
-                submenu_goto.add_cascade(label=p_wrsp, underline=0,
-                                         command=lambda e=event, n=p_wrsp: action_goto(e, n))
+                cmd19 = lambda e=event, n=p_wrsp: action_goto(e, n)
+                submenu_goto.add_cascade(label=p_wrsp, underline=0, command=cmd19)
 
         if selection:
             # other
             submenu_other = tk.Menu(rmenu, tearoff=False)
             rmenu.add_cascade(label='Разное', menu=submenu_other, underline=0)
-            submenu_other.add_cascade(
-                label='Переименовать транзакцию (выделить линию целиком)', underline=0,
-                command=lambda e=event: lr_lib.core_gui.rename.rename_transaction(e))
-            submenu_other.add_cascade(
-                label='Файлы-ответов Snapshot (выделить номер)', underline=0,
-                command=lambda e=event: lr_lib.core_gui.action_lib.snapshot_files(e.widget))
+
+            cmd20 = lambda e=event: lr_lib.core_gui.rename.rename_transaction(e)
+            submenu_other.add_cascade(label='Переименовать транзакцию (выделить линию)', underline=0, command=cmd20,)
+
+            cmd21 = lambda e=event: lr_lib.core_gui.action_lib.snapshot_files(e.widget)
+            submenu_other.add_cascade(label='Файлы-ответов Snapshot (выделить номер)', underline=0, command=cmd21,)
 
             # maxmin
             submenu_maxmin = tk.Menu(submenu_other, tearoff=False)
-            submenu_maxmin.add_cascade(
-                label='min', underline=0, command=lambda e=event: lr_lib.core_gui.action_lib.rClick_min_inf(e),
-            )
-            submenu_maxmin.add_cascade(
-                label='max', underline=0, command=lambda e=event: lr_lib.core_gui.action_lib.rClick_max_inf(e),
-            )
+
+            cmd22 = lambda e=event: lr_lib.core_gui.action_lib.rClick_min_inf(e)
+            submenu_maxmin.add_cascade(label='min', underline=0, command=cmd22,)
+
+            cmd23 = lambda e=event: lr_lib.core_gui.action_lib.rClick_max_inf(e)
+            submenu_maxmin.add_cascade(label='max', underline=0, command=cmd23,)
+
             submenu_other.add_cascade(
                 label=' Snapshot-min/max (номер из любых цифр выделения)', menu=submenu_maxmin, underline=0,
             )
 
             submenu = tk.Menu(submenu_other, tearoff=False)
             colors = lr_lib.core.var.vars_highlight.VarColorTeg.get()
-            submenu.add_cascade(
-                label='сорх в файл', underline=0,
-                command=lambda e=event: lr_lib.core_gui.action_lib.add_highlight_words_to_file(e),
-            )
+
+            cmd24 = lambda e=event: lr_lib.core_gui.action_lib.add_highlight_words_to_file(e)
+            submenu.add_cascade(label='сорх в файл', underline=0, command=cmd24,)
 
             vl = ['добавить', 'удалить']
             for val in vl:
@@ -206,7 +179,9 @@ def rClicker(event) -> str:
                     sub = tk.Menu(vSub, tearoff=False)
                     vSub.add_cascade(label=option, menu=sub, underline=0)
                     for color in colors:
+
                         def cmd(e=event, o=option, c=color, v=val, f=True) -> None:
+                            """add_highlight"""
                             lr_lib.core_gui.action_lib.rClick_add_highlight(e, o, c, v, find=f)
                             return
 
@@ -216,7 +191,7 @@ def rClicker(event) -> str:
                 continue
 
             submenu_other.add_cascade(label=' подсветка', menu=submenu, underline=0)
-        rmenu.tk_popup(event.x_root + 40, event.y_root + 10, entry="0")
+        rmenu.tk_popup((event.x_root + 40), (event.y_root + 10), entry="0")
 
     except tk.TclError as ex:
         pass

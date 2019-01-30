@@ -20,8 +20,9 @@ def find_git_ver():
         return
 
     with urllib.request.urlopen(lr_vars.GitHub) as f:
-        html = f.read().decode('utf-8')
+        html = f.read()
 
+    html = html.decode('utf-8')
     v = html.split('>VERSION</span>', 1)
     v = v[1].split('\n', 1)
     v = v[0].split('</span>v', 1)
@@ -38,7 +39,6 @@ def check_git_ver():
     if lr_vars.VERSION != GVER:
         tkinter.messagebox.showwarning(
             "Для версии {v} доступно обновление".format(v=lr_vars.VERSION),
-            "По адресу {a} доступно последнее [{v}] обновление утилиты.".format(
-                v=GVER, a=lr_vars.github,
-            ))
+            "По адресу {a} доступно последнее [{v}] обновление утилиты.".format(v=GVER, a=lr_vars.github,)
+        )
     return
