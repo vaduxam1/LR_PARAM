@@ -30,7 +30,9 @@ _PFDeny_1 = ('-' + string.ascii_lowercase)  # не {param} слова "-321" и�
 
 
 def param_filter(params: [str, ], deny_param_filter=True, action=None, ) -> iter((str,)):
-    """отфильтровать лишние param"""
+    """
+    отфильтровать лишние param
+    """
     params = filter(str.strip, params)
     params = set(params)
 
@@ -90,7 +92,9 @@ def filter_deny_onUpper(param: str, n=2, s='on', ) -> bool:
 
 
 def _param_filter(params: [str, ], ) -> [str, ]:
-    """удалить не param-слова"""
+    """
+    удалить не param-слова
+    """
     params = param_filter(params)
     _MinParamNumsOnlyLen = lr_vars.MinParamNumsOnlyLen.get()
 
@@ -123,7 +127,9 @@ def _param_filter(params: [str, ], ) -> [str, ]:
 
 
 def only_in_action_param_filter(params: [str, ], action_text=None) -> iter((str,)):
-    """удалить param которых нету в action.c"""
+    """
+    удалить param которых нету в action.c
+    """
     if action_text is None:
         action = lr_vars.Window.get_main_action()
         action_text = action.web_action._all_web_body_text()

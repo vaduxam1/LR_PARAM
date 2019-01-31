@@ -67,7 +67,9 @@ Web_LAST = 'LAST);'
 
 
 def param_bounds_setter(param: str, start='{', end='}') -> str:
-    """web_reg_save_param имя "P_1212_2_z_kau_1" -> "{P_1212_2_z_kau_1}" """
+    """
+    web_reg_save_param имя "P_1212_2_z_kau_1" -> "{P_1212_2_z_kau_1}"
+    """
     if not param.startswith(start):
         param = (start + param)
     if not param.endswith(end):
@@ -76,7 +78,9 @@ def param_bounds_setter(param: str, start='{', end='}') -> str:
 
 
 def create_web_reg_save_param(wrsp_dict=None) -> str:
-    """сформировать web_reg_save_param"""
+    """
+    сформировать web_reg_save_param
+    """
     if wrsp_dict is None:
         wrsp_dict = lr_vars.VarWrspDict.get()
     else:
@@ -92,7 +96,9 @@ def create_web_reg_save_param(wrsp_dict=None) -> str:
 
 
 def create_web_reg_save_param_and_dict(wrsp_dict=None) -> (str, dict):
-    """сформировать web_reg_save_param и его словарь"""
+    """
+    сформировать web_reg_save_param и его словарь
+    """
     if wrsp_dict is None:
         wrsp_dict = lr_vars.VarWrspDict.get()
 
@@ -110,7 +116,9 @@ wrsp_deny_punctuation.update({ord(c): '' for c in string.whitespace})
 
 
 def wrsp_dict_creator(is_param=True) -> dict:
-    """сформировать данные для web_reg_save_param"""
+    """
+    сформировать данные для web_reg_save_param
+    """
     all_infs = tuple(lr_lib.core.etc.other.get_files_infs(lr_vars.AllFiles))
     param_infs = tuple(lr_lib.core.etc.other.get_files_infs(lr_vars.FilesWithParam))
     len_param_files = len(lr_vars.FilesWithParam)
@@ -183,7 +191,9 @@ def wrsp_dict_creator(is_param=True) -> dict:
 
 
 def wrsp_name_creator(param: str, Lb: str, Rb: str, snapshot: int) -> str:
-    """сформировать имя для web_reg_save_param(6)"""
+    """
+    сформировать имя для web_reg_save_param(6)
+    """
     MaxLbWrspName = lr_vars.MaxLbWrspName.get()
     MaxRbWrspName = lr_vars.MaxRbWrspName.get()
     g = lr_vars.SnapshotInName.get()
@@ -274,13 +284,17 @@ SC = {ord(c): '\\{}'.format(c) for c in lr_lib.core.var.vars_param.Screening}
 
 
 def screening_wrsp(s: str) -> str:
-    """экранирование для web_reg_save_param"""
+    """
+    экранирование для web_reg_save_param
+    """
     s = str.translate(s, SC)
     return s
 
 
 def _search_param_in_file(file: dict) -> dict:
-    """найти кол-во {param} в файле, count - те все, без проверки на корректность"""
+    """
+    найти кол-во {param} в файле, count - те все, без проверки на корректность
+    """
     File = file['File']
     Param = file['Param']
     param = Param['Name']
@@ -295,7 +309,9 @@ def _search_param_in_file(file: dict) -> dict:
 
 
 def search_param_in_file(file: dict) -> (dict or None):
-    """найти кол-во {param} в файле, с контролем LB RB"""
+    """
+    найти кол-во {param} в файле, с контролем LB RB
+    """
     File = file['File']
     Param = file['Param']
     param = Param['Name']
@@ -330,7 +346,9 @@ def search_param_in_file(file: dict) -> (dict or None):
 
 
 def create_files_with_search_data(files: (dict,), search_data: dict, action=None, action_infs=()) -> iter((dict,)):
-    """с учетом inf - создать копию файла и обновить search_data"""
+    """
+    с учетом inf - создать копию файла и обновить search_data
+    """
     dt = search_data['Param']
     inf_min = dt['inf_min']
     inf_max = dt['inf_max']
@@ -379,7 +397,9 @@ def create_files_with_search_data(files: (dict,), search_data: dict, action=None
 
 
 def set_param_in_action_inf(action, param: str) -> iter((int,)):
-    """первый action-inf в котором расположен param, тк inf-номер запроса <= inf-номер web_reg_save_param"""
+    """
+    первый action-inf в котором расположен param, тк inf-номер запроса <= inf-номер web_reg_save_param
+    """
     webs = action.web_action.get_web_snapshot_all()
     for web_ in webs:
         wr = web_.param_find_replace(param)
@@ -392,7 +412,9 @@ def set_param_in_action_inf(action, param: str) -> iter((int,)):
 
 
 def get_search_data(param: str) -> dict:
-    """данные, для поиска param в AllFiles"""
+    """
+    данные, для поиска param в AllFiles
+    """
     search_data = dict(
         Param=dict(
             Name=param,
@@ -409,7 +431,9 @@ def get_search_data(param: str) -> dict:
 
 
 def get_files_with_param(param: str, action=None, set_file=True) -> None:
-    """найти файлы с param"""
+    """
+    найти файлы с param
+    """
     param = (param or lr_vars.VarParam.get())  # (1)
     search_data = get_search_data(param)
 
@@ -470,7 +494,9 @@ search_data: {d}
 
 
 def param_not_found_err_text(action, files: [dict, ], search_data: dict, param: str) -> str:
-    """текст ошибки - param не найден"""
+    """
+    текст ошибки - param не найден
+    """
     laf = len(lr_vars.AllFiles)
     if action:
         action_infs = action.web_action.action_infs
@@ -514,7 +540,9 @@ def param_not_found_err_text(action, files: [dict, ], search_data: dict, param: 
 
 
 def find_param_ord() -> (int, int):
-    """получить Ord"""
+    """
+    получить Ord
+    """
     if lr_vars.VarOrdVersion.get():
         ord_index = new_find_param_ord()
     else:  # можно сравнить результат, при изменении алгоритма
@@ -536,7 +564,9 @@ AIE2 = 'Формирование web_reg_save_param невозможно, тк �
 
 
 def new_find_param_ord() -> (int, int):
-    """получить Ord, версия после 7.2.0"""
+    """
+    получить Ord, версия после 7.2.0
+    """
     Items = (param, lb, rb, text) = (
         lr_vars.VarParam.get(), lr_vars.VarLB.get(), lr_vars.VarRB.get(), lr_vars.VarFileText.get(),
     )
@@ -577,7 +607,9 @@ def new_find_param_ord() -> (int, int):
 
 
 def old_find_param_ord() -> (int, int):
-    """получить Ord, версия до 7.2.0 - не ищет ord если символы LB(начало) и RB(конец) пересекаются"""
+    """
+    получить Ord, версия до 7.2.0 - не ищет ord если символы LB(начало) и RB(конец) пересекаются
+    """
     lb = lr_vars.VarLB.get()
     assert lb, 'Формирование web_reg_save_param невозможно, тк поле LB(5) пусто'
     rb = lr_vars.VarRB.get()

@@ -11,6 +11,10 @@ ColorHide = 'DimGrey'
 
 
 class RItem:
+    """
+    gui виджет метода поиска
+    """
+
     def __init__(self,
                  parent: 'RunSettingWindow',
                  function: 'callable',
@@ -203,7 +207,9 @@ class RItem:
         return
 
     def get_params(self, ask=False, ask2=False, wrsp_create=False, ) -> [str, ]:
-        """получить params"""
+        """
+        получить params
+        """
         if not self._cbx_on.get():
             return []
         at = self._cbx_only_in_act_param.get()
@@ -223,7 +229,9 @@ class RItem:
         return params
 
     def get_params_source(self) -> list:
-        """найти params_source"""
+        """
+        найти params_source
+        """
         vals = []
 
         act_var = self.act_radio.get()

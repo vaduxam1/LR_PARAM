@@ -16,7 +16,9 @@ import lr_lib.etc.excepthook
 
 
 def is_responce_file(name: str) -> (str, str):
-    """вернуть файлы ответов, отбраковать "вероятно ненужные" файлы"""
+    """
+    вернуть файлы ответов, отбраковать "вероятно ненужные" файлы
+    """
     (n, ext) = os.path.splitext(name)
     if (name in lr_lib.core.var.vars_param.DENY_FILES) or (ext in lr_lib.core.var.vars_param.DENY_EXT) or any(
             (p in n) for p in
@@ -30,7 +32,9 @@ default = -1
 
 
 def file_dict_creator(name: str, full_name: str, inf_num: int, enc: str, inf_key: str, deny: bool, stats: bool) -> dict:
-    """создать словарь файла"""
+    """
+    создать словарь файла
+    """
     is_responce = is_responce_file(name)
     if not (deny or is_responce):
         return
@@ -82,7 +86,9 @@ def file_dict_creator(name: str, full_name: str, inf_num: int, enc: str, inf_key
 
 
 def get_inf_file_num(file: str) -> int:
-    """если подходящий t*.inf, вернуть номер Snapshot"""
+    """
+    если подходящий t*.inf, вернуть номер Snapshot
+    """
     (name, ext) = os.path.splitext(file)
     num = name[1:]
     if (ext == '.inf') and (name[0] == 't') and all(map(str.isnumeric, num)):
@@ -91,7 +97,9 @@ def get_inf_file_num(file: str) -> int:
 
 
 def get_folder_infs(folder: str) -> iter((str, int), ):
-    """inf файлы/номера каталога"""
+    """
+    inf файлы/номера каталога
+    """
     for file in next(os.walk(folder))[2]:
         num = get_inf_file_num(file)
         if num:
@@ -102,7 +110,9 @@ def get_folder_infs(folder: str) -> iter((str, int), ):
 
 
 def create_files_from_infs(folder: str, enc: str, allow_deny: bool, statistic: bool) -> iter([dict, ]):
-    """создать файлы ответов, из всех t*.ini файлов"""
+    """
+    создать файлы ответов, из всех t*.ini файлов
+    """
     arg = (folder, enc, allow_deny, statistic,)
     chunks = ((arg, files) for files in
               lr_lib.core.etc.other.chunks(get_folder_infs(folder), lr_vars.FilesCreatePortionSize))
@@ -124,7 +134,9 @@ def create_files_from_infs(folder: str, enc: str, allow_deny: bool, statistic: b
 
 
 def get_files_portions(args: [(str, str, bool, bool), ((str, int),)]) -> [dict, ]:
-    """создать файлы, для порции inf-файлов"""
+    """
+    создать файлы, для порции inf-файлов
+    """
     (arg, files) = args
     gn = ((arg, file) for file in files)
     files_gen = map(_create_files_from_inf, gn)
@@ -133,7 +145,9 @@ def get_files_portions(args: [(str, str, bool, bool), ((str, int),)]) -> [dict, 
 
 
 def _create_files_from_inf(args: [(str, str, bool, bool), (str, int)]) -> iter((dict,)):
-    """создать файлы ответов, из одного inf-файла"""
+    """
+    создать файлы ответов, из одного inf-файла
+    """
     ((folder, enc, allow_deny, statistic), (file, num)) = args
 
     try:  # ConfigParser(вроде когдато были какието проблемы, с кодировкой?)
@@ -185,7 +199,9 @@ def _create_files_from_inf(args: [(str, str, bool, bool), (str, int)]) -> iter((
 
 # @lr_other.exec_time
 def init() -> None:
-    """создать все файлы ответов, для поиска в них param"""
+    """
+    создать все файлы ответов, для поиска в них param
+    """
     lr_vars.AllFiles.clear()
     folder = lr_vars.VarFilesFolder.get()
     lr_vars.Logger.info('Поиск файлов ответов в "{d}" ...'.format(d=folder))
@@ -237,7 +253,9 @@ def init() -> None:
 
 
 def get_file_with_kwargs(files: (dict,), **kwargs) -> dict:
-    """вернуть первый файл, содержащий kwargs"""
+    """
+    вернуть первый файл, содержащий kwargs
+    """
     if not kwargs:
         n = lr_vars.VarFileName.get()
         kwargs = dict(Name=n)
@@ -247,7 +265,9 @@ def get_file_with_kwargs(files: (dict,), **kwargs) -> dict:
 
 
 def get_files_with_kwargs(files: (dict,), key='File', **kwargs) -> iter((dict,)):
-    """найти файлы, содержащие kwargs"""
+    """
+    найти файлы, содержащие kwargs
+    """
     for file in files:
         f = file[key]
         try:
@@ -260,7 +280,9 @@ def get_files_with_kwargs(files: (dict,), key='File', **kwargs) -> iter((dict,))
 
 
 def set_file_statistic(file: dict, as_text=False, errors='replace') -> dict:
-    """создание ключей статистики по файлу"""
+    """
+    создание ключей статистики по файлу
+    """
     ff = file['File']
     full_name = ff['FullName']
     ff['Size'] = os.path.getsize(full_name)
@@ -279,7 +301,9 @@ def set_file_statistic(file: dict, as_text=False, errors='replace') -> dict:
 
 
 def _set_fileFile_stats(fileFile: dict, text: str, let=0, wts=0, ptn=0, dts=0, na=0) -> None:
-    """file['File'] статистика"""
+    """
+    file['File'] статистика
+    """
     counter = collections.Counter(text)  # Counter({' ': 12, 'T': 2, 'a': 2, '<': 1, '/': 1, ...
     for key in counter:
         if key in string.ascii_letters:
@@ -306,7 +330,9 @@ def _set_fileFile_stats(fileFile: dict, text: str, let=0, wts=0, ptn=0, dts=0, n
 
 @lr_lib.core.var.vars_other.T_POOL_decorator
 def thread_set_stat(files: [dict, ]) -> None:
-    """создавать статистику в фоне, для всех файлов"""
+    """
+    создавать статистику в фоне, для всех файлов
+    """
     for file in files:
         set_file_statistic(file)
         continue

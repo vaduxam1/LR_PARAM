@@ -86,7 +86,9 @@ RegExp = r'=(.+?)\"'  # re.findall по умолчанию
 
 
 def group_param_search_quotes(params_source, regexp=RegExp, ) -> iter((str,)):
-    """фильтр поиск param, внутри кавычек"""
+    """
+    фильтр поиск param, внутри кавычек
+    """
     params = _get_params(params_source, regexp=regexp)
     params = filter(str.strip, params)
     for param in params:
@@ -97,7 +99,9 @@ def group_param_search_quotes(params_source, regexp=RegExp, ) -> iter((str,)):
 
 
 def _get_params(params_source, regexp=RegExp, ) -> iter((str,)):
-    """поиск param, внутри кавычек"""
+    """
+    поиск param, внутри кавычек
+    """
     act_text_ = lr_lib.core_gui.group_param.gp_job._text_from_params_source(params_source)
     for (name, text) in act_text_:
         params = re.findall(regexp, text)

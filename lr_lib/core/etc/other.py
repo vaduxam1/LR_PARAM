@@ -14,9 +14,13 @@ import types
 
 import lr_lib.core.var.vars as lr_vars
 
+ALW = set(string.printable).__contains__
+
 
 def _chunks(iterable: list, chunk_size: int) -> iter([iter, ]):
-    """Yield successive n-sized chunks from l. - не работает с генераторами"""
+    """
+    Yield successive n-sized chunks from l. - не работает с генераторами
+    """
     len_ = len(iterable)
     for i in range(0, len_, chunk_size):
         ic = (i + chunk_size)
@@ -27,7 +31,9 @@ def _chunks(iterable: list, chunk_size: int) -> iter([iter, ]):
 
 
 def chunks(iterable: iter, chunk_size: int) -> iter((iter,)):
-    """iter-версия, работает с генераторами, Yield successive n-sized chunks from l."""
+    """
+    iter-версия, работает с генераторами, Yield successive n-sized chunks from l.
+    """
     if isinstance(iterable, types.GeneratorType):
         chunk_range = range(chunk_size - 1)
         for i in iterable:
@@ -41,7 +47,10 @@ def chunks(iterable: iter, chunk_size: int) -> iter((iter,)):
     return
 
 
-def _chunks_range(chunk_range: (int,), iterable):
+def _chunks_range(chunk_range: (int,), iterable) -> iter:
+    """
+    next(iterable) для chunks
+    """
     try:
         for _ in chunk_range:
             it = next(iterable)
@@ -53,7 +62,9 @@ def _chunks_range(chunk_range: (int,), iterable):
 
 
 def numericalSort(value: str, numbers=re.compile(r'(\d+)')) -> list:
-    """корректная сортировка файлов с inf-номерами в имени"""
+    """
+    корректная сортировка файлов с inf-номерами в имени
+    """
     value = _snapshot_file_name(value)
     parts = numbers.split(value)
     ps = parts[1::2]
@@ -62,7 +73,9 @@ def numericalSort(value: str, numbers=re.compile(r'(\d+)')) -> list:
 
 
 def _snapshot_file_name(name: str) -> str:
-    """корректная сортировка snapshot файлов"""
+    """
+    корректная сортировка snapshot файлов
+    """
     if name.startswith('snapshot') and '_' in name:
         (nam, num) = name.split('_', 1)
         t = 't{num}_{nam}'.format(num=num, nam=nam)
@@ -71,7 +84,9 @@ def _snapshot_file_name(name: str) -> str:
 
 
 def sort_files(file: dict):
-    """сортировка файлов, по ключам"""
+    """
+    сортировка файлов, по ключам
+    """
     k = lr_vars.VarFileSortKey1.get()
     val = file.get(k)
     if val:
@@ -85,7 +100,9 @@ def sort_files(file: dict):
 
 
 def file_string(file=None, deny=(), min_width=25, max_width=50) -> str:
-    """инфо о файле, во всплывающей подсказке"""
+    """
+    инфо о файле, во всплывающей подсказке
+    """
     if file is None:
         file = lr_vars.VarFile.get()
     if not file:
@@ -110,14 +127,18 @@ def file_string(file=None, deny=(), min_width=25, max_width=50) -> str:
     return s
 
 
-def not_printable(s: str, printable=set(string.printable).__contains__) -> int:
-    """кол-во непечатных символов строки"""
+def not_printable(s: str, printable=ALW, ) -> int:
+    """
+    кол-во непечатных символов строки
+    """
     ls = (len(s) - len(tuple(filter(printable, s))))
     return ls
 
 
 def all_files_info() -> str:
-    """статистическое инфо о всех найденых файлах"""
+    """
+    статистическое инфо о всех найденых файлах
+    """
     lf = len(lr_vars.AllFiles)
     sa = sum(f['File'].get('Size', 0) for f in lr_vars.AllFiles)
     mn = min([f['File'].get('Size', 0) for f in lr_vars.AllFiles] or [0])
@@ -142,7 +163,9 @@ def all_files_info() -> str:
 
 
 def param_files_info() -> str:
-    """инфо о param файлах"""
+    """
+    инфо о param файлах
+    """
     res = [(str(f['Snapshot']['Nums']), f['File']['Name'], str(f['Param']['Count'])) for f in lr_vars.FilesWithParam]
     m = max(len(n) for r in res for n in r)
 
@@ -166,13 +189,18 @@ def param_files_info() -> str:
 
 
 def get_files_infs(files: [dict, ]) -> iter({int, }):
-    """inf-номера файлов"""
+    """
+    inf-номера файлов
+    """
     s = set(n for file in files for n in file['Snapshot']['Nums'])
     yield from sorted(s)
     return
 
 
-def only_ascii_symbols(item: (str,), allow=set(string.printable).__contains__) -> iter:
+def only_ascii_symbols(item: (str,), allow=ALW, ) -> iter:
+    """
+    только allow символы
+    """
     for s in item:
         if allow(s):
             yield s
@@ -183,33 +211,42 @@ def only_ascii_symbols(item: (str,), allow=set(string.printable).__contains__) -
 
 
 def iter_to_list(item: iter) -> list:
-    """прирвести iter к list"""
+    """
+    прирвести iter к list
+    """
     if isinstance(item, (list, tuple)):
         return item
-    else:
-        li = list(item)
-        return li
+    li = list(item)
+    return li
 
 
 def _openTextInEditor(file: str):
-    """открытие файл в Блокноте"""
+    """
+    открытие файл в Блокноте
+    """
     exe = lr_vars.EDITOR['exe']
     s = subprocess.Popen([exe, file])
     return s
 
 
 def openTextInEditor(text: str) -> None:
-    """открытие сообщения в Блокноте"""
+    """
+    открытие сообщения в Блокноте
+    """
     with tempfile.NamedTemporaryFile(delete=False) as f:
+
         with open(f.name, 'w', errors='replace') as tf:
             tf.write(text)
+
         _openTextInEditor(f.name)
         f.close()
     return
 
 
 def exec_time(func: callable) -> callable:
-    """время выполнения func"""
+    """
+    время выполнения func
+    """
 
     @functools.wraps(func)
     def wrap(*args, **kwargs):
@@ -224,29 +261,34 @@ def exec_time(func: callable) -> callable:
 
 
 def get_files_names(folder: str, i_num: int, file_key='File', file_mask='t{}.inf') -> iter((str,)):
-    """все имена файлов из t{i_num}.inf"""
+    """
+    все имена файлов из t{i_num}.inf
+    """
     inf_file = file_mask.format(i_num)
     fi = os.path.join(folder, inf_file)
     if not os.path.isfile(fi):
         return
 
     yield inf_file
+
     with open(fi) as inf:
         for line in inf:
             s_line = line.strip().split('=', 1)
             if len(s_line) == 2:
                 (key, value) = s_line
+
                 if (file_key in key) and (value != 'NONE'):
                     yield value
             continue
     return
 
 
-def get_json(obj, indent=5):
-    """удобно-смотримый вид"""
+def get_json(obj, indent=5) -> str:
+    """
+    удобно-смотримый json вид
+    """
     try:
         j = json.dumps(obj, indent=indent, ensure_ascii=False)
     except Exception:
         return obj
-    else:
-        return j
+    return j

@@ -153,7 +153,9 @@ Word = 'LAST);'
 
 
 def _create_wrsp_web_(text: str, param: str, action: 'lr_lib.gui.action.main_action.ActionWindow') -> None:
-    """создать в action web_reg_save_param"""
+    """
+    создать в action web_reg_save_param
+    """
     action.backup()
     first_only = True  # если создается несколько wrsp_web_
     first_name = ''
@@ -197,7 +199,9 @@ def _create_wrsp_web_(text: str, param: str, action: 'lr_lib.gui.action.main_act
 
 
 def _wrsp_name_replace(web_text: str, new_name: str) -> str:
-    """замена имени wrsp, в wrsp тексте"""
+    """
+    замена имени wrsp, в wrsp тексте
+    """
     for line in web_text.split('\n'):
         if line.lstrip().startswith(lr_lib.core.wrsp.param.wrsp_lr_start):
             new_line = (lr_lib.core.wrsp.param.wrsp_lr_start + new_name + lr_lib.core.wrsp.param.wrsp_lr_end)
@@ -205,6 +209,6 @@ def _wrsp_name_replace(web_text: str, new_name: str) -> str:
             return st
         continue
 
-    lr_vars.Logger.debug('Ошибка замены имени wrsp "{n}" - не найдена web_reg_save_param линия.\n{t}'.format(
-        n=new_name, t=web_text))
+    i = 'Ошибка замены имени wrsp "{n}" - не найдена web_reg_save_param линия.\n{t}'.format(n=new_name, t=web_text)
+    lr_vars.Logger.debug(i)
     return web_text

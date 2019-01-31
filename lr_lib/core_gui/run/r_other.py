@@ -10,7 +10,9 @@ from lr_lib.core.var import vars as lr_vars
 
 @contextlib.contextmanager
 def block(self) -> iter:
-    """заблокировать/разблокировать виджеты в gui"""
+    """
+    заблокировать/разблокировать виджеты в gui
+    """
     try:
         state = (not self.parent._is_block_)
     except AttributeError:
@@ -32,7 +34,9 @@ def block(self) -> iter:
 
 
 def _block(self, bl: bool) -> None:
-    """заблокировать/разблокировать виджеты в gui"""
+    """
+    заблокировать/разблокировать виджеты в gui
+    """
     state = ('disabled' if bl else 'normal')
 
     for item in self.block_items:
@@ -47,7 +51,9 @@ def _block(self, bl: bool) -> None:
 
 
 def item_getattr(item, state: str) -> None:
-    """заблокировать/разблокировать виджеты в gui"""
+    """
+    заблокировать/разблокировать виджеты в gui
+    """
     for attr in dir(item):
         if attr.startswith('_'):
             continue
@@ -61,7 +67,9 @@ def item_getattr(item, state: str) -> None:
 
 
 def set_state_widg(var, widgs: list) -> 'callable':
-    """widg: normal/disabled"""
+    """
+    widg: normal/disabled
+    """
 
     def _set_state_widg(*args, **kwargs) -> None:
         v = var.get()

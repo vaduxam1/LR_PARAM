@@ -16,14 +16,18 @@ from lr_lib.gui.widj.dialog import K_FIND, K_SKIP, CREATE_or_FIND
 
 
 def param_from_str_1(stri: "'\\'zul.wnd.Window\\',\\'bJsP0\\',{'") -> (str, str):
-    """" '\w+.\w+.\w+','\w+',{ """
+    """"
+    '\w+.\w+.\w+','\w+',{
+    """
     rs = stri.split("'")  # <class 'list'>: ['', 'zul.wnd.Window', ',', 'bJsP0', ',{']
     item = (rs[1], rs[3])  # <class 'tuple'>: ('zul.wnd.Window', 'bJsP0')
     return item
 
 
 def param_from_str_2(stri: "Value=bJsPk0&") -> (str, str):
-    """" stri("dtid=\w+&") """
+    """"
+    stri("dtid=\w+&")
+    """
     rs = stri.split("=", 1)  # <class 'list'>: ['Value', 'bJsPk0&']
     r = rs[1][:-1]
     item = (rs[0], r)
@@ -46,8 +50,10 @@ def group_param_search_by_resp_re(action: 'lr_lib.gui.action.main_action.ActionW
                                   action_text=True,
                                   ask=True,
                                   ask2=True,
-                                  ):
-    """поиск param, для action.c, по regexp и дальнейшей обработке результата"""
+                                  ) -> [str, ]:
+    """
+    поиск param, для action.c, по regexp и дальнейшей обработке результата
+    """
     params = {}
     regexp = list(Regxp)
 

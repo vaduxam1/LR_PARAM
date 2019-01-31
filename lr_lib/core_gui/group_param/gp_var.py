@@ -11,7 +11,9 @@ from lr_lib.gui.widj.dialog import K_FIND, K_SKIP, K_CANCEL
 
 
 def _ask_params(params: [str, ], action: 'lr_lib.gui.action.main_action.ActionWindow', ask=True) -> (int, [str, ]):
-    """спросить о создании params, -> 0 - не создавать"""
+    """
+    спросить о создании params, -> 0 - не создавать
+    """
     old_len_params = len(params)
     if ask:
         pc = '{0} шт.'.format(old_len_params)
@@ -44,8 +46,11 @@ def _ask_params(params: [str, ], action: 'lr_lib.gui.action.main_action.ActionWi
 
 
 def responce_files_texts(folder=lr_vars.DEFAULT_FILES_FOLDER, name_check=bool,
-                         encoding='utf-8', errors='replace', ) -> iter([(str, str), ]):
-    """файлы ответов и запросов и все остальные"""
+                         encoding='utf-8', errors='replace',
+                         ) -> iter([(str, str), ]):
+    """
+    файлы ответов и запросов и все остальные
+    """
     fgen = os.walk(folder)
     (dirpath, dirnames, filenames) = next(fgen)
 

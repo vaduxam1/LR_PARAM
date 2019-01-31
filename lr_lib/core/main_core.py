@@ -11,7 +11,9 @@ import lr_lib.core.var.vars_param
 
 
 def init(as_console: bool) -> dict:
-    """стартовать core"""
+    """
+    стартовать core
+    """
     lr_lib.core.var.vars_core.init()  # связь основных Var
     lr_lib.core.var.vars_highlight.init_highlight_words()  # слова для подсветки
     lr_lib.core.var.vars_param.DENY_PARAMS_update_and_lower()  # слова для подсветки
@@ -28,7 +30,9 @@ def init(as_console: bool) -> dict:
 
 
 def start(c_args: dict, echo=True) -> str:
-    """консольное использование - поиск param из ядра"""
+    """
+    консольное использование - поиск param из ядра
+    """
     lr_vars.VarParam.set(c_args['param'])  # найти файлы с param
     web_reg_save_param = lr_lib.core.wrsp.param.create_web_reg_save_param()  # сформировать wrsp
 
@@ -38,7 +42,9 @@ def start(c_args: dict, echo=True) -> str:
 
 
 def _console_vars_setter(c_args: dict) -> None:
-    """задать из ArgumentParser"""
+    """
+    задать из ArgumentParser
+    """
     if 'last_file' in c_args:
         lr_vars.VarFirstLastFile.set(c_args['last_file'])
     if 'min_inf' in c_args:
@@ -53,7 +59,9 @@ def _console_vars_setter(c_args: dict) -> None:
 
 
 def _console_argument_parser() -> {str: str}:
-    """ArgumentParser - аргументы из консоли"""
+    """
+    ArgumentParser - аргументы из консоли
+    """
     p = argparse.ArgumentParser()
     p.add_argument('param', nargs='?', help='параметр из LoadRunner')
     p.add_argument('-last', '--last_file', help='выбрать последний, из найденных файлов, иначе первый', type=int)

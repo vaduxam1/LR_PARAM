@@ -47,7 +47,9 @@ def all_wrsp_auto_rename(gui: 'lr_lib.gui.action.main_action.ActionWindow', *arg
 
 
 def _lbrb_wrsps(wrsps: ('lr_lib.core.action.web_.WebRegSaveParam',)) -> iter((str,)):
-    """для всех wrsps, найти LR/RB из wrsp текста, и сформировать новое имя wrsp"""
+    """
+    для всех wrsps, найти LR/RB из wrsp текста, и сформировать новое имя wrsp
+    """
     for wr in wrsps:
         lb = rb = ''
 
@@ -103,8 +105,11 @@ def _split_rename(text: str) -> iter((str,)):
 
 def _rename_wrsp(wrsps_text: str,
                  wrsps: ('lr_lib.core.action.web_.WebRegSaveParam',),
-                 gui: 'lr_lib.gui.action.main_action.ActionWindow') -> None:
-    """автоматически переименовать все wrsp"""
+                 gui: 'lr_lib.gui.action.main_action.ActionWindow',
+                 ) -> None:
+    """
+    автоматически переименовать все wrsp
+    """
     new_wrsps = list(_split_rename(wrsps_text))
     assert len(wrsps) == len(new_wrsps)
 
@@ -169,7 +174,9 @@ def rename_transaction(event, parent=None, s='lr_start_transaction("', e='lr_end
 
 @lr_lib.core.var.vars_other.T_POOL_decorator
 def all_wrsp_rename(gui: 'lr_lib.gui.action.main_action.ActionWindow', parent=None, ) -> None:
-    """переименавать все wrsp, вручную"""
+    """
+    переименавать все wrsp, вручную
+    """
     if parent is None:
         parent = gui
 

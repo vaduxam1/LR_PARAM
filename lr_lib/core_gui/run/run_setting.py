@@ -26,7 +26,9 @@ from lr_lib.gui.widj.dialog import K_FIND, K_SKIP
 
 
 class RunSettingWindow(tk.Toplevel):
-    """Настраиваемый запуск поиска WRSP"""
+    """
+    Настраиваемый запуск поиска WRSP
+    """
 
     def __init__(self, parent: 'lr_lib.gui.action.main_action.ActionWindow'):
         super().__init__(padx=0, pady=0)
@@ -212,7 +214,9 @@ class RunSettingWindow(tk.Toplevel):
 
     @T_POOL_decorator
     def run(self) -> None:
-        """запуск"""
+        """
+        запуск
+        """
         if not tkinter.messagebox.askokcancel('Продолжить?', 'создание WRSP', parent=self):
             return
 
@@ -221,7 +225,9 @@ class RunSettingWindow(tk.Toplevel):
         return
 
     def _run(self) -> None:
-        """запуск"""
+        """
+        запуск
+        """
         params = set()
         for item in self.items:
             i_params = item.get_params()

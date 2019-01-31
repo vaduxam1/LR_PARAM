@@ -26,7 +26,9 @@ _COLORS = itertools.cycle(lr_lib.etc.help.COLORS.keys())  #
 
 
 def random_color(ckeck=True, all_color='ABCDEF1234567890', r=6, ) -> str:
-    """итератор - случайный цвет"""
+    """
+    итератор - случайный цвет
+    """
     # ch = True
     while ckeck:
         # if ch:
@@ -50,7 +52,9 @@ highlight_words = set()  # слова для подсветки
 
 
 def init_highlight_words() -> None:
-    """заполнить highlight_words"""
+    """
+    заполнить highlight_words
+    """
     for file in next(os.walk(highlight_words_folder))[2]:
         if file.startswith(highlight_words_files_startswith):
             with open(os.path.join(highlight_words_folder, file)) as hws:

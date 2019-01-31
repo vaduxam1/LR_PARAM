@@ -13,7 +13,9 @@ from lr_lib.core.var import vars as lr_vars
 
 @lr_lib.core.var.vars_other.T_POOL_decorator
 def group_param(event, params: [str, ], widget=None, ask=True) -> None:
-    """нахождение и замена для группы web_reg_save_param's"""
+    """
+    нахождение и замена для группы web_reg_save_param's
+    """
     if widget is None:
         widget = event.widget
 
@@ -80,8 +82,11 @@ def _group_param_iter(params: [str, ],
 
 @lr_lib.core.var.vars_other.T_POOL_decorator
 def _thread_wrsp_dict_creator(wrsp_dicts: queue.Queue, params: [str, ], unsuccess: [],
-                              action: 'lr_lib.gui.action.main_action.ActionWindow') -> None:
-    """ядро - создать wrsp_dicts в фоне, чтобы не терять время, при показе popup окон"""
+                              action: 'lr_lib.gui.action.main_action.ActionWindow',
+                              ) -> None:
+    """
+    ядро - создать wrsp_dicts в фоне, чтобы не терять время, при показе popup окон
+    """
     for param in params:
         try:
             lr_vars.VarParam.set(param, action=action, set_file=True)  # найти param, создать wrsp_dict

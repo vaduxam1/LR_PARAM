@@ -22,7 +22,9 @@ def group_param_search_by_name(
         ask2=True,
         action_text=True,
 ) -> ["zkau_5650", "zkau_5680", ]:
-    """поиск в action.c, всех уникальных param, в имени которых есть param_part"""
+    """
+    поиск в action.c, всех уникальных param, в имени которых есть param_part
+    """
     if text is None:
         if ask:
             y = lr_lib.gui.widj.dialog.YesNoCancel(
@@ -97,7 +99,9 @@ def group_param_search_by_exist_param(
         ask2=True,
         add=True,
 ) -> [str, ]:
-    """поиск по началу имени - взять n первых символов для повторного поиска param по началу имени"""
+    """
+    поиск по началу имени - взять n первых символов для повторного поиска param по началу имени
+    """
     if add:
         exist_params = list(exist_params)
         exist_params.extend(lr_lib.core.var.vars_param.Params_names)

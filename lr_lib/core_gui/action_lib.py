@@ -18,10 +18,17 @@ from lr_lib.core.var import vars as lr_vars
 
 
 @lr_lib.core.var.vars_other.T_POOL_decorator
-def mouse_web_reg_save_param(widget: 'lr_lib.gui.widj.highlight_text.HighlightText', param: str,
-                             mode=('SearchAndReplace', 'highlight',), wrsp=None, wrsp_dict=None,
-                             set_param=True) -> None:
-    """в окне action.c, для param, автозамена, залить цветом, установить виджеты"""
+def mouse_web_reg_save_param(
+        widget: 'lr_lib.gui.widj.highlight_text.HighlightText',
+        param: str,
+        mode=('SearchAndReplace', 'highlight',),
+        wrsp=None,
+        wrsp_dict=None,
+        set_param=True,
+) -> None:
+    """
+    в окне action.c, для param, автозамена, залить цветом, установить виджеты
+    """
     with widget.action.block():
         if 'SearchAndReplace' in mode:
             if not wrsp_dict:
@@ -61,7 +68,9 @@ def mouse_web_reg_save_param(widget: 'lr_lib.gui.widj.highlight_text.HighlightTe
 
 @lr_lib.core.var.vars_other.T_POOL_decorator
 def rClick_Param(event, *args, **kwargs) -> None:
-    """web_reg_save_param из выделения, меню правой кнопки мыши, с отображением в виджетах lr_vars.Window окна"""
+    """
+    web_reg_save_param из выделения, меню правой кнопки мыши, с отображением в виджетах lr_vars.Window окна
+    """
     widget = event.widget
 
     try:
@@ -83,7 +92,9 @@ def rClick_Param(event, *args, **kwargs) -> None:
 
 
 def remove_web_reg_save_param_from_action(event, selection=None, find=True) -> None:
-    """удалить web_reg_save_param с w.param или w.name == selection"""
+    """
+    удалить web_reg_save_param с w.param или w.name == selection
+    """
     if selection is None:
         selection = event.widget.selection_get()
 
@@ -96,7 +107,9 @@ def remove_web_reg_save_param_from_action(event, selection=None, find=True) -> N
 
 
 def event_action_getter(event):
-    """если передали не event.widget.'action', то найти action"""
+    """
+    если передали не event.widget.'action', то найти action
+    """
     try:
         action = event.widget.action
     except AttributeError:
@@ -106,7 +119,9 @@ def event_action_getter(event):
 
 
 def rClick_max_inf(event) -> None:
-    """max inf widget из выделения, меню правой кнопки мыши"""
+    """
+    max inf widget из выделения, меню правой кнопки мыши
+    """
     selection = event.widget.selection_get()
     m = re.sub("\D", "", selection)
     lr_vars.VarSearchMaxSnapshot.set(int(m))
@@ -114,7 +129,9 @@ def rClick_max_inf(event) -> None:
 
 
 def rClick_min_inf(event) -> None:
-    """min inf widget из выделения, меню правой кнопки мыши"""
+    """
+    min inf widget из выделения, меню правой кнопки мыши
+    """
     selection = event.widget.selection_get()
     m = re.sub("\D", "", selection)
     lr_vars.VarSearchMinSnapshot.set(int(m))
@@ -122,7 +139,9 @@ def rClick_min_inf(event) -> None:
 
 
 def rClick_Search(event) -> None:
-    """поиск выделения в тексте, меню правой кнопки мыши"""
+    """
+    поиск выделения в тексте, меню правой кнопки мыши
+    """
     selection = event.widget.selection_get()
     try:
         event.widget.action.search_in_action(word=selection)
@@ -133,7 +152,9 @@ def rClick_Search(event) -> None:
 
 @lr_lib.core.var.vars_other.T_POOL_decorator
 def encoder(event, action=None) -> None:
-    """декодирование выделения"""
+    """
+    декодирование выделения
+    """
     try:
         widget = event.widget
     except AttributeError:
@@ -184,7 +205,9 @@ def encoder(event, action=None) -> None:
 
 
 def add_highlight_words_to_file(event) -> None:
-    """сохранить слово для подсветки в файл - "навсегда" """
+    """
+    сохранить слово для подсветки в файл - "навсегда"
+    """
     selection = event.widget.selection_get()
 
     with open(lr_lib.core.var.vars_highlight.highlight_words_main_file, 'a') as f:
@@ -195,7 +218,9 @@ def add_highlight_words_to_file(event) -> None:
 
 
 def rClick_add_highlight(event, option: str, color: str, val: str, find=False) -> None:
-    """для выделения, добавление color в highlight_dict, меню правой кнопки мыши"""
+    """
+    для выделения, добавление color в highlight_dict, меню правой кнопки мыши
+    """
     try:
         hd = event.widget.highlight_dict
     except AttributeError:
@@ -218,9 +243,15 @@ def rClick_add_highlight(event, option: str, color: str, val: str, find=False) -
     return
 
 
-def snapshot_files(widget: 'lr_lib.gui.widj.highlight_text.HighlightText', folder_record='', i_num=0,
-                   selection='') -> None:
-    """показать окно файлов snapshot"""
+def snapshot_files(
+        widget: 'lr_lib.gui.widj.highlight_text.HighlightText',
+        folder_record='',
+        i_num=0,
+        selection='',
+) -> None:
+    """
+    показать окно файлов snapshot
+    """
     if not folder_record:
         folder_record = lr_vars.VarFilesFolder.get()
     folder_response = widget.action.get_result_folder()
@@ -235,7 +266,9 @@ def snapshot_files(widget: 'lr_lib.gui.widj.highlight_text.HighlightText', folde
 
 
 def file_from_selection(event) -> str:
-    """открыть файл из выделения"""
+    """
+    открыть файл из выделения
+    """
     selection = event.widget.selection_get()
     folder = lr_vars.VarFilesFolder.get()
     full_name = os.path.join(folder, selection)
@@ -243,30 +276,35 @@ def file_from_selection(event) -> str:
     if os.path.isfile(full_name):
         lr_lib.core.etc.other._openTextInEditor(full_name)
     else:
-        lr_vars.Logger.warning(
-            'файл не найден :\n"{}" : len={}\n{}'.format(selection, len(selection), full_name), log=False)
+        i = 'файл не найден :\n"{}" : len={}\n{}'.format(selection, len(selection), full_name)
+        lr_vars.Logger.warning(i, log=False)
 
     return full_name
 
 
 def snapshot_text_from_selection(event) -> int:
-    """открыть текст snapshot из выделения"""
+    """
+    открыть текст snapshot из выделения
+    """
     action = event_action_getter(event)
     selection = event.widget.selection_get()
     inf = int(''.join(filter(str.isnumeric, selection)))
     web_ = next(action.web_action.get_web_snapshot_by(snapshot=inf), None)
 
     if web_ is None:
-        lr_vars.Logger.warning(
-            'web_.snapshot не найден :\n"{}" : len={}\n{}'.format(selection, len(selection), inf), log=False)
+        i = 'web_.snapshot не найден :\n"{}" : len={}\n{}'.format(selection, len(selection), inf)
+        lr_vars.Logger.warning(i, log=False)
     else:
-        lr_lib.core.etc.other.openTextInEditor(web_.to_str(_all_stat=True))
+        i = web_.to_str(_all_stat=True)
+        lr_lib.core.etc.other.openTextInEditor(i)
 
     return inf
 
 
 def wrsp_text_from_selection(event) -> object:
-    """открыть текст wrsp из выделения"""
+    """
+    открыть текст wrsp из выделения
+    """
     action = event_action_getter(event)
     selection = event.widget.selection_get()
 
@@ -278,20 +316,24 @@ def wrsp_text_from_selection(event) -> object:
     except KeyError:
         wrsp = None
     else:
-        wrsp = next(action.web_action.get_web_reg_save_param_by(name=selection), None)
+        w = action.web_action.get_web_reg_save_param_by(name=selection)
+        wrsp = next(w, None)
 
     if wrsp is None:
-        lr_vars.Logger.warning(
-            'wrsp не найден :\n"{}" : len={}\n{}'.format(selection, len(selection), action), log=False)
+        i = 'wrsp не найден :\n"{}" : len={}\n{}'.format(selection, len(selection), action)
+        lr_vars.Logger.warning(i, log=False)
     else:
-        lr_lib.core.etc.other.openTextInEditor(wrsp.to_str(_all_stat=True))
+        i = wrsp.to_str(_all_stat=True)
+        lr_lib.core.etc.other.openTextInEditor(i)
 
     return wrsp
 
 
 @lr_lib.core.var.vars_other.T_POOL_decorator
 def rClick_web_reg_save_param_regenerate(event, new_lb_rb=True, selection=None, replace=True) -> (dict, str):
-    """из выделения, переформатировать LB/RB в уже созданном web_reg_save_param, меню правой кнопки мыши"""
+    """
+    из выделения, переформатировать LB/RB в уже созданном web_reg_save_param, меню правой кнопки мыши
+    """
     if selection is None:
         selection = event.widget.selection_get()
     try:
@@ -300,11 +342,14 @@ def rClick_web_reg_save_param_regenerate(event, new_lb_rb=True, selection=None, 
         action = next(iter(lr_vars.Window.action_windows.values()))
 
     if lr_lib.core.wrsp.param.wrsp_lr_start not in selection:
-        return tk.messagebox.showwarning(
+        s = 'Ошибка, необходимо выделять весь блок, созданного web_reg_save_param, вместе с комментариями\n' \
+            'Сейчас "{wr}" не содержится в выделенном тексте:\n{selection}'
+        tk.messagebox.showwarning(
             str(rClick_web_reg_save_param_regenerate),
-            'Ошибка, необходимо выделять весь блок, созданного web_reg_save_param, вместе с комментариями\n'
-            'Сейчас "{wr}" не содержится в выделенном тексте:\n{selection}'.format(
-                wr=lr_lib.core.wrsp.param.wrsp_lr_start, selection=selection[:1000]), parent=action)
+            s.format(wr=lr_lib.core.wrsp.param.wrsp_lr_start, selection=selection[:1000]),
+            parent=action,
+        )
+        return
 
     file_name = selection.split(lr_lib.core.wrsp.param.wrsp_file_start, 1)[-1]
     file_name = file_name.split(lr_lib.core.wrsp.param.wrsp_file_end, 1)[0]

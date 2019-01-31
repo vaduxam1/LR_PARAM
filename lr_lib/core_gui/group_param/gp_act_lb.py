@@ -98,7 +98,9 @@ def group_param_search_by_lb(
 
 
 def _ask_lb_items(action: 'lr_lib.gui.action.main_action.ActionWindow', lb_items: [str, ], t1: str, t2: str) -> [str, ]:
-    """диалог окно поиск param"""
+    """
+    диалог окно поиск param
+    """
     tt = '\n'.join(lb_items)
 
     y = lr_lib.gui.widj.dialog.YesNoCancel(

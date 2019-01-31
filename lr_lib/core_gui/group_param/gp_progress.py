@@ -9,7 +9,9 @@ final_str = '{state} | создано сейчас = {param} / fail={fail} : {un
 
 
 class ProgressBar:
-    """рекурсивный асинхронный progressbar"""
+    """
+    рекурсивный асинхронный progressbar
+    """
 
     def __init__(self, len_params: int, widget):
         self.widget = widget
@@ -21,27 +23,39 @@ class ProgressBar:
         return
 
     def __enter__(self) -> 'callable':
+        """
+        старт
+        """
         self.widget.action.show_hide_bar_1(force_show=True)
         self.start()
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb) -> tuple:
+        """
+        стоп
+        """
         self.stop()
         self.widget.action.show_hide_bar_1()
         return exc_type, exc_val, exc_tb
 
     def update(self, item: (int, dict, str, list)) -> None:
-        """добавить данные для progressbar"""
+        """
+        добавить данные для progressbar
+        """
         self.item0[:] = [item]
         return
 
     def start(self) -> None:
-        """рекурсивный асинхронный progressbar"""
+        """
+        рекурсивный асинхронный progressbar
+        """
         lr_vars.MainThreadUpdater.submit(self._start)
         return
 
     def _start(self) -> None:
-        """рекурсивный асинхронный progressbar"""
+        """
+        рекурсивный асинхронный progressbar
+        """
         (counter, wrsp_dict, wrsp, unsuccess) = self.item0[0]
         fail = len(unsuccess)
 
@@ -83,7 +97,9 @@ class ProgressBar:
         return
 
     def stop(self) -> None:
-        """выход self.start"""
+        """
+        выход self.start
+        """
         item = list(self.item0[0])
         item[1] = None  # выход
         self.item0[:] = [item]

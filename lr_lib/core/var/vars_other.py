@@ -78,7 +78,9 @@ VRS = (
 
 
 def clearVars() -> None:
-    """очистка Var's"""
+    """
+    очистка Var's
+    """
     for var in VRS:
         var.set(var.default_value, callback=False)
         continue

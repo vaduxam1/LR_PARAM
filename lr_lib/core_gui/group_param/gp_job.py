@@ -26,7 +26,9 @@ from lr_lib.core_gui.group_param.gp_var import responce_files_texts
 
 
 def _get_text_for_web(mode: str, action: 'lr_lib.gui.action.main_action.ActionWindow') -> iter(([str, str],)):
-    """текст для web объектов"""
+    """
+    текст для web объектов
+    """
     if mode == 'snapshot':
         for web_ in action.web_action.get_web_snapshot_all():
             n = str(web_.snapshot.inf)
@@ -54,7 +56,9 @@ name_check3 = lambda file_name: (not (name_check1(file_name) or name_check2(file
 def _text_from_params_source(
         params_source: 'str or lr_lib.gui.action.main_action.ActionWindow',
 ) -> iter(([str, str],)):
-    """тексты для поиска param"""
+    """
+    тексты для поиска param
+    """
     if isinstance(params_source, str):
         params_source = [params_source, ]
 
@@ -81,7 +85,9 @@ def _group_param_search_by_exist_param(
         params_source,
         **kwargs
 ) -> iter((str,)):
-    """поиск по началу имени - взять n первых символов для повторного поиска param по началу имени"""
+    """
+    поиск по началу имени - взять n первых символов для повторного поиска param по началу имени
+    """
     param_spin = lr_vars.SecondaryParamLen.get()
     if param_spin:
         param_parts = [param[:param_spin] for param in exist_params]
@@ -94,7 +100,9 @@ def _group_param_search_by_exist_param(
 
 
 def _group_param_search_by_lb(lb_items: [str, ], params_source) -> iter((str,)):
-    """поиск по LB"""
+    """
+    поиск по LB
+    """
     gp = _group_param_search_by_param_part(lb_items, params_source, part_mode=False)
     yield from gp
     return
@@ -174,6 +182,9 @@ def _params_by_part(
 
 
 def all_lb_from(text: str, param: str) -> iter((str,)):
+    """
+    поиск новых lb, для param, в text
+    """
     checks = lr_lib.core.etc.lbrb_checker.check_in_text_param_all_bound_lb_rb(text=text, param=param)
 
     for (index, check) in enumerate(checks, start=1):
@@ -190,7 +201,9 @@ def all_lb_from(text: str, param: str) -> iter((str,)):
 
 
 def _lb_get(lb_full: str) -> str:
-    """забрать lb"""
+    """
+    забрать lb
+    """
     check = False
     lb = []
 
