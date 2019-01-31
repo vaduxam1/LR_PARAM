@@ -8,7 +8,9 @@ import lr_lib.core.var.vars as lr_vars
 
 
 class Transactions:
-    """объект хранящий иерархию "транзакций" в action.c"""
+    """
+    объект хранящий иерархию "транзакций" в action.c
+    """
     _no_transaction_name = 'NoTransaction_'
 
     def __init__(self, parent: 'lr_lib.core.action.main_awal.ActionWebsAndLines'):
@@ -21,7 +23,9 @@ class Transactions:
         return
 
     def __no_transaction_name(self) -> str:
-        """если нет имени транзакции"""
+        """
+        если нет имени транзакции
+        """
         self._no_transaction_num += 1
         name = '{a}{u}'.format(a=self._no_transaction_name, u=self._no_transaction_num)
         self.start_transaction(name)
@@ -29,7 +33,9 @@ class Transactions:
         return name
 
     def _current(self) -> str:
-        """для определения где находится web, во время разбора action.c текста"""
+        """
+        для определения где находится web, во время разбора action.c текста
+        """
         for n in reversed(self.names):
             if n not in self.start_stop['stop']:
                 return n
@@ -38,6 +44,9 @@ class Transactions:
         return nm
 
     def start_transaction(self, transaction: str) -> None:
+        """
+        установить начало транзакции
+        """
         if self.__is_no_transaction_name:
             self.stop_transaction(self.__is_no_transaction_name)
             self.__is_no_transaction_name = ''
@@ -59,6 +68,9 @@ class Transactions:
         return
 
     def stop_transaction(self, transaction: str) -> None:
+        """
+        установить конец транзакции
+        """
         if transaction not in self.names:
             t = 'транзакция: stop перед start\nОтсутствует start_transaction("{}")'.format(transaction)
             lr_vars.Logger.error(t)

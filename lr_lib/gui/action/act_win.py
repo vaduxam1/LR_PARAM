@@ -21,71 +21,88 @@ import lr_lib.gui.wrsp.top.top_allfiles
 
 
 class ActWin(lr_lib.gui.action.act_any.ActAny):
-    """родитель lr_lib.gui.action.main_action.ActionWindow"""
+    """
+    родитель lr_lib.gui.action.main_action.ActionWindow
+    """
 
     def __init__(self):
         lr_lib.gui.action.act_any.ActAny.__init__(self)
 
+        # Button
         cmd1 = lambda: lr_lib.core.etc.other.openTextInEditor(self.tk_text.get(1.0, tk.END))
         self.editor_button = tk.Button(
             self.file_bar, text='editor', font=(lr_vars.DefaultFont + ' bold'),
             command=cmd1,
         )
 
+        # Button
         cmd2 = lambda: lr_lib.core_gui.run.run_setting.RunSettingWindow(self)
         self.auto_param_creator_button = tk.Button(
             self.toolbar, text='Найти и Создать\nparam WRSP', background='orange', font=(lr_vars.DefaultFont + ' bold'),
             command=cmd2,
         )
 
+        # Checkbutton
         self.final_wnd_cbx = tk.Checkbutton(
             self.toolbar, text='final', font=lr_vars.DefaultFont, variable=self.final_wnd_var,
         )
 
+        # Button
         cmd3 = lambda *a: lr_lib.gui.widj.wrsp_setting.WrspSettingWindow(parent=self)
         self.wrsp_setting = tk.Button(
             self.toolbar, text='wrsp_setting', font=(lr_vars.DefaultFont + ' bold'), command=cmd3,
         )
 
+        # Button
         cmd4 = lambda *a: lr_lib.core_gui.action_lib.snapshot_files(self.tk_text, i_num=1)
         self.resp_btn = tk.Button(
             self.toolbar, text='файлы ответов', font=lr_vars.DefaultFont, command=cmd4,
         )
 
-        #
+        # Checkbutton
         self.force_ask_cbx = tk.Checkbutton(
             self.toolbar, text='Ask', font=lr_vars.DefaultFont, variable=self.force_ask_var, command=self.force_ask_cmd,
         )
+
+        # Checkbutton
         self.no_cbx = tk.Checkbutton(
             self.toolbar, text='NoAsk', font=lr_vars.DefaultFont, variable=self.no_var, command=self.no_var_cmd,
         )
 
-        #
+        # Checkbutton
         self.max_inf_cbx = tk.Checkbutton(
             self.toolbar, text='ограничить max inf', font=(lr_vars.DefaultFont + ' bold'),
             variable=self.max_inf_cbx_var, command=self.max_inf_set,
         )
+
+        # Checkbutton
         self.add_inf_cbx = tk.Checkbutton(
             self.toolbar, anchor=tk.E, text='max inf mode', font=lr_vars.DefaultFont, variable=self.add_inf_cbx_var,
         )
+
+        # Checkbutton
         self.force_yes_inf_checker_cbx = tk.Checkbutton(
             self.toolbar, text='fYes', font=lr_vars.DefaultFont, variable=self.force_yes_inf,
         )
 
-        #
+        # Button
         cmd5 = lambda *a: lr_lib.gui.etc.gui_other.repB(self.tk_text)
         self.lr_report_B = tk.Button(
             self.toolbar, text='reportB', font=lr_vars.DefaultFont, command=cmd5,
         )
+
+        # Button
         cmd6 = lambda *a: lr_lib.gui.etc.gui_other.repA(self.tk_text)
         self.lr_report_A = tk.Button(
             self.toolbar, text='reportA', font=lr_vars.DefaultFont, command=cmd6,
         )
 
-        #
+        # Button
         self.lr_legend = tk.Button(
             self.toolbar, text='web_legend', font=lr_vars.DefaultFont, command=self.legend,
         )
+
+        # Button
         cmd7 = lambda *a: lr_lib.gui.wrsp.top.top_allfiles.TopFolder(self)
         self.btn_all_files = tk.Button(
             self.toolbar, text='все файлы', font=lr_vars.DefaultFont, command=cmd7,
@@ -95,8 +112,10 @@ class ActWin(lr_lib.gui.action.act_any.ActAny):
         self.post_init()
         return
 
-    def post_init(self):
-        """выполнять после создания всех виджетов"""
+    def post_init(self) -> None:
+        """
+        выполнять после создания всех виджетов
+        """
         widjs = (self.search_res_combo, self.SearchReplace_searchCombo, self.SearchReplace_replaceCombo,
                  self.search_entry,)
         for w in widjs:
@@ -110,11 +129,16 @@ class ActWin(lr_lib.gui.action.act_any.ActAny):
         return
 
     def open_action(self, file=None, errors='replace', callback=None) -> None:
-        """сформировать action.c"""
+        """
+        сформировать action.c
+        """
         super().open_action(file=file, errors=errors, callback=self._open_action_final)
+        return
 
     def param_inf_checker(self, wrsp_dict: dict, wrsp: str) -> None:
-        """inf-номер запроса <= inf-номер web_reg_save_param"""
+        """
+        inf-номер запроса <= inf-номер web_reg_save_param
+        """
         if not wrsp_dict:
             return
 
@@ -150,10 +174,21 @@ class ActWin(lr_lib.gui.action.act_any.ActAny):
                         lr_vars.Logger.info('{q}\n\n{e}'.format(e=ex, q=qb))
         return
 
-    def SearchAndReplace(self, search: str, replace='', wrsp_dict=None, wrsp=None, backup=False, is_wrsp=True,
-                         replace_callback=None, rep_stat=False) -> None:
-        """VarWrspDict автозамена: [заменить param на {web_reg_save_param}]
-        + [добавить блок с // web_reg_save_param, перед блоком c inf_line]"""
+    def SearchAndReplace(
+            self,
+            search: str,
+            replace='',
+            wrsp_dict=None,
+            wrsp=None,
+            backup=False,
+            is_wrsp=True,
+            replace_callback=None,
+            rep_stat=False,
+    ) -> None:
+        """
+        VarWrspDict автозамена: [заменить param на {web_reg_save_param}]
+            + [добавить блок с // web_reg_save_param, перед блоком c inf_line]
+        """
         assert search, 'пустой search "{s}" {ts}'.format(s=search, ts=type(search))
 
         if is_wrsp:
@@ -200,13 +235,16 @@ class ActWin(lr_lib.gui.action.act_any.ActAny):
         return
 
     def get_result_folder(self, results_xml='Results.xml') -> str:
-        """директория файлов ответов"""
+        """
+        директория файлов ответов
+        """
         result_folder = self.usr_config['General']['LastResultDir']
         folder = os.path.join(os.getcwd(), result_folder)
         results_xml = os.path.join(folder, results_xml)  # 'C:\\SCR\\LR_10\\LR_PARAM\\result1\\Results.xml'
 
         if not os.path.isfile(results_xml):
             lr_vars.Logger.error(ERR1)
+
         with open(results_xml) as f:
             text = f.read()
 
@@ -219,19 +257,25 @@ class ActWin(lr_lib.gui.action.act_any.ActAny):
         return ps
 
     def no_var_cmd(self, *args) -> None:
-        """force_ask_var"""
+        """
+        force_ask_var
+        """
         if self.no_var.get():
             self.force_ask_var.set(0)
         return
 
     def force_ask_cmd(self, *args) -> None:
-        """no_var"""
+        """
+        no_var
+        """
         if self.force_ask_var.get():
             self.no_var.set(0)
         return
 
     def max_inf_set(self, *args) -> None:
-        """max_inf_cbx_var вкл/выкл"""
+        """
+        max_inf_cbx_var вкл/выкл
+        """
         if self.max_inf_cbx_var.get():
             self.add_inf_cbx.configure(state='normal')
         else:
@@ -239,14 +283,18 @@ class ActWin(lr_lib.gui.action.act_any.ActAny):
         return
 
     def legend(self) -> None:
-        """окно легенды"""
+        """
+        окно легенды
+        """
         t = lr_lib.gui.widj.legend.WebLegend(self)
         t.add_web_canavs()
         t.print()
         return
 
-    def _start_auto_update_action_info_lab(self):
-        """автообновление self.scroll_lab2"""
+    def _start_auto_update_action_info_lab(self) -> None:
+        """
+        автообновление self.scroll_lab2
+        """
         lr_lib.gui.action._other.auto_update_action_info_lab(
             self=self,
             config=self.scroll_lab2.config,
@@ -260,12 +308,16 @@ class ActWin(lr_lib.gui.action.act_any.ActAny):
         return
 
 
-ERR1 = '''Не найдены LoadRunner файлы, ответов при воспроизведении, например "LR_scr\\result1\\Results.xml".
+ERR1 = '''
+Не найдены LoadRunner файлы, ответов при воспроизведении, например "LR_scr\\result1\\Results.xml".
 Для появления файлов ответов, необходимо хотябы один раз, запустить action.c скрипт в LoadRunner.
-Путь директории последнего воспроизведения, берется из "LR_scr\\имя_скрипта.usr" LoadRunner файла.'''
+Путь директории последнего воспроизведения, берется из "LR_scr\\имя_скрипта.usr" LoadRunner файла.
+'''.strip()
 
-ERR2 = '''Snapshot=t{p}.inf, в котором расположен,\nпервый заменяемый "{prm}"
+ERR2 = '''
+Snapshot=t{p}.inf, в котором расположен,\nпервый заменяемый "{prm}"
 
 не может быть({p} <= {inf_nums}) меньше или равен,
 
-Snapshot=t{w}.inf, перед которым вставляется:'''
+Snapshot=t{w}.inf, перед которым вставляется:
+'''.strip()

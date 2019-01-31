@@ -11,7 +11,9 @@ import lr_lib.gui.action.main_action
 
 
 class ActionWebsAndLines:
-    """внутреннее представление action.c текста, как список web_ объектов, и "неважного" текста между ними"""
+    """
+    внутреннее представление action.c текста, как список web_ объектов, и "неважного" текста между ними
+    """
 
     def __init__(self, action: 'lr_lib.gui.action.main_action.ActionWindow'):
         self.action = action
@@ -27,8 +29,10 @@ class ActionWebsAndLines:
         return
 
     def drop_file_none_inf_num_in_action(self) -> None:
-        """в LoadRunner могут быть inf-файлы, которых нету в action.c(например удалили лишний код),
-        такие файлы надо отсеять, тк web_reg_save_param потом может на него сослатся"""
+        """
+        в LoadRunner могут быть inf-файлы, которых нету в action.c(например удалили лишний код),
+        такие файлы надо отсеять, тк web_reg_save_param потом может на него сослатся
+        """
         self.action_infs.clear()
         self.drop_infs.clear()
         self.drop_files.clear()
@@ -52,7 +56,9 @@ class ActionWebsAndLines:
         return
 
     def get_web_all(self) -> iter((lr_lib.core.action.web_.WebAny,)):
-        """все объекты"""
+        """
+        все объекты
+        """
         for web in self.webs_and_lines:
             if not isinstance(web, str):
                 yield web
@@ -60,7 +66,9 @@ class ActionWebsAndLines:
         return
 
     def get_web_by(self, webs: (lr_lib.core.action.web_.WebAny,), **kwargs) -> iter((lr_lib.core.action.web_.WebAny,)):
-        """объекты по kwargs условию: kwargs={'abc': [123]} -> web's.abc == [123]"""
+        """
+        объекты по kwargs условию: kwargs={'abc': [123]} -> web's.abc == [123]
+        """
         snapshot = kwargs.pop('snapshot', None)
         attrs = kwargs.items()
         for web in webs:
@@ -72,7 +80,9 @@ class ActionWebsAndLines:
         return
 
     def get_web_snapshot_all(self) -> iter((lr_lib.core.action.web_.WebSnapshot,)):
-        """snapshot объекты"""
+        """
+        snapshot объекты
+        """
         webs = self.get_web_all()
         for web in webs:
             if web.snapshot.inf:
@@ -81,7 +91,9 @@ class ActionWebsAndLines:
         return
 
     def get_web_snapshot_by(self, **kwargs) -> iter((lr_lib.core.action.web_.WebSnapshot,)):
-        """snapshot объекты по kwargs условию"""
+        """
+        snapshot объекты по kwargs условию
+        """
         al = self.get_web_snapshot_all()
         webs = self.get_web_by(al, **kwargs)
         for web in webs:
@@ -90,7 +102,9 @@ class ActionWebsAndLines:
         return
 
     def get_web_reg_save_param_all(self) -> iter((lr_lib.core.action.web_.WebRegSaveParam,)):
-        """web_reg_save_param объекты"""
+        """
+        web_reg_save_param объекты
+        """
         webs = self.get_web_snapshot_all()
         for web in webs:
             yield from web.web_reg_save_param_list
@@ -98,7 +112,9 @@ class ActionWebsAndLines:
         return
 
     def get_web_reg_save_param_by(self, **kwargs) -> iter((lr_lib.core.action.web_.WebRegSaveParam,)):
-        """web_reg_save_param объекты по kwargs условию"""
+        """
+        web_reg_save_param объекты по kwargs условию
+        """
         al = self.get_web_reg_save_param_all()
         webs = self.get_web_by(al, **kwargs)
         for web_wrsp in webs:
@@ -107,7 +123,9 @@ class ActionWebsAndLines:
         return
 
     def replace_bodys(self, replace_list: [(str, str), ], is_wrsp=True) -> None:
-        """заменить группу param, во всех web_ body"""
+        """
+        заменить группу param, во всех web_ body
+        """
         web_actions = tuple(self.get_web_snapshot_all())
         lr_vars.Logger.trace('web_actions={lw}, replace_list={lrl}:{rl}'.format(
             rl=replace_list, lrl=len(replace_list), lw=len(web_actions)))
@@ -124,7 +142,9 @@ class ActionWebsAndLines:
         return
 
     def replace_bodys_iter(self, web_actions: (lr_lib.core.action.web_.WebAny,), is_wrsp=True) -> None:
-        """заменить группу param, во всех web_ body - сопрограмма"""
+        """
+        заменить группу param, во всех web_ body - сопрограмма
+        """
         search_replace = yield
         while search_replace is not None:
             (search, replace) = search_replace
@@ -141,16 +161,21 @@ class ActionWebsAndLines:
         return
 
     def _add_to_text_list(self, element: (str or lr_lib.core.action.web_.WebAny)) -> None:
-        """объединять строки, идущие подряд"""
+        """
+        объединять строки, идущие подряд
+        """
         last_ = self.webs_and_lines[-1]
 
         if isinstance(element, str) and isinstance(last_, str):
             self.webs_and_lines[-1] = '{tl}\n{et}'.format(tl=last_, et=element)
         else:
             self.webs_and_lines.append(element)
+        return
 
     def set_text_list(self, text_list: [str, ], websReport=True) -> None:
-        """создать все web_action объекты"""
+        """
+        создать все web_action объекты
+        """
         self.transactions = lr_lib.core.action.transac.Transactions(self)
 
         if isinstance(text_list, str):
@@ -165,7 +190,9 @@ class ActionWebsAndLines:
         return
 
     def _set_text_list(self, iter_lines: (str,)) -> None:
-        """создать все web_action объекты"""
+        """с
+        оздать все web_action объекты
+        """
         iter_lines = map(str.rstrip, iter_lines)
         self.webs_and_lines.clear()
 
@@ -271,7 +298,7 @@ class ActionWebsAndLines:
                 [w.name for w in RegParamList]))
         return
 
-    def set_transaction_name(self, strip_line: str) -> (str or None):
+    def set_transaction_name(self, strip_line: str) -> None:
         """проверить линию, сохранить имя transaction"""
         if strip_line.startswith('lr_'):  # lr_start_transaction("login");
             if strip_line.startswith('lr_start_transaction'):
@@ -285,9 +312,14 @@ class ActionWebsAndLines:
                 self.transactions.stop_transaction(transac)
         return
 
-    def web_reg_save_param_insert(self, wrsp_dict_or_snapshot: (dict or int),
-                                  wrsp='') -> lr_lib.core.action.web_.WebRegSaveParam:
-        """вставить web_reg_save_param"""
+    def web_reg_save_param_insert(
+            self,
+            wrsp_dict_or_snapshot: (dict or int),
+            wrsp='',
+    ) -> lr_lib.core.action.web_.WebRegSaveParam:
+        """
+        вставить web_reg_save_param
+        """
         if isinstance(wrsp_dict_or_snapshot, dict):
             inf = wrsp_dict_or_snapshot['inf_nums']
             inf = inf[0]
@@ -323,7 +355,9 @@ class ActionWebsAndLines:
         return wrsp_web_
 
     def web_reg_save_param_remove(self, name: str, keys=('param', 'name'), param=None, is_wrsp=False) -> str:
-        """удалить web_reg_save_param, is_wrsp=False"""
+        """
+        удалить web_reg_save_param, is_wrsp=False
+        """
         al = self.get_web_snapshot_all()
         for web_request in al:
             for wrsp_web in web_request.web_reg_save_param_list:
@@ -341,7 +375,9 @@ class ActionWebsAndLines:
         return param
 
     def to_str(self, websReport=False) -> str:
-        """весь action текст как строка"""
+        """
+        весь action текст как строка
+        """
         if websReport:
             self.websReport.create()
 
@@ -350,7 +386,9 @@ class ActionWebsAndLines:
         return s
 
     def _to_str(self, sep=True) -> iter((str,)):
-        """итератор - весь action текст как строка"""
+        """
+        итератор - весь action текст как строка
+        """
         for line in self.webs_and_lines:
             is_str = isinstance(line, str)
             if is_str != sep:
@@ -368,7 +406,9 @@ class ActionWebsAndLines:
         return
 
     def _all_web_body_text(self) -> str:
-        """текст body всех web"""
+        """
+        текст body всех web
+        """
         al = self.get_web_all()
         text = '\n'.join(w.get_body() for w in al)
         return text

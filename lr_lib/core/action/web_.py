@@ -29,19 +29,25 @@ class Snapshot:
 
 
 def read_web_type(first_line: str, s1='("', s2='(') -> str:
-    """найти тип web_"""
+    """
+    найти тип web_
+    """
     s = (s1 if (s1 in first_line) else s2)
     t = first_line.split(s, 1)
     if len(t) == 2:
-        return t[0].strip()
-    else:
-        u = '{fl} не содержит {s}'.format(fl=first_line, s=[s1, s2])
-        raise UserWarning(u)
+        s = t[0].strip()
+        return s
+
+    u = '{fl} не содержит {s}'.format(fl=first_line, s=[s1, s2])
+    raise UserWarning(u)
 
 
 def _body_replace(body_split: [str, ], len_body_split: int, search: str, replace: str, is_wrsp=True) -> iter((str,)):
-    """замена search в body"""
-    yield body_split[0]
+    """
+    замена search в body
+    """
+    fst = body_split[0]
+    yield fst
 
     if is_wrsp:
         replace = lr_lib.core.wrsp.param.param_bounds_setter(replace)
@@ -49,17 +55,21 @@ def _body_replace(body_split: [str, ], len_body_split: int, search: str, replace
     for indx in range(1, len_body_split):
         left = body_split[indx - 1]
         right = body_split[indx]
+
         if lr_lib.core.etc.lbrb_checker.check_bound_lb_rb(left, right):
             s = (replace + right)
         else:
             s = (search + right)
+
         yield s
         continue
     return
 
 
 def body_replace(body: str, search: str, replace: str, is_wrsp=True) -> str:
-    """замена search в body"""
+    """
+    замена search в body
+    """
     body_split = body.split(search)
     len_body_split = len(body_split)
 
@@ -70,7 +80,9 @@ def body_replace(body: str, search: str, replace: str, is_wrsp=True) -> str:
 
 
 def bodys_replace(replace_args: ({int: str}, [(str, str), ]), is_wrsp=True) -> [str, ]:
-    """замена param's в body's"""
+    """
+    замена param's в body's
+    """
     (body_portion, replace_list) = replace_args
     for i in body_portion:
         for (search, replace) in replace_list:
@@ -83,11 +95,19 @@ def bodys_replace(replace_args: ({int: str}, [(str, str), ]), is_wrsp=True) -> [
 
 
 class WebAny:
-    """любые web_"""
+    """
+    любые web_
+    """
     count = 0
 
-    def __init__(self, parent_: 'lr_lib.core.action.main_awal.ActionWebsAndLines', lines_list: list,
-                 comments: str, transaction: str, _type=''):
+    def __init__(
+            self,
+            parent_: 'lr_lib.core.action.main_awal.ActionWebsAndLines',
+            lines_list: list,
+            comments: str,
+            transaction: str,
+            _type='',
+    ):
         self.ActionWebsAndLines = parent_
         self.tk_text = self.ActionWebsAndLines.action.tk_text
         self.lines_list = lines_list
@@ -111,7 +131,9 @@ class WebAny:
         return
 
     def _read_snapshot(self) -> int:
-        """Snapshot inf номер"""
+        """
+        Snapshot inf номер
+        """
         try:
             for line in self.lines_list[1:-1]:
                 strip = line.strip()
@@ -129,24 +151,30 @@ class WebAny:
         return 0
 
     def to_str(self, _all_stat=False) -> str:
-        """весь текст web_"""
-        comments = self.comments
+        """
+        весь текст web_
+        """
+        comments = self.comments  # str copy
 
         if lr_vars.VarWebStatsWarn.get() or _all_stat:
             if self.snapshot.inf in self.ActionWebsAndLines.websReport.rus_webs:
-                comments += '\n\t{} WARNING: NO ASCII Symbols(rus?)'.format(lr_lib.core.wrsp.param.LR_COMENT)
+                s = '\n\t{} WARNING: NO ASCII Symbols(rus?)'.format(lr_lib.core.wrsp.param.LR_COMENT)
+                comments += s
             if (len(self.lines_list) > 2) and (not self.snapshot.inf):
-                comments += '\n\t{} WARNING: no "Snapshot=t.inf" (del?)'.format(lr_lib.core.wrsp.param.LR_COMENT)
+                s = '\n\t{} WARNING: no "Snapshot=t.inf" (del?)'.format(lr_lib.core.wrsp.param.LR_COMENT)
+                comments += s
 
         warn = self.check_for_warnings()
-        text = '{warn}\n{coment}\n{snap_text}'.format(
-            coment=comments,
-            snap_text='\n'.join(self.lines_list),
-            warn=warn,
-        )
-        return text.strip('\n')
+        st = '\n'.join(self.lines_list)
+
+        t = '{warn}\n{coment}\n{snap_text}'
+        text = t.format(coment=comments, snap_text=st, warn=warn).strip('\n')
+        return text
 
     def _read_name(self, name='') -> str:
+        """
+        ParamName
+        """
         try:
             n = self.lines_list[0]
             n = n.split('",', 1)
@@ -168,14 +196,26 @@ class WebAny:
 
         return name
 
-    def ask_replace(self, param: str, replace: str, left: str, right: str, ask_dict: dict) -> bool:
+    def ask_replace(
+            self,
+            param: str,
+            replace: str,
+            left: str,
+            right: str,
+            ask_dict: dict,
+    ) -> bool:
+        """
+        спросить о замене param
+        """
         buttons = (ys, yta, no, nta, rais) = ('Да', 'Да, для Всех', 'Нет', 'Нет, для Всех', 'Преврать',)
         dk = (nta, yta, rais)
 
         if ask_dict and (a in ask_dict for a in dk):
             if ask_dict.get(rais):
-                raise UserWarning('Прервано!\n{}'.format('\n\t###\n'.join((param, replace, left, right, ask_dict))))
-            return ask_dict.get(nta) or ask_dict.get(yta)
+                e = 'Прервано!\n{}'.format('\n\t###\n'.join((param, replace, left, right, ask_dict)))
+                raise UserWarning(e)
+            r = (ask_dict.get(nta) or ask_dict.get(yta))
+            return r
 
         t2 = 'хотя строка и содержит param-имя "{p}"\nоно является частью другого, более длинного имени:\n' \
              'Заменить на "{r}" ?'.format(p=param, r=replace)
@@ -201,7 +241,9 @@ class WebAny:
         return r
 
     def param_find_replace(self, param: str, replace=None, ask_dict=None) -> (int, int):
-        """поиск или замена"""
+        """
+        поиск или замена
+        """
         b = self.get_body()
         body_split = b.split(param)
         len_body_split = len(body_split)
@@ -212,6 +254,7 @@ class WebAny:
         chunk_indxs = []
 
         def force_ask_replace(indx: int, left: str, right: str) -> None:
+            """всегда спрашивать о замене"""
             bs = body_split[:indx]
             w = param.join(bs)
             action.search_in_action(word=w, hist=False)
@@ -220,6 +263,7 @@ class WebAny:
             return
 
         def normal_replace(indx: int, left: str, right: str, ask=(not action.no_var.get())) -> None:
+            """спрашивать о замене только при необходимости"""
             ch1 = lr_lib.core.etc.lbrb_checker.check_bound_lb_rb(left, right)
             if ch1 or (ask and self.ask_replace(param, replace, left, right, ask_dict)):
                 chunk_indxs.append(indx)
@@ -253,19 +297,25 @@ class WebAny:
         return item
 
     def _get_body(self, a: int, b: int) -> str:
-        """тело web_ - поиск и замену делать тут"""
+        """
+        тело web_ - поиск и замену делать тут
+        """
         la = self.lines_list[a:b]
         bs = '\n'.join(la)
         return bs
 
     def _set_body(self, body: str, a: int, b: int) -> None:
-        """задать новое тело web_"""
+        """
+        задать новое тело web_
+        """
         bs = body.split('\n')
         self.lines_list[a:b] = bs
         return
 
     def get_body(self, mx=2) -> str:
-        """тело web_ - поиск и замену делать тут"""
+        """
+        тело web_ - поиск и замену делать тут
+        """
         if len(self.lines_list) > mx:
             b = self._get_body(1, -1)
         else:
@@ -273,7 +323,9 @@ class WebAny:
         return b
 
     def set_body(self, body: str, mx=2) -> None:
-        """задать новое тело web_"""
+        """
+        задать новое тело web_
+        """
         if len(self.lines_list) > mx:
             self._set_body(body, 1, -1)
         else:
@@ -281,7 +333,9 @@ class WebAny:
         return
 
     def check_for_warnings(self) -> str:
-        """wrsp могут быть неправильно заменены, например кем-то внучную или LR, в виде '{wrsp_name}_1' """
+        """
+        wrsp могут быть неправильно заменены, например кем-то внучную или LR, в виде '{wrsp_name}_1'
+        """
         warnings = []
         for w in self.ActionWebsAndLines.websReport.wrsp_and_param_names:
             wn = ('{%s}' % w)
@@ -313,10 +367,19 @@ class WebAny:
 
 
 class WebSnapshot(WebAny):
-    """web со snapshot > 0, те содержащие файлы ответов"""
+    """
+    web со snapshot > 0, те содержащие файлы ответов
+    """
 
-    def __init__(self, parent_: 'lr_lib.core.action.main_awal.ActionWebsAndLines', lines_list: list, comments: str,
-                 transaction='', _type='', web_reg_save_param_list=None):
+    def __init__(
+            self,
+            parent_: 'lr_lib.core.action.main_awal.ActionWebsAndLines',
+            lines_list: list,
+            comments: str,
+            transaction='',
+            _type='',
+            web_reg_save_param_list=None,
+    ):
         super().__init__(parent_, lines_list, comments, transaction=transaction, _type=_type)
 
         if web_reg_save_param_list is None:
@@ -330,7 +393,9 @@ class WebSnapshot(WebAny):
         return
 
     def to_str(self, _all_stat=False) -> str:
-        """весь текст web_"""
+        """
+        весь текст web_
+        """
         if lr_vars.VarWebStatsTransac.get() or _all_stat:
             _tr = self.ActionWebsAndLines.websReport.stats_transaction_web(self)
         else:
@@ -368,12 +433,16 @@ class WebSnapshot(WebAny):
         return txt
 
     def get_body(self, a=1, b=-1) -> str:
-        """тело web_ - поиск и замену делать тут"""
+        """
+        тело web_ - поиск и замену делать тут
+        """
         s = super()._get_body(a, b)
         return s
 
     def set_body(self, body: str, a=1, b=-1) -> None:
-        """задать новое тело web_"""
+        """
+        задать новое тело web_
+        """
         super()._set_body(body, a, b)
         return
 
@@ -381,8 +450,15 @@ class WebSnapshot(WebAny):
 class WebRegSaveParam(WebAny):
     """web web_reg_save_param*"""
 
-    def __init__(self, parent_: 'lr_lib.core.action.main_awal.ActionWebsAndLines', lines_list: list, comments: str,
-                 transaction='', _type='', parent_snapshot=None):
+    def __init__(
+            self,
+            parent_: 'lr_lib.core.action.main_awal.ActionWebsAndLines',
+            lines_list: list,
+            comments: str,
+            transaction='',
+            _type='',
+            parent_snapshot=None,
+    ):
         self.parent_snapshot = parent_snapshot  # WebSnapshot
         super().__init__(parent_, lines_list, comments, transaction=transaction, _type=_type)
         if self.parent_snapshot is not None:
@@ -393,6 +469,9 @@ class WebRegSaveParam(WebAny):
         return
 
     def _read_param(self, param='') -> str:
+        """
+        найти исходное имя param из wrsp
+        """
         try:
             if lr_lib.core.wrsp.param.wrsp_start in self.comments:
                 p = self.comments.split(lr_lib.core.wrsp.param.wrsp_start, 1)
@@ -418,7 +497,9 @@ class WebRegSaveParam(WebAny):
         return param
 
     def to_str(self, _all_stat=False) -> str:
-        """web_reg_save_param текст + //lr:Usage коментарий"""
+        """
+        web_reg_save_param текст + //lr:Usage коментарий
+        """
         comments = self.comments
 
         if lr_vars.VarWebStatsWarn.get() or _all_stat:
@@ -442,6 +523,9 @@ class WebRegSaveParam(WebAny):
         return ts
 
     def usage_string(self, _all_stat=False) -> str:
+        """
+        статистика использования wrsp
+        """
         rep = self.ActionWebsAndLines.websReport
         ps = rep.param_statistic[self.name]
         wt = rep.web_transaction[self.transaction]
