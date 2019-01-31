@@ -9,7 +9,9 @@ import lr_lib.gui.wrsp.win_maxmin
 
 
 def deny_keys(key: str) -> bool:
-    """не t123 keys"""
+    """
+    не t123 keys
+    """
     tk = (key[0] == 't')
     ak = all(map(str.isnumeric, key[1:]))
     b = (not (tk and ak))
@@ -17,7 +19,9 @@ def deny_keys(key: str) -> bool:
 
 
 class WinFileSort(lr_lib.gui.wrsp.win_maxmin.WinMaxMin):
-    """сортировка файлов, файловыми ключами"""
+    """
+    сортировка файлов, файловыми ключами
+    """
 
     def __init__(self):
         lr_lib.gui.wrsp.win_maxmin.WinMaxMin.__init__(self)
@@ -37,7 +41,9 @@ class WinFileSort(lr_lib.gui.wrsp.win_maxmin.WinMaxMin):
         return
 
     def setSortKeys(self) -> None:
-        """задать комбо(1/2) сортировки"""
+        """
+        задать комбо(1/2) сортировки
+        """
         keys = set(itertools.chain(*lr_vars.AllFiles))
         self.sortKey1['values'] = list(filter(deny_keys, keys))
 
@@ -50,7 +56,9 @@ class WinFileSort(lr_lib.gui.wrsp.win_maxmin.WinMaxMin):
         return
 
     def setSortKey1(self, *args, _t=(),) -> None:
-        """комбо сортировки 1"""
+        """
+        комбо сортировки 1
+        """
         k1 = self.sortKey1.get()
         lr_vars.VarFileSortKey1.set(k1)
         ic = itertools.chain(lr_vars.AllFiles, lr_vars.FilesWithParam)
@@ -61,7 +69,9 @@ class WinFileSort(lr_lib.gui.wrsp.win_maxmin.WinMaxMin):
         return
 
     def setSortKey2(self, *args) -> None:
-        """комбо сортировки файлов"""
+        """
+        комбо сортировки файлов
+        """
         k2 = self.sortKey2.get()
         lr_vars.VarFileSortKey2.set(k2)
         if lr_vars.FilesWithParam:

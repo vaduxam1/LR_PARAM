@@ -11,7 +11,9 @@ import lr_lib.gui.wrsp.win_frame
 
 
 class WinAct(lr_lib.gui.wrsp.win_frame.WinFrame):
-    """связь с lr_lib.gui.action.main_action.ActionWindow"""
+    """
+    связь с lr_lib.gui.action.main_action.ActionWindow
+    """
 
     def __init__(self):
         lr_lib.gui.wrsp.win_frame.WinFrame.__init__(self)
@@ -24,13 +26,17 @@ class WinAct(lr_lib.gui.wrsp.win_frame.WinFrame):
         return
 
     def get_main_action(self) -> lr_lib.gui.action.main_action.ActionWindow:
-        """если открыто несколько action онон, какое вернуть"""
+        """
+        если открыто несколько action онон, какое вернуть
+        """
         for action in self.action_windows:
             return self.action_windows[action]
         return
 
     def new_action_window(self, *args, folder=None, file='action.c') -> lr_lib.gui.action.main_action.ActionWindow:
-        """создать lr_lib.gui.action.main_action.ActionWindow()"""
+        """
+        создать lr_lib.gui.action.main_action.ActionWindow()
+        """
         if folder is None:
             folder = lr_vars.VarFilesFolder.get()
 

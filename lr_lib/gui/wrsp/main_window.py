@@ -32,20 +32,21 @@ t6 = '(6) получить web_reg_save_param, с учетом (1)-(5)\n\t' \
 
 
 class Window(lr_lib.gui.wrsp.win_menu.WinMenu):
-    """главное окно скрипта
-    Window
-    lr_win_menu.WinMenu
-    lr_win_folder.WinFolder
-    lr_win_other.WinOther
-    lr_win_filesort.WinFileSort
-    lr_win_maxmin.WinMaxMin
-    lr_win_widj.WinWidj
-    lr_win_part_lbrb.WinPartsLbRb
-    lr_win_text.WinText
-    lr_win_block.WinBlock
-    lr_win_act.WinAct
-    lr_win_frame.WinFrame
-    ttk.Frame
+    """
+    главное окно скрипта:
+        Window
+        lr_win_menu.WinMenu
+        lr_win_folder.WinFolder
+        lr_win_other.WinOther
+        lr_win_filesort.WinFileSort
+        lr_win_maxmin.WinMaxMin
+        lr_win_widj.WinWidj
+        lr_win_part_lbrb.WinPartsLbRb
+        lr_win_text.WinText
+        lr_win_block.WinBlock
+        lr_win_act.WinAct
+        lr_win_frame.WinFrame
+        ttk.Frame
     """
 
     def __init__(self):
@@ -56,7 +57,9 @@ class Window(lr_lib.gui.wrsp.win_menu.WinMenu):
         return
 
     def set_tooltip(self) -> None:
-        """создать все tooltip основного gui окна"""
+        """
+        создать все tooltip основного gui окна
+        """
         lr_lib.gui.widj.tooltip.createToolTip(self.t0, lr_lib.etc.help.CODE)
         lr_lib.gui.widj.tooltip.createToolTip(self.t01, lr_lib.etc.help.WORK)
         lr_lib.gui.widj.tooltip.createToolTip(self.t02, lr_lib.etc.help.ADD)
@@ -456,7 +459,9 @@ class Window(lr_lib.gui.wrsp.win_menu.WinMenu):
         return
 
     def set_grid(self):
-        """grid всех виджетов для основного gui окна"""
+        """
+        grid всех виджетов для основного gui окна
+        """
         self.main_frame.grid(row=2, column=0, sticky=tk.NS, padx=0, pady=0)
         self.find_frame.grid(row=4, column=0, sticky=tk.NS, padx=0, pady=0)
         self.show_param_frame.grid(row=6, column=0, sticky=tk.NS, padx=0, pady=0)

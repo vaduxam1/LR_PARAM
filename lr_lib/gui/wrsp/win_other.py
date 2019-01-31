@@ -12,7 +12,9 @@ import lr_lib.gui.wrsp.win_filesort
 
 
 class WinOther(lr_lib.gui.wrsp.win_filesort.WinFileSort):
-    """разное"""
+    """
+    разное
+    """
 
     def __init__(self):
         lr_lib.gui.wrsp.win_filesort.WinFileSort.__init__(self)
@@ -113,19 +115,26 @@ class WinOther(lr_lib.gui.wrsp.win_filesort.WinFileSort):
         return
 
     def force_unblock(self, *args) -> None:
+        """
+        разблокировка виджетов во время работы
+        """
         self._block_ = False
         self._block(False)
         return
 
     @lr_lib.core.var.vars_other.T_POOL_decorator
     def param_file_editor(self, *args):
-        """открыть param файл в editor"""
+        """
+        открыть param файл в editor
+        """
         f = lr_lib.core.wrsp.files.get_file_with_kwargs(lr_vars.FilesWithParam)['File']['FullName']
         p = subprocess.Popen([lr_vars.EDITOR['exe'], f])
         return p
 
     def clear(self) -> None:
-        """очистить поля ввода"""
+        """
+        очистить поля ввода
+        """
         self.show_frame_info_working()
         lr_lib.core.var.vars_other.clearVars()
         self.LB.set('')
@@ -147,7 +156,9 @@ class WinOther(lr_lib.gui.wrsp.win_filesort.WinFileSort):
         return
 
     def last_frame_text_set(self) -> None:
-        """отображение всякой информации"""
+        """
+        отображение всякой информации
+        """
         s = 'inf={i}: файлов={f} | MP: {pool}[{p_size}] | T: {tpool}[{tpool_size}] | {d}'
         t = s.format(
             d=lr_vars.VarFilesFolder.get(),
@@ -162,7 +173,9 @@ class WinOther(lr_lib.gui.wrsp.win_filesort.WinFileSort):
         return
 
     def err_to_widgts(self, exc_type, exc_val, exc_tb, ern) -> None:
-        """отображение ошибки"""
+        """
+        отображение ошибки
+        """
         err = '{n}( {e} )'.format(n=ern, e=exc_val)
         lr_vars.Tk.title('{e} | {v}'.format(e=err, v=lr_vars.VERSION))
         t = err.split('\n')[:5]

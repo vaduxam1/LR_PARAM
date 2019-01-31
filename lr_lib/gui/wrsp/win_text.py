@@ -11,7 +11,9 @@ import lr_lib.gui.wrsp.win_block
 
 
 class WinText(lr_lib.gui.wrsp.win_block.WinBlock):
-    """tk.Text"""
+    """
+    tk.Text
+    """
 
     def __init__(self):
         lr_lib.gui.wrsp.win_block.WinBlock.__init__(self)
@@ -29,7 +31,9 @@ class WinText(lr_lib.gui.wrsp.win_block.WinBlock):
         return
 
     def add_message(self, levelname: str, text: str) -> None:
-        """сообщения в конец текста gui"""
+        """
+        сообщения в конец текста gui
+        """
         lg = lr_vars.VarWindowLogger.get()
         if lr_lib.core.var.vars_other.loggingLevels[lg] <= lr_lib.core.var.vars_other.loggingLevels[levelname]:
             self.tk_text.insert(tk.END, '{}\n'.format(text))
@@ -37,7 +41,9 @@ class WinText(lr_lib.gui.wrsp.win_block.WinBlock):
         return
 
     def print(self, levelname: str, text: str) -> None:
-        """сообщения в конец текста gui, в main потоке"""
+        """
+        сообщения в конец текста gui, в main потоке
+        """
         cmd = lambda: self.add_message(levelname, text)
         lr_vars.MainThreadUpdater.submit(cmd)
         return

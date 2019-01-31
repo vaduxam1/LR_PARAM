@@ -21,7 +21,9 @@ Snapshot(все[{all_inf_min}:{all_inf_max}]={all_inf_len} -> поиск[{param_
 
 
 class WinWidj(lr_lib.gui.wrsp.win_part_lbrb.WinPartsLbRb):
-    """основные виджеты: (1) (2) (3) (6)"""
+    """
+    основные виджеты: (1) (2) (3) (6)
+    """
     cbxClearShowVar = tk.IntVar(value=lr_vars.cbxClearShowVar)  # перед (2), очищать центральный виджет текста
     cbxWrspClipboard = tk.IntVar(value=lr_vars.cbxWrspClipboard)  # после (2), копировать wrsp в буфер обмена
     cbxWrspAutoCreate = tk.IntVar(value=lr_vars.cbxWrspAutoCreate)  # после (2), выполнять (3)-(6)
@@ -82,7 +84,9 @@ class WinWidj(lr_lib.gui.wrsp.win_part_lbrb.WinPartsLbRb):
         return
 
     def get_files(self, *args, param=None, clipb=False, callback=None, action=None) -> None:
-        """получить файлы с {param} (2)"""
+        """
+        получить файлы с {param} (2)
+        """
         if param is not None:
             self.comboParam.set(param)
 
@@ -109,7 +113,9 @@ class WinWidj(lr_lib.gui.wrsp.win_part_lbrb.WinPartsLbRb):
         return
 
     def firstOrLastFile(self, *args) -> None:
-        """выбрать первый/последный файл в (3)"""
+        """
+        выбрать первый/последный файл в (3)
+        """
         if (not lr_vars.FilesWithParam) or (not self.comboParam.get()):
             return
         self.comboFiles.current(0)
@@ -117,7 +123,9 @@ class WinWidj(lr_lib.gui.wrsp.win_part_lbrb.WinPartsLbRb):
         return
 
     def comboFiles_change(self, *args) -> None:
-        """при смене комбо(3), читать файл, записать комбо(4), выбрать файл по умолчанию (3)"""
+        """
+        при смене комбо(3), читать файл, записать комбо(4), выбрать файл по умолчанию (3)
+        """
         name = self.comboFiles.get()
         lr_vars.VarFileName.set(name)
         part = lr_vars.VarPartNum.get()
@@ -132,7 +140,9 @@ class WinWidj(lr_lib.gui.wrsp.win_part_lbrb.WinPartsLbRb):
         return
 
     def comboPartsFill(self) -> None:
-        """заполнить комбобокс (4)"""
+        """
+        заполнить комбобокс (4)
+        """
         file = lr_vars.VarFile.get()
         if lr_vars.VarStrongSearchInFile.get():
             self.comboParts['values'] = file['Param']['Count_indexs']
@@ -146,7 +156,9 @@ class WinWidj(lr_lib.gui.wrsp.win_part_lbrb.WinPartsLbRb):
         return
 
     def show_LR_Param(self, callback=None) -> str:
-        """показать web_reg_save_param (6)"""
+        """
+        показать web_reg_save_param (6)
+        """
         lr_vars.VarLB.set(self.LB.get())
         lr_vars.VarRB.set(self.RB.get())
         # с учетом редактирования LB/RB(5)
@@ -166,14 +178,18 @@ class WinWidj(lr_lib.gui.wrsp.win_part_lbrb.WinPartsLbRb):
         return web_reg_save_param
 
     def set_comboFiles_width(self) -> None:
-        """установка макс ширины комбо файлов(3)"""
+        """
+        установка макс ширины комбо файлов(3)
+        """
         mf = max(len(f) for f in self.comboFiles['values'])
         mw = lr_vars.VarMaxComboFilesWidth.get()
         self.comboFiles.configure(width=(mf if (mf < mw) else mw), )
         return
 
     def clear_before_find_param_files(self) -> None:
-        """очистка виджетов перед поиском"""
+        """
+        очистка виджетов перед поиском
+        """
         self.LB.set('')
         self.RB.set('')
         lr_lib.gui.widj.lbrb5.LBRBText.set_label_text()
@@ -186,9 +202,16 @@ class WinWidj(lr_lib.gui.wrsp.win_part_lbrb.WinPartsLbRb):
         return
 
     def show_frame_info_working(self) -> None:
-        """отображение всякой информации"""
-        self.main_frame['text'] = '{} | {} | ParamClipBoardSearchHotKey[{}]'.format(
-            lr_lib.core.var.vars_other.VarEncode.get(), time.strftime('%H:%M:%S'), lr_vars.FIND_PARAM_HOTKEY,
-        )
-        self.last_frame['text'] = 'working ... {}'.format(lr_vars.VarFilesFolder.get())
+        """
+        отображение всякой информации
+        """
+        e = lr_lib.core.var.vars_other.VarEncode.get()
+        t = time.strftime('%H:%M:%S')
+        i = '{} | {} | ParamClipBoardSearchHotKey[{}]'.format(e, t, lr_vars.FIND_PARAM_HOTKEY,)
+
+        f = lr_vars.VarFilesFolder.get()
+        s = 'working ... {}'.format(f)
+
+        self.main_frame['text'] = i
+        self.last_frame['text'] = s
         return

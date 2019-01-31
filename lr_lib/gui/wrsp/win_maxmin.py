@@ -9,7 +9,9 @@ import lr_lib.gui.wrsp.win_widj
 
 
 class WinMaxMin(lr_lib.gui.wrsp.win_widj.WinWidj):
-    """min_inf / max_inf"""
+    """
+    min_inf / max_inf
+    """
 
     def __init__(self):
         lr_lib.gui.wrsp.win_widj.WinWidj.__init__(self)
@@ -29,13 +31,17 @@ class WinMaxMin(lr_lib.gui.wrsp.win_widj.WinWidj):
         return
 
     def _min_max_set(self, *args) -> None:
-        """max/min_inf"""
+        """
+        max/min_inf
+        """
         if lr_vars.FilesWithParam:
             self.get_files()
         return
 
     def set_maxmin_inf(self, files):
-        """установка виджетов min_inf max_inf"""
+        """
+        установка виджетов min_inf max_inf
+        """
         infs = list(lr_lib.core.etc.other.get_files_infs(files))
         self.max_inf['values'] = list(reversed(infs))
         self.min_inf['values'] = infs

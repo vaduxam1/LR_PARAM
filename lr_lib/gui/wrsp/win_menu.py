@@ -13,7 +13,9 @@ import lr_lib.gui.wrsp.win_folder
 
 
 class WinMenu(lr_lib.gui.wrsp.win_folder.WinFolder):
-    """меню"""
+    """
+    меню
+    """
 
     def __init__(self):
         lr_lib.gui.wrsp.win_folder.WinFolder.__init__(self)
@@ -27,7 +29,9 @@ class WinMenu(lr_lib.gui.wrsp.win_folder.WinFolder):
         return
 
     def set_menu(self) -> None:
-        """menubar"""
+        """
+        menubar
+        """
         filemenu = tk.Menu(self.menubar, tearoff=0)
 
         cmd1 = lambda: lr_lib.gui.widj.setting.Setting(parent=self)
@@ -57,14 +61,18 @@ class WinMenu(lr_lib.gui.wrsp.win_folder.WinFolder):
         return
 
     def _select_editor(self) -> None:
-        """Select Editor"""
+        """
+        Select Editor
+        """
         __file = tk.filedialog.askopenfile()
         if __file:
             lr_vars.EDITOR['exe'] = __file.name
         return
 
     def set_rclick_menu(self) -> None:
-        """меню правой кнопки мыши"""
+        """
+        меню правой кнопки мыши
+        """
         lr_lib.gui.etc.sub_menu.rClickbinder(self)  # все tk
         for widj in dir(self):
             try:

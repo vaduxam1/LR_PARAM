@@ -11,7 +11,9 @@ import lr_lib.core.var.vars_other
 
 
 class TopPoolSetting(tk.Toplevel):
-    """окно настройки пулов"""
+    """
+    окно настройки пулов
+    """
 
     def __init__(self, action: 'lr_lib.gui.wrsp.main_window.Window'):
         tk.Toplevel.__init__(self)
@@ -137,22 +139,30 @@ class TopPoolSetting(tk.Toplevel):
         return
 
     def set_pool(self, pool) -> None:
-        """установить новый пул"""
+        """
+        установить новый пул
+        """
         pool.reset()
         self.action.last_frame_text_set()
         return
 
     @lr_lib.core.var.vars_other.T_POOL_decorator
     def pool_state_updater(self) -> None:
-        """SThreadPool(threading.Thread) текст состояния пула"""
+        """
+        SThreadPool(threading.Thread) текст состояния пула
+        """
 
         def pool_state_string(st=lambda i: '{0:<6} : {1}'.format(*i)) -> str:
-            """инфо о потоках T_POOL"""
+            """
+            инфо о потоках T_POOL
+            """
             i = '\n'.join((t.task.to_str() if t.task else 'sleep') for t in lr_vars.T_POOL.threads)
             return i
 
         def thread_info_updater(y: lr_lib.gui.widj.dialog.YesNoCancel) -> None:
-            """перезапуск инфо"""
+            """
+            перезапуск инфо
+            """
             (t1, t2) = y.label1['text'].split('\n', 1)
             t1 = '{0}: size({1})'.format(t1.split(':', 1)[0], len(lr_vars.T_POOL.threads))
             y.label1.config(text='{0}\n{1}'.format(t1, t2))

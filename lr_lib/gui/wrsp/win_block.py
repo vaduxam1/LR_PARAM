@@ -14,7 +14,9 @@ AllowWidj = (
 
 
 class WinBlock(lr_lib.gui.wrsp.win_act.WinAct):
-    """блокировать виджеты"""
+    """
+    блокировать виджеты
+    """
 
     def __init__(self):
         lr_lib.gui.wrsp.win_act.WinAct.__init__(self)
@@ -24,7 +26,9 @@ class WinBlock(lr_lib.gui.wrsp.win_act.WinAct):
 
     @contextlib.contextmanager
     def block(self, w=AllowWidj, force=False) -> iter:
-        """заблокировать/разблокировать виджеты в gui"""
+        """
+        заблокировать/разблокировать виджеты в gui
+        """
         with lr_lib.gui.etc.color_progress.ColorProgress(self):
             try:
                 if self._block_:
@@ -44,7 +48,9 @@ class WinBlock(lr_lib.gui.wrsp.win_act.WinAct):
         return
 
     def _block(self, bl: bool, w=()) -> None:
-        """заблокировать/разблокировать виджеты в gui"""
+        """
+        заблокировать/разблокировать виджеты в gui
+        """
         state = ('disabled' if bl else 'normal')
 
         for attr in dir(self):

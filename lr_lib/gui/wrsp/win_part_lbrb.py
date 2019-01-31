@@ -14,7 +14,9 @@ import lr_lib.gui.wrsp.win_text
 
 
 class WinPartsLbRb(lr_lib.gui.wrsp.win_text.WinText):
-    """основные виджеты: (4) (5)LB (5)RB"""
+    """
+    основные виджеты: (4) (5)LB (5)RB
+    """
 
     def __init__(self):
         lr_lib.gui.wrsp.win_text.WinText.__init__(self)
@@ -194,7 +196,9 @@ class WinPartsLbRb(lr_lib.gui.wrsp.win_text.WinText):
         return
 
     def comboParts_change(self, *args) -> None:
-        """смена комбо(4)"""
+        """
+        смена комбо(4)
+        """
         if not lr_vars.FilesWithParam:
             return
         i = self.comboParts.get()
@@ -205,7 +209,9 @@ class WinPartsLbRb(lr_lib.gui.wrsp.win_text.WinText):
         return
 
     def show_frame_info_file(self) -> None:
-        """отображение всякой информации"""
+        """
+        отображение всякой информации
+        """
         dt = lr_vars.VarWrspDict.get()
 
         t1 = '"{param}", {Name}, {inf_nums} > Файлы(из {files_all} найдено {file_index}/{param_files}) ' \
@@ -220,7 +226,9 @@ class WinPartsLbRb(lr_lib.gui.wrsp.win_text.WinText):
         return
 
     def spl_cbx_cmd_lb(self, *a) -> None:
-        """lb SplitList widj"""
+        """
+        lb SplitList widj
+        """
         if lr_vars.VarSplitListLB.get():
             self.LBent_SplitList.configure(state='normal')
             self.LBSpinSplitList.configure(state='normal')
@@ -236,7 +244,9 @@ class WinPartsLbRb(lr_lib.gui.wrsp.win_text.WinText):
         return
 
     def spl_cbx_cmd_rb(self, *a) -> None:
-        """rb SplitList widj"""
+        """
+        rb SplitList widj
+        """
         if lr_vars.VarSplitListRB.get():
             self.RBent_SplitList.configure(state='normal')
             self.RBSpinSplitList.configure(state='normal')
@@ -253,7 +263,9 @@ class WinPartsLbRb(lr_lib.gui.wrsp.win_text.WinText):
 
     @lr_lib.core.var.vars_other.T_POOL_decorator
     def lr_note(self, ob) -> None:
-        """открыть в блокноте"""
+        """
+        открыть в блокноте
+        """
         t = ob.get()
         lr_lib.core.etc.other.openTextInEditor(t)
         return

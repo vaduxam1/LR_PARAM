@@ -10,7 +10,9 @@ import lr_lib.gui.wrsp.win_other
 
 
 class WinFolder(lr_lib.gui.wrsp.win_other.WinOther):
-    """выбор каталога файлов ответов"""
+    """
+    выбор каталога файлов ответов
+    """
 
     def __init__(self):
         lr_lib.gui.wrsp.win_other.WinOther.__init__(self)
@@ -37,7 +39,9 @@ class WinFolder(lr_lib.gui.wrsp.win_other.WinOther):
         return
 
     def set_folder(self) -> None:
-        """установка folder"""
+        """
+        установка folder
+        """
         self.clear()
         with self.block():
             lr_lib.core.wrsp.files.init()
@@ -47,7 +51,9 @@ class WinFolder(lr_lib.gui.wrsp.win_other.WinOther):
         return
 
     def change_folder_ask(self, *args) -> None:
-        """смена директории поиска файлов"""
+        """
+        смена директории поиска файлов
+        """
         d = filedialog.askdirectory()
         if d:
             lr_vars.VarFilesFolder.set(d)

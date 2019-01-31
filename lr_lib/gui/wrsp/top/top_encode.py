@@ -11,7 +11,9 @@ import lr_lib.core.var.vars_other
 
 
 class TopEncoding(tk.Toplevel):
-    """окно кодировки файлов"""
+    """
+    окно кодировки файлов
+    """
 
     def __init__(self, action: 'lr_lib.gui.wrsp.main_window.Window'):
         tk.Toplevel.__init__(self)

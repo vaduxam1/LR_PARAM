@@ -8,7 +8,9 @@ import lr_lib.core.var.vars_highlight
 
 
 class WinFrame(tk.Frame):
-    """ttk.Frame"""
+    """
+    ttk.Frame
+    """
 
     def __init__(self):
         lr_vars.Tk.protocol("WM_DELETE_WINDOW", self.on_closing)
@@ -47,7 +49,9 @@ class WinFrame(tk.Frame):
         return
 
     def on_closing(self) -> None:
-        """не выходить, при открытых action.c окнах"""
+        """
+        не выходить, при открытых action.c окнах
+        """
         tt = "Есть открытые action.c окна\n{a}\nвсе равно выйти?".format(a=', '.join(map(str, self.action_windows)))
         if (not self.action_windows) or tk.messagebox.askokcancel('выход', tt):
             self.destroy()
@@ -55,7 +59,9 @@ class WinFrame(tk.Frame):
         return
 
     def clip_add(self, text: str) -> None:
-        """буфер обмена"""
+        """
+        буфер обмена
+        """
         self.clipboard_clear()
         self.clipboard_append(text)
         return
