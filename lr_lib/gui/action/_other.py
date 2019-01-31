@@ -3,11 +3,14 @@
 
 import os
 
+import lr_lib
 import lr_lib.core.var.vars as lr_vars
 
 
 def get_action_file(folder: str, file='action.c') -> str:
-    """найти action.c"""
+    """
+    найти action.c
+    """
     if os.path.isfile(file):
         return file
     else:
@@ -27,9 +30,19 @@ restart = lr_vars.Tk.after
 ver = lr_vars.VERSION
 
 
-def auto_update_action_info_lab(self, config, tk_text, id_: int, timeout: int, check_run: callable, title: callable,
-                                _set_title: callable) -> None:
-    """обновление action.label с процентами и пулом"""
+def auto_update_action_info_lab(
+        self,
+        config: callable,
+        tk_text: 'lr_lib.gui.widj.highlight_text.HighlightText',
+        id_: int,
+        timeout: int,
+        check_run: callable,
+        title: callable,
+        _set_title: callable,
+) -> None:
+    """
+    обновление action.label с процентами и пулом
+    """
     if not check_run(id_):
         return
 

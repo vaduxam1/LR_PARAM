@@ -8,7 +8,9 @@ import lr_lib.core.var.vars as lr_vars
 
 
 class ActToplevel(tk.Toplevel):
-    """окно Toplevel"""
+    """
+    окно Toplevel
+    """
 
     def __init__(self):
         tk.Toplevel.__init__(self, padx=0, pady=0)
@@ -20,7 +22,9 @@ class ActToplevel(tk.Toplevel):
         return
 
     def on_closing(self) -> None:
-        """спросить, при закрытии окна"""
+        """
+        спросить, при закрытии окна
+        """
         if messagebox.askokcancel("Закрыть action.c", "Закрыть action.c ?", parent=self):
             self.destroy()
         return

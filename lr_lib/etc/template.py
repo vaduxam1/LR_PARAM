@@ -3,7 +3,9 @@
 
 
 def dummy_remove(web_: [str, ], mode=False) -> bool:
-    """похожая web_submit_data или нет"""
+    """
+    похожая web_submit_data или нет
+    """
     if mode == 'endswith':
         r = dummy_endswith_remove(web_)
     else:
@@ -12,7 +14,9 @@ def dummy_remove(web_: [str, ], mode=False) -> bool:
 
 
 class Dummy:
-    """шаблоны удаления inf-запросов"""
+    """
+    шаблоны удаления inf-запросов
+    """
     web_dummy_template = ''
     web_len = 0
     web_dummy = ()
@@ -22,7 +26,9 @@ class Dummy:
 
     @staticmethod
     def setattrs(template: str) -> None:
-        """создать Dummy атрибуты, для web_dummy_template"""
+        """
+        создать Dummy атрибуты, для web_dummy_template
+        """
         Dummy.web_dummy_template = template.strip()
         Dummy.web_len = len(Dummy.web_dummy_template)
         Dummy.web_dummy = tuple(filter(bool, map(str.strip, Dummy.web_dummy_template.split('\n'))))
@@ -88,7 +94,9 @@ WebDummyTemplate_Part_ = tuple(filter(bool, map(str.strip, WebDummyTemplate_Part
 
 
 def dummy_endswith_remove(web_: [str, ]) -> bool:
-    """web_submit_data похожая на WebDummyTemplate_Part_, или нет"""
+    """
+    web_submit_data похожая на WebDummyTemplate_Part_, или нет
+    """
     if (len(web_) > Dummy.dummy_len) and \
             (web_[-1].strip() == WebDummyTemplate_Part_[-1]) and \
             (web_[-2].strip() == WebDummyTemplate_Part_[-2]) and \

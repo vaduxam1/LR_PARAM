@@ -11,11 +11,14 @@ import lr_lib.gui.etc.color_progress
 
 
 class ActBlock(lr_lib.gui.action.act_scroll.ActScrollText):
-    """блокировка виджетов"""
+    """
+    блокировка виджетов
+    """
 
     def __init__(self):
         lr_lib.gui.action.act_scroll.ActScrollText.__init__(self)
 
+        # Button
         cmd = lambda *a: self._block(False)
         self.unblock = tk.Button(
             self.file_bar, text='unblock', font=(lr_vars.DefaultFont + ' bold'), command=cmd,
@@ -24,7 +27,9 @@ class ActBlock(lr_lib.gui.action.act_scroll.ActScrollText):
 
     @contextlib.contextmanager
     def block(self, w=('tk_text', 'unblock', 'search_entry', 'search_res_combo', 'toolbar',)) -> iter:
-        """заблокировать/разблокировать виджеты в gui"""
+        """
+        заблокировать/разблокировать виджеты в gui - запуск
+        """
         with lr_lib.gui.etc.color_progress.ColorProgress(self):
             try:
                 lr_vars.MainThreadUpdater.submit(lambda: self._block(True, w=w))
@@ -36,7 +41,9 @@ class ActBlock(lr_lib.gui.action.act_scroll.ActScrollText):
         return
 
     def _block(self, bl: bool, w=()) -> None:
-        """заблокировать/разблокировать виджеты в gui"""
+        """
+        заблокировать/разблокировать виджеты в gui - ядро
+        """
         state = ('disabled' if bl else 'normal')
 
         for attr in dir(self):

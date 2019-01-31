@@ -11,19 +11,24 @@ from lr_lib.gui.etc.color_progress import progress_decor
 
 
 class ActBackup(lr_lib.gui.action.act_block.ActBlock):
-    """бекап action"""
+    """
+    бекап action
+    """
 
     def __init__(self):
         lr_lib.gui.action.act_block.ActBlock.__init__(self)
         self._backup_index = 0
 
+        # Entry
         self.backup_entry = tk.Entry(self.file_bar, font=lr_vars.DefaultFont, width=5, justify='center')
         self.backup_entry.insert('1', lr_vars.BackupActionFile)
         return
 
     @progress_decor
     def backup(self, errors='replace') -> None:
-        """сделать action.c бэкап"""
+        """
+        сделать action.c бэкап
+        """
         self._backup_index += 1
 
         if self._backup_index > int(self.backup_entry.get()):
@@ -41,13 +46,17 @@ class ActBackup(lr_lib.gui.action.act_block.ActBlock):
         return
 
     def backup_name(self) -> str:
-        """имя backup-файла"""
+        """
+        имя backup-файла
+        """
         n = lr_vars.BackupName.format(i=self.id_, ind=self._backup_index, )
         i = os.path.join(lr_vars.BackupFolder, n)
         return i
 
     def destroy(self):
-        """выход"""
+        """
+        выход
+        """
         try:
             self.backup()
         except AttributeError as ex:

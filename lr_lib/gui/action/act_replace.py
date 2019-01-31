@@ -14,20 +14,25 @@ import lr_lib.gui.widj.dialog
 
 
 class ActReplaceRemove(lr_lib.gui.action.act_search.ActSearch):
-    """замена и удаление текста"""
+    """
+    замена и удаление текста
+    """
 
     def __init__(self):
         lr_lib.gui.action.act_search.ActSearch.__init__(self)
 
+        # Button
         self.lr_think_time = tk.Button(
             self.toolbar, text='lr_think_time', font=(lr_vars.DefaultFont + ' bold'), command=self.thinktime_remove,
         )
 
+        # Button
         self.transaction_rename = tk.Button(
             self.toolbar, text='rename\ntransaction', font=(lr_vars.DefaultFont + ' bold'), background='orange',
             command=self.all_transaction_rename,
         )
 
+        # Button
         self.dummy_button = tk.Button(
             self.toolbar, text="Snapshot remove", font=(lr_vars.DefaultFont + ' bold'), background='orange',
             command=self.remove_web_dummy_template,
@@ -36,7 +41,9 @@ class ActReplaceRemove(lr_lib.gui.action.act_search.ActSearch):
 
     @lr_lib.core.var.vars_other.T_POOL_decorator
     def remove_web_dummy_template(self, *args, force=True) -> None:
-        """для WebDummyTemplate_List - удалить все dummy web_"""
+        """
+        для WebDummyTemplate_List - удалить все dummy web_
+        """
         lr_lib.etc.template.Dummy.setattrs(lr_lib.etc.template.WebDummyTemplate_Part_Endswith)
         ok = self.tk_text_dummy_remove(force=force, mode='endswith')
 
@@ -77,11 +84,17 @@ class ActReplaceRemove(lr_lib.gui.action.act_search.ActSearch):
         return
 
     def tk_text_dummy_remove(self, force=False, mode='') -> bool:
+        """
+        удалить все dummy web_ - запуск
+        """
         with self.block():
-            return self._tk_text_dummy_remove(force=force, mode=mode)
+            b = self._tk_text_dummy_remove(force=force, mode=mode)
+        return b
 
     def _tk_text_dummy_remove(self, force=False, mode='') -> bool:
-        """удалить все dummy web_"""
+        """
+        удалить все dummy web_ - ядро
+        """
         text = self.tk_text.get(1.0, tk.END).strip()
         _web_action = lr_lib.core.action.main_awal.ActionWebsAndLines(self)
         _web_action.set_text_list(text)
@@ -164,7 +177,9 @@ class ActReplaceRemove(lr_lib.gui.action.act_search.ActSearch):
         return
 
     def thinktime_remove(self, *args, word='lr_think_time') -> None:
-        """удалить thinktime"""
+        """
+        удалить thinktime
+        """
         text = self.tk_text.get(1.0, tk.END)
         assert text
         num = 0
@@ -183,17 +198,23 @@ class ActReplaceRemove(lr_lib.gui.action.act_search.ActSearch):
         if lines:
             if messagebox.askokcancel('thinktime', 'удалить thinktime из action?\n{} шт.'.format(num), parent=self):
                 self.backup()
-                self.tk_text_to_web_action('\n'.join(lines), websReport=True)
+                ls = '\n'.join(lines)
+                self.tk_text_to_web_action(ls, websReport=True)
         return
 
     @lr_lib.core.var.vars_other.T_POOL_decorator
     def all_transaction_rename(self, *args) -> None:
-        """переименавать все транзакции"""
+        """
+        переименавать все транзакции
+        """
         _transactions = [t.split('"', 1)[1] for t in self.transaction]
         transactions = list(sorted(set(_transactions), key=_transactions.index))
+
         mx = max(map(len, transactions or ['']))
         m = '"{:<%s}" -> "{}"' % mx
-        all_transaction = '\n'.join(m.format(old, new) for old, new in zip(transactions, transactions))
+        z2 = zip(transactions, transactions)
+        all_transaction = '\n'.join(m.format(old, new) for old, new in z2)
+
         y = lr_lib.gui.widj.dialog.YesNoCancel(
             ['Переименовать', 'Отмена'],
             'Переименовать transaction слева',
@@ -202,11 +223,10 @@ class ActReplaceRemove(lr_lib.gui.action.act_search.ActSearch):
             parent=self,
             is_text=all_transaction,
         )
-        st = 'lr_start_transaction("'
-        en = 'lr_end_transaction("'
+
         if y.ask() == 'Переименовать':
             new_transaction = [t.split('-> "', 1)[1].split('"', 1)[0].strip() for t in y.text.strip().split('\n')]
-            assert len(transactions) == len(new_transaction)
+            assert (len(transactions) == len(new_transaction))
 
             text = self.tk_text.get('1.0', tk.END)
             for old, new in zip(transactions, new_transaction):
@@ -217,3 +237,7 @@ class ActReplaceRemove(lr_lib.gui.action.act_search.ActSearch):
             self.backup()
             self.tk_text_to_web_action(text, websReport=True)
         return
+
+
+st = 'lr_start_transaction("'
+en = 'lr_end_transaction("'

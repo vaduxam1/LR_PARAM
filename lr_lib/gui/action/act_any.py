@@ -13,14 +13,18 @@ import lr_lib.gui.action.act_goto
 
 
 class ActAny(lr_lib.gui.action.act_goto.ActGoto):
-    """разное"""
+    """
+    разное
+    """
 
     def __init__(self):
         lr_lib.gui.action.act_goto.ActGoto.__init__(self)
         return
 
     def widj_reset(self) -> None:
-        """обновить виджеты"""
+        """
+        обновить виджеты
+        """
         super().widj_reset()
         self.transaction_combo_set()
 
@@ -31,7 +35,9 @@ class ActAny(lr_lib.gui.action.act_goto.ActGoto):
         return
 
     def param_counter(self, all_param_info=False) -> str:
-        """подсчитать кол-во созданных web_reg_save_param"""
+        """
+        подсчитать кол-во созданных web_reg_save_param
+        """
         self.wrsp_combo_set()
         self.param_combo_set()
         if all_param_info:
@@ -41,13 +47,17 @@ class ActAny(lr_lib.gui.action.act_goto.ActGoto):
         return i
 
     def clear_text(self) -> None:
-        """очистить tk_text"""
+        """
+        очистить tk_text
+        """
         if tkinter.messagebox.askquestion('очистить', 'очистить окно?', parent=self) == 'yes':
             self.backup()
             self.tk_text.delete(1.0, tk.END)
 
     def set_combo_len(self):
-        """задать ширину всех ['values'] виджетов"""
+        """
+        задать ширину всех ['values'] виджетов
+        """
         if lr_vars.Window._block_:
             return
 
@@ -66,12 +76,17 @@ class ActAny(lr_lib.gui.action.act_goto.ActGoto):
         return
 
     def set_title(self) -> None:
-        self.title('{} {} undo: ctrl-z / redo: ctrl-y)'.format(
-            self._set_title(), lr_vars.VERSION,
-        ))
+        """
+        main title
+        """
+        t = '{} {} undo: ctrl-z / redo: ctrl-y)'.format(self._set_title(), lr_vars.VERSION,)
+        self.title(t)
         return
 
     def _set_title(self) -> str:
+        """
+        main title
+        """
         i = '{a} | {i} | backup={b} | Всего( WRSP/WebSnapshot/WebAny ) : ( {ww}/{ws}/{wa} ) |'.format(
             a=self.action_file,
             b=self._backup_index,
@@ -83,7 +98,9 @@ class ActAny(lr_lib.gui.action.act_goto.ActGoto):
         return i
 
     def _open_action_final(self, *args) -> None:
-        """сообщения и действия, после открытия нового action файла"""
+        """
+        сообщения и действия, после открытия нового action файла
+        """
         if not self.action_file:
             return
 

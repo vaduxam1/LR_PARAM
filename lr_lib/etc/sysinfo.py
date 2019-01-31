@@ -4,16 +4,24 @@
 import sys
 
 
-def system_info() -> str:
-    return str_separator('\n'.join(_system_info()).lstrip('\n'))
+def system_info() -> iter((str,)):
+    """
+    всякая ненужная инфа(при старте скрипта)
+    """
+    s = str_separator('\n'.join(_system_info()).lstrip('\n'))
+    return s
 
 
-def _system_info() -> (str,):
-    """всякая ненужная инфа(при старте скрипта)"""
+def _system_info() -> iter((str,)):
+    """
+    всякая ненужная инфа(при старте скрипта)
+    """
     replace_dt = {ord(s): '' for s in "(')"}
 
     def attrs_from_all_objs() -> (object, 'attrs',):
-        """объект_источник_инфы, "атрибуты, " """
+        """
+        объект_источник_инфы, "атрибуты, "
+        """
         yield sys, 'dont_write_bytecode, executable, getdefaultencoding, ' \
                    'getfilesystemencoding, getwindowsversion, implementation, platform, exc_info, '
         import platform
@@ -25,8 +33,10 @@ def _system_info() -> (str,):
             pass
         return
 
-    def create_obj_attrs_message(obj: object, attrs: str):
-        """формирование сообщения для всех атрибутов объекта"""
+    def create_obj_attrs_message(obj: object, attrs: str) -> iter((str,)):
+        """
+        формирование сообщения для всех атрибутов объекта
+        """
         # yield '\n{}'.format(obj)
         n = obj.__name__
         ats = attrs.replace(' ', '').split(',')
@@ -35,28 +45,35 @@ def _system_info() -> (str,):
             if callable(result):
                 result = result()
 
-            yield '{}.{} = {}'.format(n, atr, result).translate(replace_dt)
+            s = '{}.{} = {}'.format(n, atr, result).translate(replace_dt)
+            yield s
             continue
         return
 
-    def get_messages():
-        """все сообщения для вывода"""
+    def get_messages() -> iter((str,)):
+        """
+        все сообщения для вывода
+        """
         for ob, at in attrs_from_all_objs():
             yield from create_obj_attrs_message(ob, at)
             continue
         try:
             import psutil
-            yield 'psutil.disk_usage = {}'.format(psutil.disk_usage('/'))
+            s = 'psutil.disk_usage = {}'.format(psutil.disk_usage('/'))
+            yield s
         except Exception as xe:
             pass
         return
 
-    yield from get_messages()
+    m = get_messages()
+    yield from m
     return
 
 
 def _separator(msg: (str,), max_len: int) -> (str,):
-    """выравнивание пробелами для сообщения в рамки"""
+    """
+    выравнивание пробелами для сообщения в рамки
+    """
     for i in range(len(msg)):
         lm = len(msg[i])
         if lm < max_len:
@@ -69,9 +86,14 @@ def _separator(msg: (str,), max_len: int) -> (str,):
 
 
 def str_separator(message: str, s_width='#', s_height='#', t='  ', max_=70, n=5) -> str:
-    """сообщение в рамке"""
+    """
+    сообщение в рамке
+    """
 
-    def len_split(_m: [str, ]):  # макс длина строки по '\n'
+    def len_split(_m: [str, ]) -> iter((str, )):
+        """
+        макс длина строки по '\n'
+        """
         for st in _m:
             if len(st) > max_:
                 yield st[:max_]

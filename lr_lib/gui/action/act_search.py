@@ -12,7 +12,9 @@ import lr_lib.gui.widj.tooltip
 
 
 class ActSearch(lr_lib.gui.action.act_serializ.TkTextWebSerialization):
-    """поиск текста"""
+    """
+    поиск текста
+    """
 
     def __init__(self):
         lr_lib.gui.action.act_serializ.TkTextWebSerialization.__init__(self)
@@ -24,35 +26,43 @@ class ActSearch(lr_lib.gui.action.act_serializ.TkTextWebSerialization):
 
         self._uptext = '<-up %s'
 
+        # Button
         self.search_button = tk.Button(
             self.toolbar, text='> Поиск >', command=self.search_in_action, font=lr_vars.DefaultFont,
         )
+
+        # Combobox
         self.search_entry = ttk.Combobox(
             self.toolbar, textvariable=self.searchVar, font=(lr_vars.DefaultFont + ' italic'), justify='center',
         )
         self.search_entry.bind("<KeyRelease-Return>", self.search_in_action)
         self.search_entry['values'] = ['']
 
+        # Combobox
         self.search_res_combo = ttk.Combobox(
             self.toolbar, textvariable=self.searchPosVar, justify='center', font=lr_vars.DefaultFont,
             background=lr_lib.core.var.vars_highlight.Background,
         )
-
         self.search_res_combo.bind("<<ComboboxSelected>>", self.tk_text_see)
         self.search_res_combo.bind("<KeyRelease-Return>", self.tk_text_see)
 
+        # Button
         self.up_search_button = tk.Button(
             self.toolbar, text=self._uptext, command=self.search_up, font=lr_vars.DefaultFont,
         )
 
+        # Button
         self.down_search_button = tk.Button(
             self.toolbar, text='down->', command=self.search_down, font=lr_vars.DefaultFont,
         )
 
+        # Combobox
         self.SearchReplace_searchCombo = ttk.Combobox(
             self.toolbar, textvariable=self.SearchReplace_searchVar, justify='center', foreground="purple",
             font=(lr_vars.DefaultFont + ' italic'),
         )
+
+        # Combobox
         self.SearchReplace_replaceCombo = ttk.Combobox(
             self.toolbar, textvariable=self.SearchReplace_replaceVar, justify='center', font=lr_vars.DefaultFont,
             foreground="maroon",
@@ -61,13 +71,16 @@ class ActSearch(lr_lib.gui.action.act_serializ.TkTextWebSerialization):
         self.SearchReplace_searchCombo['values'] = ['']
         self.SearchReplace_replaceCombo['values'] = ['']
 
+        # Button
         self.SearchReplace_button = tk.Button(
             self.toolbar, text='> замена >', font=lr_vars.DefaultFont, command=self._replace_button_set,
         )
         return
 
     def search_down(self, *a) -> None:
-        """поиск вниз, по тексту action.c"""
+        """
+        поиск вниз, по тексту action.c
+        """
 
         def func() -> None:
             # bhl = self.backgr_butt()
@@ -89,7 +102,9 @@ class ActSearch(lr_lib.gui.action.act_serializ.TkTextWebSerialization):
         return
 
     def search_up(self, *a) -> None:
-        """поиск вверх, по тексту action.c"""
+        """
+        поиск вверх, по тексту action.c
+        """
 
         def func() -> None:
             # bhl = self.backgr_butt()
@@ -110,7 +125,9 @@ class ActSearch(lr_lib.gui.action.act_serializ.TkTextWebSerialization):
         return
 
     def search_in_action(self, *a, word=None, hist=True) -> None:
-        """поиск в tk_text"""
+        """
+        поиск в tk_text
+        """
 
         def func(word=word, hist=hist) -> None:
             if lr_vars.Window._block_:
@@ -157,7 +174,9 @@ class ActSearch(lr_lib.gui.action.act_serializ.TkTextWebSerialization):
         return
 
     def tk_text_see(self, *args) -> None:
-        """перейти на позицию в тексте"""
+        """
+        перейти на позицию в тексте
+        """
         if lr_vars.Window._block_:
             return
 
@@ -177,7 +196,9 @@ class ActSearch(lr_lib.gui.action.act_serializ.TkTextWebSerialization):
         return
 
     def _search_text(self, *a, word=None, pos='1.0', coord='{i}+{w}c') -> [str, ]:
-        """поиск в tk_text"""
+        """
+        поиск в tk_text
+        """
         if lr_vars.Window._block_:
             return []
         if word is None:
@@ -197,7 +218,9 @@ class ActSearch(lr_lib.gui.action.act_serializ.TkTextWebSerialization):
             return []
 
     def backgr_butt(self) -> iter:
-        """менять/вернуть цвет кнопок"""
+        """
+        менять/вернуть цвет кнопок при поиске
+        """
         if lr_vars.Window._block_:
             try:
                 yield
@@ -205,7 +228,9 @@ class ActSearch(lr_lib.gui.action.act_serializ.TkTextWebSerialization):
                 return
 
         def change() -> None:
-            """менять"""
+            """
+            менять
+            """
             self.search_entry.config(font='Arial 7 bold')
             self.down_search_button.config(background='orange')
             self.up_search_button.config(background='orange')
@@ -214,7 +239,9 @@ class ActSearch(lr_lib.gui.action.act_serializ.TkTextWebSerialization):
             return
 
         def restore() -> None:
-            """вернуть"""
+            """
+            вернуть
+            """
             self.search_entry.config(font=lr_vars.DefaultFont)
             self.search_res_combo.config(font=lr_vars.DefaultFont)
             self.down_search_button.config(background='lightgray')
@@ -231,7 +258,9 @@ class ActSearch(lr_lib.gui.action.act_serializ.TkTextWebSerialization):
         return
 
     def _replace_button_set(self, *args) -> None:
-        """кнопка замены(обычной как в блокноте) текста"""
+        """
+        кнопка замены(обычной как в блокноте) текста
+        """
         t = "action.c: Заменить ? :\n\n{s}\n\n на :\n\n{r}".format(
             s=self.SearchReplace_searchVar.get(), r=self.SearchReplace_replaceVar.get(),
         )

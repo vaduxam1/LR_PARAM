@@ -10,45 +10,48 @@ import lr_lib.gui.action.act_var
 
 
 class ActWidj(lr_lib.gui.action.act_var.ActVar):
-    """виджеты, которые надо создать первыми"""
+    """
+    виджеты, которые надо создать первыми
+    """
 
     def __init__(self):
         lr_lib.gui.action.act_var.ActVar.__init__(self)
 
-        # bars
+        # LabelFrame
         self.toolbar = tk.LabelFrame(
             self, relief='ridge', bd=5, labelanchor=tk.N, font=(lr_vars.DefaultFont + ' italic'),
             text='для корректной работы, раскладку клавиатуры установить в ENG',
         )
-
+        # LabelFrame
         self.middle_bar = tk.LabelFrame(
             self, relief='ridge', bd=2, text='', labelanchor=tk.S, font=lr_vars.DefaultFont,
         )
-
+        # LabelFrame
         self.transaction_bar = tk.LabelFrame(
             self.middle_bar, relief='groove', bd=0, text='transaction', labelanchor=tk.S, font=lr_vars.DefaultFont,
         )
-
+        # LabelFrame
         self.inf_bar = tk.LabelFrame(
             self.middle_bar, relief='groove', bd=0, text='inf', labelanchor=tk.S, font=lr_vars.DefaultFont,
         )
-
+        # LabelFrame
         self.wrsp_bar = tk.LabelFrame(
             self.middle_bar, relief='groove', bd=0, text='web_reg_save_param', labelanchor=tk.S,
             font=lr_vars.DefaultFont,
         )
-
+        # LabelFrame
         self.font_toolbar = tk.LabelFrame(
             self.toolbar, relief='groove', bd=0, text='', labelanchor=tk.S, font=lr_vars.DefaultFont,
         )
-
+        # LabelFrame
         self.file_bar = tk.LabelFrame(self.toolbar, relief='groove', bd=0, text='', labelanchor=tk.N)
+        # LabelFrame
         self.cbx_bar = tk.LabelFrame(self.toolbar, relief='groove', bd=0, text='', labelanchor=tk.S)
 
-        #
-        # self.scroll_lab = tk.Label(self, text='0')
+        # Label
         self.scroll_lab2 = ttk.Label(self, text='0 %', background=lr_lib.core.var.vars_highlight.Background)
 
+        # Label's
         self.help1 = tk.Label(self, text='?', foreground='grey')
         self.help2 = tk.Label(self, text='?', foreground='grey')
         self.help3 = tk.Label(self, text='?', foreground='grey')
@@ -59,7 +62,9 @@ class ActWidj(lr_lib.gui.action.act_var.ActVar):
         return
 
     def show_hide_bar_1(self, force_show=False) -> None:
-        """show/hide self.toolbar"""
+        """
+        show/hide self.toolbar
+        """
         vb = self.var_bar_1.get()
         if force_show:
             if not vb:
@@ -78,7 +83,9 @@ class ActWidj(lr_lib.gui.action.act_var.ActVar):
         return
 
     def show_hide_bar_2(self) -> None:
-        """show/hide self.middle_bar"""
+        """
+        show/hide self.middle_bar
+        """
         self.var_bar_2.set(not self.var_bar_2.get())
         if self.var_bar_2.get():
             self.middle_bar.grid(row=3, column=1, sticky=tk.N)
@@ -89,7 +96,9 @@ class ActWidj(lr_lib.gui.action.act_var.ActVar):
         return
 
     def show_hide_bar_3(self) -> None:
-        """show/hide self.scroll_lab2"""
+        """
+        show/hide self.scroll_lab2
+        """
         self.var_bar_3.set(not self.var_bar_3.get())
         if self.var_bar_3.get():
             self.scroll_lab2.grid(row=2, column=0, sticky=tk.NSEW, rowspan=2)

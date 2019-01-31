@@ -9,7 +9,9 @@ import lr_lib.core.var.vars as lr_vars
 
 
 class MainThreadUpdater:
-    """выполнить из main потока(например если что-то нельзя(RuntimeError) выполнять в потоке)"""
+    """
+    выполнить из main потока(например если что-то нельзя(RuntimeError) выполнять в потоке)
+    """
 
     def __init__(self):
         self.working = None
@@ -17,13 +19,17 @@ class MainThreadUpdater:
         return
 
     def submit(self, callback: callable) -> None:
-        """добавить в очередь выполнения"""
+        """
+        добавить в очередь выполнения
+        """
         self.queue_in.put(callback)
         return
 
     @contextlib.contextmanager
     def init(self) -> iter:
-        """вызов _queue_listener"""
+        """
+        вызов _queue_listener
+        """
         self.working = True  # разрешить перезапуск _queue_listener
         try:
             self._queue_listener()
@@ -33,7 +39,9 @@ class MainThreadUpdater:
         return
 
     def _queue_listener(self) -> None:
-        """выполнять из очереди, пока есть, затем перезапустить"""
+        """
+        выполнять из очереди, пока есть, затем перезапустить
+        """
         while self.working:
             try:  # получить callback
                 callback = self.queue_in.get_nowait()
@@ -52,7 +60,9 @@ class MainThreadUpdater:
 
 
 class NoPool:
-    """заглушка пула для однопоточного выполнения, для POOL_"""
+    """
+    заглушка пула для однопоточного выполнения, для POOL_
+    """
 
     @staticmethod
     def map(fn: callable, args: tuple) -> iter:
@@ -62,6 +72,8 @@ class NoPool:
     def submit(self, func: callable, *args, **kwargs):
         return func(*args, **kwargs)
 
+
+# import asyncio
 # @asyncio.coroutine
 # def async_worker(executor: callable, fn: callable, args: tuple, e=None):
 #     result = yield from executor(e, fn, args)

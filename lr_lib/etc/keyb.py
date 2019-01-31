@@ -15,7 +15,9 @@ cd c:\Python36\Scripts\n
 
 @contextlib.contextmanager
 def keyboard_listener() -> None:
-    """перехват keyboard-hotkey"""
+    """
+    перехват keyboard-hotkey
+    """
     try:
         import keyboard
     except ImportError:
@@ -29,7 +31,9 @@ def keyboard_listener() -> None:
 
 
 def get_param_clipboard_hotkey() -> None:
-    """найти {param} из clipboard, по хоткей"""
+    """
+    найти {param} из clipboard, по хоткей
+    """
     param = lr_vars.Tk.clipboard_get()
     lr_vars.Window.get_files(param=param, clipb=True)
     return

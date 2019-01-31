@@ -9,7 +9,9 @@ import lr_lib.core.var.vars as lr_vars
 
 
 def excepthook(*args) -> None:
-    """обработка raise: сокращенный стектрейс + исходный код"""
+    """
+    обработка raise: сокращенный стектрейс + исходный код
+    """
     len_args = len(args)
 
     if len_args == 1:
@@ -33,7 +35,9 @@ def excepthook(*args) -> None:
 
 
 def full_tb_write(*args):
-    """логировать полный traceback"""
+    """
+    логировать полный traceback
+    """
     if not args:
         (exc_type, exc_val, exc_tb) = sys.exc_info()
     elif len(args) == 3:
@@ -60,7 +64,9 @@ def full_tb_write(*args):
 
 
 def get_tb(exc_type, exc_val, exc_tb, err_name: str) -> str:
-    """traceback + исходный код"""
+    """
+    traceback + исходный код
+    """
     if not exc_tb:
         i = '{} {} {}'.format(exc_type, exc_val, exc_tb)
         return i

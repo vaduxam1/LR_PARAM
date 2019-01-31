@@ -28,26 +28,46 @@ from lr_lib.gui.etc.color_progress import progress_decor
 
 
 class ActionWindow(lr_lib.gui.action.act_win.ActWin):
-    """окно action.c
-    ActionWindow
-    lr_act_win.ActWin
-    lr_act_any.ActAny
-    lr_act_goto.ActGoto
-    lr_act_font.ActFont
-    lr_act_replace.ActReplaceRemove
-    lr_act_search.ActSearch
-    lr_act_serializ.TkTextWebSerialization
-    lr_act_backup.ActBackup
-    lr_act_block.ActBlock
-    lr_act_scroll.ActScrollText
-    lr_act_widj.ActWidj
-    lr_act_var.ActVar
-    lr_act_toplevel.ActToplevel
-    tk.Toplevel
+    """
+    Окно action.c:
+        ActionWindow
+        lr_act_win.ActWin
+        lr_act_any.ActAny
+        lr_act_goto.ActGoto
+        lr_act_font.ActFont
+        lr_act_replace.ActReplaceRemove
+        lr_act_search.ActSearch
+        lr_act_serializ.TkTextWebSerialization
+        lr_act_backup.ActBackup
+        lr_act_block.ActBlock
+        lr_act_scroll.ActScrollText
+        lr_act_widj.ActWidj
+        lr_act_var.ActVar
+        lr_act_toplevel.ActToplevel
+        tk.Toplevel
     """
 
+    def __init__(self):
+        lr_lib.gui.action.act_win.ActWin.__init__(self)
+
+        self.set_grid()  # расположить виджеты
+        self.set_tooltip()  # создать tooltip виджетов
+
+        self.open_action()  # открыть action текст
+        self.tk_text.init()
+
+        # Menu
+        self.menubar = tk.Menu()
+        self.config(menu=self.menubar)
+        self.set_menu()
+
+        lr_lib.gui.etc.gui_other.center_widget(self)
+        return
+
     def _all_wrsp_remove(self) -> None:
-        """удалить все созданные WRSP"""
+        """
+        удалить все созданные WRSP
+        """
         if not tkinter.messagebox.askokcancel(
                 'Удаление WRSP', 'Удалить все web_reg_save_param из action.c?',
                 parent=lr_vars.Window.get_main_action(), ):
@@ -63,136 +83,129 @@ class ActionWindow(lr_lib.gui.action.act_win.ActWin):
         return
 
     def __repr__(self) -> str:
-        """переопределить строковое представление объекта класса, все равно ткинер сует чтото неинформативное"""
+        """
+        переопределить строковое представление объекта класса, все равно tkinter сует чтото не информативное
+        """
         r = '{}:action.c'.format(self.__class__.__name__)
         return r
 
-    def __init__(self):
-        lr_lib.gui.action.act_win.ActWin.__init__(self)
-
-        self.set_grid()  # расположить виджеты
-        self.set_tooltip()  # создать tooltip виджетов
-
-        self.open_action()  # открыть action текст
-        self.tk_text.init()
-
-        self.menubar = tk.Menu()
-        self.config(menu=self.menubar)
-        self.set_menu()
-
-        lr_lib.gui.etc.gui_other.center_widget(self)
-        return
-
     def set_menu(self) -> None:
-        """menubar"""
+        """
+        создать menubar
+        """
         filemenu = tk.Menu(self.menubar, tearoff=0)
-        filemenu.add_command(
-            label="WRSP Setting",
-            command=lambda: lr_lib.gui.widj.wrsp_setting.WrspSettingWindow(parent=self),
-        )
-        filemenu.add_command(
-            label="Setting",
-            command=lambda: lr_lib.gui.widj.setting.Setting(parent=self),
-        )
+
+        cmd10 = lambda: lr_lib.gui.widj.wrsp_setting.WrspSettingWindow(parent=self)
+        filemenu.add_command(label="WRSP Setting", command=cmd10,)
+
+        cmd11 = lambda: lr_lib.gui.widj.setting.Setting(parent=self)
+        filemenu.add_command(label="Setting", command=cmd11,)
+
         filemenu.add_command(label="Web Legend Window", command=self.legend)
         filemenu.add_command(label="show/hide main bar", command=self.show_hide_bar_1)
         filemenu.add_command(label="show/hide navigation bar", command=self.show_hide_bar_2)
         filemenu.add_command(label="show/hide info bar", command=self.show_hide_bar_3)
-        filemenu.add_command(label="report_A", command=lambda: lr_lib.gui.etc.gui_other.repA(self.tk_text))
-        filemenu.add_command(label="report_B", command=lambda: lr_lib.gui.etc.gui_other.repB(self.tk_text))
+
+        cmd12 = lambda: lr_lib.gui.etc.gui_other.repA(self.tk_text)
+        filemenu.add_command(label="report_A", command=cmd12)
+        cmd13 = lambda: lr_lib.gui.etc.gui_other.repB(self.tk_text)
+        filemenu.add_command(label="report_B", command=cmd13)
+
         filemenu.add_command(label="Exit", command=self.destroy)
         self.menubar.add_cascade(label="Show/Hide", menu=filemenu)
 
         filemenu2 = tk.Menu(self.menubar, tearoff=0)
-        filemenu2.add_command(
-            label="Open",
-            command=lambda: self.open_action_dialog(title=True, folder=lr_vars.BackupFolder),
-        )
+
+        cmd14 = lambda: self.open_action_dialog(title=True, folder=lr_vars.BackupFolder)
+        filemenu2.add_command(label="Open", command=cmd14,)
         filemenu2.add_command(label="Save", command=self.save_action_file)
-        filemenu2.add_command(
-            label="Перенести текст_на_экране, во внутр_предсталение", command=self.tk_text_to_web_action,
-        )
-        filemenu2.add_command(
-            label="Перенести внутр_предсталение, в текст_на_экране", command=self.web_action_to_tk_text,
-        )
+
+        cm1 = self.tk_text_to_web_action
+        filemenu2.add_command(label="Перенести текст_на_экране, во внутр_предсталение", command=cm1,)
+        cm2 = self.web_action_to_tk_text
+        filemenu2.add_command(label="Перенести внутр_предсталение, в текст_на_экране", command=cm2,)
+
         self.menubar.add_cascade(label="Open/Save", menu=filemenu2)
 
         filemenu3 = tk.Menu(self.menubar, tearoff=0)
+
         filemenu3.add_command(label="Remove dummy", command=self.remove_web_dummy_template)
         filemenu3.add_command(label="Remove thinktime", command=self.thinktime_remove)
         filemenu3.add_command(label="Remove ALL web_reg_save_param", command=self._all_wrsp_remove)
         filemenu3.add_command(label="Rename transaction", command=self.all_transaction_rename)
-        filemenu3.add_command(label="Rename WRSP+", command=lambda: lr_lib.core_gui.rename.all_wrsp_auto_rename(self))
-        filemenu3.add_command(label="Rename WRSP-", command=lambda: lr_lib.core_gui.rename.all_wrsp_rename(self))
+
+        cmd15 = lambda: lr_lib.core_gui.rename.all_wrsp_auto_rename(self)
+        filemenu3.add_command(label="Rename WRSP+", command=cmd15)
+        cmd16 = lambda: lr_lib.core_gui.rename.all_wrsp_rename(self)
+        filemenu3.add_command(label="Rename WRSP-", command=cmd16)
+
         self.menubar.add_cascade(label="Remove/Rename", menu=filemenu3)
 
         filemenu4 = tk.Menu(self.menubar, tearoff=0)
 
-        filemenu4.add_command(
-            label="* Найти и Создать WRSP: расширенный вариант",
-            command=lambda: lr_lib.core_gui.run.run_setting.RunSettingWindow(self)
-        )
+        cmd1 = lambda: lr_lib.core_gui.run.run_setting.RunSettingWindow(self)
+        filemenu4.add_command(label="* Найти и Создать WRSP: расширенный вариант", command=cmd1,)
 
-        filemenu4.add_command(
-            label="1) по LB",
-            command=lambda: lr_lib.core.var.vars_other.T_POOL_decorator(progress_decor(
-                group_param_search_by_lb, self))(
-                self, [['web', self], 'all'], wrsp_create=True,
-            )
-        )
+        @lr_lib.core.var.vars_other.T_POOL_decorator
+        def cmd2() -> None:
+            f = progress_decor(group_param_search_by_lb, self)
+            f(self, [['web', self], 'all'], wrsp_create=True,)
+            return
+        filemenu4.add_command(label="1) по LB", command=cmd2,)
 
-        filemenu4.add_command(
-            label="2) по regexp",
-            command=lambda: lr_lib.core.var.vars_other.T_POOL_decorator(progress_decor(
-                group_param_search_by_act_re, self))(
-                self, [['web', self], 'all'], wrsp_create=True,
-            )
-        )
+        @lr_lib.core.var.vars_other.T_POOL_decorator
+        def cmd3() -> None:
+            f = progress_decor(group_param_search_by_act_re, self)
+            f(self, [['web', self], 'all'], wrsp_create=True, )
+            return
+        filemenu4.add_command(label="2) по regexp", command=cmd3,)
 
-        filemenu4.add_command(
-            label="3) по regexp c постобработкой результата",
-            command=lambda: lr_lib.core.var.vars_other.T_POOL_decorator(progress_decor(
-                group_param_search_by_resp_re, self))(
-                self, [['web', self], 'all'], wrsp_create=True,
-            )
-        )
+        @lr_lib.core.var.vars_other.T_POOL_decorator
+        def cmd4() -> None:
+            f = progress_decor(group_param_search_by_resp_re, self)
+            f(self, [['web', self], 'all'], wrsp_create=True, )
+            return
+        filemenu4.add_command(label="3) по regexp c постобработкой результата", command=cmd4,)
 
-        filemenu4.add_command(
-            label="4) split способ",
-            command=lambda: lr_lib.core.var.vars_other.T_POOL_decorator(progress_decor(
-                group_param_search_by_split, self))(
-                self, [['web', self], 'all'], wrsp_create=True,
-            )
-        )
+        @lr_lib.core.var.vars_other.T_POOL_decorator
+        def cmd5() -> None:
+            f = progress_decor(group_param_search_by_split, self)
+            f(self, [['web', self], 'all'], wrsp_create=True, )
+            return
+        filemenu4.add_command(label="4) split способ", command=cmd5,)
 
-        filemenu4.add_command(
-            label="5) LAST: по начальным символам известных",
-            command=lambda: lr_lib.core.var.vars_other.T_POOL_decorator(progress_decor(
-                group_param_search_by_exist_param, self))(
-                self, [['web', self], 'all'],
-                list(self.web_action.websReport.wrsp_and_param_names.values()), wrsp_create=True,
-            )
-        )
+        @lr_lib.core.var.vars_other.T_POOL_decorator
+        def cmd6() -> None:
+            f = progress_decor(group_param_search_by_exist_param, self)
+            wp = list(self.web_action.websReport.wrsp_and_param_names.values())
+            f(self, [['web', self], 'all'], wp, wrsp_create=True,)
+            return
+        filemenu4.add_command(label="5) LAST: по начальным символам известных", command=cmd6,)
 
-        filemenu4.add_command(
-            label="6) LAST: по LB известных",
-            command=lambda: lr_lib.core.var.vars_other.T_POOL_decorator(progress_decor(
-                group_param_search_by_lb_post, self))(self, [['web', self], 'all'], wrsp_create=True, ),
-        )
+        @lr_lib.core.var.vars_other.T_POOL_decorator
+        def cmd7() -> None:
+            f = progress_decor(group_param_search_by_lb_post, self)
+            f(self, [['web', self], 'all'], wrsp_create=True,)
+            return
+        filemenu4.add_command(label="6) LAST: по LB известных", command=cmd7,)
 
         self.menubar.add_cascade(label="Запуск", menu=filemenu4)
 
         filemenu5 = tk.Menu(self.menubar, tearoff=0)
-        filemenu5.add_command(
-            label="по Snapshot inf номерам",
-            command=lambda: lr_lib.core_gui.action_lib.snapshot_files(self.tk_text, i_num=1),
-        )
-        filemenu5.add_command(label="подряд", command=lambda: lr_lib.gui.wrsp.top.top_allfiles.TopFolder(self))
+
+        cmd8 = lambda: lr_lib.core_gui.action_lib.snapshot_files(self.tk_text, i_num=1)
+        filemenu5.add_command(label="по Snapshot inf номерам", command=cmd8,)
+
+        cmd9 = lambda: lr_lib.gui.wrsp.top.top_allfiles.TopFolder(self)
+        filemenu5.add_command(label="подряд", command=cmd9)
+
         self.menubar.add_cascade(label="Файлы ответов", menu=filemenu5)
         return
 
     def set_tooltip(self) -> None:
-        """создать все tooltip action окна"""
+        """
+        создать все tooltip action окна
+        """
         lr_lib.gui.widj.tooltip.createToolTip(self.help1, lr_lib.etc.help.ACTION1)
         lr_lib.gui.widj.tooltip.createToolTip(self.help2, lr_lib.etc.help.ACTION2)
         lr_lib.gui.widj.tooltip.createToolTip(self.help3, lr_lib.etc.help.ACTION3)
@@ -487,7 +500,9 @@ class ActionWindow(lr_lib.gui.action.act_win.ActWin):
         return
 
     def set_grid(self):
-        """grid всех виджетов action.с окна"""
+        """
+        grid всех виджетов action.с окна
+        """
         self.search_entry.grid(row=5, column=0, columnspan=8, sticky=tk.NSEW)
         self.search_button.grid(row=5, column=8, sticky=tk.NSEW)
         self.down_search_button.grid(row=5, column=9, sticky=tk.NSEW)

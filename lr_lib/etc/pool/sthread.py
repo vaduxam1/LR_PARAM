@@ -22,7 +22,9 @@ kwargs = {kwargs}
 
 
 class Task:
-    """задача для пула"""
+    """
+    задача для пула
+    """
     __slots__ = ('target', 'args', 'kwargs',)
 
     def __init__(self, target: callable, args: tuple, kwargs: dict):
@@ -52,7 +54,9 @@ class Task:
 
 
 class SThreadIOQueue:
-    """priority_DeQueue_in"""
+    """
+    priority_DeQueue_in
+    """
     __slots__ = ('priority', 'queue_in',)
 
     def __init__(self, queue_in: PriorityQueue):
@@ -70,8 +74,10 @@ class SThreadIOQueue:
 
 
 class _NoPool:
+    """
+    заглушка пула для SThread
+    """
     size = 1
-    """заглушка пула для SThread"""
 
     def __getattr__(self, item):
         """self.pool.working -> True"""
@@ -79,7 +85,9 @@ class _NoPool:
 
 
 class SThread(threading.Thread, SThreadIOQueue):
-    """worker поток Thread пула"""
+    """
+    worker поток Thread пула
+    """
     __slots__ = ('task', 'pool', 'timeout', 'size_min',)
 
     def __init__(self, queue_in: PriorityQueue, pool=None):
@@ -95,7 +103,9 @@ class SThread(threading.Thread, SThreadIOQueue):
         return
 
     def run(self) -> None:
-        """worker-поток, выполнять task из queue_in, при простое выйти"""
+        """
+        worker-поток, выполнять task из queue_in, при простое выйти
+        """
         try:
             while self.pool.working:
                 try:  # получить задачу / поток занят
@@ -128,12 +138,16 @@ class SThread(threading.Thread, SThreadIOQueue):
         return
 
     def __bool__(self) -> bool:
-        """поток свободен/занят"""
+        """
+        поток свободен/занят
+        """
         return bool(self.task)
 
 
 class SThreadPool(SThreadIOQueue):
-    """threading.Thread пул"""
+    """
+    threading.Thread пул
+    """
     __slots__ = ('_qsize', 'threads', 'parent', 'working', 'size',)
 
     def __init__(self, size=lr_vars.cpu_count, parent=None):
@@ -153,7 +167,9 @@ class SThreadPool(SThreadIOQueue):
         return
 
     def thread_create(self, th_count=1) -> None:
-        """создать, сохранить и запустить worker-поток"""
+        """
+        создать, сохранить и запустить worker-поток
+        """
         for _ in range(th_count):
             th = self._create_thread()
             DLOCK.acquire()
@@ -165,13 +181,17 @@ class SThreadPool(SThreadIOQueue):
         return
 
     def _create_thread(self) -> SThread:
-        """создать worker-поток"""
+        """
+        создать worker-поток
+        """
         th = SThread(self.queue_in, pool=self)
         # print(' + add {}, from: {}'.format(th.name, threading.current_thread().name))
         return th
 
     def _remove_thread(self, th: SThread) -> None:
-        """удалить поток"""
+        """
+        удалить поток
+        """
         DLOCK.acquire()
         try:
             self.threads.remove(th)
@@ -183,11 +203,16 @@ class SThreadPool(SThreadIOQueue):
         return
 
     def _set_pool_size(self) -> None:
-        """сохранить размер пула"""
+        """
+        сохранить размер пула
+        """
         self.parent._size = self.size = len(self.threads)
         return
 
     def close(self) -> None:
+        """
+        выход
+        """
         self.working = False
         for _ in range(lr_vars.SThreadPoolSizeMax.get()):
             self.queue_in.put((0, None))
@@ -195,7 +220,9 @@ class SThreadPool(SThreadIOQueue):
         return
 
     def _auto_size(self, timeout: int, pmax: int, max_th: int, qmin: int) -> None:
-        """создать новый поток, если есть очередь, недостигнут maxsize, и все потоки заняты"""
+        """
+        создать новый поток, если есть очередь, недостигнут maxsize, и все потоки заняты
+        """
         self._qsize = self.queue_in.qsize()
 
         if self._qsize:

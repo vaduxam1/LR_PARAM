@@ -13,12 +13,15 @@ import lr_lib.gui.action.act_toplevel
 
 
 class ActVar(lr_lib.gui.action.act_toplevel.ActToplevel):
-    """переменные которые надо создать первыми"""
+    """
+    переменные которые надо создать первыми
+    """
 
     def __init__(self):
         lr_lib.gui.action.act_toplevel.ActToplevel.__init__(self)
         self.id_ = id(self)
 
+        # ActionWebsAndLines
         self.web_action = lr_lib.core.action.main_awal.ActionWebsAndLines(action=self)
         self.action_file = None  # путь_имя текущего action.c
 
@@ -47,7 +50,9 @@ class ActVar(lr_lib.gui.action.act_toplevel.ActToplevel):
         return
 
     def get_usr_file(self) -> configparser.ConfigParser:
-        """result_folder = self.get_usr_file()['General']['LastResultDir']"""
+        """
+        result_folder = self.get_usr_file()['General']['LastResultDir']
+        """
         config = configparser.ConfigParser()
         config.read(os.path.join(os.getcwd(), self.usr_file))
         return config

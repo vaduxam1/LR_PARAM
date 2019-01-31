@@ -14,21 +14,26 @@ from lr_lib.gui.etc.color_progress import progress_decor
 
 
 class TkTextWebSerialization(lr_lib.gui.action.act_backup.ActBackup):
-    """преобразование action-текста(tk_text) во внутреннее представление(web_action), и обратно"""
+    """
+    преобразование action-текста(tk_text) во внутреннее представление(web_action), и обратно
+    """
 
     def __init__(self):
         lr_lib.gui.action.act_backup.ActBackup.__init__(self)
 
+        # Button
         cmd = lambda *a: self.open_action_dialog(title=True, folder=lr_vars.BackupFolder)
         self.backup_open_button = tk.Button(
             self.file_bar, text='backup_open', background='orange', font=(lr_vars.DefaultFont + ' bold'),
             command=cmd,
         )
 
+        # Button
         self.save_action_button = tk.Button(
             self.file_bar, text='save', font=(lr_vars.DefaultFont + ' bold'), command=self.save_action_file,
         )
 
+        # Button
         self.open_button = tk.Button(
             self.file_bar, text='open', font=lr_vars.DefaultFont, command=self.open_action_dialog,
         )
@@ -36,7 +41,9 @@ class TkTextWebSerialization(lr_lib.gui.action.act_backup.ActBackup):
 
     @progress_decor
     def web_action_to_tk_text(self, websReport=False, highlight_apply=True, gui_reset=True) -> None:
-        """from self.web_action to self.tk_text"""
+        """
+        from self.web_action to self.tk_text
+        """
         text = self.web_action.to_str(websReport=websReport)
         self.tk_text.new_text_set(text)
 
@@ -52,7 +59,9 @@ class TkTextWebSerialization(lr_lib.gui.action.act_backup.ActBackup):
 
     @progress_decor
     def tk_text_to_web_action(self, text=None, websReport=True, highlight_apply=True, gui_reset=True) -> None:
-        """from self.web_action to self.tk_text"""
+        """
+        from self.tk_text to self.web_action
+        """
         if text is None:
             text = self.tk_text.get(1.0, tk.END)
 
@@ -70,7 +79,9 @@ class TkTextWebSerialization(lr_lib.gui.action.act_backup.ActBackup):
 
     @progress_decor
     def open_action(self, file=None, errors='replace', callback=None) -> None:
-        """сформировать action.c"""
+        """
+        сформировать action.c
+        """
         self.action_file = file or lr_lib.gui.action._other.get_action_file(lr_vars.VarFilesFolder.get())
 
         if os.path.isfile(self.action_file):
@@ -82,7 +93,9 @@ class TkTextWebSerialization(lr_lib.gui.action.act_backup.ActBackup):
 
     @progress_decor
     def save_action_file(self, file_name=None, errors='replace', websReport=True) -> None:
-        """текст to WEB_ACTION - сохранить текст action.c окна"""
+        """
+        текст to WEB_ACTION - сохранить текст action.c окна
+        """
         self.tk_text_to_web_action(websReport=websReport)
 
         if file_name is None:
@@ -98,7 +111,9 @@ class TkTextWebSerialization(lr_lib.gui.action.act_backup.ActBackup):
         return
 
     def open_action_dialog(self, *a, title=False, folder=os.getcwd()) -> None:
-        """открыть файл"""
+        """
+        открыть файл
+        """
         if title:
             ft = (("%s_backup_*.c" % self.id_, "%s_backup_*.c" % self.id_), ("all", "*.*"))
             af = tk.filedialog.askopenfilename(
@@ -113,7 +128,9 @@ class TkTextWebSerialization(lr_lib.gui.action.act_backup.ActBackup):
         return
 
     def show_info(self) -> None:
-        """всякая инфа"""
+        """
+        всякая инфа
+        """
         len_all_files = len(lr_vars.AllFiles)
         all_infs = len(list(lr_lib.core.etc.other.get_files_infs(lr_vars.AllFiles)))
 
@@ -121,7 +138,7 @@ class TkTextWebSerialization(lr_lib.gui.action.act_backup.ActBackup):
             d=lr_vars.VarFilesFolder.get(), f=len_all_files, i=all_infs)
 
         any_w = len(tuple(self.web_action.get_web_all()))
-        snap_w = len(self.web_action.action_infs)
+        sn_w = len(self.web_action.action_infs)
         files = len([f for f in lr_vars.AllFiles if any(map(
             self.web_action.action_infs.__contains__, f['Snapshot']['Nums']))])
 
@@ -129,19 +146,18 @@ class TkTextWebSerialization(lr_lib.gui.action.act_backup.ActBackup):
         dfiles = len(self.web_action.drop_files)
 
         t = "action.c web_* : любых={any_w}, (Snapshot's / файлов_ответов) = ({snap_w} / {files}) |" \
-            " Удалено: ({dsnap_w} / {dfiles})".format(
-            any_w=any_w, snap_w=snap_w, files=files, dsnap_w=dsnap_w, dfiles=dfiles,
-        )
+            " Удалено: ({dsnap_w} / {dfls})".format(any_w=any_w, snap_w=sn_w, files=files, dsnap_w=dsnap_w, dfls=dfiles)
         self.middle_bar['text'] = t
 
         if self.web_action.drop_infs or self.web_action.drop_files:
-            lr_vars.Logger.debug('Удалено в action.c: inf: {il}, файлов : {fl} | Найдено: {ai} inf'.format(
-                il=dsnap_w, fl=dfiles, ai=snap_w), parent=self,
-            )
+            i = 'action.c: Удалено: inf: {il}, файлов : {fl} | Найдено: {ai} inf'.format(il=dsnap_w, fl=dfiles, ai=sn_w)
+            lr_vars.Logger.debug(i, parent=self)
         return
 
     def widj_reset(self) -> None:
-        """обновить виджеты"""
+        """
+        обновить виджеты
+        """
         self.transaction.clear()
         self.transaction.extend(lr_lib.gui.etc.gui_other.get_transaction(self.tk_text.get(1.0, tk.END)))
         return
