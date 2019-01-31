@@ -18,7 +18,9 @@ import lr_lib.gui.widj.tooltip
 
 
 class Setting(tk.Toplevel):
-    """настройка var"""
+    """
+    настройка var
+    """
 
     def __init__(self, parent: 'lr_lib.gui.action.main_action.ActionWindow', ):
         super().__init__(padx=0, pady=0)
@@ -32,6 +34,9 @@ class Setting(tk.Toplevel):
         return
 
     def init(self, max_row=30, font='Arial 7', ) -> None:
+        """
+        создание
+        """
         col = 0
         modeles = [
             lr_vars,
@@ -92,7 +97,9 @@ class Setting(tk.Toplevel):
 
 
 def _get_source_var_comment(source: [str, ], attr: str) -> str:
-    """подсказки к кнопкам насройки vars из каментов исходного кода"""
+    """
+    подсказки к кнопкам насройки vars из каментов исходного кода
+    """
     vs = '{} ='.format(attr)
     _vs = [v for v in source if v.startswith(vs)]
     vs1 = _vs[0]
@@ -132,7 +139,9 @@ AllowTypes.extend(TkVars)
 
 
 def attr_filter(dt: dict, allow_types=tuple(AllowTypes), ) -> iter((str,)):
-    """исключить ненужные атрибуты"""
+    """
+    исключить ненужные атрибуты
+    """
     for attr in dt:
         da = dt[attr]
         if (not attr.startswith('__')) and isinstance(da, allow_types) and (len(attr) > 1) \
@@ -143,7 +152,9 @@ def attr_filter(dt: dict, allow_types=tuple(AllowTypes), ) -> iter((str,)):
 
 
 def to_json(var, _var: 'repr') -> str:
-    """преобразовать var в json-str"""
+    """
+    преобразовать var в json-str
+    """
     try:
         txt = json.dumps(var, ensure_ascii=False, indent=2)
     except Exception as ex:  # TypeError: Object of type set is not JSON serializable
@@ -152,7 +163,9 @@ def to_json(var, _var: 'repr') -> str:
 
 
 def _var_editor(parent, var_dict, var_name, ) -> None:
-    """Toplevel tk.Text + scroll_XY"""
+    """
+    Toplevel tk.Text + scroll_XY
+    """
     var = var_dict[var_name]
 
     try:

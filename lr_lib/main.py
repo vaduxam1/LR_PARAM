@@ -21,7 +21,9 @@ import lr_lib.gui.main_gui
 
 
 def init(excepthook=True):
-    """инит дополнительных классов, сохр. их в lr_vars, запуск core/gui"""
+    """
+    инит дополнительных классов, сохр. их в lr_vars, запуск core/gui
+    """
     # lr_vars.Logger
     with lr_lib.etc.logger.init(name='__main__', encoding='cp1251',
                                 levels=lr_lib.core.var.vars_other.loggingLevels) as lr_vars.Logger:
@@ -39,7 +41,9 @@ def init(excepthook=True):
 
 @contextlib.contextmanager
 def _start(excepthook=True, console_args=sys.argv) -> iter(((None, None, None),)):
-    """запуск core/gui"""
+    """
+    запуск core/gui
+    """
     if excepthook:  # перехват raise -> lr_vars.Logger.error
         lr_vars.Tk.report_callback_exception = lr_lib.etc.excepthook.excepthook
     try:

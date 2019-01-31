@@ -12,10 +12,15 @@ import lr_lib.core.var.vars_highlight
 import lr_lib.gui.widj.tooltip_canvas
 
 
+_S = {'white', 'black', 'navy', 'grey', 'alice'}
+
+
 def clrs() -> [str, ]:
-    """цвет"""
-    cs = sorted(c for c in lr_lib.core.var.vars_highlight.VarColorTeg.get() if not any((r >= 0) for r in map(
-        c.find, {'white', 'black', 'navy', 'grey', 'alice'})))
+    """
+    цвет
+    """
+    g = lr_lib.core.var.vars_highlight.VarColorTeg.get()
+    cs = sorted(c for c in g if not any((r >= 0) for r in map(c.find, _S)))
     return cs
 
 
@@ -23,7 +28,9 @@ Colors = iter(itertools.cycle(clrs()))
 
 
 class WebLegend(tk.Toplevel):
-    """окно web_ леленды"""
+    """
+    окно web_ леленды
+    """
 
     def __init__(self, parent: 'lr_lib.gui.action.main_action.ActionWindow'):
         super().__init__(master=parent, padx=0, pady=0)
@@ -65,7 +72,9 @@ class WebLegend(tk.Toplevel):
         lr_lib.gui.widj.tooltip.createToolTip(self.h_entry, 'высота, между верхними и нижними объектами')
 
         def enter_H(*_) -> None:
-            """self.H.set по кнопке Enter, при ручном вводе"""
+            """
+            self.H.set по кнопке Enter, при ручном вводе
+            """
             self.H.set(int(self.h_entry.get()))
             self.print()
             return
@@ -89,12 +98,16 @@ class WebLegend(tk.Toplevel):
         return
 
     def _set_on_top(self, *args) -> None:
-        """поверх других окон"""
+        """
+        поверх других окон
+        """
         self.attributes('-topmost', self.top_var.get())
         return
 
     def _configure_interior(self, *args) -> None:
-        """update the scrollbars to match the size of the inner frame"""
+        """
+        update the scrollbars to match the size of the inner frame
+        """
         size = (max(self.interior.winfo_reqwidth(), self.minimal_canvas_size[0]),
                 max(self.interior.winfo_reqheight(), self.minimal_canvas_size[1]),)
         self.canvas.config(scrollregion=('0 0 %s %s' % size), )
@@ -102,13 +115,19 @@ class WebLegend(tk.Toplevel):
             self.canvas.config(width=self.interior.winfo_reqwidth())
         return
 
-    def add_web_canavs(self):
+    def add_web_canavs(self) -> None:
+        """
+        все web
+        """
         for web_ in self.parent.web_action.get_web_snapshot_all():
             self.web_canavs[web_.snapshot.inf] = {1: {}, 2: {}, 'enable': True, 'enable_in': True}
             continue
         return
 
     def print(self, *_, colors=Colors) -> None:
+        """
+        показать
+        """
         self.canvas.delete("all")
         web_actions = tuple(self.parent.web_action.get_web_snapshot_all())
         sep = 25
@@ -259,14 +278,18 @@ class WebLegend(tk.Toplevel):
         return
 
     def show_transac(self, *args) -> None:
-        """показать соответствие номеров(из окна легенды) и имен транзакций"""
+        """
+        показать соответствие номеров(из окна легенды) и имен транзакций
+        """
         transacts = [(a, b) for (a, b) in self.tr if b]
         if transacts:
             self.transac(transacts)
             return
 
     def transac(self, transacts) -> None:
-        """соответствие номеров(из окна легенды) и имен транзакций"""
+        """
+        соответствие номеров(из окна легенды) и имен транзакций
+        """
         text = '\n'.join('({}): {}'.format(a, b) for (a, b) in transacts)
         title = '{} транзакций - соответствие номеров и имен'.format(len(transacts))
         _set_transacts(self, text, title)
@@ -274,7 +297,9 @@ class WebLegend(tk.Toplevel):
 
 
 def _set_transacts(parent, text='', title='', ):
-    """Toplevel tk.Text + scroll_XY"""
+    """
+    Toplevel tk.Text + scroll_XY
+    """
     top_level = tk.Toplevel(parent)
     top_level.attributes('-topmost', True)
     top_level.title(title)

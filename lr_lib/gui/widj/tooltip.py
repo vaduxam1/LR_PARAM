@@ -13,7 +13,9 @@ ActiveTips = collections.OrderedDict()
 
 
 def tt_clear() -> None:
-    """удалить все ToolTip"""
+    """
+    удалить все ToolTip
+    """
     tips = list(ActiveTips.keys())
     for tip in tips:
         try:
@@ -29,7 +31,9 @@ def tt_clear() -> None:
 
 
 class ToolTip(object):
-    """всплывающие подсказки"""
+    """
+    всплывающие подсказки
+    """
 
     def __init__(self, widget):
         self.widget = widget
@@ -40,7 +44,9 @@ class ToolTip(object):
         return
 
     def showtip(self, text: str) -> None:
-        """Display text in tooltip"""
+        """
+        Display text in tooltip
+        """
         try:
             (x, y, cx, cy) = self.widget.bbox("insert")
             x += (self.widget.winfo_rootx() + 25)
@@ -63,7 +69,9 @@ class ToolTip(object):
         return
 
     def hidetip(self) -> None:
-        """destroy подсказки"""
+        """
+        destroy подсказки
+        """
         try:
             self.tip.destroy()
         except Exception as ex:
@@ -72,7 +80,9 @@ class ToolTip(object):
 
 
 def widget_values_counter(widget) -> (int, int):
-    """кол-во строк/индекс текущей строки виджета"""
+    """
+    кол-во строк/индекс текущей строки виджета
+    """
     i = li = 0
     try:
         _i = list(widget['values'])
@@ -89,11 +99,15 @@ def widget_values_counter(widget) -> (int, int):
 
 
 def createToolTip(widget, text: str) -> None:
-    """всплывающая подсказка для widget"""
+    """
+    всплывающая подсказка для widget
+    """
     toolTip = ToolTip(widget)
 
     def _enter(event, toolTip=toolTip, text=text, wlines='') -> None:
-        """событие входа мыши на виджет"""
+        """
+        событие входа мыши на виджет
+        """
         Lock.acquire()
         try:
             tt_clear()
@@ -113,7 +127,9 @@ def createToolTip(widget, text: str) -> None:
         return
 
     def leave(event, toolTip=toolTip) -> None:
-        """событие выхода мыши из виджета"""
+        """
+        событие выхода мыши из виджета
+        """
         Lock.acquire()
         try:
             lr_vars.Tk.after_cancel(ActiveTips[toolTip])
@@ -125,7 +141,9 @@ def createToolTip(widget, text: str) -> None:
         return
 
     def enter(event, wait=750, ) -> None:
-        """событие входа мыши на виджет"""
+        """
+        событие входа мыши на виджет
+        """
         Lock.acquire()
         ActiveTips[toolTip] = lr_vars.Tk.after(wait, _enter, event)
         Lock.release()

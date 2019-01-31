@@ -10,7 +10,9 @@ import lr_lib.core.var.vars_highlight
 
 
 class HighlightLines:
-    """подсветка линий текста"""
+    """
+    подсветка линий текста
+    """
 
     def __init__(self, tk_text: 'lr_lib.gui.widj.highlight_text.HighlightText', tegs_names: {str, (str,), }):
         self.tk_text = tk_text
@@ -39,10 +41,14 @@ class HighlightLines:
         return
 
     def set_thread_attrs(self) -> None:
-        """взять настройки подсветки, из виджетов"""
+        """
+        взять настройки подсветки, из виджетов
+        """
 
         def set() -> None:
-            """lr_vars.MainThreadUpdater.submit(set)"""
+            """
+            lr_vars.MainThreadUpdater.submit(set)
+            """
             try:
                 self.highlight_enable = self.tk_text.highlight_var.get()
                 self.HighlightAfter0 = int(self.tk_text.action.highlight_After0.get())
@@ -56,14 +62,18 @@ class HighlightLines:
         return
 
     def set_top_bottom(self, on_sreen_line_nums: (int, int), __highlight=True) -> None:
-        """новые границы показанных линий"""
+        """
+        новые границы показанных линий
+        """
         self.on_sreen_line_nums = on_sreen_line_nums
         if self.highlight_enable:  # подсвечивать при вкл
             self.highlight_need = __highlight
         return
 
     def highlight_callback(self, __highlight=False) -> None:
-        """подсветить все линии на экране"""
+        """
+        подсветить все линии на экране
+        """
         if self.highlight_need:
             self.highlight_need = __highlight
             # подсветить
@@ -71,8 +81,10 @@ class HighlightLines:
         return
 
     def highlight_top_bottom_lines(self, on_sreen_line_nums: (int, int)) -> None:
-        """подсветить все линии на экране
-        получать индексы и подсвечивать on-screen линии текста, пока top и bottom не изменились"""
+        """
+        подсветить все линии на экране
+        получать индексы и подсвечивать on-screen линии текста, пока top и bottom не изменились
+        """
         if self.on_sreen_line_nums != on_sreen_line_nums:
             return
 
@@ -83,7 +95,9 @@ class HighlightLines:
         return
 
     def _line_tegs_add(self, line_num: int, on_sreen_line_nums: (int, int), XY='{}.{}'.format) -> None:
-        """вычислить координаты подсветки одной линии и подсветить"""
+        """
+        вычислить координаты подсветки одной линии и подсветить
+        """
         if self.on_sreen_line_nums != on_sreen_line_nums:
             return
 
@@ -129,9 +143,11 @@ class HighlightLines:
 
 
 def join_indxs(index: int, *indxs: sorted) -> iter((int, int), ):
-    """ join_indxs(*sorted(indxs))
+    """
+    join_indxs(*sorted(indxs))
     объединить идущие подряд индексы, увеличить посл.индекс (+1):
-     indxs = {1, 2, 3, 4, 7, 9, 10, 11} -> (1, 4(+1)), (7, 7(+1)), (9, 11(+1)) -> (1, 5), (7, 8), (9, 12)"""
+     indxs = {1, 2, 3, 4, 7, 9, 10, 11} -> (1, 4(+1)), (7, 7(+1)), (9, 11(+1)) -> (1, 5), (7, 8), (9, 12)
+     """
     i_end = i_start = index
 
     for index in indxs:
@@ -149,8 +165,10 @@ def join_indxs(index: int, *indxs: sorted) -> iter((int, int), ):
 
 
 def generate_line_tags_names_indxs(line: str, setdefault: callable, teg_names: {str: {(str, int)}}) -> None:
-    """индексы tags для подсветки, для линии - слова из словаря
-    teg_names={'backgroundorange': {('warning', 7),..."""
+    """
+    индексы tags для подсветки, для линии - слова из словаря
+    teg_names={'backgroundorange': {('warning', 7),...
+    """
     olive_callback = setdefault(lr_lib.core.var.vars_highlight.OliveChildTeg, []).extend
 
     for tag in teg_names:
@@ -179,7 +197,9 @@ whitespace_letters = set(string.whitespace + string.ascii_letters)
 
 
 def genetate_line_tags_purct_etc_indxs(line: str, setdefault: callable) -> None:
-    """индексы подсветки для линии - пунктуация, цифры и не ASCII"""
+    """
+    индексы подсветки для линии - пунктуация, цифры и не ASCII
+    """
     punct_digit_callback = setdefault(lr_lib.core.var.vars_highlight.PunctDigitTag, []).append
     rus_callback = setdefault(lr_lib.core.var.vars_highlight.RusTag, []).append
 

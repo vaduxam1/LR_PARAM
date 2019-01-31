@@ -10,7 +10,9 @@ import lr_lib.gui.wrsp.main_window
 
 
 def init(c_args=None) -> None:
-    """создать gui"""
+    """
+    создать gui
+    """
     lr_vars.Window = lr_lib.gui.wrsp.main_window.Window()  # main Gui
     lr_lib.gui.etc.gui_other.wordBreakAfter()  # область выделения двойным кликом мыши
 
@@ -19,7 +21,9 @@ def init(c_args=None) -> None:
 
 
 def start(action=True, lock=True) -> None:
-    """action + lock"""
+    """
+    action + lock
+    """
     if action:  # action Gui
         lr_vars.Window.new_action_window()  # lr_lib.gui.action.main_action.ActionWindow()
     if lock:  # main thread lock

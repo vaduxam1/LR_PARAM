@@ -17,7 +17,9 @@ from lr_lib.gui.etc.color_progress import progress_decor
 
 
 def rClicker(event) -> str:
-    """ right click context menu for all Tk Entry and Text widgets"""
+    """
+    right click context menu for all Tk Entry and Text widgets
+    """
     try:
         event.widget.focus()
 
@@ -209,6 +211,9 @@ def rClicker(event) -> str:
 
 
 def rClickbinder(widget, wdg=('Text', 'Entry', 'Listbox', 'Label')) -> None:
+    """
+    добавить на виджет, меню правой кнопки мыши
+    """
     for b in wdg:  #
         try:
             widget.bind_class(b, sequence='<Button-3>', func=rClicker, add='')

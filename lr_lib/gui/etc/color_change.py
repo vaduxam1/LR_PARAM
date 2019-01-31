@@ -8,7 +8,9 @@ ColorCash = {}  # оригинальный цвет виджетов
 
 
 def background_color_set(self, color='', _types=('Button',), obs=None) -> None:
-    """поменять цвет всех виджетов"""
+    """
+    поменять цвет всех виджетов
+    """
     if obs is None:
         wid = [self, lr_vars.Window, ]
         obs = [ob for w in wid for ob in DiR(w, _types=_types)]
@@ -55,7 +57,9 @@ def _rnd_color(self, color) -> str:
 
 
 def DiR(ob, _types=('button',)):
-    """объекты для смены цвета"""
+    """
+    объекты для смены цвета
+    """
     for attr in dir(ob):
         ga = getattr(ob, attr)
         ta = type(ga)

@@ -21,28 +21,40 @@ class ColorProgress:
         return
 
     def __enter__(self):
+        """
+        старт
+        """
         self.start()
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
+        """
+        стоп
+        """
         if exc_type:
             lr_lib.etc.excepthook.excepthook(exc_type, exc_val, exc_tb)
         self.stop()
         return exc_type, exc_val, exc_tb
 
     def stop(self) -> None:
-        """остановка"""
+        """
+        остановка
+        """
         self.is_work.clear()
         return
 
     def start(self) -> None:
-        """циклическая смена цвета"""
+        """
+        циклическая смена цвета
+        """
         t = threading.Thread(target=self._start)
         t.start()
         return
 
     def _start(self) -> None:
-        """циклическая смена цвета"""
+        """
+        циклическая смена цвета
+        """
         while self.is_work:
             self.color_change(None)  # смена цвета
             # ждать
@@ -53,14 +65,18 @@ class ColorProgress:
         return
 
     def color_change(self, color: 'None or ""') -> None:
-        """смена цвета"""
+        """
+        смена цвета
+        """
         callback = lambda: lr_lib.gui.etc.color_change.background_color_set(self.action, color=color, **self.kwargs)
         lr_vars.MainThreadUpdater.submit(callback)  # action цвет
         return
 
 
 def progress_decor(func, action=None):
-    """декоратор - навесить цветной прогрессбар"""
+    """
+    декоратор - навесить цветной прогрессбар
+    """
 
     def wrap(*args, **kwargs):
         act = (args[0] if (action is None) else action)

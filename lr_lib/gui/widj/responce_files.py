@@ -13,7 +13,9 @@ import lr_lib.core.var.vars_other
 
 
 class RespFiles(tk.Toplevel):
-    """окно файлов ответов, для i_num-snapshot"""
+    """
+    окно файлов ответов, для i_num-snapshot
+    """
 
     def __init__(self, widget, i_num: int, folder_record: str, folder_response: str):
         super().__init__(padx=0, pady=0)
@@ -33,6 +35,9 @@ class RespFiles(tk.Toplevel):
         return
 
     def combo_select(self, ent: tk.Entry, folder: str, cbx_var: tk.BooleanVar):
+        """
+        self.files_cmb select
+        """
         full_name = os.path.join(folder, ent.get())
         if cbx_var.get():
             lr_lib.core.etc.other._openTextInEditor(full_name)
@@ -48,7 +53,9 @@ class RespFiles(tk.Toplevel):
         return
 
     def response_widj_creator(self, folder: str, desc='', side='bottom', w1=30, w2=100) -> None:
-        """виджеты для окна файлов snapshot"""
+        """
+        виджеты для окна файлов snapshot
+        """
         text = '{desc}\n{folder}'.format(desc=desc, folder=folder)
 
         lab = tk.LabelFrame(self, text=desc, font='Arial 7')
@@ -128,7 +135,9 @@ class RespFiles(tk.Toplevel):
         return
 
     def select_folder(self, folder: str) -> None:
-        """ноавя директория snapshot"""
+        """
+        ноавя директория snapshot
+        """
         directory = filedialog.askdirectory()
         if not directory:
             return

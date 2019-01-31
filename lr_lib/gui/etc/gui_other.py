@@ -8,7 +8,9 @@ from lr_lib.core.var.vars import Tk
 
 
 def center_widget(widget) -> None:
-    """center window on screen"""
+    """
+    center window on screen
+    """
     widget.withdraw()
     widget.update_idletasks()
     x = ((widget.winfo_screenwidth() - widget.winfo_reqwidth()) / 2)
@@ -19,7 +21,9 @@ def center_widget(widget) -> None:
 
 
 def repA(widget) -> None:
-    """отчет сокращенный"""
+    """
+    отчет сокращенный
+    """
     rep = widget.action.web_action.websReport.all_in_one
     t = 'transac_len={}, param_len={}'.format(len(rep), len(widget.action.web_action.websReport.wrsp_and_param_names))
     y = lr_lib.gui.widj.dialog.YesNoCancel(
@@ -36,7 +40,9 @@ def repA(widget) -> None:
 
 
 def repB(widget, counter=None, st='\n----\n') -> None:
-    """отчет полный"""
+    """
+    отчет полный
+    """
     wr = widget.action.web_action.websReport
     if counter is None:
         counter = len(wr.wrsp_and_param_names)
@@ -68,17 +74,21 @@ def repB(widget, counter=None, st='\n----\n') -> None:
 
 
 def get_transaction(text: str) -> iter((str,)):
-    """имена транзакций"""
+    """
+    имена транзакций
+    """
     for line in filter(bool, map(str.strip, text.split('\n'))):
         if line.startswith('lr_') and line.endswith(');') and ('_transaction("' in line):
             t_name = line.rsplit('"', 1)[0]
-            yield t_name[3:]
+            t = t_name[3:]
+            yield t
         continue
     return
 
 
 def wordBreakAfter(tcl_wordchars=lr_vars.tcl_wordchars, tcl_nonwordchars=lr_vars.tcl_nonwordchars) -> None:
-    """ область выделения двойным кликом мыши
+    """
+    область выделения двойным кликом мыши
     this first statement triggers tcl to autoload the library # that defines the variables we want to override.
     this defines what tcl considers to be a "word". For more
     # information see http://www.tcl.tk/man/tcl8.5/TclCmd/library.htm#M19

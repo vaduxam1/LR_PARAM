@@ -13,7 +13,9 @@ import lr_lib.gui.widj.highlight
 
 
 class HighlightText(tk.Text):
-    """Colored tk.Text + line_numbers"""
+    """
+    Colored tk.Text + line_numbers
+    """
 
     def __init__(self, action: 'lr_lib.gui.action.main_action.ActionWindow', *args, **kwargs):
         super().__init__(action, *args, **kwargs)
@@ -73,12 +75,16 @@ class HighlightText(tk.Text):
         return
 
     def init(self) -> lr_lib.gui.widj.highlight.HighlightLines:
-        """пересоздать self.highlight_lines"""
+        """
+        пересоздать self.highlight_lines
+        """
         self.highlight_lines = lr_lib.gui.widj.highlight.HighlightLines(self, self.get_tegs_names())
         return self.highlight_lines
 
     def after_callback(self) -> None:
-        """подсветить все линии на экране, и перезапустить"""
+        """
+        подсветить все линии на экране, и перезапустить
+        """
         try:
             self.cursor_position = self.index(tk.INSERT)
         except tk.TclError as ex:
@@ -96,14 +102,18 @@ class HighlightText(tk.Text):
         return self.edit_redo()
 
     def new_text_set(self, text: str) -> None:
-        """заменить весь текст на новый"""
+        """
+        заменить весь текст на новый
+        """
         self.delete(1.0, tk.END)
         self.insert(1.0, text)
         return
 
     def _text_checkbox(self) -> (str, str, int, int):
-        """text checkbox's get,
-        + дополнительно используется как self.__class__._text_checkbox(parent) - color/nocolor?"""
+        """
+        text checkbox's get,
+        + дополнительно используется как self.__class__._text_checkbox(parent) - color/nocolor?
+        """
         w = ('bold' if self.weight_var.get() else 'normal')
         s = ('italic' if self.slant_var.get() else 'roman')
         u = (1 if self.underline_var.get() else 0)
@@ -111,7 +121,9 @@ class HighlightText(tk.Text):
         return w, s, u, o,
 
     def set_tegs(self, *a, remove=False, parent=None, ground=('background', 'foreground',)) -> None:
-        """создать/удалить теги, для parent/self"""
+        """
+        создать/удалить теги, для parent/self
+        """
         if remove:
             for tag in self.tag_names():
                 if any(tag.startswith(g) for g in ground):
@@ -136,7 +148,9 @@ class HighlightText(tk.Text):
         return
 
     def reset_highlight(self, highlight=True) -> None:
-        """сбросить текст настройки цветов"""
+        """
+        сбросить текст настройки цветов
+        """
         self.highlight_dict.clear()
         self.highlight_dict.update(copy.deepcopy(lr_lib.core.var.vars_highlight.VarDefaultColorTeg))
         if highlight:
@@ -144,6 +158,9 @@ class HighlightText(tk.Text):
         return
 
     def set_font(self, *a, size=None) -> None:
+        """
+        получить переменные шрифтов
+        """
         if size is None:
             size = self.size_var.get()
         (w, s, u, o) = self._text_checkbox()
@@ -151,7 +168,9 @@ class HighlightText(tk.Text):
         return
 
     def highlight_apply(self, *a) -> None:
-        """tk.Text tag_add/remove, сформировать on_screen_lines "карту" подсветки"""
+        """
+        tk.Text tag_add/remove, сформировать on_screen_lines "карту" подсветки
+        """
         self.highlight_lines.set_thread_attrs()
         self.set_tegs(remove=True)
 
@@ -164,7 +183,9 @@ class HighlightText(tk.Text):
         return
 
     def get_tegs_names(self) -> {str: {str, }}:
-        """_tegs_names + \\xCE\\xE1"""
+        """
+        _tegs_names + \\xCE\\xE1
+        """
         tegs_names = {}
         hex_unicode_words = re.compile(lr_lib.core.var.vars_highlight.hex_unicode_words).findall(
             self.get(1.0, tk.END))  # \\xCE\\xE1
@@ -202,7 +223,9 @@ class HighlightText(tk.Text):
         return tegs_names
 
     def web_add_highlight(self, web_) -> None:
-        """подсветить web_"""
+        """
+        подсветить web_
+        """
         self.highlight_mode(web_.type)
 
         for line in web_.comments.split('\n'):
@@ -223,7 +246,9 @@ class HighlightText(tk.Text):
         return
 
     def highlight_mode(self, word: str, option='foreground', color=lr_lib.core.var.vars_highlight.DefaultColor) -> None:
-        """залить цветом все word в tk.Text widget"""
+        """
+        залить цветом все word в tk.Text widget
+        """
         colors = self.highlight_dict.setdefault(option, {})
         try:
             colors[color].add(word)
@@ -233,7 +258,9 @@ class HighlightText(tk.Text):
 
 
 class TextLineNumbers(tk.Canvas):
-    """номера линий tk.Text"""
+    """
+    номера линий tk.Text
+    """
 
     def __init__(self, tk_text: HighlightText):
         super().__init__(tk_text.action, background=lr_lib.core.var.vars_highlight.Background)
@@ -243,7 +270,9 @@ class TextLineNumbers(tk.Canvas):
         return
 
     def redraw(self, *args, __restart=False) -> None:
-        """redraw line numbers"""
+        """
+        redraw line numbers
+        """
         self.delete("all")
         self.linenum = 0
 

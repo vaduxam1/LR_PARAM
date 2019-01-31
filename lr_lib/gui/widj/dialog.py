@@ -16,10 +16,37 @@ CREATE_or_FIND = lambda x: (K_CREATE if x else '')
 
 
 class YesNoCancel(tk.Toplevel):
-    """диалог окно, тк велосипед, работает только в потоке"""
+    """
+    диалог окно, тк велосипед, работает только в потоке
+    """
 
-    def __init__(self, buttons: [str, ], text_before: str, text_after: str, title: str, parent=None, default_key='',
-                 is_text=None, focus=None, combo_dict=None, t_enc=False, color=None, ):
+    def __init__(
+            self,
+            buttons: [str, ],
+            text_before: str,
+            text_after: str,
+            title: str,
+            parent=None,
+            default_key='',
+            is_text=None,
+            focus=None,
+            combo_dict=None,
+            t_enc=False,
+            color=None,
+    ):
+        """
+        :param buttons: названия кнопок
+        :param text_before: текст описания
+        :param text_after: текст нижнего описания
+        :param title: тайтл окна
+        :param parent: родитель окна
+        :param default_key: кнопка по умолчанию
+        :param is_text: текст основного tk.Text виджета
+        :param focus: установить фокус ввода
+        :param combo_dict: ttk.Combobox значения
+        :param t_enc: декодировать is_text
+        :param color: label1 цвет фона
+        """
         super().__init__(master=parent, padx=0, pady=0)
         buttons = list(filter(bool, buttons))
 
@@ -121,13 +148,17 @@ class YesNoCancel(tk.Toplevel):
         return
 
     def new_text(self, text: str) -> None:
-        """стереть = новый текст в self.tk_text"""
+        """
+        стереть = новый текст в self.tk_text
+        """
         self.tk_text.delete(1.0, tk.END)
         self.tk_text.insert(1.0, text)
         return
 
     def _wind_attributes(self) -> None:
-        """сделать окно похожим на dialog"""
+        """
+        сделать окно похожим на dialog
+        """
         # self.resizable(width=False, height=False)
         # self.attributes('-topmost', True)  # свсегда сверху
         # self.attributes("-toolwindow", 1)  # remove maximize/minimize
@@ -137,7 +168,9 @@ class YesNoCancel(tk.Toplevel):
         return
 
     def ask(self) -> str:
-        """приостановить поток, до получения ответа"""
+        """
+        приостановить поток, до получения ответа
+        """
         try:
             return self.queue.get()
         finally:
@@ -147,12 +180,16 @@ class YesNoCancel(tk.Toplevel):
             self.parent.focus_set()
 
     def close(self) -> None:
-        """отмена при выходе"""
+        """
+        отмена при выходе
+        """
         self.queue.put_nowait(self.default_key)
         return
 
     def center_widget(self) -> None:
-        """center window on screen"""
+        """
+        center window on screen
+        """
         self.withdraw()
         self.update_idletasks()
         x = ((self.winfo_screenwidth() - self.winfo_reqwidth()) / 2)
