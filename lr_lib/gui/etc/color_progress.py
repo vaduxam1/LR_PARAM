@@ -14,11 +14,10 @@ class ColorProgress:
     менять цвет action.c окна при "работе" поиска всех вариантов создания web_reg_save_param
     """
 
-    def __init__(self, action: 'lr_lib.gui.action.main_action.ActionWindow',
-                 **color_set_kwargs):
+    def __init__(self, action: 'lr_lib.gui.action.main_action.ActionWindow', **color_set_kwargs):
         self.is_work = [True]
         self.action = action
-        self.color_set_kwargs = color_set_kwargs
+        self.kwargs = color_set_kwargs
         return
 
     def __enter__(self):
@@ -55,8 +54,7 @@ class ColorProgress:
 
     def color_change(self, color: 'None or ""') -> None:
         """смена цвета"""
-        callback = lambda: lr_lib.gui.etc.color_change.background_color_set(
-            self.action, color=color, **self.color_set_kwargs)
+        callback = lambda: lr_lib.gui.etc.color_change.background_color_set(self.action, color=color, **self.kwargs)
         lr_vars.MainThreadUpdater.submit(callback)  # action цвет
         return
 
@@ -65,11 +63,8 @@ def progress_decor(func, action=None):
     """декоратор - навесить цветной прогрессбар"""
 
     def wrap(*args, **kwargs):
-        p = ColorProgress(args[0] if (action is None) else action)
-        p.__enter__()
-        try:
+        act = (args[0] if (action is None) else action)
+        with ColorProgress(act):
             return func(*args, **kwargs)
-        finally:
-            p.__exit__(None, None, None, )
 
     return wrap
