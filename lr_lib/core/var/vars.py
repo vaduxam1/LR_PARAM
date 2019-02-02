@@ -139,12 +139,12 @@ Legend_scroll_len_modificator = 75  # модификатор длины скро
 
 VarShowPopupWindow = tk.BooleanVar(value=True)  # показ popup - ошибок, финальных и др окон
 PRINT_SEPARATOR = ('_' * 50)  # строка разделитель сообщений
-VarToolTipTimeout = tk.StringVar(value=9000)  # время жизни всплывающкй подсказки, в мс
+VarToolTipTimeout = tk.StringVar(value=2000)  # время жизни всплывающкй подсказки, в мс
 
 ToolTipFont = ('Arial', '7', 'bold italic')  # всплывающие подсказки
 DefaultFont = 'Arial 7'  # шрифт кнопок и тд
 DefaultLBRBFont = 'Arial 8 bold'  # шрифт LB/RB(5)
-InfoLabelUpdateTime = tk.IntVar(value=1500)  # (мс) обновление linenumbers + action.label с процентами и пулом
+InfoLabelUpdateTime = tk.IntVar(value=1000)  # (мс) обновление linenumbers + action.label с процентами и пулом
 
 DefaultActionHighlightFont = 'Eras Medium ITC'  # шрифт подсвеченного текста action
 DefaultActionHighlightFontSize = 9  # размер подсвеченного шрифта текста action
@@ -207,7 +207,7 @@ FilesCreatePortionSize = 15  # порция, число обрабатываем
 # пулы
 
 MainThreadUpdater = None  # выполнять callback из main потока # lr_lib.etc.pool.other.MainThreadUpdater
-_MTUT = 0.3  # сек - влияет на общую отзывчивость интерфейса
+_MTUT = 0.4  # сек - влияет на общую отзывчивость интерфейса
 MainThreadUpdateTime = tk.IntVar(value=(_MTUT * 1000))  # интервал(мс) проверки очереди, callback(из потоков) + скорость обновления подсветки
 
 M_POOL = None  # пул процессов  # lr_lib.etc.pool.main_pool.POOL
@@ -225,7 +225,7 @@ SThreadPoolSizeMax = tk.IntVar(value=10)  # SThreadPool max size (int>=2)
 SThreadExitTimeout = tk.IntVar(value=5)  # таймаут(сек) выхода, бездействующих потоков(до SThreadPoolSizeMin)
 SThreadPoolAddMinQSize = tk.IntVar(value=100)  # мин длина очереди, для добавления, более чем одного потока, за раз
 SThreadPooMaxAddThread = tk.IntVar(value=2)  # max число потоков, для добавления за один раз(до SThreadPoolSizeMax
-SThreadAutoSizeTimeOut = tk.IntVar(value=1500)  # отзывчивость(мсек) - период опроса, для изменения размера пула
+SThreadAutoSizeTimeOut = tk.IntVar(value=1000)  # отзывчивость(мсек) - период опроса, для изменения размера пула
 _SThreadMonitorUpdate = tk.IntVar(value=1000)  # мс, время обновления окна Window.pool_wind для текста состояния пула
 
 #####################################

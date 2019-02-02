@@ -12,6 +12,12 @@ import lr_lib.gui.wrsp.top.top_pool
 import lr_lib.gui.wrsp.win_folder
 
 
+def test():
+    import qwe1
+    qwe1.main()
+    return
+
+
 class WinMenu(lr_lib.gui.wrsp.win_folder.WinFolder):
     """
     меню

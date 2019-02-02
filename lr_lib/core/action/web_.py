@@ -128,6 +128,7 @@ class WebAny:
             self.comments = '\n{}'.format(self.comments)
 
         # print('\n{w}({n}):\n\tSnap={sn}, lines={l}, symb={s}, {t}'.format(w=self.type, n=self.name, l=len(self.lines_list), s=len(tuple(itertools.chain(*self.lines_list))), sn=self.snapshot, t=self.transaction))
+        self.param_in = set()  # имена wrsp использующихся в теле, задается в WebReport
         return
 
     def _read_snapshot(self) -> int:

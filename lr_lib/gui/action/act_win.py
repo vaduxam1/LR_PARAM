@@ -92,7 +92,10 @@ class ActWin(lr_lib.gui.action.act_any.ActAny):
         )
 
         # Button
-        cmd6 = lambda *a: lr_lib.gui.etc.gui_other.repA(self.tk_text)
+        def cmd6(*a) -> None:
+            """report_A"""
+            lr_lib.gui.etc.gui_other.repA(self.tk_text)
+            return
         self.lr_report_A = tk.Button(
             self.toolbar, text='reportA', font=lr_vars.DefaultFont, command=cmd6,
         )

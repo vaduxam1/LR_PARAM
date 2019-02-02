@@ -21,16 +21,16 @@ class WebReport:
     def __init__(self, parent_: 'lr_lib.core.action.main_awal.ActionWebsAndLines'):
         self.ActionWebsAndLines = parent_
 
-        self.wrsp_and_param_names = {}  # {'P_6046_1__z_k62_0': 'z_k620', ...}
-        self.param_statistic = {}  # {'P_3396_4_Menupopup__a_FFXc_0__id_mainMenu': {'param_count': 2, 'snapshots': [874, 875], 'snapshots_count': 2, 'minmax_snapshots': '[t874:t875]=2', 'transaction_names': {'logout'}, 'transaction_count': 1}}
-        self.web_snapshot_param_in_count = {}  # {1: {'P_6046_1__z_k62_0': 3, }, 2: ...}
-        self.web_transaction = {}  # {'close_document': {'snapshots': [847, 848, ...], 'minmax_snapshots': '[t847:t857]=11'}, 'logout': {'snapshots': [872, 873, 874, 875], 'minmax_snapshots': '[t872:t875]=4'}}
+        self.wrsp_and_param_names = collections.OrderedDict()  # {'P_6046_1__z_k62_0': 'z_k620', ...}
+        self.param_statistic = collections.OrderedDict()  # {'P_3396_4_Menupopup__a_FFXc_0__id_mainMenu': {'param_count': 2, 'snapshots': [874, 875], 'snapshots_count': 2, 'minmax_snapshots': '[t874:t875]=2', 'transaction_names': {'logout'}, 'transaction_count': 1}}
+        self.web_snapshot_param_in_count = collections.OrderedDict()  # {1: {'P_6046_1__z_k62_0': 3, }, 2: ...}
+        self.web_transaction = collections.OrderedDict()  # {'close_document': {'snapshots': [847, 848, ...], 'minmax_snapshots': '[t847:t857]=11'}, 'logout': {'snapshots': [872, 873, 874, 875], 'minmax_snapshots': '[t872:t875]=4'}}
         self.web_transaction_sorted = []  # ['close_document', 'logout', ]
-        self.rus_webs = {}  # web с не ASCII символами {snap: symb_count} {103: 17, 250: 14, 644: 22}
-        self.google_webs = {}  # вероятно лишние web {228: {'google.com': 1}}
+        self.rus_webs = collections.OrderedDict()  # web с не ASCII символами {snap: symb_count} {103: 17, 250: 14, 644: 22}
+        self.google_webs = collections.OrderedDict()  # вероятно лишние web {228: {'google.com': 1}}
         self.bad_wrsp_in_usage = []  # ['P_6046_1__z_k62_0', ...]
-        self._wrsp = {}  # {'P_6046_1__z_k62_0': <lr_lib.web_.WebRegSaveParam object at 0x09252770>, ...}
-        self.all_in_one = {}
+        self._wrsp = collections.OrderedDict()  # {'P_6046_1__z_k62_0': <lr_lib.web_.WebRegSaveParam object at 0x09252770>, ...}
+        self.all_in_one = collections.OrderedDict()
         return
 
     def create(self) -> None:
@@ -69,7 +69,8 @@ class WebReport:
             }
             continue
 
-        for web in self.ActionWebsAndLines.get_web_all():
+        wal = self.ActionWebsAndLines.get_web_all()
+        for web in wal:
             self.ActionWebsAndLines.action.tk_text.web_add_highlight(web)
 
             snapshot = web.snapshot.inf
@@ -85,7 +86,8 @@ class WebReport:
                 self.web_transaction_sorted.append(transaction)
 
             for line in web.lines_list:
-                no_ascii = len(line) - len([s for s in line if s in is_ascii])
+                ls = len([s for s in line if (s in is_ascii)])
+                no_ascii = (len(line) - ls)
                 if no_ascii:
                     self.rus_webs[snapshot] = no_ascii
 
@@ -106,12 +108,15 @@ class WebReport:
 
             body = web.get_body()
             self.web_snapshot_param_in_count[snapshot] = in_count = {}
+            web.param_in.clear()
 
             for wr_name in self.wrsp_and_param_names:
                 bs = lr_lib.core.wrsp.param.param_bounds_setter(wr_name)
                 param_in_count = body.count(bs)
                 if param_in_count:
                     in_count[wr_name] = param_in_count
+                    web.param_in.add(wr_name)
+
                     statistic = self.param_statistic[wr_name]
                     statistic['param_count'] += param_in_count
                     statistic['snapshots'].append(snapshot)
@@ -293,10 +298,13 @@ class WebReport:
         """
         if isinstance(dt_obj, collections.OrderedDict):
             if transaction in dt_obj:
-                yield dt_obj[transaction]
+                tt = dt_obj[transaction]
+                yield tt
             else:
                 for t in dt_obj:
-                    yield from self.get_sub_transaction_dt(transaction, dt_obj[t])
+                    v = dt_obj[t]
+                    tt = self.get_sub_transaction_dt(transaction, v)
+                    yield from tt
                     continue
         return
 
