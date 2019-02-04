@@ -140,7 +140,7 @@ def group_param_search_by_exist_param(
                         'Для всех param, найденных предыдущими способами - взять {n} первых символов имени,\n'
                         'и использовать для повторного поиска param по началу имени\n\n'
                         'найдено {ln} шт'.format(ln=len(params), n=lr_vars.SecondaryParamLen.get(), ),
-            text_after='добавить/удалить',
+            text_after='добавить/удалить: необходимо удалить "лишнее", то что не является param',
             parent=action,
             color=lr_lib.core.var.vars_highlight.PopUpWindColor1,
         )
