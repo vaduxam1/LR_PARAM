@@ -37,8 +37,9 @@ def group_param_search_by_act_re(
         )
         ans = y.ask()
         if ans == K_FIND:
-            yt = y.text.split('\n')
-            regexps = lr_lib.core_gui.group_param.gp_filter.param_filter(map(str.strip, yt))
+            regexps = y.text.split('\n')
+            regexps = map(str.strip, regexps)
+            regexps = filter(bool, regexps)
         else:
             return []
     else:
