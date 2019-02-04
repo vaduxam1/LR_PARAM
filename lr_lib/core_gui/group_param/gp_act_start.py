@@ -14,7 +14,7 @@ from lr_lib.gui.widj.dialog import K_FIND, K_SKIP, K_CANCEL, CREATE_or_FIND
 
 
 TB1 = '''
-1) Поиск param в [ ACTION.C ] тексте: Поиск param, имя которых начинается на указанные имена.
+5) Поиск param в [ ACTION.C ] тексте: Поиск param, имя которых начинается на указанные имена.
 
 Например используя ( "zkau_" ), для action.c файла подобного содержания:
     web_url("index.zul",
@@ -43,7 +43,7 @@ def group_param_search_by_name(
             y = lr_lib.gui.widj.dialog.YesNoCancel(
                 [K_FIND, K_CANCEL],
                 default_key=K_FIND,
-                title='1.1) запрос: поиск param в action, используя начало param имен',
+                title='5.1) запрос: поиск param в action, используя начало param имен',
                 is_text='\n'.join(lr_lib.core.var.vars_param.Params_names),
                 text_before=(TB1 % len(lr_lib.core.var.vars_param.Params_names)),
                 text_after='добавить/удалить',
@@ -75,7 +75,7 @@ def group_param_search_by_name(
         y = lr_lib.gui.widj.dialog.YesNoCancel(
             [cf, K_SKIP],
             default_key=cf,
-            title='1.2) ответ',
+            title='5.2) ответ',
             is_text='\n'.join(params),
             text_before=(TB1 % len(params)),
             text_after='добавить/удалить: необходимо удалить "лишнее", то что не является param',
@@ -121,6 +121,8 @@ def group_param_search_by_exist_param(
     if add:
         exist_params = list(exist_params)
         exist_params.extend(lr_lib.core.var.vars_param.Params_names)
+        exist_p = list(action.web_action.websReport.wrsp_and_param_names.values())
+        exist_params.extend(exist_p)
 
     if ask:
         y = lr_lib.gui.widj.dialog.YesNoCancel(
