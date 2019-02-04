@@ -44,7 +44,8 @@ def check_git_ver():
     """
     changes = find_version_changes(lr_vars.VERSION)
     GVER = find_git_ver()
-    lr_vars.Logger.info([lr_vars.githubDownloadUrl, GVER, '\n\n', changes, ])
+    lr_vars.Logger.info([lr_vars.githubDownloadUrl, GVER, ])
+    lr_vars.Logger.info(changes)
 
     if lr_vars.VERSION != GVER:
         i1 = "Для версии {v} доступно обновление".format(v=lr_vars.VERSION)
