@@ -13,6 +13,19 @@ from lr_lib.core.var import vars as lr_vars
 from lr_lib.gui.widj.dialog import K_FIND, K_SKIP, K_CANCEL, CREATE_or_FIND
 
 
+TB1 = '''
+1) Поиск param в [ ACTION.C ] тексте: Поиск param, имя которых начинается на указанные имена.
+
+Например используя ( "zkau_" ), для action.c файла подобного содержания:
+    web_url("index.zul",
+    ... "value=zkau_1"; ... value=editZul_1;...\n... value={editZul_2, "zkau_2"} ...
+    ... "item=zkau_3"; ... item=editZul_3; ...\n... item={editZul_4, "zkau_4"} ...\nLAST);
+можно найти такие param: zkau_1, zkau_2, zkau_3, zkau_4.'
+
+найдено %s шт
+'''.strip()
+
+
 def group_param_search_by_name(
         action: 'lr_lib.gui.action.main_action.ActionWindow',
         params_source,
@@ -32,20 +45,14 @@ def group_param_search_by_name(
                 default_key=K_FIND,
                 title='1.1) запрос: поиск param в action, используя начало param имен',
                 is_text='\n'.join(lr_lib.core.var.vars_param.Params_names),
-                text_before='1) Поиск param в [ ACTION.C ] тексте: '
-                            'Поиск param, имя которых начинается на указанные имена.\n'
-                            'Например используя ( "zkau_" ), для action.c файла подобного содержания:\n\n'
-                            'web_url("index.zul",\n'
-                            '... "value=zkau_1"; ... value=editZul_1;...\n... value={editZul_2, "zkau_2"} ...\n'
-                            '... "item=zkau_3"; ... item=editZul_3; ...\n... item={editZul_4, "zkau_4"} ...\nLAST);\n\n'
-                            'можно найти такие param: zkau_1, zkau_2, zkau_3, zkau_4.',
+                text_before=(TB1 % len(lr_lib.core.var.vars_param.Params_names)),
                 text_after='добавить/удалить',
                 parent=action,
             )
-
             ans = y.ask()
             if ans != K_FIND:
                 return ()
+
             text = y.text
         else:
             text = lr_lib.core.var.vars_param.Params_names
@@ -70,7 +77,7 @@ def group_param_search_by_name(
             default_key=cf,
             title='1.2) ответ',
             is_text='\n'.join(params),
-            text_before='1) найдено {} шт'.format(len(params)),
+            text_before=(TB1 % len(params)),
             text_after='добавить/удалить: необходимо удалить "лишнее", то что не является param',
             parent=action,
             color=lr_lib.core.var.vars_highlight.PopUpWindColor1,
@@ -87,6 +94,15 @@ def group_param_search_by_name(
     if wrsp_create:  # создать wrsp
         lr_lib.core_gui.group_param.core_gp.group_param(None, params, widget=action.tk_text, ask=False)
     return params
+
+
+TB2 = '''
+5) Поиск param в [ ACTION.C ] тексте:
+Для всех param, найденных предыдущими способами - взять {n} первых символов имени,
+и использовать для повторного поиска param по началу имени.
+
+найдено {ln} шт
+'''.strip()
 
 
 def group_param_search_by_exist_param(
@@ -112,7 +128,7 @@ def group_param_search_by_exist_param(
             default_key=K_FIND,
             title='5.1) запрос: LAST поиск {param} по началу имени',
             is_text='\n'.join(exist_params),
-            text_before='5) итого {} шт.'.format(len(exist_params)),
+            text_before=TB2.format(ln=len(exist_params), n=lr_vars.SecondaryParamLen.get()),
             text_after='добавить/удалить',
             parent=action,
             color=lr_lib.core.var.vars_highlight.PopUpWindColor1,
@@ -136,10 +152,7 @@ def group_param_search_by_exist_param(
             default_key=K_FIND,
             title='5.2) ответ: LAST поиск {param} по началу имени',
             is_text='\n'.join(params),
-            text_before='5) Поиск param в [ ACTION.C ] тексте:\n\n'
-                        'Для всех param, найденных предыдущими способами - взять {n} первых символов имени,\n'
-                        'и использовать для повторного поиска param по началу имени\n\n'
-                        'найдено {ln} шт'.format(ln=len(params), n=lr_vars.SecondaryParamLen.get(), ),
+            text_before=TB2.format(ln=len(params), n=lr_vars.SecondaryParamLen.get(), ),
             text_after='добавить/удалить: необходимо удалить "лишнее", то что не является param',
             parent=action,
             color=lr_lib.core.var.vars_highlight.PopUpWindColor1,

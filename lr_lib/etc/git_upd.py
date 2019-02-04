@@ -63,9 +63,9 @@ def find_version_changes(ver: str) -> str:
     current_ver = ver_to_int(ver)
     description = []
 
-    for v in VersionСhanges:
+    for v in VersionChanges:
         if ver_to_int(v) > current_ver:
-            it = [v, VersionСhanges[v]]
+            it = [v, VersionChanges[v]]
             description.append(it)
         continue
 
@@ -84,7 +84,12 @@ def ver_to_int(ver: str) -> (int,):
     return vint
 
 
-VersionСhanges = collections.OrderedDict({
+VersionChanges = collections.OrderedDict({
+    'v11.5.5': '''
+* не работал "Поиск WRSP на основе регулярных выражений" №2, если при работе было выведено диалог окно
+* нумерация меню "Найти и Создать WRSP" и в самих методах различалась - исправлены описания методов
+    ''',
+
     'v11.5.4': '''
 * добавлен WARNING: Неправильное использование WRSP: value={P_3874_1__Tree__bJsPc0}_1"
 * в методе "LAST: по lb известных" - для увеличения вариантов поиска param, добавлены новые источники lb
@@ -93,6 +98,7 @@ VersionСhanges = collections.OrderedDict({
 * добавлено описание изменений, для новых версий утилиты
 * общий рефакторинг
         ''',
+
     'v11.5.3': '''
 * добавлено меню: "Setting" - настройка var
 * добавлено меню: "Удалить все созданные WRSP"
@@ -102,8 +108,10 @@ VersionСhanges = collections.OrderedDict({
 * исправления для совместимости с win2k3
 * общий рефакторинг
         ''',
+
     'v11.5': '''
 * новая система поиска WRSP в action.c и других файлах - 6 способов
 * реакция гирляндой(циклическая смена цвета кнопок), на действия пользователя
         ''',
+
 })
