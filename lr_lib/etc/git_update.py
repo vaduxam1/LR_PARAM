@@ -42,26 +42,29 @@ def check_git_ver():
     """
     проверить обновление версии утилиты на github.com
     """
+    changes = find_version_changes(lr_vars.VERSION)
     GVER = find_git_ver()
-    lr_vars.Logger.info([lr_vars.githubDownloadUrl, GVER])
+    lr_vars.Logger.info([lr_vars.githubDownloadUrl, GVER, '\n\n', changes, ])
 
     if lr_vars.VERSION != GVER:
-        ufd = uptext_find(lr_vars.VERSION)
         i1 = "Для версии {v} доступно обновление".format(v=lr_vars.VERSION)
         i2 = "По адресу {a} доступно последнее [{v}] обновление утилиты.\n\n{d}".format(
-            v=GVER, a=lr_vars.githubDownloadUrl, d=ufd,
+            v=GVER, a=lr_vars.githubDownloadUrl, d=changes,
         )
         tkinter.messagebox.showwarning(i1, i2)
     return
 
 
-def uptext_find(ver: str) -> str:
+def find_version_changes(ver: str) -> str:
+    """
+    текст изменений для версии
+    """
     current_ver = ver_to_int(ver)
     description = []
 
-    for v in UpdateText:
+    for v in VersionСhanges:
         if ver_to_int(v) > current_ver:
-            it = [v, UpdateText[v]]
+            it = [v, VersionСhanges[v]]
             description.append(it)
         continue
 
@@ -80,7 +83,7 @@ def ver_to_int(ver: str) -> (int,):
     return vint
 
 
-UpdateText = collections.OrderedDict({
+VersionСhanges = collections.OrderedDict({
     'v11.5.4': '''
 * добавлен WARNING: Неправильное использование WRSP: value={P_3874_1__Tree__bJsPc0}_1"
 * в методе "LAST: по lb известных" - для увеличения вариантов поиска param, добавлены новые источники lb
