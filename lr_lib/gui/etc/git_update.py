@@ -42,10 +42,10 @@ def check_git_ver():
     проверить обновление версии утилиты на github.com
     """
     GVER = find_git_ver()
-    lr_vars.Logger.info([lr_vars.github, GVER])
+    lr_vars.Logger.info([lr_vars.githubDownloadUrl, GVER])
 
     if lr_vars.VERSION != GVER:
         i1 = "Для версии {v} доступно обновление".format(v=lr_vars.VERSION)
-        i2 = "По адресу {a} доступно последнее [{v}] обновление утилиты.".format(v=GVER, a=lr_vars.github, )
+        i2 = "По адресу {a} доступно последнее [{v}] обновление утилиты.".format(v=GVER, a=lr_vars.githubDownloadUrl, )
         tkinter.messagebox.showwarning(i1, i2)
     return

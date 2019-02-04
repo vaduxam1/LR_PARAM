@@ -238,5 +238,6 @@ FIND_PARAM_HOTKEY = 'ctrl+shift+c'  # хоткей "найти(2) param"
 github = 'https://github.com/vaduxam1/LR_PARAM'
 github_vars = '/blob/master/lr_lib/core/var/vars.py'
 GitHub = (github + github_vars)  #
+githubDownloadUrl = '{}/archive/master.zip'.format(github)
 GitUpdPeriod = (60 * 60 * 4)  # сек, период проверки
 githubCheckUpdateEnable = True  # вкл/выкл проверку обновлений утилиты
