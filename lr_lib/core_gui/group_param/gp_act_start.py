@@ -122,7 +122,7 @@ def group_param_search_by_exist_param(
         exist_params = list(exist_params)
         exist_params.extend(lr_lib.core.var.vars_param.Params_names)
         exist_p = list(action.web_action.websReport.wrsp_and_param_names.values())
-        exist_params.extend(exist_p)
+        exist_params.extend(exist_p)  # использовать уже созданные param
 
     if ask:
         y = lr_lib.gui.widj.dialog.YesNoCancel(
