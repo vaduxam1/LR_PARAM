@@ -46,7 +46,7 @@ def group_param_search_by_lb_post(
     if ask:
         y = lr_lib.gui.widj.dialog.YesNoCancel(
             [K_FIND, K_SKIP],
-            title='6.1) пост LB запрос',
+            title='6.1) запрос: пост LB',
             is_text='\n'.join(lb_items),
             text_before=lr_lib.core_gui.run.r_texts.TT_LBP,
             text_after='добавить/удалить',
@@ -74,10 +74,10 @@ def group_param_search_by_lb_post(
         cf = CREATE_or_FIND(wrsp_create)
         y = lr_lib.gui.widj.dialog.YesNoCancel(
             [cf, K_SKIP],
-            title='6.2) пост LB ответ',
+            title='6.2) ответ: пост LB',
             is_text='\n'.join(params),
-            text_before='6.2) найдено {} шт'.format(len(params)),
-            text_after='добавить/удалить',
+            text_before='6) найдено {} шт'.format(len(params)),
+            text_after='добавить/удалить: необходимо удалить "лишнее", то что не является param',
             parent=action,
             default_key=cf,
             color=lr_lib.core.var.vars_highlight.PopUpWindColor1,

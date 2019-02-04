@@ -62,9 +62,9 @@ def group_param_search_by_resp_re(action: 'lr_lib.gui.action.main_action.ActionW
         y = lr_lib.gui.widj.dialog.YesNoCancel(
             buttons=[K_FIND, K_SKIP],
             default_key=K_FIND,
-            title='4) запрос: Поиск param по regexp с постобработкой',
+            title='3.1) запрос: Поиск param по regexp с постобработкой',
             is_text=text,
-            text_before='4) Поиск param в тексте {ps}:\n\nпо regexp и дальнейшей обработке результата.\n'
+            text_before='3) Поиск param в тексте {ps}:\n\nпо regexp и дальнейшей обработке результата.\n'
                         'Например в "zul.sel.Treecell" конструкциях.'.format(ps=params_source, ),
             text_after='Можно попытатся поменять regexp, но добавлять/удалять нельзя.',
             parent=action,
@@ -114,11 +114,11 @@ def group_param_search_by_resp_re(action: 'lr_lib.gui.action.main_action.ActionW
         y = lr_lib.gui.widj.dialog.YesNoCancel(
             buttons=[cf, K_SKIP],
             default_key=cf,
-            title='4) ответ: Поиск param по regexp с постобработкой',
+            title='3.2) ответ: Поиск param по regexp с постобработкой',
             is_text=text,
-            text_before='4) Поиск param в тексте {ps}:\n\nпо regexp и дальнейшей обработке результата.\n'
+            text_before='3) Поиск param в тексте {ps}:\n\nпо regexp и дальнейшей обработке результата.\n'
                         'найдено {ln} шт'.format(ps=params_source, ln=len(in_action_param_only), ),
-            text_after='добавить/удалить',
+            text_after='добавить/удалить: необходимо удалить "лишнее", то что не является param',
             parent=action,
             color=lr_lib.core.var.vars_highlight.PopUpWindColor1,
         )

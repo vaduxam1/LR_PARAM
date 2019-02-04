@@ -31,6 +31,7 @@ VarWrspDictList = []  # все возможные web_reg_save_param слова�
 
 #####################################
 # статистика в каментах
+
 VarWebStatsTransac = tk.BooleanVar(value=False)  # коментарии с именем транзакции
 VarWebStatsIn = tk.BooleanVar(value=False)  # In коментарии
 VarWebStatsOut = tk.BooleanVar(value=False)  # Out коментарии
@@ -168,11 +169,12 @@ var_bar_3 = False  # show/hide info bar
 # Backup
 
 BackupActionFile = 100  # макс(по кругу) кол-во backup файлов
-BackupFolder = 'lr_backup'
-BackupName = '{i}_backup_{ind}_action.c'  # Backup
+BackupFolder = 'lr_backup'  # Backup каталог
+BackupName = '{i}_backup_{ind}_action.c'  # Backup файл
 
 #####################################
 # область выделения двойным кликом мыши
+
 tcl_wordchars = '[a-zA-Z0-9_.!-]'  # область выделения двойным кликом мыши
 tcl_nonwordchars = '[^a-zA-Z0-9_.!-]'  # область выделения двойным кликом мыши
 
@@ -180,12 +182,12 @@ tcl_nonwordchars = '[^a-zA-Z0-9_.!-]'  # область выделения дв�
 # логирование
 
 Logger = None  # lr_lib.etc.logger.Logger # вывод сообщений во все Handler: Logger.info('m', notepad=True, parent=act)
-log_overdrive = 'a'
-logFolder = 'lr_logs'
-logName = 'server_%s.log' % time.strftime('%d.%m')
-logPath = os.path.join(os.getcwd(), logFolder)
-logFullName = os.path.join(logPath, logName)
-logger_level = 1  # logging
+log_overdrive = 'a'  # запись/перезапись лога
+logFolder = 'lr_logs'  # каталог лога
+logName = 'server_%s.log' % time.strftime('%d.%m')  # имя лога
+logPath = os.path.join(os.getcwd(), logFolder)  # полное путь лога
+logFullName = os.path.join(logPath, logName)  # полное имя лога
+logger_level = 1  # минимальный уровень логирования
 
 VarWindowLogger = tk.StringVar(value='INFO')  # минимальный уровень вывода сообщений в gui
 EHE = (EHOME, EEND) = [3, 1]  # при ошибке, показать строк выше/ниже, строки в файле-кода
@@ -194,7 +196,7 @@ EHE = (EHOME, EEND) = [3, 1]  # при ошибке, показать строк
 # поиск файлов ответов, при старте
 
 DEFAULT_FILES_FOLDER = 'data'  # каталог поиска
-DEFAULT_FILES_FOLDER = (os.path.realpath(DEFAULT_FILES_FOLDER) if os.path.isdir(DEFAULT_FILES_FOLDER) else os.getcwd())
+DEFAULT_FILES_FOLDER = (os.path.realpath(DEFAULT_FILES_FOLDER) if os.path.isdir(DEFAULT_FILES_FOLDER) else os.getcwd())  # каталог поиска
 
 VarFilesFolder = tk.StringVar(value=DEFAULT_FILES_FOLDER)  # каталог с файлами
 VarIsSnapshotFiles = tk.BooleanVar(value=True)  # брать файлы, проаписанные в inf файлах каталога / или все файлы
@@ -207,7 +209,7 @@ FilesCreatePortionSize = 15  # порция, число обрабатываем
 # пулы
 
 MainThreadUpdater = None  # выполнять callback из main потока # lr_lib.etc.pool.other.MainThreadUpdater
-_MTUT = 0.4  # сек - влияет на общую отзывчивость интерфейса
+_MTUT = 0.33  # сек - влияет на общую отзывчивость интерфейса
 MainThreadUpdateTime = tk.IntVar(value=(_MTUT * 1000))  # интервал(мс) проверки очереди, callback(из потоков) + скорость обновления подсветки
 
 M_POOL = None  # пул процессов  # lr_lib.etc.pool.main_pool.POOL
@@ -230,14 +232,16 @@ _SThreadMonitorUpdate = tk.IntVar(value=1000)  # мс, время обновле
 
 #####################################
 # etc
+
 EDITOR = dict(exe='notepad.exe')  # программа для открытия "в Editor"
 FIND_PARAM_HOTKEY = 'ctrl+shift+c'  # хоткей "найти(2) param"
 
 #####################################
 # проверка наличия обновленной версии
-github = 'https://github.com/vaduxam1/LR_PARAM'
-github_vars = '/blob/master/lr_lib/core/var/vars.py'
-GitHub = (github + github_vars)  #
-githubDownloadUrl = '{}/archive/master.zip'.format(github)
-GitUpdPeriod = (60 * 60 * 4)  # сек, период проверки
-githubCheckUpdateEnable = True  # вкл/выкл проверку обновлений утилиты
+
+github = 'https://github.com/vaduxam1/LR_PARAM'  # url проэкта утилиты
+github_vars = '/blob/master/lr_lib/core/var/vars.py'  # путь к файлу на гитхабе, с номером версии утилиты
+GitHub = (github + github_vars)  # полный путь к файлу на гитхабе, с номером версии утилиты
+githubDownloadUrl = '{}/archive/master.zip'.format(github)  # url для скачивания утилиты
+GitUpdPeriod = (60 * 60 * 4)  # сек, период проверки наличия обновления утилиты
+githubCheckUpdateEnable = True  # вкл/выкл проверку обновления утилиты

@@ -302,9 +302,10 @@ def _search_param_in_file(file: dict) -> dict:
     ff = File['FullName']
     with open(ff, encoding=File['encoding'], errors='ignore') as text:
         count = sum(line.count(param) for line in text)
-        if count:
-            Param['Count'] = count
-            return file
+
+    if count:
+        Param['Count'] = count
+        return file
     return
 
 

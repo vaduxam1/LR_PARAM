@@ -2,6 +2,7 @@
 # нахождение param, в action.c файле, на основе регулярных выражений
 
 import re
+import time
 
 import lr_lib
 import lr_lib.core.etc.lbrb_checker
@@ -27,9 +28,9 @@ def group_param_search_by_act_re(
     if ask:
         y = lr_lib.gui.widj.dialog.YesNoCancel(
             [K_FIND, K_SKIP],
-            title='3.1) запрос: action.c regexp',
+            title='2.1) запрос: action.c regexp',
             is_text='\n'.join(lr_lib.core.var.vars_param.REGEXP_PARAMS),
-            text_before='3) Поиск param в [ ACTION.C ] тексте:\n\n'
+            text_before='2) Поиск param в [ ACTION.C ] тексте:\n\n'
                         'Поиск re.findall(regexp, text) слов в тексте, '
                         'например zkau_12 для "value=zkau_12".',
             text_after='добавить/удалить',
@@ -63,10 +64,10 @@ def group_param_search_by_act_re(
         cf = CREATE_or_FIND(wrsp_create)
         y = lr_lib.gui.widj.dialog.YesNoCancel(
             [cf, K_SKIP],
-            title='3.2) ответ',
+            title='2.2) ответ: action.c regexp',
             is_text='\n'.join(params),
-            text_before='3) найдено {} шт'.format(len(params)),
-            text_after='добавить/удалить',
+            text_before='2) найдено {} шт'.format(len(params)),
+            text_after='добавить/удалить: необходимо удалить "лишнее", то что не является param',
             parent=action,
             default_key=cf,
             color=lr_lib.core.var.vars_highlight.PopUpWindColor1,
@@ -82,30 +83,34 @@ def group_param_search_by_act_re(
     return params
 
 
-Filter = lr_lib.core.var.vars_param.param_valid_letters.__contains__  # фильтр поиск param
+ValidLetters = lr_lib.core.var.vars_param.param_valid_letters.__contains__  # фильтр поиск param
 RegExp = r'=(.+?)\"'  # re.findall по умолчанию
 
 
 def group_param_search_quotes(params_source, regexp=RegExp, ) -> iter((str,)):
     """
-    фильтр поиск param, внутри кавычек
+    фильтр поиск param, по regexp, например внутри кавычек
     """
     params = _get_params(params_source, regexp=regexp)
     params = filter(str.strip, params)
+
     for param in params:
-        if all(map(Filter, param)):
+        if all(map(ValidLetters, param)):
             yield param  # не содержит неподходящих символов
         continue
+
     return
 
 
 def _get_params(params_source, regexp=RegExp, ) -> iter((str,)):
     """
-    поиск param, внутри кавычек
+    поиск param, по regexp, например внутри кавычек
     """
     act_text_ = lr_lib.core_gui.group_param.gp_job._text_from_params_source(params_source)
+
     for (name, text) in act_text_:
         params = re.findall(regexp, text)
         yield from params
         continue
+
     return

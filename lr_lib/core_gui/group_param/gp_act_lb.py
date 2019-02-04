@@ -13,15 +13,15 @@ import lr_lib.core_gui.group_param.gp_job
 from lr_lib.core_gui.group_param.gp_var import responce_files_texts
 from lr_lib.gui.widj.dialog import K_FIND, K_SKIP, CREATE_or_FIND
 
-T1 = '2.1) запрос: поиск param в action, используя action-LB'
-T2 = '2) Поиск param в [ ACTION.C ] тексте: используя action-LB символы.\n' \
+T1 = '1.1) запрос: поиск param в action, используя action-LB'
+T2 = '1) Поиск param в [ ACTION.C ] тексте: используя action-LB символы.\n' \
      'Например используя action-LB: ( value= ), для action.c файла подобного содержания:\n\n' \
      'web_url("index.zul",\n' \
      '... "value=zkau_1"; ... value=editZul_1;...\n... value={editZul_2, "zkau_2"} ...\n' \
      '... "item=zkau_3"; ... item=editZul_3; ...\n... item={editZul_4, "zkau_4"} ...\nLAST);\n\n' \
      'можно найти такие param: zkau_1, editZul_1.'
-T3 = '2.2) ответ'
-T4 = '2) найдено {} шт'
+T3 = '1.2) ответ action-LB'
+T4 = '1) найдено {} шт'
 
 
 def group_param_search_by_lb(
@@ -79,7 +79,7 @@ def group_param_search_by_lb(
             title=t3,
             is_text='\n'.join(params),
             text_before=t4.format(len(params)),
-            text_after='добавить/удалить',
+            text_after='добавить/удалить: необходимо удалить "лишнее", то что не является param',
             parent=action,
             color=lr_lib.core.var.vars_highlight.PopUpWindColor1,
         )

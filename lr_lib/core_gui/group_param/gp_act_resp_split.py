@@ -56,12 +56,11 @@ def group_param_search_by_split(
         y = lr_lib.gui.widj.dialog.YesNoCancel(
             [cf, K_SKIP],
             default_key=cf,
-            title='Поиск param в RequestBody/RequestHeader файлах.',
+            title='4) запрос/ответ: split Поиск param в RequestBody/RequestHeader файлах.',
             is_text='\n'.join(params),
-            text_before='Поиск param в RequestBody/RequestHeader файлах, каталога "data".\n'
-                        'После поиска, необходимо удалить "лишнее", '
-                        'то что не является param.\n\nнайдено {} шт'.format(len(params)),
-            text_after='добавить/удалить',
+            text_before='4) Поиск param в RequestBody/RequestHeader файлах, каталога "data".'
+                        '\n\nнайдено {} шт'.format(len(params)),
+            text_after='добавить/удалить: необходимо удалить "лишнее", то что не является param',
             parent=action,
             color=lr_lib.core.var.vars_highlight.PopUpWindColor1,
         )

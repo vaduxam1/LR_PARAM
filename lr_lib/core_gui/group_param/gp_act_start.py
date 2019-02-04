@@ -71,7 +71,7 @@ def group_param_search_by_name(
             title='1.2) ответ',
             is_text='\n'.join(params),
             text_before='1) найдено {} шт'.format(len(params)),
-            text_after='добавить/удалить',
+            text_after='добавить/удалить: необходимо удалить "лишнее", то что не является param',
             parent=action,
             color=lr_lib.core.var.vars_highlight.PopUpWindColor1,
         )
@@ -110,9 +110,9 @@ def group_param_search_by_exist_param(
         y = lr_lib.gui.widj.dialog.YesNoCancel(
             [K_FIND, K_SKIP],
             default_key=K_FIND,
-            title='поиск {param} по началу имени',
+            title='5.1) запрос: LAST поиск {param} по началу имени',
             is_text='\n'.join(exist_params),
-            text_before='итого {} шт.'.format(len(exist_params)),
+            text_before='5) итого {} шт.'.format(len(exist_params)),
             text_after='добавить/удалить',
             parent=action,
             color=lr_lib.core.var.vars_highlight.PopUpWindColor1,
@@ -134,7 +134,7 @@ def group_param_search_by_exist_param(
         y = lr_lib.gui.widj.dialog.YesNoCancel(
             [K_FIND, K_SKIP],
             default_key=K_FIND,
-            title='5) запрос/ответ: Имена param, поиск в action.c',
+            title='5.2) ответ: LAST поиск {param} по началу имени',
             is_text='\n'.join(params),
             text_before='5) Поиск param в [ ACTION.C ] тексте:\n\n'
                         'Для всех param, найденных предыдущими способами - взять {n} первых символов имени,\n'
