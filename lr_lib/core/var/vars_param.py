@@ -144,8 +144,7 @@ StripRBEnd3 = ['{', ',']  # символы обрезки для конца ст
 Screening = ['\\', '"', ]  # символы для экранирования слешем
 AddAllowParamSymb = '_!-'  # символы, которые могут входить в имя param, кроме букв и цифр
 
-param_valid_letters = (
-            string.ascii_letters + string.digits + AddAllowParamSymb)  # символы из которых, может состоять param
+param_valid_letters = (string.ascii_letters + string.digits + AddAllowParamSymb)  # символы из которых, может состоять param
 
 # символы обрезки автозамены
 param_splitters = (string.punctuation + string.whitespace)
@@ -180,5 +179,6 @@ DENY_PART_NAME = {
 }  # не испоьлзовать как файлы ответов
 
 DENY_EXT = {
-    '.inf', '.ico', '.gif', '.jpg', '.jpeg', '.bmp', '.tif', '.png', '.zip', '.rar', '.7z', '.gz', '.tar', '.c', '.css',
+    '.inf', '.ico', '.gif', '.jpg', '.jpeg', '.bmp', '.tif', '.png', '.zip', '.rar', '.7z', '.gz', '.tar', '.c',
+    '.css',
 }  # запрещенные расширения файлов, для файлов-ответов

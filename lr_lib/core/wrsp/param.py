@@ -11,11 +11,12 @@ import lr_lib.core.var.vars as lr_vars
 import lr_lib.core.var.vars_other
 import lr_lib.core.var.vars_param
 
-LR_COMENT = '//lr:'
+LR_COMENT = '//lr:'  # определять как комментарий утилиты
 
 # имя web_reg_save_param
 WEB_REG_NUM = '{letter}_{wrsp_rnd_num}_{infs}__{transaction}__{lb_name}__{wrsp_name}__{rb_name}'
 
+# WRSP с коротким комментарием
 _web_reg_save_param = """
 // PARAM["{param}"] // Snap{inf_nums} // FILE["{Name}"]
 web_reg_save_param("{web_reg_name}",
@@ -26,6 +27,7 @@ web_reg_save_param("{web_reg_name}",
     LAST); 
 """
 
+# WRSP с полным комментарием
 web_reg_save_param = """
 // Snap{inf_nums}, [{param_inf_min}:{param_inf_max}]={search_inf_len} -> [{_param_inf_min}:{_param_inf_max}]={_param_inf_all} | FILE["{Name}"], with_param = {file_index}/{param_files} | {create_time}
 // PARAM["{param}"], count={param_part}/{param_count}, NA={param_NotPrintable} | LB[{Lb_len}~{lb_len}] NA={lb_NotPrintable}, RB[{Rb_len}~{rb_len}] NA={rb_NotPrintable}
@@ -63,7 +65,7 @@ SnapInComentE = ']'
 Snap1 = '"Snapshot=t'
 Snap2 = '.inf",'
 Snap = '%s{num}%s' % (Snap1, Snap2)
-Web_LAST = 'LAST);'
+Web_LAST = 'LAST);'  #
 
 
 def param_bounds_setter(param: str, start='{', end='}') -> str:
@@ -280,14 +282,15 @@ def wrsp_name_creator(param: str, Lb: str, Rb: str, snapshot: int) -> str:
     return wrsp_name
 
 
-SC = {ord(c): '\\{}'.format(c) for c in lr_lib.core.var.vars_param.Screening}
+# экранирование символов для WRSP
+ScrWrspSymbol = {ord(c): '\\{}'.format(c) for c in lr_lib.core.var.vars_param.Screening}
 
 
 def screening_wrsp(s: str) -> str:
     """
     экранирование для web_reg_save_param
     """
-    s = str.translate(s, SC)
+    s = str.translate(s, ScrWrspSymbol)
     return s
 
 
@@ -491,7 +494,7 @@ search_data: {d}
 Поиск происходил в: Snapshot {lf}=[ t{min_iaf}:t{max_iaf} ] / файлах={f_}
 Директория поиска: {folder}
 откл чекб "strong", вероятно может помочь найти варианты
-'''
+'''  #
 
 
 def param_not_found_err_text(action, files: [dict, ], search_data: dict, param: str) -> str:
@@ -556,6 +559,7 @@ def find_param_ord() -> (int, int):
     raise UserWarning(t)
 
 
+#
 AIE1 = '''Формирование Ord для web_reg_save_param невозможно, тк поле пусто
 [param, lb, rb, text] == {empty}
 VarWrspDict={wrsp}\nVarPartNum={pn}, max={len_lbti}
