@@ -229,20 +229,17 @@ class RunSettingWindow(tk.Toplevel):
         запуск
         """
         params = set()
-        for item in self.items:
+        for item in self.items:  # поиск param
             i_params = item.get_params()
             params.update(i_params)
             continue
 
-        sp = set(params)
-        self.item_last_startsw.kwargs['exist_params'] = sp
         item = self.last_items[0]
-        i_params = item.get_params()
+        i_params = item.get_params(i_params=params)
         params.update(i_params)
 
-        self.item_last_startsw.kwargs['exist_params'] = params
         item = self.last_items[1]
-        i_params = item.get_params()
+        i_params = item.get_params(i_params=params)
         params.update(i_params)
 
         y = lr_lib.gui.widj.dialog.YesNoCancel(
@@ -251,7 +248,7 @@ class RunSettingWindow(tk.Toplevel):
             title='создание WRSP',
             is_text='\n'.join(params),
             text_before='итого {} шт.'.format(len(params)),
-            text_after='добавить/удалить',
+            text_after='добавить/удалить: необходимо удалить "лишнее", то что не является param',
             parent=self.action,
             color=lr_lib.core.var.vars_highlight.PopUpWindColor1,
         )

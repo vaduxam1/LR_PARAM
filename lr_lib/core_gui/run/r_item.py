@@ -206,12 +206,14 @@ class RItem:
         self.act_radio.set(a)
         return
 
-    def get_params(self, ask=False, ask2=False, wrsp_create=False, ) -> [str, ]:
+    def get_params(self, ask=False, ask2=False, wrsp_create=False, i_params=None, ) -> [str, ]:
         """
         получить params
         """
         if not self._cbx_on.get():
             return []
+        if i_params is None:
+            i_params = set()
         at = self._cbx_only_in_act_param.get()
 
         with block(self):
@@ -224,6 +226,7 @@ class RItem:
                 ask2=ask2,
                 wrsp_create=wrsp_create,
                 action_text=at,
+                i_params=i_params,
                 **self.kwargs
             )
         return params

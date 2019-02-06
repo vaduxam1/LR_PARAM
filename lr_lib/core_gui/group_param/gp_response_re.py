@@ -44,13 +44,15 @@ Regxp.extend(
 )
 
 
-def group_param_search_by_resp_re(action: 'lr_lib.gui.action.main_action.ActionWindow',
-                                  params_source,
-                                  wrsp_create=False,
-                                  action_text=True,
-                                  ask=True,
-                                  ask2=True,
-                                  ) -> [str, ]:
+def group_param_search_by_resp_re(
+        action: 'lr_lib.gui.action.main_action.ActionWindow',
+        params_source,
+        wrsp_create=False,
+        action_text=True,
+        ask=True,
+        ask2=True,
+        **kwargs,
+) -> [str, ]:
     """
     поиск param, для action.c, по regexp и дальнейшей обработке результата
     """

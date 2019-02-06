@@ -21,18 +21,25 @@ def group_param_search_by_lb_post(
         action_text=True,
         ask=True,
         ask2=True,
+        i_params=None,
+        **kwargs,
 ) -> [str, ]:
     """
     Метод основан том что, что если часть {param} имен уже известна,
     то можно извлечь, для каждого {param}, для каждого файла, каждый LB.
         Затем при помощи полученных LB, найти новые имена {param}, обычным LB-способом.
     """
-    if not exist_params:
+    if exist_params:
+        if not isinstance(exist_params, set):
+            exist_params = set(exist_params)
+    else:
         exist_params = set(
             list(lr_lib.core.var.vars_param.Params_names) +
             list(action.web_action.websReport.wrsp_and_param_names.keys()) +
             list(action.web_action.websReport.wrsp_and_param_names.values())
         )
+    if i_params:
+        exist_params.update(i_params)
 
     lb_items = set()
     source = lr_lib.core_gui.group_param.gp_job._text_from_params_source(params_source)

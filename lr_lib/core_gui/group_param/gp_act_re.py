@@ -21,6 +21,7 @@ def group_param_search_by_act_re(
         action_text=True,
         ask=True,
         ask2=True,
+        **kwargs,
 ) -> [str, ]:
     """
     group params поиск, на основе регулярных выражений

@@ -60,7 +60,7 @@ DENY_Startswitch_PARAMS = (
 DENY_Force_Startswitch_PARAMS = (
     'X-Atmosphere', 'Accept-', 'Adf-', 'X-Cache', 'click', 'selected', 'content-', 'doc-content', 'suppress',
     'disclosed', '_adfp_', '_afrLocal', 'viewport', 'adfport', 'User-', 'Transfer-', 'vertical', 'z-slider',
-    'z-paging', 'padding', 'fixed',
+    'z-paging', 'padding', 'fixed', 'eb-arp',
 )  # не использовать в качестве параметров, если начинаются так
 
 DENY_PARAMS_LOWER = {
@@ -76,7 +76,7 @@ DENY_PARAMS_LOWER = {
     'timeZoneOffset', 'mouseleave', 'cls', 'setConstraint', 'dialog-edit', 'exitFullscreen', 'scrollable', 'between',
     'insertChildHTML_', 'zmousedown', '_target', '_minsize', 'DOMMouseScroll', 'resetSize_', 'shortName',
     'webkitRequestFullscreen', '_columns', 'loadCertificateContent', 'doFocus_', 'ZK-SID', 'before_center', 'Trim',
-    'table-wrapper', '_closable', 'PATCH', '_posInfo', '_resizable', 'dialog',
+    'table-wrapper', '_closable', 'PATCH', '_posInfo', '_resizable', 'dialog', '_Ispolnitely',
     '_columnsgroup', 'beforeSize', 'common-scroller', 'item-content', '_running', 'expand',
     'timezone', 'DOMContentLoaded', 'mouseover', 'overrideTooltip', 'z-renderdefer', 'mailCount', 'multipart',
     'zIndex', '_rows', 'head', 'Italic', 'getValue', 'zk_download', 'udu-webcenter', 'natural', 'checkJinn',

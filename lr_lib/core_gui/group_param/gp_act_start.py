@@ -34,6 +34,7 @@ def group_param_search_by_name(
         ask=True,
         ask2=True,
         action_text=True,
+        **kwargs,
 ) -> ["zkau_5650", "zkau_5680", ]:
     """
     поиск в action.c, всех уникальных param, в имени которых есть param_part
@@ -114,15 +115,21 @@ def group_param_search_by_exist_param(
         ask=True,
         ask2=True,
         add=True,
+        i_params=None,
+        **kwargs,
 ) -> [str, ]:
     """
     поиск по началу имени - взять n первых символов для повторного поиска param по началу имени
     """
+    if not isinstance(exist_params, set):
+        exist_params = set(exist_params)
+
     if add:
-        exist_params = list(exist_params)
-        exist_params.extend(lr_lib.core.var.vars_param.Params_names)
+        exist_params.update(lr_lib.core.var.vars_param.Params_names)
         exist_p = list(action.web_action.websReport.wrsp_and_param_names.values())
-        exist_params.extend(exist_p)  # использовать уже созданные param
+        exist_params.update(exist_p)  # использовать уже созданные param
+    if i_params:
+        exist_params.update(i_params)
 
     if ask:
         y = lr_lib.gui.widj.dialog.YesNoCancel(

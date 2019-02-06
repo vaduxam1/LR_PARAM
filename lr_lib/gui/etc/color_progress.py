@@ -1,6 +1,8 @@
 # -*- coding: UTF-8 -*-
 # все варианты создания web_reg_save_param
+
 import threading
+import functools
 import time
 
 import lr_lib
@@ -77,6 +79,7 @@ def progress_decor(func, action=None):
     """
     декоратор - навесить цветной прогрессбар
     """
+    @functools.wraps(func)
 
     def wrap(*args, **kwargs):
         act = (args[0] if (action is None) else action)

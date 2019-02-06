@@ -18,6 +18,7 @@ def group_param_search_by_split(
         action_text=True,
         ask=True,
         ask2=True,
+        **kwargs,
 ) -> [str, ]:
     """
     поиск param в RequestBody/RequestHeader файлах

@@ -34,7 +34,7 @@ def group_param_search_by_lb(
         texts_for_lb=None,
         MutableLBRegs=lr_lib.core.var.vars_param.MutableLBRegs,
         action_text=True,
-        t1=T1, t2=T2, t3=T3, t4=T4,
+        t1=T1, t2=T2, t3=T3, t4=T4, **kwargs,
 ) -> list:
     """
     поиск param в action, по LB=
