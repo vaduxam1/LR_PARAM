@@ -76,7 +76,7 @@ DENY_PARAMS_LOWER = {
     'timeZoneOffset', 'mouseleave', 'cls', 'setConstraint', 'dialog-edit', 'exitFullscreen', 'scrollable', 'between',
     'insertChildHTML_', 'zmousedown', '_target', '_minsize', 'DOMMouseScroll', 'resetSize_', 'shortName',
     'webkitRequestFullscreen', '_columns', 'loadCertificateContent', 'doFocus_', 'ZK-SID', 'before_center', 'Trim',
-    'table-wrapper', '_closable', 'PATCH', '_posInfo', '_resizable', 'dialog', '_Ispolnitely',
+    'table-wrapper', '_closable', 'PATCH', '_posInfo', '_resizable', 'dialog', '056_Ispolnitely',
     '_columnsgroup', 'beforeSize', 'common-scroller', 'item-content', '_running', 'expand',
     'timezone', 'DOMContentLoaded', 'mouseover', 'overrideTooltip', 'z-renderdefer', 'mailCount', 'multipart',
     'zIndex', '_rows', 'head', 'Italic', 'getValue', 'zk_download', 'udu-webcenter', 'natural', 'checkJinn',
