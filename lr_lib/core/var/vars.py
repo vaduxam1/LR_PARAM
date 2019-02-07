@@ -246,5 +246,5 @@ GitHub = (github + github_vars)  # полный путь к файлу на ги
 # полный путь к файлу на гитхабе, с описанием версии утилиты
 GitHub2 = 'https://raw.githubusercontent.com/vaduxam1/LR_PARAM/master/lr_lib/etc/git_upd.py'
 githubDownloadUrl = '{}/archive/master.zip'.format(github)  # url для скачивания утилиты
-GitUpdPeriod = (60 * 60 * 4)  # сек, период проверки наличия обновления утилиты
+GitUpdPeriod = (1000* 60 * 60 * 4)  # мсек, период проверки наличия обновления утилиты
 githubCheckUpdateEnable = True  # вкл/выкл проверку обновления утилиты

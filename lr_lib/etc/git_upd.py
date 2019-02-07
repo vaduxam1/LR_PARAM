@@ -1,11 +1,11 @@
 ﻿# -*- coding: UTF-8 -*-
 # проверить обновление версии утилиты на github.com
 
-import threading
 import collections
 import tkinter.messagebox
 import urllib.request
 
+import lr_lib.etc.excepthook
 import lr_lib.core.var.vars as lr_vars
 
 
@@ -15,9 +15,10 @@ def git_update_check() -> None:
     """
     try:
         check_git_ver()
+    except Exception as ex:
+        lr_lib.etc.excepthook.excepthook(ex)
     finally:
-        t = threading.Timer(lr_vars.GitUpdPeriod, git_update_check)
-        t.start()  # перезапуск
+        lr_vars.Tk.after(lr_vars.GitUpdPeriod, git_update_check)  # перезапуск
     return
 
 
