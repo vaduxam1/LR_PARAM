@@ -60,7 +60,9 @@ DENY_Startswitch_PARAMS = (
 DENY_Force_Startswitch_PARAMS = (
     'X-Atmosphere', 'Accept-', 'Adf-', 'X-Cache', 'click', 'selected', 'content-', 'doc-content', 'suppress',
     'disclosed', '_adfp_', '_afrLocal', 'viewport', 'adfport', 'User-', 'Transfer-', 'vertical', 'z-slider',
-    'z-paging', 'padding', 'fixed', 'eb-arp',
+    'z-paging', 'padding', 'fixed', 'eb-arp', 'eb-core', 'notif-', 'Qwerty', 'marker_', 'FK', 'paging', 'message',
+    'document_', 'table_', 'combo_', 'scroller', 'import', 'export', 'service', 'copy_', 'details', 'Print', 'filter',
+    'dropdown',
 )  # не использовать в качестве параметров, если начинаются так
 
 DENY_PARAMS_LOWER = {
@@ -68,18 +70,18 @@ DENY_PARAMS_LOWER = {
     'cb1', 'f1', 'POST', 'HTML', 'Yes', 'dtid', 'compId', 'this', 'left', 'right', 'top', 'bottom', 'open', 'unique',
     'pageY', 'pageX', 'value', 'which', 'items', 'reference', 'selectAll', 'clearFirst', 'Referer', 'text', 'advradio',
     'otr', 'zul', 'user_name', 'user', 'name', 'password', 'jsessionid', 'sessionid', 'horizontal', 'inprogress',
-    'fromServer', 'undefined', 'maximized', 'isLoaded', 'keypress', 'function', 'complete', 'textarea',
+    'fromServer', 'undefined', 'maximized', 'isLoaded', 'keypress', 'function', 'complete', 'textarea', 'ViewState',
     'checkbox', 'tabpanel', 'embedded', 'dblclick', 'boolean', 'checked', 'option', 'hidden', 'string',
     'normal', 'script', 'newPos', 'inline', 'number', 'before', 'radio', 'input', 'popup', 'self', 'cmd', 'advcheckbox',
     'margin', 'windowY', 'windowX', 'formatBlock', 'propertychange', 'plugin_resolved', 'uploadInfo', 'granted',
-    'tmpobj', 'QTWeb', 'nodom', 'day', 'toolbar', 'Accept-Language', 'print_scroller', 'installCheckResult',
+    'tmpobj', 'QTWeb', 'nodom', 'day', 'toolbar', 'Accept-Language', 'print_scroller', 'installCheckResult', 'javax',
     'timeZoneOffset', 'mouseleave', 'cls', 'setConstraint', 'dialog-edit', 'exitFullscreen', 'scrollable', 'between',
-    'insertChildHTML_', 'zmousedown', '_target', '_minsize', 'DOMMouseScroll', 'resetSize_', 'shortName',
+    'insertChildHTML_', 'zmousedown', '_target', '_minsize', 'DOMMouseScroll', 'resetSize_', 'shortName', 'context',
     'webkitRequestFullscreen', '_columns', 'loadCertificateContent', 'doFocus_', 'ZK-SID', 'before_center', 'Trim',
-    'table-wrapper', '_closable', 'PATCH', '_posInfo', '_resizable', 'dialog', '056_Ispolnitely',
-    '_columnsgroup', 'beforeSize', 'common-scroller', 'item-content', '_running', 'expand',
+    'table-wrapper', '_closable', 'PATCH', '_posInfo', '_resizable', 'dialog', '056_Ispolnitely', '_adf', 'xmlns',
+    '_columnsgroup', 'beforeSize', 'common-scroller', 'item-content', '_running', 'expand', 'resourceproxy',
     'timezone', 'DOMContentLoaded', 'mouseover', 'overrideTooltip', 'z-renderdefer', 'mailCount', 'multipart',
-    'zIndex', '_rows', 'head', 'Italic', 'getValue', 'zk_download', 'udu-webcenter', 'natural', 'checkJinn',
+    'zIndex', '_rows', 'head', 'Italic', 'getValue', 'zk_download', 'udu-webcenter', 'natural', 'checkJinn', 'add_line',
     'visibility', 'rowspan', '_doClick', 'ZK-Error', '_visible', 'onload', 'ru_RU', 'unlink', 'cryptoProPlugin',
     'Bold', '_src', 'icon', 'year', 'west', 'Blob', 'rows', 'Busy', 'Host', 'color', 'panel', 'outer', 'zhtml',
     'unload', 'content_script', 'woff', 'ARP', 'signAttributes', 'MODApplet', 'selectedRowKeys', '_afrVblRws', 'bear',
@@ -87,6 +89,8 @@ DENY_PARAMS_LOWER = {
     'json', 'styles', 'sortDirection', 'charCode', 'autoSubmit', 'polling', 'xonLoadCal', 'valueChange', 'message',
     'combobox', 'blank', 'outcome', 'renderOnly', 'clientKey', 'clientId', 'editWindow', 'zkTheme', 'landscape',
     'portrait', 'keyCode', 'WebkitTransform', 'ZKClientInfo', 'ZKMatchMedia', 'images', 'doTooltipOver_',
+    'current', 'resultsOFcontrols', 'taskmanager', 'metadata', 'userProfile', 'ssl', 'loader', 'templates',
+    'Navigation', '', 'None',
 }  # не использовать в качестве параметров
 
 
