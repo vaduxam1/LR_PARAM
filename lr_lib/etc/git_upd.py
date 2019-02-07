@@ -9,12 +9,15 @@ import urllib.request
 import lr_lib.core.var.vars as lr_vars
 
 
-def _git_update_check() -> None:
+def git_update_check() -> None:
     """
     проверить на наличие обновлений
     """
-    t = threading.Thread(target=check_git_ver)
-    t.start()
+    try:
+        check_git_ver()
+    finally:
+        t = threading.Timer(lr_vars.GitUpdPeriod, git_update_check)
+        t.start()  # перезапуск
     return
 
 
@@ -46,10 +49,10 @@ def find_git_ver() -> str:
         return ''
 
     with urllib.request.urlopen(lr_vars.GitHub) as f:
-        text = f.read()
+        v_text = f.read()
 
-    text = text.decode('utf-8')
-    v = text.split('>VERSION</span>', 1)
+    v_text = v_text.decode('utf-8')
+    v = v_text.split('>VERSION</span>', 1)
     v = v[1].split('\n', 1)
     v = v[0].split('</span>v', 1)
     v = v[1].split('<', 1)
@@ -66,9 +69,26 @@ def find_version_changes(ver: str) -> str:
     current_ver = ver_to_int(ver)
     description = []
 
-    for v in VersionChanges:
+    with urllib.request.urlopen(lr_vars.GitHub2) as f:
+        ch_text = f.read()
+
+    ch_text = ch_text.decode('utf-8')
+    ch_changes = ch_text.rsplit(VName, 1)
+    if len(ch_changes) != 2:
+        return 'описание изменений для версии не определено!'
+
+    ch_changes = ch_changes[1].split('=', 1)
+    changes = ch_changes[1]
+    try:
+        version_changes = eval(changes)
+    except Exception as ex:
+        er = 'ошибка определения описания изменений для версии!\n{e}\n{ea}'
+        text = er.format(e=ex.__class__.__name__, ea=ex.args, )
+        return text
+
+    for v in version_changes:
         if ver_to_int(v) > current_ver:
-            it = [v, VersionChanges[v]]
+            it = [v, version_changes[v]]
             description.append(it)
         else:
             break
@@ -92,10 +112,15 @@ def ver_to_int(ver: str) -> (int,):
     return vint
 
 
+VName = 'VersionChanges'  # одноименно с переменной ниже
+# должно располагатся в конце файла, для find_version_changes()
 VersionChanges = collections.OrderedDict({
+    'v11.5.7': '''
+* не работал показ изменений для обновленной версии, при проверки наличия обновления утилиты - теперь текст изменений загружается из github
+#     ''',
     'v11.5.6': '''
 * неверно работал "Поиск WRSP" №5 и №6, если он производился кнопкой "Запуск" из меню "Найти и Создать WRSP" - не использовались, найденные перед этим другими способоми, но еще не созданные param
-    ''',
+#     ''',
     'v11.5.5': '''
 * неверно работал "Поиск WRSP на основе регулярных выражений" №2, если при работе было выведено диалог окно
 * неверно работал "Поиск по началу имени - взять n первых символов" №5 - не использовались уже созданные param

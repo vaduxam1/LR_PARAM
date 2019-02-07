@@ -16,7 +16,8 @@ def init(c_args=None) -> None:
     lr_vars.Window = lr_lib.gui.wrsp.main_window.Window()  # main Gui
     lr_lib.gui.etc.gui_other.wordBreakAfter()  # область выделения двойным кликом мыши
 
-    threading.Thread(target=lr_lib.etc.git_upd._git_update_check).start()  # проверить обновление
+    t = threading.Thread(target=lr_lib.etc.git_upd.git_update_check)
+    t.start()  # проверить обновление
     return
 
 

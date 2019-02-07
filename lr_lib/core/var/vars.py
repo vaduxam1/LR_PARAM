@@ -11,7 +11,7 @@ import lr_lib.core.var._var
 #####################################
 # главные переменные
 
-VERSION = 'v11.5.6'  # версия утилиты
+VERSION = 'v11.5.7'  # версия утилиты
 lib_folder = 'lr_lib'  # каталог py-файлов утилиты
 Tk = tk.Tk()
 original_callback_exception = Tk.report_callback_exception  # переопределение обработчика raise
@@ -241,7 +241,10 @@ FIND_PARAM_HOTKEY = 'ctrl+shift+c'  # хоткей "найти(2) param"
 
 github = 'https://github.com/vaduxam1/LR_PARAM'  # url проэкта утилиты
 github_vars = '/blob/master/lr_lib/core/var/vars.py'  # путь к файлу на гитхабе, с номером версии утилиты
+github_vars2 = '/blob/master/lr_lib/etc/git_upd.py'  # путь к файлу на гитхабе, с описанием версии утилиты
 GitHub = (github + github_vars)  # полный путь к файлу на гитхабе, с номером версии утилиты
+# полный путь к файлу на гитхабе, с описанием версии утилиты
+GitHub2 = 'https://raw.githubusercontent.com/vaduxam1/LR_PARAM/master/lr_lib/etc/git_upd.py'
 githubDownloadUrl = '{}/archive/master.zip'.format(github)  # url для скачивания утилиты
 GitUpdPeriod = (60 * 60 * 4)  # сек, период проверки наличия обновления утилиты
 githubCheckUpdateEnable = True  # вкл/выкл проверку обновления утилиты
