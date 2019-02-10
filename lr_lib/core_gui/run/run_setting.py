@@ -128,7 +128,7 @@ class RunSettingWindow(tk.Toplevel):
         def _MinParamLen_minus_1(*args):
             """тк нумерация с 0"""
             n = lr_vars._MinParamLen.get()
-            lr_vars.MinParamLen = (n - 1)
+            lr_vars.MinParamLen = n
             return
 
         self.min_param_spin = tk.Spinbox(

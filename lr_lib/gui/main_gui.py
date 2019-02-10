@@ -1,8 +1,6 @@
 ﻿# -*- coding: UTF-8 -*-
 # создание главного окна + заблокировать
 
-import threading
-
 import lr_lib.core.var.vars as lr_vars
 import lr_lib.etc.git_upd
 import lr_lib.gui.etc.gui_other

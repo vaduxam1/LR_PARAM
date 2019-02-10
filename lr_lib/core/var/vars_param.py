@@ -90,7 +90,7 @@ DENY_PARAMS_LOWER = {
     'combobox', 'blank', 'outcome', 'renderOnly', 'clientKey', 'clientId', 'editWindow', 'zkTheme', 'landscape',
     'portrait', 'keyCode', 'WebkitTransform', 'ZKClientInfo', 'ZKMatchMedia', 'images', 'doTooltipOver_',
     'current', 'resultsOFcontrols', 'taskmanager', 'metadata', 'userProfile', 'ssl', 'loader', 'templates',
-    'Navigation', '', 'None', 'Dropdown',
+    'Navigation', '', 'None', 'Dropdown', 'AP', 'portlet', 'request_id', 'richClient',
 }  # не использовать в качестве параметров
 
 

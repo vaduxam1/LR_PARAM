@@ -47,7 +47,6 @@ SecondaryParamLen = tk.IntVar(value=3)  # число первых символо
 
 MinParamLen = 3  # минимальная длина param
 _MinParamLen = tk.IntVar(value=MinParamLen)  # минимальная длина param
-MinParamLen -= 1  # тк нумерация с 0
 
 MinParamNumsOnlyLen = tk.IntVar(value=5)  # минимальная длина param, состоящего только из цифр
 
