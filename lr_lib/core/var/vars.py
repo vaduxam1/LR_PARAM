@@ -54,11 +54,11 @@ FindParamPOOLEnable = True  # использовать M_POOL, для поиск
 VarStrongSearchInFile = tk.IntVar(value=True)  # принудительно использовать контроль LB/RB(на недопустимые символы), при поиске param, в файлах ответов
 ReplaceParamDialogWindow = True  # вкл диалог окна(автозамены), для одиночной замены param в action.c
 
-AllowOnlyNumericParam = tk.BooleanVar(value=True)  # разрешить имена {param}, состоящие только из цифр
+AllowOnlyNumericParam = tk.BooleanVar(value=False)  # разрешить имена {param}, состоящие только из цифр
 
 VarFileSortKey1 = lr_lib.core.var._var.Var(value='Snapshot')  # сортировка файлов
 VarFileSortKey2 = lr_lib.core.var._var.Var(value='Nums')  # сортировка файлов
-VarFirstLastFile = tk.IntVar(value=0)  # 0=первый, выбрать последний или первый файл из FilesWithParam
+VarFirstLastFile = tk.IntVar(value=1)  # 0=первый, выбрать последний или первый файл из FilesWithParam
 VarOrdVersion = tk.IntVar(value=1)  # версия(старая/новая) функции для получения Ord, например если не ищется?
 VarFileNamesNumsShow = tk.BooleanVar(value=True)  # показывать инфо о найденых файлах с param
 VarSearchMinSnapshot = tk.IntVar(value=-1)  # ограничение(для поиска param) минимального номера inf файла
@@ -95,7 +95,7 @@ MaxFileStringWidth = 250  # макс ширина подсказки для фа
 DefaultActionForceAsk = False  # Автозамена - подтверждать любую замену
 DefaultActionNoVar = True  # Автозамена - Принудительно отвечать "Нет, для Всех" в вопросе замены
 DefaultActionMaxSnapshot = True  # ограничить диапазон поиска param - максимальный номер inf
-DefaultActionAddSnapshot = tk.BooleanVar(value=True)  # ограничить максимальный inf, не номером(param_inf - 1), а самим param-inf номером
+DefaultActionAddSnapshot = tk.BooleanVar(value=False)  # ограничить максимальный inf, не номером(param_inf - 1), а самим param-inf номером
 DefaultActionForceYes = True  # отвечать "Да", при вопросе о создании param, если inf-номер запроса <= inf-номер web_reg_save_param
 DefaultActionFinalWind = True  # окно результата создания param
 
@@ -208,7 +208,7 @@ FilesCreatePortionSize = 15  # порция, число обрабатываем
 # пулы
 
 MainThreadUpdater = None  # выполнять callback из main потока # lr_lib.etc.pool.other.MainThreadUpdater
-_MTUT = 0.5  # сек - влияет на общую отзывчивость интерфейса
+_MTUT = 0.25  # сек - влияет на общую отзывчивость интерфейса(=0.25: отзывчивый переход по тексту)
 MainThreadUpdateTime = tk.IntVar(value=(_MTUT * 1000))  # интервал(мс) проверки очереди, callback(из потоков) + скорость обновления подсветки
 
 M_POOL = None  # пул процессов  # lr_lib.etc.pool.main_pool.POOL
