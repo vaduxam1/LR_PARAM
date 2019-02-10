@@ -71,6 +71,12 @@ DENY_Force_Startswitch_PARAMS = (
     'to_', 'miscel', 'doc_', 'id_',
 )  # не использовать в качестве параметров, если начинаются так
 
+DENY_Force_Endswitch_PARAMS = set()  # не использовать в качестве параметров, если заканчивается так
+DENY_Force_Contains_PARAMS = set()  # не использовать в качестве параметров, если содержит это
+DENY_Force_Contains_Lower_PARAMS = set()  # не использовать в качестве параметров, если содержит это
+DENY_Force_Contains_Lower_PARAMS = set(map(str.lower, DENY_Force_Contains_Lower_PARAMS))  # не использовать в качестве параметров, если содержит это
+DENY_PARAMS_EQ = set()  # не использовать в качестве параметров, если ==
+
 DENY_PARAMS_LOWER = {
     'UTF-8', 'boot', 'true', 'false', 'i', 'xonLoadUseIndustrialCalendar', 'dummy', 'CPAGE', 'null', 'pt1', 'itSearch',
     'cb1', 'f1', 'POST', 'HTML', 'Yes', 'dtid', 'compId', 'this', 'left', 'right', 'top', 'bottom', 'open', 'unique',
@@ -96,8 +102,8 @@ DENY_PARAMS_LOWER = {
     'combobox', 'blank', 'outcome', 'renderOnly', 'clientKey', 'clientId', 'editWindow', 'zkTheme', 'landscape',
     'portrait', 'keyCode', 'WebkitTransform', 'ZKClientInfo', 'ZKMatchMedia', 'images', 'doTooltipOver_',
     'current', 'resultsOFcontrols', 'taskmanager', 'metadata', 'userProfile', 'ssl', 'loader', 'templates',
-    'Navigation', '', 'None', 'Dropdown', 'AP', 'portlet', 'request_id', 'richClient', 'update',
-}  # не использовать в качестве параметров
+    'Navigation', '', 'None', 'Dropdown', 'AP', 'portlet', 'request_id', 'richClient', 'update', '177_Nikolaev',
+}  # не использовать в качестве параметров, если lower соосветствие
 
 
 def DENY_PARAMS_update_and_lower() -> None:

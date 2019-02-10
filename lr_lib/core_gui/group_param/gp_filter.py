@@ -5,8 +5,11 @@ import string
 
 import lr_lib.core
 from lr_lib.core.var import vars as lr_vars
-from lr_lib.core.var.vars_param import DENY_Startswitch_PARAMS, DENY_PARAMS_LOWER, param_splitters, \
-    param_valid_letters, DENY_Force_Startswitch_PARAMS, DENY_ENABLE
+from lr_lib.core.var.vars_param import (
+    DENY_Startswitch_PARAMS, DENY_PARAMS_LOWER, param_splitters, param_valid_letters, DENY_Force_Startswitch_PARAMS,
+    DENY_ENABLE, DENY_Force_Endswitch_PARAMS, DENY_Force_Contains_PARAMS, DENY_PARAMS_EQ,
+    DENY_Force_Contains_Lower_PARAMS
+)
 
 
 def param_sort(params: [str, ], reverse=True, _filter=True, deny_param_filter=True, action_text=None, ) -> [str, ]:
@@ -52,7 +55,13 @@ def param_filter(params: [str, ], deny_param_filter=True, action=None, ) -> iter
 
         if len_p < lr_vars.MinParamLen:
             continue
-        elif deny and (any(map(param.startswith, DENY_Force_Startswitch_PARAMS)) or (pl in DENY_PARAMS_LOWER)):
+        elif deny and (any(map(param.startswith, DENY_Force_Startswitch_PARAMS))
+                       or any(map(param.endswith, DENY_Force_Endswitch_PARAMS))
+                       or (param in DENY_PARAMS_EQ)
+                       or (pl in DENY_PARAMS_LOWER)
+                       or any(a in pl for a in DENY_Force_Contains_PARAMS)
+                       or any(a in param for a in DENY_Force_Contains_PARAMS)
+        ):
             continue
         elif not all(map(param_valid_letters.__contains__, param)):
             continue  # "asd wer*&3"
