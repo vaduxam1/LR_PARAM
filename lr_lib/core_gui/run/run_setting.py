@@ -6,6 +6,7 @@ import tkinter.messagebox
 
 import lr_lib
 import lr_lib.core.var.vars as lr_vars
+import lr_lib.core.var.vars_param
 import lr_lib.core_gui.group_param.core_gp
 import lr_lib.core_gui.group_param.gp_act_lb
 import lr_lib.core_gui.group_param.gp_act_re
@@ -169,6 +170,14 @@ class RunSettingWindow(tk.Toplevel):
                'Либо ограничичь, минимильную длину param из цифр, спинбоксом.'
         lr_lib.gui.widj.tooltip.createToolTip(self.only_numeric, tt20)
 
+        # Checkbutton
+        self.deny_enable = tk.Checkbutton(
+            self.tool_label, anchor=tk.E, text='deny', font=lr_vars.DefaultFont,
+            variable=lr_lib.core.var.vars_param.DENY_ENABLE,
+        )
+        tt21 = 'Отфильтровывать имена {param} из списка запрешенных имен.\nТеоритически может отфильтровать нужное.'
+        lr_lib.gui.widj.tooltip.createToolTip(self.deny_enable, tt21)
+
         # grid
         self.main_label.grid(row=0, column=0)
 
@@ -187,6 +196,7 @@ class RunSettingWindow(tk.Toplevel):
 
         self.min_num_param_spin.grid(row=5, column=6, sticky=tk.NSEW, rowspan=10, columnspan=1)
         self.only_numeric.grid(row=5, column=5, sticky=tk.NSEW, rowspan=10, columnspan=1)
+        self.deny_enable.grid(row=5, column=7, sticky=tk.NSEW, rowspan=10, columnspan=1)
 
         self.cbxFirstLastFile.grid(row=5, column=3, sticky=tk.NSEW, rowspan=10, columnspan=1)
         self.add_inf_cbx.grid(row=5, column=4, sticky=tk.NSEW, rowspan=10, columnspan=1)

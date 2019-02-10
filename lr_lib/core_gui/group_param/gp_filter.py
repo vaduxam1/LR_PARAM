@@ -6,7 +6,7 @@ import string
 import lr_lib.core
 from lr_lib.core.var import vars as lr_vars
 from lr_lib.core.var.vars_param import DENY_Startswitch_PARAMS, DENY_PARAMS_LOWER, param_splitters, \
-    param_valid_letters, DENY_Force_Startswitch_PARAMS
+    param_valid_letters, DENY_Force_Startswitch_PARAMS, DENY_ENABLE
 
 
 def param_sort(params: [str, ], reverse=True, _filter=True, deny_param_filter=True, action_text=None, ) -> [str, ]:
@@ -45,17 +45,17 @@ def param_filter(params: [str, ], deny_param_filter=True, action=None, ) -> iter
         yield from params
         return
 
+    deny = DENY_ENABLE.get()
     for param in params:
         len_p = len(param)
+        pl = param.lower()
 
         if len_p < lr_vars.MinParamLen:
             continue
-        elif any(map(param.startswith, DENY_Force_Startswitch_PARAMS)):
+        elif deny and (any(map(param.startswith, DENY_Force_Startswitch_PARAMS)) or (pl in DENY_PARAMS_LOWER)):
             continue
         elif not all(map(param_valid_letters.__contains__, param)):
             continue  # "asd wer*&3"
-        elif param.lower() in DENY_PARAMS_LOWER:
-            continue
         elif filter_deny_onUpper(param):
             continue  # "onScreen"
         elif deny_numeric and all(map(str.isnumeric, param)):

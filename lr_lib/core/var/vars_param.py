@@ -3,6 +3,7 @@
 
 import itertools
 import string
+import tkinter as tk
 
 import lr_lib.core
 import lr_lib.core.var.vars_highlight
@@ -53,16 +54,21 @@ LB_PARAM_FIND_LIST = [
     'PSI=',
 ]  # использовать для поиска param(1) по LB=
 
+
+DENY_ENABLE = tk.BooleanVar(value=True)  # использовать ли фильтры DENY
+
+
 DENY_Startswitch_PARAMS = (
     'opt_', 'cmd_', 'data_', 'uuid_',
 )  # не использовать в качестве параметров, если начинаются так + цифры
 
 DENY_Force_Startswitch_PARAMS = (
-    'X-Atmosphere', 'Accept-', 'Adf-', 'X-Cache', 'click', 'selected', 'content-', 'doc-content', 'suppress',
-    'disclosed', '_adfp_', '_afrLocal', 'viewport', 'adfport', 'User-', 'Transfer-', 'vertical', 'z-slider',
+    'X-Atmosphere', 'Accept-', 'Adf-', 'X-Cache', 'click', 'selected', 'content-', 'doc-content', 'suppress', 'book_',
+    'disclosed', '_adfp_', '_afrLocal', 'viewport', 'adfport', 'User-', 'Transfer-', 'vertical', 'z-slider', 'ico_',
     'z-paging', 'padding', 'fixed', 'eb-arp', 'eb-core', 'notif-', 'Qwerty', 'marker_', 'FK', 'paging', 'message',
     'document_', 'table_', 'combo_', 'scroller', 'import', 'export', 'service', 'copy_', 'details', 'Print', 'filter',
-    'dropdown',
+    'dropdown', 'expand_', 'arrow-', 'apply_', 'sufd-', 'groupbox', 'collapse_', 'x-www', 'funnel_', 'selecting_',
+    'to_', 'miscel', 'doc_', 'id_',
 )  # не использовать в качестве параметров, если начинаются так
 
 DENY_PARAMS_LOWER = {
@@ -79,18 +85,18 @@ DENY_PARAMS_LOWER = {
     'insertChildHTML_', 'zmousedown', '_target', '_minsize', 'DOMMouseScroll', 'resetSize_', 'shortName', 'context',
     'webkitRequestFullscreen', '_columns', 'loadCertificateContent', 'doFocus_', 'ZK-SID', 'before_center', 'Trim',
     'table-wrapper', '_closable', 'PATCH', '_posInfo', '_resizable', 'dialog', '056_Ispolnitely', '_adf', 'xmlns',
-    '_columnsgroup', 'beforeSize', 'common-scroller', 'item-content', '_running', 'expand', 'resourceproxy',
-    'timezone', 'DOMContentLoaded', 'mouseover', 'overrideTooltip', 'z-renderdefer', 'mailCount', 'multipart',
+    '_columnsgroup', 'beforeSize', 'common-scroller', 'item-content', '_running', 'expand', 'resourceproxy', 'en-US',
+    'timezone', 'DOMContentLoaded', 'mouseover', 'overrideTooltip', 'z-renderdefer', 'mailCount', 'multipart', 'annul',
     'zIndex', '_rows', 'head', 'Italic', 'getValue', 'zk_download', 'udu-webcenter', 'natural', 'checkJinn', 'add_line',
     'visibility', 'rowspan', '_doClick', 'ZK-Error', '_visible', 'onload', 'ru_RU', 'unlink', 'cryptoProPlugin',
-    'Bold', '_src', 'icon', 'year', 'west', 'Blob', 'rows', 'Busy', 'Host', 'color', 'panel', 'outer', 'zhtml',
+    'Bold', '_src', 'icon', 'year', 'west', 'Blob', 'rows', 'Busy', 'Host', 'color', 'panel', 'outer', 'zhtml', 'forms',
     'unload', 'content_script', 'woff', 'ARP', 'signAttributes', 'MODApplet', 'selectedRowKeys', '_afrVblRws', 'bear',
-    'getValueFromArrayById', 'zkau', 'username', 'styleClass', 'desktop', 'Content-Type', 'Resource', 'zk',
+    'getValueFromArrayById', 'zkau', 'username', 'styleClass', 'desktop', 'Content-Type', 'Resource', 'zk', 'rollback',
     'json', 'styles', 'sortDirection', 'charCode', 'autoSubmit', 'polling', 'xonLoadCal', 'valueChange', 'message',
     'combobox', 'blank', 'outcome', 'renderOnly', 'clientKey', 'clientId', 'editWindow', 'zkTheme', 'landscape',
     'portrait', 'keyCode', 'WebkitTransform', 'ZKClientInfo', 'ZKMatchMedia', 'images', 'doTooltipOver_',
     'current', 'resultsOFcontrols', 'taskmanager', 'metadata', 'userProfile', 'ssl', 'loader', 'templates',
-    'Navigation', '', 'None', 'Dropdown', 'AP', 'portlet', 'request_id', 'richClient',
+    'Navigation', '', 'None', 'Dropdown', 'AP', 'portlet', 'request_id', 'richClient', 'update',
 }  # не использовать в качестве параметров
 
 
