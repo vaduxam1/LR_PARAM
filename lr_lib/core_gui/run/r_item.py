@@ -250,3 +250,13 @@ class RItem:
             continue
 
         return vals
+
+    def search_label_text(self, add: int, new: int) -> None:
+        """
+        сколько param, нашел конкретный метод поиска
+        """
+        t = self.search_label['text']
+        t = t.split(':', 1)[0]
+        t += ': найдено:{add} шт, новых:{new} шт.'.format(add=add, new=new,)
+        self.search_label['text'] = t
+        return

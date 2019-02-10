@@ -244,18 +244,33 @@ class RunSettingWindow(tk.Toplevel):
         запуск
         """
         params = set()
-        for item in self.items:  # поиск param
+
+        def param_count_search_info(item: 'RItem', i_params: set) -> None:
+            """сколько param, нашел конкретный метод поиска"""
+            if not isinstance(i_params, set):
+                i_params = set(i_params)
+            add = len(i_params)
+            new = len(i_params - params)
+            item.search_label_text(add, new)
+            return
+
+        #  --> поиск param -->
+        for item in self.items:
             i_params = item.get_params()
+            param_count_search_info(item, i_params)
             params.update(i_params)
             continue
-
+        # LAST1
         item = self.last_items[0]
         i_params = item.get_params(i_params=params)
+        param_count_search_info(item, i_params)
         params.update(i_params)
-
+        # LAST2
         item = self.last_items[1]
         i_params = item.get_params(i_params=params)
+        param_count_search_info(item, i_params)
         params.update(i_params)
+        #  <-- поиск param <--
 
         y = lr_lib.gui.widj.dialog.YesNoCancel(
             [K_FIND, K_SKIP],
