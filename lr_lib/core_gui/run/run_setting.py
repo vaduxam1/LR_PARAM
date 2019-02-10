@@ -147,22 +147,27 @@ class RunSettingWindow(tk.Toplevel):
         lr_lib.gui.widj.tooltip.createToolTip(self.min_num_param_spin, TT_MinP)
 
         # Checkbutton
+        def cmd1() -> None:
+            """VarFirstLastFile и DefaultActionAddSnapshot должны быть противоположными"""
+            s = (not lr_vars.VarFirstLastFile.get())
+            lr_vars.DefaultActionAddSnapshot.set(s)
+            return
         self.cbxFirstLastFile = tk.Checkbutton(
             self.tool_label, variable=lr_vars.VarFirstLastFile, text='reverse', font=lr_vars.DefaultFont + ' italic',
-            padx=0, pady=0,
+            padx=0, pady=0, command=cmd1
         )
         lr_lib.gui.widj.tooltip.createToolTip(self.cbxFirstLastFile, lr_vars.Window._T2)
 
         # Checkbutton
         self.add_inf_cbx = tk.Checkbutton(
-            self.tool_label, anchor=tk.E, text='max inf mode', font=lr_vars.DefaultFont,
+            self.tool_label, anchor=tk.E, text='max inf', font=lr_vars.DefaultFont,
             variable=lr_vars.DefaultActionAddSnapshot,
         )
         lr_lib.gui.widj.tooltip.createToolTip(self.add_inf_cbx, self.action._T1)
 
         # Checkbutton
         self.only_numeric = tk.Checkbutton(
-            self.tool_label, anchor=tk.E, text='numeric', font=lr_vars.DefaultFont,
+            self.tool_label, anchor=tk.E, text='num', font=lr_vars.DefaultFont,
             variable=lr_vars.AllowOnlyNumericParam,
         )
         tt20 = 'Разрешить имена {param}, состоящие только из цифр\n например: 11235432\n\n' \
@@ -196,7 +201,7 @@ class RunSettingWindow(tk.Toplevel):
 
         self.min_num_param_spin.grid(row=5, column=6, sticky=tk.NSEW, rowspan=10, columnspan=1)
         self.only_numeric.grid(row=5, column=5, sticky=tk.NSEW, rowspan=10, columnspan=1)
-        self.deny_enable.grid(row=5, column=7, sticky=tk.NSEW, rowspan=10, columnspan=1)
+        self.deny_enable.grid(row=5, column=8, sticky=tk.NSEW, rowspan=10, columnspan=1)
 
         self.cbxFirstLastFile.grid(row=5, column=3, sticky=tk.NSEW, rowspan=10, columnspan=1)
         self.add_inf_cbx.grid(row=5, column=4, sticky=tk.NSEW, rowspan=10, columnspan=1)
