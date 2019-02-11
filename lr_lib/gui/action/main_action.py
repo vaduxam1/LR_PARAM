@@ -129,6 +129,7 @@ class ActionWindow(lr_lib.gui.action.act_win.ActWin):
 
         filemenu3 = tk.Menu(self.menubar, tearoff=0)
 
+        filemenu3.add_command(label="Remove dummy NEW", command=self.remove_web_dummy_template_new)
         filemenu3.add_command(label="Remove dummy", command=self.remove_web_dummy_template)
         filemenu3.add_command(label="Remove thinktime", command=self.thinktime_remove)
         filemenu3.add_command(label="Remove ALL web_reg_save_param", command=self._all_wrsp_remove)

@@ -11,7 +11,7 @@ import lr_lib.core.var._var
 #####################################
 # главные переменные
 
-VERSION = 'v11.5.8'  # версия утилиты
+VERSION = 'v11.5.9'  # версия утилиты
 lib_folder = 'lr_lib'  # каталог py-файлов утилиты
 Tk = tk.Tk()
 original_callback_exception = Tk.report_callback_exception  # переопределение обработчика raise

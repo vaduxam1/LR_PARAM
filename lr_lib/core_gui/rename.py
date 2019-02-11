@@ -31,16 +31,17 @@ def all_wrsp_auto_rename(gui: 'lr_lib.gui.action.main_action.ActionWindow', *arg
     m = (M % m)
     all_wrsps = '\n'.join(m.format(old, new) for (old, new) in zip(wrsps, wrsps_new))
 
+    key = 'Переименовать'
     y = lr_lib.gui.widj.dialog.YesNoCancel(
-        ['Переименовать', 'Отмена'],
-        'Переименовать wrsp слева',
-        'в wrsp справа',
-        'wrsp',
+        buttons=[key, 'Отмена'],
+        text_before='Переименовать wrsp слева',
+        text_after='в wrsp справа',
+        title='wrsp',
         parent=gui,
         is_text=all_wrsps,
     )
 
-    if y.ask() == 'Переименовать':
+    if y.ask() == key:
         with gui.block():
             _rename_wrsp(y.text, wrsps, gui)
     return
@@ -185,16 +186,18 @@ def all_wrsp_rename(gui: 'lr_lib.gui.action.main_action.ActionWindow', parent=No
     mx = max(map(len, wrsps or ['']))
     m = ('"{:<%s}" -> "{}"' % mx)
     all_wrsps = '\n'.join(m.format(old, new) for (old, new) in zip(wrsps, wrsps))
+
+    key = 'Переименовать'
     y = lr_lib.gui.widj.dialog.YesNoCancel(
-        ['Переименовать', 'Отмена', ],
-        'Переименовать wrsp слева',
-        'в wrsp справа',
-        'wrsp',
+        buttons=[key, 'Отмена', ],
+        text_before='Переименовать wrsp слева',
+        text_after='в wrsp справа',
+        title='wrsp',
         parent=parent,
         is_text=all_wrsps,
     )
 
-    if y.ask() == 'Переименовать':
+    if y.ask() == key:
         new_wrsps = [t.split('-> "', 1)[1].split('"', 1)[0].strip() for t in y.text.strip().split('\n')]
         assert (len(wrsps) == len(new_wrsps))
         with gui.block():

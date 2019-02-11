@@ -160,12 +160,19 @@ class YesNoCancel(tk.Toplevel):
         сделать окно похожим на dialog
         """
         # self.resizable(width=False, height=False)
-        # self.attributes('-topmost', True)  # свсегда сверху
+        self.attributes('-topmost', True)  # свсегда сверху
         # self.attributes("-toolwindow", 1)  # remove maximize/minimize
         self.protocol('WM_DELETE_WINDOW', self.close)  # remove close_threads
         self.grid_rowconfigure(0, weight=1)
         self.grid_columnconfigure(0, weight=1)
         return
+
+    def text_get(self) -> str:
+        """
+        текст tk.Text
+        """
+        t = self.tk_text.get(1.0, tk.END)
+        return t
 
     def ask(self) -> str:
         """
@@ -175,7 +182,7 @@ class YesNoCancel(tk.Toplevel):
             return self.queue.get()
         finally:
             self.alive_ = False
-            self.text = '\n{}'.format(self.tk_text.get(1.0, tk.END))
+            self.text = '\n{}'.format(self.text_get())
             self.destroy()
             self.parent.focus_set()
 

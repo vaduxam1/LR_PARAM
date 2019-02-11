@@ -13,6 +13,32 @@ import lr_lib.gui.action.act_search
 import lr_lib.gui.widj.dialog
 
 
+WT0 = '''
+web_submit_data("zkau;jsessionid=
+		"Method=POST",
+		"Snapshot=
+		"Mode=HTML",
+		ITEMDATA,
+		"Name=cmd_0", "Value=dummy", ENDITEM,
+		LAST);
+'''
+
+IsTextA = '''
+Отображенный пример Template необходимо заменить своим.
+Сравнивает Template построчно со всеми web_ из action.c. Найденные web_ удаляются.
+'''.strip()
+
+IsTextB = '''
+Template.Line счинается эквивалентной Action.Web_.Line, если A.W.Line содержит T.Line, то есть A.W.Line может быть длинее чем T.Line.
+Чтобы выбрать web, которые содержат различающиеся строки, например номер в "Snapshot=t5.inf", необходимо указать/обрезать эту строку в Template, так: "Snapshot=
+Порядок самих строк внутри Action.Web_ и Template может быть любым.
+
+Выбрать в комбобоксе:
+ 1) Нестрогое соответствие: web_ содержит все отображенные линии, и любые другие.
+ 2) Строгое соответствие: web_ содержит только отображенные линии, т.е. кол-во линий web_ и Template должно совпадать.
+'''.strip()
+
+
 class ActReplaceRemove(lr_lib.gui.action.act_search.ActSearch):
     """
     замена и удаление текста
@@ -83,6 +109,98 @@ class ActReplaceRemove(lr_lib.gui.action.act_search.ActSearch):
             self.web_action_to_tk_text(websReport=True)
         return
 
+    @lr_lib.core.var.vars_other.T_POOL_decorator
+    def remove_web_dummy_template_new(self, template='', **kwargs) -> None:
+        """
+        удалить web_ по пользовательскому шаблону
+        """
+        if not template:
+            template = WT0
+
+        template_dt = lambda: dict.fromkeys(map(str.strip, ync.text_get().strip().split('\n')))
+
+        def is_eq(mode: bool) -> str:
+            text = self.tk_text.get(1.0, tk.END).strip()
+            _web_action = lr_lib.core.action.main_awal.ActionWebsAndLines(self)
+            _web_action.set_text_list(text)
+
+            al = tuple(_web_action.get_web_all())
+            web_remove_count = 0
+            wrsp_remove_count = 0
+
+            for web_ in al:
+                wls = web_.lines_list
+                wls = tuple(map(str.strip, wls))
+                tdt = template_dt()
+
+                for wl in wls:
+                    for tl in tdt:
+                        if (not tdt[tl]) and wl.startswith(tl):
+                            tdt[tl] = True
+                            break
+                        continue
+                    continue
+
+                if mode:
+                    ch = (all(tdt.values()) and (len(web_.lines_list) == len(tdt)))
+                else:
+                    ch = all(tdt.values())
+
+                if ch:  # delete
+                    # wrsp
+                    try:
+                        wrsp_list = web_.web_reg_save_param_list
+                    except AttributeError:
+                        pass  # не snapshot web
+                    else:
+                        for wr in wrsp_list:
+                            _web_action.web_reg_save_param_remove(wr.name)  # удалить
+
+                            wrsp_remove_count += 1
+                            lr_vars.Logger.info('delete {} | {}'.format(wr.name, wr.param))
+                            continue
+
+                    # web
+                    _web_action.webs_and_lines.remove(web_)  # удалить
+
+                    web_remove_count += 1
+                    lr_vars.Logger.info('delete web={} | snapshot={} | num={}'.format(
+                        web_.name, web_.snapshot.inf, web_.snapshot.serial)
+                    )
+                continue
+
+            # сохр
+            self.web_action_to_tk_text()
+
+            r = 'web={w} шт., wrsp={r} шт.'.format(w=web_remove_count, r=wrsp_remove_count,)
+            lr_vars.Logger.info(r)
+
+            if messagebox.askokcancel(title='удаление web_', message='Удалить {} ?'.format(r), parent=ync, ):
+                new_text = _web_action.to_str(websReport=False)
+                self.backup()
+                self.tk_text_to_web_action(text=new_text, websReport=True)
+
+            t = ync.text_get().strip()
+            return t
+
+        # удаление
+        combo_dict = {
+            '1) Нестрогое': lambda: is_eq(False),
+            '2) Строгое': lambda: is_eq(True),
+        }
+
+        ync = lr_lib.gui.widj.dialog.YesNoCancel(
+            buttons=['Выход', ],
+            text_before=IsTextA,
+            text_after=IsTextB,
+            title='Template:',
+            parent=self,
+            is_text=template.strip(),
+            combo_dict=combo_dict,
+        )
+        ync.ask()
+        return
+
     def tk_text_dummy_remove(self, force=False, mode='') -> bool:
         """
         удалить все dummy web_ - запуск
@@ -105,7 +223,8 @@ class ActReplaceRemove(lr_lib.gui.action.act_search.ActSearch):
             is_remove = lr_lib.etc.template.dummy_remove
 
         rem = 0
-        for web_ in tuple(_web_action.get_web_all()):
+        al = tuple(_web_action.get_web_all())
+        for web_ in al:
             if is_remove(web_.lines_list):
                 _web_action.webs_and_lines.remove(web_)
                 rem += 1
@@ -165,7 +284,8 @@ class ActReplaceRemove(lr_lib.gui.action.act_search.ActSearch):
             if ((len(template) != lr_lib.etc.template.Dummy.web_len) or
                     (len(template.split('\n')) != lr_lib.etc.template.Dummy.dummy_len)):
                 lr_lib.etc.template.Dummy.setattrs(template)
-                return self.tk_text_dummy_remove()
+                self.tk_text_dummy_remove()
+                return
 
             if y == buttons[0]:
                 new_text = _web_action.to_str(websReport=False)
