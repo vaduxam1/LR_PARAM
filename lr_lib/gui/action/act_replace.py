@@ -14,23 +14,22 @@ import lr_lib.gui.widj.dialog
 
 
 WT0 = '''
-web_submit_data("zkau;jsessionid=
-		"Method=POST",
-		"Snapshot=
-		"Mode=HTML",
-		ITEMDATA,
-		"Name=cmd_0", "Value=dummy", ENDITEM,
-		LAST);
+web_submit_data("
+    "Method=POST",
+    "Snapshot=
+    "Mode=HTML",
+    ITEMDATA,
+    "Name=cmd_0", "Value=dummy", ENDITEM,
+    LAST);
 '''
 
 IsTextA = '''
-Отображенный пример Template необходимо заменить своим.
-Сравнивает Template построчно со всеми web_ из action.c. Найденные web_ удаляются.
+Отображенный пример Template необходимо заменить своим. Сравнивает Template построчно со всеми web_ из action.c. Найденные web_ удаляются.
 '''.strip()
 
 IsTextB = '''
-Template.Line считается эквивалентной Action.Web_.Line, если A.W.Line содержит T.Line, то есть A.W.Line может быть длинее чем T.Line.
-Чтобы выбрать web, которые содержат различающиеся строки, например номер в "Snapshot=t5.inf", необходимо указать/обрезать эту строку в Template, так: "Snapshot=
+Template_Line считается эквивалентной ActionWeb_Line, если AW_Line начинается на T_Line: AW.startswith(T).
+Для выбора web, содержаших различающиеся строки, например номер в "Snapshot=t5.inf", необходимо обрезать эту строку в Template так: "Snapshot=t
 Порядок самих строк внутри Action.Web_ и Template может быть любым.
 
 Выбрать в комбобоксе:

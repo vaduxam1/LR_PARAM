@@ -74,10 +74,12 @@ class YesNoCancel(tk.Toplevel):
 
             self.combo.bind("<<ComboboxSelected>>", enc)
 
-        self.label1 = tk.Label(self, text=str(text_before), font='Arial 11', padx=0, pady=0, bg=color)
-        self.label1.grid(row=3, column=0, sticky=tk.NSEW, columnspan=2, padx=0, pady=0)
-        self.label2 = tk.Label(self, text=str(text_after), font='Arial 10', padx=0, pady=0)
-        self.label2.grid(row=100, column=0, sticky=tk.NSEW, columnspan=2, padx=0, pady=0)
+        # text_before
+        self.label1 = tk.Label(self, text=str(text_before), font='Arial 10', bg=color, justify=tk.LEFT, )
+        self.label1.grid(row=3, column=0, sticky=tk.NSEW, columnspan=2, )
+        # text_after
+        self.label2 = tk.Label(self, text=str(text_after), font='Arial 10', justify=tk.LEFT, )
+        self.label2.grid(row=100, column=0, sticky=tk.NSEW, columnspan=2, )
 
         width = max(map(len, buttons))
         if width > 20:
