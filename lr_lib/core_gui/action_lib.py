@@ -44,6 +44,7 @@ def mouse_web_reg_save_param(
             w = wrsp_dict['web_reg_name']
             if lr_vars.VarShowPopupWindow.get() and widget.action.final_wnd_var.get():
                 widget.action.search_in_action(word=w)
+
                 s = '{wr}\n\n{wd}'.format(wr=widget.action.web_action.websReport.param_statistic[w], wd=wrsp_dict)
                 lr_vars.Logger.debug(s)
                 tk.messagebox.showinfo(wrsp_dict['param'], s, parent=widget.action)
@@ -79,7 +80,10 @@ def rClick_Param(event, *args, **kwargs) -> None:
         # count = widget.count("1.0", "sel.first")
         # print(count)
     except tk.TclError:
-        return lr_vars.Logger.warning('сбросилось выделение текста\ntry again', parent=widget)
+        i = 'сбросилось выделение текста\ntry again'
+        lr_vars.Logger.warning(i, parent=widget)
+        return
+
     try:
         action = widget.action
     except AttributeError:
@@ -124,7 +128,8 @@ def rClick_max_inf(event) -> None:
     """
     selection = event.widget.selection_get()
     m = re.sub("\D", "", selection)
-    lr_vars.VarSearchMaxSnapshot.set(int(m))
+    m = int(m)
+    lr_vars.VarSearchMaxSnapshot.set(m)
     return
 
 
@@ -134,7 +139,8 @@ def rClick_min_inf(event) -> None:
     """
     selection = event.widget.selection_get()
     m = re.sub("\D", "", selection)
-    lr_vars.VarSearchMinSnapshot.set(int(m))
+    m = int(m)
+    lr_vars.VarSearchMinSnapshot.set(m)
     return
 
 
@@ -260,7 +266,9 @@ def snapshot_files(
     if not i_num:
         if not selection:
             selection = widget.selection_get()
-        i_num = ''.join(filter(str.isnumeric, selection))
+
+        i = filter(str.isnumeric, selection)
+        i_num = ''.join(i)
 
     lr_lib.gui.widj.responce_files.RespFiles(widget, i_num, folder_record, folder_response)
     return
@@ -277,7 +285,9 @@ def file_from_selection(event) -> str:
     if os.path.isfile(full_name):
         lr_lib.core.etc.other._openTextInEditor(full_name)
     else:
-        i = 'файл не найден :\n"{}" : len={}\n{}'.format(selection, len(selection), full_name)
+        ls = len(selection)
+        i = 'файл не найден :\n"{}" : len={}\n{}'
+        i = i.format(selection, ls, full_name)
         lr_vars.Logger.warning(i, log=False)
 
     return full_name
@@ -289,17 +299,24 @@ def snapshot_text_from_selection(event) -> int:
     """
     action = event_action_getter(event)
     selection = event.widget.selection_get()
-    inf = int(''.join(filter(str.isnumeric, selection)))
-    web_ = next(action.web_action.get_web_snapshot_by(snapshot=inf), None)
+
+    snapshot = filter(str.isnumeric, selection)
+    snapshot = ''.join(snapshot)
+    snapshot = int(snapshot)
+
+    webs = action.web_action.get_web_snapshot_by(snapshot=snapshot)
+    web_ = next(webs, None)
 
     if web_ is None:
-        i = 'web_.snapshot не найден :\n"{}" : len={}\n{}'.format(selection, len(selection), inf)
+        ls = len(selection)
+        i = 'web_.snapshot не найден :\n"{}" : len={}\n{}'
+        i = i.format(selection, ls, snapshot)
         lr_vars.Logger.warning(i, log=False)
     else:
         i = web_.to_str(_all_stat=True)
         lr_lib.core.etc.other.openTextInEditor(i)
 
-    return inf
+    return snapshot
 
 
 def wrsp_text_from_selection(event) -> object:
@@ -321,7 +338,9 @@ def wrsp_text_from_selection(event) -> object:
         wrsp = next(w, None)
 
     if wrsp is None:
-        i = 'wrsp не найден :\n"{}" : len={}\n{}'.format(selection, len(selection), action)
+        ls = len(selection)
+        i = 'wrsp не найден :\n"{}" : len={}\n{}'
+        i = i.format(selection, ls, action)
         lr_vars.Logger.warning(i, log=False)
     else:
         i = wrsp.to_str(_all_stat=True)
@@ -340,16 +359,15 @@ def rClick_web_reg_save_param_regenerate(event, new_lb_rb=True, selection=None, 
     try:
         action = event.widget.action
     except:
-        action = next(iter(lr_vars.Window.action_windows.values()))
+        vals = lr_vars.Window.action_windows.values()
+        vals = iter(vals)
+        action = next(vals)
 
     if lr_lib.core.wrsp.param.wrsp_lr_start not in selection:
         s = 'Ошибка, необходимо выделять весь блок, созданного web_reg_save_param, вместе с комментариями\n' \
             'Сейчас "{wr}" не содержится в выделенном тексте:\n{selection}'
-        tk.messagebox.showwarning(
-            str(rClick_web_reg_save_param_regenerate),
-            s.format(wr=lr_lib.core.wrsp.param.wrsp_lr_start, selection=selection[:1000]),
-            parent=action,
-        )
+        s = s.format(wr=lr_lib.core.wrsp.param.wrsp_lr_start, selection=selection[:1000])
+        tk.messagebox.showwarning(str(rClick_web_reg_save_param_regenerate), s, parent=action)
         return
 
     file_name = selection.split(lr_lib.core.wrsp.param.wrsp_file_start, 1)[-1]
@@ -362,7 +380,7 @@ def rClick_web_reg_save_param_regenerate(event, new_lb_rb=True, selection=None, 
 
     sel = selection.split(lr_lib.core.wrsp.param.wrsp_lr_start, 1)[-1]
     sel = sel.split(lr_lib.core.wrsp.param.wrsp_lr_end, 1)
-    wrsp_name, sel = sel[0], sel[-1]
+    (wrsp_name, sel) = (sel[0], sel[-1])
 
     if new_lb_rb:  # сохранить LB/RB
         _lb = sel.split(lr_lib.core.wrsp.param.wrsp_LB_start, 1)[-1]
@@ -380,7 +398,8 @@ def rClick_web_reg_save_param_regenerate(event, new_lb_rb=True, selection=None, 
         try:
             _ = event.widget.action
         except AttributeError:  # не  action
-            txt = event.widget.get(1.0, tk.END).replace(selection, web_reg_save_param)
+            t = event.widget.get(1.0, tk.END)
+            txt = t.replace(selection, web_reg_save_param)
             event.widget.delete(1.0, tk.END)
             event.widget.insert(1.0, txt)  # вставить
         else:
@@ -393,9 +412,11 @@ def rClick_web_reg_save_param_regenerate(event, new_lb_rb=True, selection=None, 
 
             wrsp_name = wrsp_dict['web_reg_name']
             action.web_action.web_reg_save_param_insert(wrsp_dict, web_reg_save_param)  # сохр web_reg_save_param в web
-            action.web_action.replace_bodys([(wrsp_dict['param'], wrsp_name)])  # заменить в телах web's
+            w = (wrsp_dict['param'], wrsp_name)
+            action.web_action.replace_bodys([w, ])  # заменить в телах web's
             action.web_action_to_tk_text(websReport=True)  # вставить в action.c
 
             action.search_in_action(word=wrsp_name)
 
-    return wrsp_dict, web_reg_save_param
+    it = (wrsp_dict, web_reg_save_param)
+    return it
