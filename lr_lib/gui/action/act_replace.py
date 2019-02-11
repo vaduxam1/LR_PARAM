@@ -79,8 +79,12 @@ class ActReplaceRemove(lr_lib.gui.action.act_search.ActSearch):
             continue
 
         del_all = yask = is_del = False
-        for web in self.web_action.get_web_snapshot_all():
-            if web.snapshot.inf in self.web_action.websReport.google_webs:
+        al = self.web_action.get_web_snapshot_all()
+
+        for web in al:
+            gv = self.web_action.websReport.google_webs
+            if web.snapshot.inf in gv:
+
                 if not del_all:
                     gws = str(self.web_action.websReport.google_webs)[:50]
                     wt = ''.join(web.to_str())
@@ -88,22 +92,25 @@ class ActReplaceRemove(lr_lib.gui.action.act_search.ActSearch):
                     sn = '"Snapshot=t{}.inf"'.format(web.snapshot.inf)
 
                     y = lr_lib.gui.widj.dialog.YesNoCancel(
-                        ['Удалить текущий', "Удалить все Snapshot's {}".format(gws), 'Пропустить', 'Выход'],
-                        "удалить {sn} содержащий {d}".format(d=dw, sn=sn),
-                        'всего можно удалить {} шт'.format(len(self.web_action.websReport.google_webs)),
+                        buttons=['Удалить текущий', "Удалить все Snapshot's {}".format(gws), 'Пропустить', 'Выход'],
+                        text_before="удалить {sn} содержащий {d}".format(d=dw, sn=sn),
+                        text_after='всего можно удалить {} шт'.format(len(self.web_action.websReport.google_webs)),
                         parent=self,
                         is_text=wt,
                         title=sn,
                     )
-                    yask = y.ask()
 
+                    yask = y.ask()
                     del_all = yask.startswith('Удалить все')
+
                 if del_all or yask.startswith('Удалить'):
                     self.web_action.webs_and_lines.remove(web)
                     is_del = True
+
                 elif yask == 'Выход':
                     break
             continue
+
         if is_del:
             self.web_action_to_tk_text(websReport=True)
         return
@@ -334,16 +341,17 @@ class ActReplaceRemove(lr_lib.gui.action.act_search.ActSearch):
         z2 = zip(transactions, transactions)
         all_transaction = '\n'.join(m.format(old, new) for old, new in z2)
 
+        key = 'Переименовать'
         y = lr_lib.gui.widj.dialog.YesNoCancel(
-            ['Переименовать', 'Отмена'],
-            'Переименовать transaction слева',
-            'в transaction справа',
-            'transaction',
+            buttons=[key, 'Отмена'],
+            text_before='Переименовать transaction слева',
+            text_after='в transaction справа',
+            title='transaction',
             parent=self,
             is_text=all_transaction,
         )
 
-        if y.ask() == 'Переименовать':
+        if y.ask() == key:
             new_transaction = [t.split('-> "', 1)[1].split('"', 1)[0].strip() for t in y.text.strip().split('\n')]
             assert (len(transactions) == len(new_transaction))
 

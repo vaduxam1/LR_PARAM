@@ -64,28 +64,34 @@ class YesNoCancel(tk.Toplevel):
 
         self.combo_var = tk.StringVar(value='')
         if self.combo_dict:
-            self.combo = ttk.Combobox(self, textvariable=self.combo_var, values=list(self.combo_dict.keys()))
+            values = list(self.combo_dict.keys())
+
+            # Combobox
+            self.combo = ttk.Combobox(self, textvariable=self.combo_var, values=values, )
 
             def enc(*a) -> None:
-                callback = self.combo_dict[self.combo_var.get()]
-                out = callback()
-                self.new_text(out)
+                """выбор в Combobox -> вывод нового текста в self.tk_text"""
+                cv = self.combo_var.get()
+                callback = self.combo_dict[cv]
+                text = callback()  # получить text
+                self.new_text(text)  # вывести
                 return
-
             self.combo.bind("<<ComboboxSelected>>", enc)
 
-        # text_before
-        self.label1 = tk.Label(self, text=str(text_before), font='Arial 10', bg=color, justify=tk.LEFT, )
-        self.label1.grid(row=3, column=0, sticky=tk.NSEW, columnspan=2, )
-        # text_after
-        self.label2 = tk.Label(self, text=str(text_after), font='Arial 10', justify=tk.LEFT, )
-        self.label2.grid(row=100, column=0, sticky=tk.NSEW, columnspan=2, )
+        # Label
+        self.text_before = tk.Label(self, text=str(text_before), font='Arial 10', bg=color, justify=tk.LEFT, )
+        self.text_before.grid(row=3, column=0, sticky=tk.NSEW, columnspan=2, )
+
+        # Label
+        self.text_after = tk.Label(self, text=str(text_after), font='Arial 10', justify=tk.LEFT, )
+        self.text_after.grid(row=100, column=0, sticky=tk.NSEW, columnspan=2, )
 
         width = max(map(len, buttons))
         if width > 20:
             width = 20
         i = 10
 
+        # Button's
         for name in buttons:
 
             def cmd(*a, n=name) -> None:
@@ -99,9 +105,11 @@ class YesNoCancel(tk.Toplevel):
                     self.queue.put(n)
                 return
 
+            # Button
             self.buttons[name] = tk.Button(
                 self, text=name, command=cmd, width=width, font='Arial 9 bold', padx=0, pady=0,
             )
+
             self.buttons[name].bind("<KeyRelease-Return>", cmd)
             self.buttons[name].grid(row=i, column=0, sticky=tk.NSEW, columnspan=2, padx=0, pady=0)
             i += 1
@@ -110,8 +118,9 @@ class YesNoCancel(tk.Toplevel):
         if self.combo_dict:
             self.combo.grid(row=(i + 1), column=0, padx=0, pady=0)
 
-        self.text = ''
+        # tk.Text
         self.tk_text = tk.Text(self, wrap="none", padx=0, pady=0)
+        self.text = ''  # текст tk.Text при выходе
 
         if is_text is not None:
             try:
@@ -126,6 +135,7 @@ class YesNoCancel(tk.Toplevel):
 
             if t_enc:
                 is_text = codecs.decode(is_text, 'unicode_escape', 'replace')
+
             self.tk_text.insert(1.0, is_text)
             self.text_scrolly = ttk.Scrollbar(self, orient=tk.VERTICAL, command=self.tk_text.yview)
             self.text_scrollx = ttk.Scrollbar(self, orient=tk.HORIZONTAL, command=self.tk_text.xview)

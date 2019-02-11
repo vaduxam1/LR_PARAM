@@ -163,9 +163,9 @@ class TopPoolSetting(tk.Toplevel):
             """
             перезапуск инфо
             """
-            (t1, t2) = y.label1['text'].split('\n', 1)
+            (t1, t2) = y.text_before['text'].split('\n', 1)
             t1 = '{0}: size({1})'.format(t1.split(':', 1)[0], len(lr_vars.T_POOL.threads))
-            y.label1.config(text='{0}\n{1}'.format(t1, t2))
+            y.text_before.config(text='{0}\n{1}'.format(t1, t2))
             y.new_text(pool_state_string())
             if y.alive_:
                 y.after(lr_vars._SThreadMonitorUpdate.get(), thread_info_updater, y)
