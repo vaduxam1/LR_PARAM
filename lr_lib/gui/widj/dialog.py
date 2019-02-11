@@ -33,6 +33,7 @@ class YesNoCancel(tk.Toplevel):
             combo_dict=None,
             t_enc=False,
             color=None,
+            btn_font='Arial 9 bold',
     ):
         """
         :param buttons: названия кнопок
@@ -86,7 +87,8 @@ class YesNoCancel(tk.Toplevel):
         self.text_after = tk.Label(self, text=str(text_after), font='Arial 10', justify=tk.LEFT, )
         self.text_after.grid(row=100, column=0, sticky=tk.NSEW, columnspan=2, )
 
-        width = max(map(len, buttons))
+        bl = list(map(len, buttons))
+        width = max(bl)
         if width > 20:
             width = 20
         i = 10
@@ -95,23 +97,25 @@ class YesNoCancel(tk.Toplevel):
         for name in buttons:
 
             def cmd(*a, n=name) -> None:
-                """button callback"""
+                """
+                button callback, выход при нажатии
+                :param n: str: имя кнопки калбека, для возврата в функцию, вызвавщую диалог, при выходе
+                :return: None
+                """
                 if n == K_CREATE:
                     if tkinter.messagebox.askokcancel('Продолжить?', K_CREATE, parent=self):
                         self.queue.put(n)
                     else:
                         pass  # оставаться в диалог окне
                 else:
-                    self.queue.put(n)
+                    self.queue.put(n)  # выйти
                 return
 
             # Button
-            self.buttons[name] = tk.Button(
-                self, text=name, command=cmd, width=width, font='Arial 9 bold', padx=0, pady=0,
-            )
-
+            self.buttons[name] = tk.Button(self, text=name, command=cmd, width=width, font=btn_font, padx=0, pady=0,)
             self.buttons[name].bind("<KeyRelease-Return>", cmd)
             self.buttons[name].grid(row=i, column=0, sticky=tk.NSEW, columnspan=2, padx=0, pady=0)
+
             i += 1
             continue
 
@@ -146,10 +150,12 @@ class YesNoCancel(tk.Toplevel):
 
         if self.buttons:
             if self.default_key not in self.buttons:
-                self.default_key = list(self.buttons.keys())[0]
+                bk = list(self.buttons.keys())
+                self.default_key = bk[0]
 
             if not focus:
-                self.buttons[self.default_key].focus_set()
+                btn = self.buttons[self.default_key]
+                btn.focus_set()
 
             b = self.buttons[self.default_key]
             b.configure(height=2, background='orange')
@@ -191,10 +197,12 @@ class YesNoCancel(tk.Toplevel):
         приостановить поток, до получения ответа
         """
         try:
-            return self.queue.get()
+            item = self.queue.get()
+            return item
         finally:
             self.alive_ = False
-            self.text = '\n{}'.format(self.text_get())
+            t = self.text_get()
+            self.text = '\n{}'.format(t)
             self.destroy()
             self.parent.focus_set()
 
@@ -211,8 +219,13 @@ class YesNoCancel(tk.Toplevel):
         """
         self.withdraw()
         self.update_idletasks()
-        x = ((self.winfo_screenwidth() - self.winfo_reqwidth()) / 2)
-        y = ((self.winfo_screenheight() - self.winfo_reqheight()) / 2)
-        self.geometry("+%d+%d" % (x, y))
+
+        x = (self.winfo_screenwidth() - self.winfo_reqwidth())
+        x /= 2
+        y = (self.winfo_screenheight() - self.winfo_reqheight())
+        y /= 2
+        g = ("+%d+%d" % (x, y))
+
+        self.geometry(g)
         self.deiconify()
         return
