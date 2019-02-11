@@ -54,10 +54,10 @@ def full_tb_write(*args):
     traceback.print_tb(exc_tb)
     # в лог
     with open(lr_vars.logFullName, 'a') as log:
-        log.write('\n{0}\n\t>>> traceback.print_tb\n{0}\n'.format(lr_vars.PRINT_SEPARATOR))
+        log.write('\n{0}\n\t>>> traceback.print_tb\n{0}\n'.format(lr_vars.SEP))
         traceback.print_tb(exc_tb, file=log)
         log.write('{t}\n{v}'.format(t=exc_type, v=exc_val))
-        log.write('\n{0}\n\t<<< traceback.print_tb\n{0}\n'.format(lr_vars.PRINT_SEPARATOR))
+        log.write('\n{0}\n\t<<< traceback.print_tb\n{0}\n'.format(lr_vars.SEP))
 
     item = (exc_type, exc_val, exc_tb)
     return item
@@ -112,5 +112,5 @@ def get_tb(exc_type, exc_val, exc_tb, err_name: str) -> str:
 
     tb = ''.join(exc_lines[-1:]).rstrip()
     code = get_code().rstrip()
-    s = '{tb}\n{s}\n{code}'.format(tb=tb, code=code, s=lr_vars.PRINT_SEPARATOR)
+    s = '{tb}\n{s}\n{code}'.format(tb=tb, code=code, s=lr_vars.SEP)
     return s

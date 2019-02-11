@@ -172,7 +172,7 @@ class WinWidj(lr_lib.gui.wrsp.win_part_lbrb.WinPartsLbRb):
                 self.clip_add(web_reg_save_param)
             if self.cbxClearShowVar.get():
                 self.tk_text.delete(1.0, 'end')
-            lr_vars.Logger.info('{s}\n{wrsp}\n{s}'.format(s=lr_vars.PRINT_SEPARATOR, wrsp=web_reg_save_param))
+            lr_vars.Logger.info('{s}\n{wrsp}\n{s}'.format(s=lr_vars.SEP, wrsp=web_reg_save_param))
             if callback:  # highlight
                 callback()
         return web_reg_save_param

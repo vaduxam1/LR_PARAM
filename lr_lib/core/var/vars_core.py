@@ -279,7 +279,7 @@ def gui_updater_comboFiles() -> None:
     return
 
 
-NF3 = ('%s\nNEXT файл(3), при {text} в (5):\n {indx}-> {ni}/{len_files} : {f} -> {next_file}' % lr_vars.PRINT_SEPARATOR)
+NF3 = ('%s\nNEXT файл(3), при {text} в (5):\n {indx}-> {ni}/{len_files} : {f} -> {next_file}' % lr_vars.SEP)
 NP4 = ' next вхождение(4), при {text} в (5):\n\t\t[ {num}-> {n}/{pc} ] : {f}'
 UW = '''
 Все возможные LB/RB(5), для формирования param "{p}", пустые/недопустимые.

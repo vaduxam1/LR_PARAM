@@ -124,9 +124,8 @@ class ActReplaceRemove(lr_lib.gui.action.act_search.ActSearch):
                             _web_action.web_reg_save_param_remove(wr.name)  # удалить wrsp
 
                             wrsp_remove_count += 1
-                            lr_vars.Logger.info('delete {} | {}'.format(wr.name, wr.param))
-                            a = 'delete web:\n{p}\n{w}\n{p}\n name="{s}" | param="{n}"'
-                            a = a.format(w=wr.to_str(), s=wr.name, n=wr.param, p=lr_vars.PRINT_SEPARATOR, )
+                            a = 'delete WRSP:\n{p}\n{ws}\n{p}\n name="{wn}" | param="{wp}"'
+                            a = a.format(ws=wr.to_str(), wn=wr.name, wp=wr.param, p=lr_vars.SEP, )
                             lr_vars.Logger.info(a)
                             continue
 
@@ -135,7 +134,7 @@ class ActReplaceRemove(lr_lib.gui.action.act_search.ActSearch):
 
                     web_remove_count += 1
                     a = 'delete web:\n{p}\n{w}\n{p}\n snapshot={s} | num={n}'
-                    a = a.format(w=web_.to_str(), s=web_.snapshot.inf, n=web_.snapshot.serial, p=lr_vars.PRINT_SEPARATOR, )
+                    a = a.format(w=web_.to_str(), s=web_.snapshot.inf, n=web_.snapshot.serial, p=lr_vars.SEP, )
                     lr_vars.Logger.info(a)
                 continue
 

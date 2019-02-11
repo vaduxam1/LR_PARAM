@@ -85,7 +85,7 @@ def _LoggerLevelCreator(level_num: int, level: str) -> None:
                 if (parent is None) and lr_vars.Window:  # сделать action родителем
                     parent = lr_vars.Window.get_main_action()
 
-                message = '{s}\n{m}\n{s}'.format(m=message, s=lr_vars.PRINT_SEPARATOR)
+                message = '{s}\n{m}\n{s}'.format(m=message, s=lr_vars.SEP)
                 if level == 'warning':
                     messagebox.showwarning(level.capitalize(), message, parent=parent)
                 else:

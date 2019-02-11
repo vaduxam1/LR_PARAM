@@ -179,7 +179,7 @@ def param_files_info() -> str:
     ts = tuple(get_files_infs(lr_vars.FilesWithParam))
 
     r = rs.format(
-        sep=lr_vars.PRINT_SEPARATOR,
+        sep=lr_vars.SEP,
         t=s.format('Snapshot', 'FileName', 'Кол-во вариантов WRSP'),
         p=lr_vars.VarParam.get(),
         res='\n'.join(s.format(*r) for r in res),
