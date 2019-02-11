@@ -21,7 +21,7 @@ web_submit_data("
     ITEMDATA,
     "Name=cmd_0", "Value=dummy", ENDITEM,
     LAST);
-'''
+'''  # пример шаблона web, для удаления
 
 IsTextA = '''
 Отображенный пример Template необходимо заменить своим. Сравнивает Template построчно со всеми web_ из action.c. Найденные web_ удаляются.
@@ -118,7 +118,13 @@ class ActReplaceRemove(lr_lib.gui.action.act_search.ActSearch):
     @lr_lib.core.var.vars_other.T_POOL_decorator
     def remove_web_dummy_template_new(self, template='', **kwargs) -> None:
         """
-        удалить web_ по пользовательскому шаблону
+        удалить web_(например dummy или google) по пользовательскому шаблону - расширенный вариант.
+        работает примерно как раньше, но можно искать даже по одной строке,
+            например любые с этим адресом:
+                "URL=http://ssl.elk.minfin.ru:8080/",
+            или например любые с этим адресом и имеющие snapsot
+                 "URL=http://ssl.elk.minfin.ru:8080/",
+                 "Snapshot=
         """
         if not template:
             template = WT0
@@ -126,7 +132,11 @@ class ActReplaceRemove(lr_lib.gui.action.act_search.ActSearch):
         template_dt = lambda: dict.fromkeys(map(str.strip, ync.text_get().strip().split('\n')))
 
         def is_eq(web_find_mode: bool) -> str:
-            """поиск и удаление web"""
+            """
+            поиск и удаление web
+            :param web_find_mode: bool: Нестрогий/Строгий поиск web_
+            :return: str: вывод нового текста в диалог ync.tk_text - но тут это никак не используется, вернуть тот же
+            """
             text = self.tk_text.get(1.0, tk.END).strip()
             _web_action = lr_lib.core.action.main_awal.ActionWebsAndLines(self)
             _web_action.set_text_list(text)
@@ -187,7 +197,7 @@ class ActReplaceRemove(lr_lib.gui.action.act_search.ActSearch):
                 self.backup()
                 self.tk_text_to_web_action(text=new_text, websReport=True)
 
-            t = ync.text_get().strip()
+            t = ync.text_get().strip()  # для ync - вернуть тот же текст что и был
             return t
 
         # удаление
