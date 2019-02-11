@@ -17,7 +17,9 @@ CREATE_or_FIND = lambda x: (K_CREATE if x else '')
 
 class YesNoCancel(tk.Toplevel):
     """
-    диалог окно, тк велосипед, работает только в потоке
+    диалог окно, тк велосипед, работает только в потоке.
+    при вызове .ask() - приостановить вызвавший поток, до нажатия кнопки, и вернуть имя нажатой кнопки.
+    при выборе значения в комбобоксе - смена текста в tk.Text/is_text на переданный в калбеке из combo_dict
     """
 
     def __init__(
@@ -41,12 +43,27 @@ class YesNoCancel(tk.Toplevel):
         :param text_after: текст нижнего описания
         :param title: тайтл окна
         :param parent: родитель окна
-        :param default_key: кнопка по умолчанию
+        :param default_key: название "кнопки по умолчанию"
         :param is_text: текст основного tk.Text виджета
         :param focus: установить фокус ввода
-        :param combo_dict: ttk.Combobox значения
+        :param combo_dict: ttk.Combobox значения: {'combo_val': lambda: "new__is_text", 'new':  lambda: "tk text_3", }
         :param t_enc: декодировать is_text
-        :param color: label1 цвет фона
+        :param color: цвет фона text_before
+
+        Привер использования:
+            y = lr_lib.gui.widj.dialog.YesNoCancel(
+                buttons=['Найти', 'Выход'],
+                text_before='text before',
+                text_after='text after',
+                title='title text',
+                parent=lr_vars.Window.get_main_action(),
+                default_key='Найти',
+                is_text='tk text_1',
+                combo_dict={'key_a': lambda: 'tk text_2', 'key_b': lambda: unescape('%22_tk text_3_%22'), },
+            )
+            ask = y.ask()  # приостановить поток, до получения ответа - имени нажатой кнопки
+            if ask == 'Выход':
+                return
         """
         super().__init__(master=parent, padx=0, pady=0)
         buttons = list(filter(bool, buttons))
@@ -194,7 +211,7 @@ class YesNoCancel(tk.Toplevel):
 
     def ask(self) -> str:
         """
-        приостановить поток, до получения ответа
+        приостановить поток, до получения ответа, те до нажатия кнопки
         """
         try:
             item = self.queue.get()
