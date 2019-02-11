@@ -29,7 +29,7 @@ IsTextA = '''
 '''.strip()
 
 IsTextB = '''
-Template.Line счинается эквивалентной Action.Web_.Line, если A.W.Line содержит T.Line, то есть A.W.Line может быть длинее чем T.Line.
+Template.Line считается эквивалентной Action.Web_.Line, если A.W.Line содержит T.Line, то есть A.W.Line может быть длинее чем T.Line.
 Чтобы выбрать web, которые содержат различающиеся строки, например номер в "Snapshot=t5.inf", необходимо указать/обрезать эту строку в Template, так: "Snapshot=
 Порядок самих строк внутри Action.Web_ и Template может быть любым.
 
