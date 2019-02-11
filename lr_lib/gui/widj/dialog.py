@@ -38,19 +38,19 @@ class YesNoCancel(tk.Toplevel):
             btn_font='Arial 9 bold',
     ):
         """
-        :param buttons: названия кнопок
-        :param text_before: текст описания
-        :param text_after: текст нижнего описания
-        :param title: тайтл окна
-        :param parent: родитель окна
-        :param default_key: название "кнопки по умолчанию"
-        :param is_text: текст основного tk.Text виджета
-        :param focus: установить фокус ввода
-        :param combo_dict: ttk.Combobox значения: {'combo_val': lambda: "new__is_text", 'new':  lambda: "tk text_3", }
-        :param t_enc: декодировать is_text
-        :param color: цвет фона text_before
+        :param buttons: [str, ]: ['Найти', 'Выход']: названия кнопок
+        :param text_before: str: текст описания
+        :param text_after: str: текст нижнего описания
+        :param title: str: тайтл окна
+        :param parent: tk.Widget: родитель окна
+        :param default_key: str: "Найти": название "кнопки по умолчанию"
+        :param is_text: str: текст основного tk.Text виджета
+        :param focus: tk.Widget: установить фокус ввода
+        :param combo_dict: dict: {'combo_val': lambda: "new__is_text", 'new':  lambda: "tk text_3", }: для ttk.Combobox
+        :param t_enc: bool: декодировать is_text
+        :param color: str: "red": цвет фона text_before
 
-        Привер использования:
+        Пример использования:
             y = lr_lib.gui.widj.dialog.YesNoCancel(
                 buttons=['Найти', 'Выход'],
                 text_before='text before',
