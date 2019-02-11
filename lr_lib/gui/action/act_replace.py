@@ -125,7 +125,8 @@ class ActReplaceRemove(lr_lib.gui.action.act_search.ActSearch):
 
         template_dt = lambda: dict.fromkeys(map(str.strip, ync.text_get().strip().split('\n')))
 
-        def is_eq(mode: bool) -> str:
+        def is_eq(web_find_mode: bool) -> str:
+            """поиск и удаление web"""
             text = self.tk_text.get(1.0, tk.END).strip()
             _web_action = lr_lib.core.action.main_awal.ActionWebsAndLines(self)
             _web_action.set_text_list(text)
@@ -147,35 +148,35 @@ class ActReplaceRemove(lr_lib.gui.action.act_search.ActSearch):
                         continue
                     continue
 
-                if mode:
-                    ch = (all(tdt.values()) and (len(web_.lines_list) == len(tdt)))
-                else:
-                    ch = all(tdt.values())
+                need_delete = all(tdt.values())
+                if need_delete and web_find_mode:
+                    ln1 = len(web_.lines_list)
+                    ln2 = len(tdt)
+                    need_delete = (ln1 == ln2)
 
-                if ch:  # delete
-                    # wrsp
-                    try:
+                if need_delete:  # delete
+                    try:  # если у web есть wrsp, нужно удалить все эти wrsp, и все ссылки на них в остальных web
                         wrsp_list = web_.web_reg_save_param_list
                     except AttributeError:
                         pass  # не snapshot web
                     else:
                         for wr in wrsp_list:
-                            _web_action.web_reg_save_param_remove(wr.name)  # удалить
+                            _web_action.web_reg_save_param_remove(wr.name)  # удалить wrsp
 
                             wrsp_remove_count += 1
                             lr_vars.Logger.info('delete {} | {}'.format(wr.name, wr.param))
                             continue
 
                     # web
-                    _web_action.webs_and_lines.remove(web_)  # удалить
+                    _web_action.webs_and_lines.remove(web_)  # удалить web
 
                     web_remove_count += 1
                     lr_vars.Logger.info('delete web={} | snapshot={} | num={}'.format(
-                        web_.name, web_.snapshot.inf, web_.snapshot.serial)
-                    )
+                        web_.name, web_.snapshot.inf, web_.snapshot.serial,
+                    ))
                 continue
 
-            # сохр
+            # сформировать новый action.c
             self.web_action_to_tk_text()
 
             r = 'web={w} шт., wrsp={r} шт.'.format(w=web_remove_count, r=wrsp_remove_count,)
