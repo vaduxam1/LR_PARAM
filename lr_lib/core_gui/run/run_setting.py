@@ -139,7 +139,7 @@ class RunSettingWindow(tk.Toplevel):
             return
 
         self.min_param_spin = tk.Spinbox(
-            self.tool_label, width=2, justify='center', from_=0, to=99,
+            self.tool_label, width=2, justify='center', from_=0, to=99, bg='orange',
             textvariable=lr_vars._MinParamLen, command=_MinParamLen_minus_1,
         )
         rr2 = 'Минимальная длина любого {param}.\nОтфильтровывать {param} с меньшей длиной.'
@@ -159,15 +159,15 @@ class RunSettingWindow(tk.Toplevel):
             lr_vars.DefaultActionAddSnapshot.set(s)
             return
         self.cbxFirstLastFile = tk.Checkbutton(
-            self.tool_label, variable=lr_vars.VarFirstLastFile, text='reverse', font=lr_vars.DefaultFont + ' italic',
-            padx=0, pady=0, command=cmd1
+            self.tool_label, variable=lr_vars.VarFirstLastFile, text='reverse', font=lr_vars.DefaultFont,
+            padx=0, pady=0, command=cmd1, bg='orange',
         )
         lr_lib.gui.widj.tooltip.createToolTip(self.cbxFirstLastFile, lr_vars.Window._T2)
 
         # Checkbutton
         self.add_inf_cbx = tk.Checkbutton(
             self.tool_label, anchor=tk.E, text='max inf', font=lr_vars.DefaultFont,
-            variable=lr_vars.DefaultActionAddSnapshot,
+            variable=lr_vars.DefaultActionAddSnapshot, bg='orange',
         )
         lr_lib.gui.widj.tooltip.createToolTip(self.add_inf_cbx, self.action._T1)
 

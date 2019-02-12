@@ -587,5 +587,5 @@ class ActionWindow(lr_lib.gui.action.act_win.ActWin):
         self.lr_think_time.grid(row=8, column=13, sticky=tk.NSEW)
         self.lr_report_B.grid(row=8, column=4, sticky=tk.NSEW)
         self.lr_report_A.grid(row=7, column=4, sticky=tk.NSEW)
-        self.transaction_rename.grid(row=7, column=5, sticky=tk.NSEW, rowspan=1)
+        self.transaction_rename.grid(row=7, column=5, sticky=tk.NSEW, rowspan=2)
         return
