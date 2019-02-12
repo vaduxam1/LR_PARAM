@@ -45,6 +45,7 @@ VarWRSPStats = tk.BooleanVar(value=False)  # для wrsp, создавать п�
 
 SecondaryParamLen = tk.IntVar(value=3)  # число первых символов, взятых из param, для использования их при поиске одноименных param
 
+MaxParamLen = 99  # максимальная длина param
 MinParamLen = 3  # минимальная длина param
 _MinParamLen = tk.IntVar(value=MinParamLen)  # минимальная длина param
 

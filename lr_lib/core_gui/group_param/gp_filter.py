@@ -53,7 +53,7 @@ def param_filter(params: [str, ], deny_param_filter=True, action=None, ) -> iter
         len_p = len(param)
         pl = param.lower()
 
-        if len_p < lr_vars.MinParamLen:
+        if lr_vars.MaxParamLen < len_p < lr_vars.MinParamLen:
             continue
         elif deny and (any(map(param.startswith, DENY_Force_Startswitch_PARAMS))
                        or any(map(param.endswith, DENY_Force_Endswitch_PARAMS))
@@ -109,7 +109,7 @@ def _param_filter(params: [str, ], ) -> [str, ]:
 
     for param in params:
         lp = len(param)
-        if (lp < lr_vars.MinParamLen) \
+        if (lr_vars.MaxParamLen < lp < lr_vars.MinParamLen) \
                 or any(map(param_splitters.__contains__, param)) \
                 or (all(map(str.isnumeric, param)) and (lp < _MinParamNumsOnlyLen)):
             continue
