@@ -38,30 +38,34 @@ def param_filter(params: [str, ], deny_param_filter=True, action=None, ) -> iter
     """
     params = filter(str.strip, params)
     params = set(params)
-
-    deny_numeric = (not lr_vars.AllowOnlyNumericParam.get())
-
-    if not action:
-        action = lr_vars.Window.get_main_action()
-
     if not deny_param_filter:
         yield from params
         return
 
+    deny_numeric = (not lr_vars.AllowOnlyNumericParam.get())
     deny = DENY_ENABLE.get()
+    if not action:
+        action = lr_vars.Window.get_main_action()
+
     for param in params:
         len_p = len(param)
-        pl = param.lower()
 
-        if lr_vars.MaxParamLen < len_p < lr_vars.MinParamLen:
-            continue
-        elif deny and (any(map(param.startswith, DENY_Force_Startswitch_PARAMS))
-                       or any(map(param.endswith, DENY_Force_Endswitch_PARAMS))
-                       or (param in DENY_PARAMS_EQ)
-                       or (pl in DENY_PARAMS_LOWER)
-                       or any(a in pl for a in DENY_Force_Contains_PARAMS)
-                       or any(a in param for a in DENY_Force_Contains_PARAMS)
-        ):
+        if deny:
+            p_lower = param.lower()
+            if any(map(param.startswith, DENY_Force_Startswitch_PARAMS)):
+                continue
+            elif p_lower in DENY_PARAMS_LOWER:
+                continue
+            elif any(map(param.endswith, DENY_Force_Endswitch_PARAMS)):
+                continue
+            elif param in DENY_PARAMS_EQ:
+                continue
+            elif any(a in p_lower for a in DENY_Force_Contains_Lower_PARAMS):
+                continue
+            elif any(a in param for a in DENY_Force_Contains_PARAMS):
+                continue
+
+        if (len_p < lr_vars.MinParamLen) or (len_p > lr_vars.MaxParamLen):
             continue
         elif not all(map(param_valid_letters.__contains__, param)):
             continue  # "asd wer*&3"
@@ -108,10 +112,12 @@ def _param_filter(params: [str, ], ) -> [str, ]:
     _MinParamNumsOnlyLen = lr_vars.MinParamNumsOnlyLen.get()
 
     for param in params:
-        lp = len(param)
-        if (lr_vars.MaxParamLen < lp < lr_vars.MinParamLen) \
-                or any(map(param_splitters.__contains__, param)) \
-                or (all(map(str.isnumeric, param)) and (lp < _MinParamNumsOnlyLen)):
+        len_p = len(param)
+        if (len_p < lr_vars.MinParamLen) or (len_p > lr_vars.MaxParamLen):
+            continue
+        elif any(map(param_splitters.__contains__, param)):
+            continue
+        elif all(map(str.isnumeric, param)) and (len_p < _MinParamNumsOnlyLen):
             continue
 
         check = True

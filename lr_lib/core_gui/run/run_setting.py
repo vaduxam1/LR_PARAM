@@ -12,13 +12,13 @@ import lr_lib.core_gui.group_param.gp_act_lb
 import lr_lib.core_gui.group_param.gp_act_re
 import lr_lib.core_gui.group_param.gp_act_resp_split
 import lr_lib.core_gui.group_param.gp_act_start
-import lr_lib.core_gui.group_param.gp_filter
 import lr_lib.core_gui.group_param.gp_lb_post
 import lr_lib.core_gui.group_param.gp_response_re
 import lr_lib.core_gui.rename
 import lr_lib.gui.widj.dialog
 import lr_lib.gui.widj.tooltip
 from lr_lib.core.var.vars_other import T_POOL_decorator
+from lr_lib.core_gui.group_param.gp_filter import param_sort
 from lr_lib.core_gui.run.r_item import RItem
 from lr_lib.core_gui.run.r_other import block
 from lr_lib.core_gui.run.r_texts import TT_N, TT_PN, TT_MinP, TT_LB, TT_SPL, TT_RE, TT_REP, TT_LBP
@@ -60,6 +60,7 @@ class RunSettingWindow(tk.Toplevel):
             files_resp=True,
             files_other=True,
             only_in_act_param=True,
+            enable=True,
         )
         self.item2 = RItem(
             self, lr_lib.core_gui.group_param.gp_act_re.group_param_search_by_act_re,
@@ -70,6 +71,7 @@ class RunSettingWindow(tk.Toplevel):
             files_resp=True,
             files_other=False,
             only_in_act_param=True,
+            enable=False,
         )
         self.item3 = RItem(
             self, lr_lib.core_gui.group_param.gp_response_re.group_param_search_by_resp_re,
@@ -80,6 +82,7 @@ class RunSettingWindow(tk.Toplevel):
             files_resp=True,
             files_other=True,
             only_in_act_param=True,
+            enable=True,
         )
         self.item4 = RItem(
             self, lr_lib.core_gui.group_param.gp_act_resp_split.group_param_search_by_split,
@@ -90,6 +93,7 @@ class RunSettingWindow(tk.Toplevel):
             files_resp=True,
             files_other=True,
             only_in_act_param=True,
+            enable=False,
         )
         self.item_last_startsw = RItem(
             self, lr_lib.core_gui.group_param.gp_act_start.group_param_search_by_exist_param,
@@ -100,6 +104,7 @@ class RunSettingWindow(tk.Toplevel):
             files_resp=True,
             files_other=True,
             only_in_act_param=True,
+            enable=True,
         )
         self.item_last_lb = RItem(
             self, lr_lib.core_gui.group_param.gp_lb_post.group_param_search_by_lb_post,
@@ -110,6 +115,7 @@ class RunSettingWindow(tk.Toplevel):
             files_resp=True,
             files_other=True,
             only_in_act_param=True,
+            enable=False,
         )
 
         # Button
@@ -260,16 +266,21 @@ class RunSettingWindow(tk.Toplevel):
             param_count_search_info(item, i_params)
             params.update(i_params)
             continue
+        params = set(param_sort(params, deny_param_filter=True))  # фильтровать
+
         # LAST1
         item = self.last_items[0]
         i_params = item.get_params(i_params=params)
         param_count_search_info(item, i_params)
         params.update(i_params)
+        params = set(param_sort(params, deny_param_filter=True))  # фильтровать
+
         # LAST2
         item = self.last_items[1]
         i_params = item.get_params(i_params=params)
         param_count_search_info(item, i_params)
         params.update(i_params)
+        params = param_sort(params, deny_param_filter=True)  # фильтровать
         #  <-- поиск param <--
 
         y = lr_lib.gui.widj.dialog.YesNoCancel(
@@ -287,7 +298,7 @@ class RunSettingWindow(tk.Toplevel):
         # создание param
         if ans == K_FIND:
             params = y.text.split('\n')
-            params = lr_lib.core_gui.group_param.gp_filter.param_sort(params, deny_param_filter=False)
+            params = param_sort(params, deny_param_filter=False)
             self.after(500, self.destroy)
             lr_lib.core_gui.group_param.core_gp.group_param(None, params, widget=self.action.tk_text, ask=False)
         else:

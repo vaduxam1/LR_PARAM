@@ -68,7 +68,7 @@ DENY_Force_Startswitch_PARAMS = (
     'z-paging', 'padding', 'fixed', 'eb-arp', 'eb-core', 'notif-', 'Qwerty', 'marker_', 'FK', 'paging', 'message',
     'document_', 'table_', 'combo_', 'scroller', 'import', 'export', 'service', 'copy_', 'details', 'Print', 'filter',
     'dropdown', 'expand_', 'arrow-', 'apply_', 'sufd-', 'groupbox', 'collapse_', 'x-www', 'funnel_', 'selecting_',
-    'to_', 'miscel', 'doc_', 'id_', 'Cache-Control',
+    'to_', 'miscel', 'doc_', 'id_', 'Cache-Control', 'notification', 'form-',
 )  # не использовать в качестве параметров, если начинаются так
 
 DENY_Force_Endswitch_PARAMS = set()  # не использовать в качестве параметров, если заканчивается так
@@ -103,7 +103,7 @@ DENY_PARAMS_LOWER = {
     'portrait', 'keyCode', 'WebkitTransform', 'ZKClientInfo', 'ZKMatchMedia', 'images', 'doTooltipOver_', 'no-cache',
     'current', 'resultsOFcontrols', 'taskmanager', 'metadata', 'userProfile', 'ssl', 'loader', 'templates',
     'Navigation', '', 'None', 'Dropdown', 'AP', 'portlet', 'request_id', 'richClient', 'update', '177_Nikolaev',
-    'javascript', 'fileSize', 'fileName', 'files',
+    'javascript', 'fileSize', 'fileName', 'files', 'signature', 'after', 'upload',
 }  # не использовать в качестве параметров, если lower соосветствие
 
 

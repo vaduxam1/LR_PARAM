@@ -25,7 +25,8 @@ class RItem:
                  files_other=False,
                  only_in_act_param=True,
                  label_title='',
-                 kwargs=None
+                 enable=True,
+                 kwargs=None,
                  ):
         self.parent = parent
 
@@ -168,7 +169,7 @@ class RItem:
 
         # Checkbutton
         tt_on = 'вкл. / выкл.'
-        self._cbx_on = tk.BooleanVar(value=True)
+        self._cbx_on = tk.BooleanVar(value=enable)
         self.cbx_on = tk.Checkbutton(
             self.main_label, text=tt_on, font='Arial 8', justify='left', fg=ColorHide, variable=self._cbx_on,
             command=set_state_widg(self._cbx_on, self.main_label.winfo_children()),
@@ -212,9 +213,11 @@ class RItem:
         """
         if not self._cbx_on.get():
             return []
+
         if i_params is None:
             i_params = set()
-        at = self._cbx_only_in_act_param.get()
+
+        only_in_act = self._cbx_only_in_act_param.get()
 
         with block(self):
             ps = self.get_params_source()
@@ -225,7 +228,7 @@ class RItem:
                 ask=ask,
                 ask2=ask2,
                 wrsp_create=wrsp_create,
-                action_text=at,
+                action_text=only_in_act,
                 i_params=i_params,
                 **self.kwargs
             )
