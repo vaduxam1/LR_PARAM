@@ -6,7 +6,7 @@ def default_callback(value, *args, **kwargs) -> None:
     """
     заглушка - пустой callback
     """
-    pass
+    return
 
 
 class Var:
@@ -15,7 +15,13 @@ class Var:
     """
 
     def __init__(self, value=None, callback_set=default_callback):
-        self.value_ = self.default_value = value
+        self.value_ = value  # хранящееся значение
+
+        try:  # значение по учолчанию
+            self.default_value = value.copy()
+        except Exception as ex:
+            self.default_value = value
+
         self.callback_set = callback_set  # выполнить callback при установке
         return
 
@@ -24,6 +30,7 @@ class Var:
         установить
         """
         self.value_ = value
+
         if callback:
             self.callback_set(value, *args, **kwargs)
         return
@@ -32,5 +39,5 @@ class Var:
         """
         получить
         """
-        v = self.value_
-        return v
+        value = self.value_
+        return value

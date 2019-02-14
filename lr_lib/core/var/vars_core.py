@@ -37,17 +37,20 @@ def _set_file(file: dict, errors='replace') -> None:
     чение файла в lr_vars.VarFileText
     """
     ff = file['File']
-
-    with open(ff['FullName'], encoding=lr_lib.core.var.vars_other.VarEncode.get(), errors=errors) as f:
+    fname = ff['FullName']
+    with open(fname, encoding=lr_lib.core.var.vars_other.VarEncode.get(), errors=errors) as f:
         lr_vars.VarFileText.set(f.read())
 
-    lr_vars.VarPartNum.set(0)
+    lr_vars.VarPartNum.set(0)  # варианты param в файле, начинать с начала - 0
 
-    if not ff['timeCreate']:  # создать статистику, если нет
+    ct = ff['timeCreate']
+    if not ct:  # создать статистику, если нет
         lr_lib.core.wrsp.files.set_file_statistic(file, as_text=True)
         # сохранить статистику в AllFiles
-        file_from_allfiles = lr_lib.core.wrsp.files.get_file_with_kwargs(lr_vars.AllFiles, Name=ff['Name'])
-        file_from_allfiles.update({k: file[k] for k in file if (k != 'Param')})
+        name = ff['Name']
+        file_from_allfiles = lr_lib.core.wrsp.files.get_file_with_kwargs(lr_vars.AllFiles, Name=name)
+        fp = {k: file[k] for k in file if (k != 'Param')}
+        file_from_allfiles.update(fp)
     return
 
 
@@ -76,6 +79,15 @@ def is_mutable_bound(left: str, right: str, b1='{', b2='}') -> [int, int]:
     return [ml, mr]
 
 
+ER1 = '''
+Вероятно закончились доступные комбинации (3)/(4) для посика корректных LB/RB
+
+файлов: {}, param_num: {}, split_text: {}
+
+файл: {}
+'''.strip()
+
+
 def set_part_num(num=0) -> None:
     """
     сформировать VarLB VarRB, с учетом номера вхождения param
@@ -84,17 +96,20 @@ def set_part_num(num=0) -> None:
     assert param, 'Пустой param(1)[{tp}]:"{p}"'.format(tp=type(param), p=param)
 
     lr_vars.VarWrspDict.set({})
-    split_text = lr_vars.VarFileText.get().split(param)
+    text = lr_vars.VarFileText.get()
+    split_text = text.split(param)
 
     try:  # обрезать по длине
         __lb = split_text[num]
         __rb = split_text[num + 1]
-        lb = __lb[-lr_vars.VarMaxLenLB.get():]
-        rb = __rb[:lr_vars.VarMaxLenRB.get()]
+        il = lr_vars.VarMaxLenLB.get()
+        lb = __lb[-il:]
+        ir = lr_vars.VarMaxLenRB.get()
+        rb = __rb[:ir]
     except Exception:
-        lr_vars.Logger.error('Вероятно закончились доступные комбинации (3)/(4) для посика корректных LB/RB\n\n'
-                             'файлов: {}, param_num: {}, split_text: {}\n\nфайл: {}'.format(
-            len(lr_vars.FilesWithParam), num, len(split_text), lr_vars.VarFile.get()))
+        f = lr_vars.VarFile.get()
+        e = ER1.format(len(lr_vars.FilesWithParam), num, len(split_text), f)
+        lr_vars.Logger.error(e)
         raise
 
     # next (3) либо (4), при пустом LB/RB(5)
@@ -113,9 +128,13 @@ def set_part_num(num=0) -> None:
 
     # обрезать по 'непечатные/русские'
     if lr_vars.VarRusLB.get():
-        lb = ''.join(lr_lib.core.etc.other.only_ascii_symbols(lb[::-1]))[::-1]
+        l_ = lb[::-1]
+        l_ = lr_lib.core.etc.other.only_ascii_symbols(l_)
+        lb = ''.join(l_)
+        lb = lb[::-1]
     if lr_vars.VarRusRB.get():
-        rb = ''.join(lr_lib.core.etc.other.only_ascii_symbols(rb))
+        r_ = lr_lib.core.etc.other.only_ascii_symbols(rb)
+        rb = ''.join(r_)
 
     (lb, rb) = lb_rb_split_list_set(__lb, __rb, lb, rb)
     (lb, rb) = lb_rb_split_end(lb, rb)
@@ -157,7 +176,8 @@ def lb_rb_split_end(lb: str, rb: str) -> (str, str):
         if llb < 5:
             for s in lr_lib.core.var.vars_param.StripLBEnd1:
                 lb = lb.rsplit(s, 1)
-                lb = lb[1 if (len(lb) == 2) else 0]
+                i = (1 if (len(lb) == 2) else 0)
+                lb = lb[i]
                 continue
         if (llb > 2) and any(map(lb.startswith, lr_lib.core.var.vars_param.StripLBEnd2)):
             lb = lb[2:].lstrip()
@@ -280,7 +300,7 @@ def gui_updater_comboFiles() -> None:
 
 
 NF3 = ('%s\nNEXT файл(3), при {text} в (5):\n {indx}-> {ni}/{len_files} : {f} -> {next_file}' % lr_vars.SEP)
-NP4 = ' next вхождение(4), при {text} в (5):\n\t\t[ {num}-> {n}/{pc} ] : {f}'
+NP4 = '\n\n next вхождение(4), при {text} в (5):\n\t\t[ {num}-> {n}/{pc} ] : {f}'
 UW = '''
 Все возможные LB/RB(5), для формирования param "{p}", пустые/недопустимые.
 'Снятие чекбокса "deny" или "strip", вероятно поможет. 
@@ -318,9 +338,10 @@ def next_3_or_4_if_bad_or_enmpy_lb_rb(text='') -> None:
             new_file_name = file_new['File']['Name']
 
             lr_vars.MainThreadUpdater.submit(gui_updater_comboFiles)
-            lr_vars.Logger.trace(NF3.format(len_files=len(lr_vars.FilesWithParam), indx=(index + 1), ni=(new_i + 1),
-                                            f=name, next_file=new_file_name, text=text, ))
-            lr_vars.Logger.trace(NP4.format(num=1, n=1, pc=file_new['Param']['Count'], f=new_file_name, text=text, ))
+            lf = len(lr_vars.FilesWithParam)
+            i = NF3.format(len_files=lf, indx=(index + 1), ni=(new_i + 1), f=name, next_file=new_file_name, text=text, )
+            i += NP4.format(num=1, n=1, pc=file_new['Param']['Count'], f=new_file_name, text=text, )
+            lr_vars.Logger.trace(i)
 
             # установить
             lr_vars.VarFileName.set(new_file_name)

@@ -244,7 +244,7 @@ github_vars = '/blob/master/lr_lib/core/var/vars.py'  # путь к файлу �
 github_vars2 = '/blob/master/lr_lib/etc/git_upd.py'  # путь к файлу на гитхабе, с описанием версии утилиты
 GitHub = (github + github_vars)  # полный путь к файлу на гитхабе, с номером версии утилиты
 # полный путь к файлу на гитхабе, с описанием версии утилиты
-GitHub2 = 'https://raw.githubusercontent.com/vaduxam1/LR_PARAM/master/lr_lib/etc/git_upd.py'
+GitHub2 = 'https://raw.githubusercontent.com/vaduxam1/LR_PARAM/master/lr_lib/etc/git_upd.py'  # //raw. - без html тэгов
 githubDownloadUrl = '{}/archive/master.zip'.format(github)  # url для скачивания утилиты
 GitUpdPeriod = (1000* 60 * 60 * 4)  # мсек, период проверки наличия обновления утилиты
 githubCheckUpdateEnable = True  # вкл/выкл проверку обновления утилиты
