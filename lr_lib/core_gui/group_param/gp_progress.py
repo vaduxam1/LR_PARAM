@@ -18,8 +18,9 @@ class ProgressBar:
         self.len_params = len_params
         self.p1 = ((self.len_params / 100) or 1)
 
-        item = (0, {'param': ''}, '', [])
-        self.item0 = [item]  # [(counter, wrsp_dict, wrsp, unsuccess)]
+        p = {'param': ''}
+        item = (0, p, '', [], )
+        self.item0 = [item, ]  # [(counter, wrsp_dict, wrsp, unsuccess)]
         return
 
     def __enter__(self) -> 'callable':
@@ -36,7 +37,8 @@ class ProgressBar:
         """
         self.stop()
         self.widget.action.show_hide_bar_1()
-        return exc_type, exc_val, exc_tb
+        item = (exc_type, exc_val, exc_tb)
+        return item
 
     def update(self, item: (int, dict, str, list)) -> None:
         """
@@ -85,8 +87,8 @@ class ProgressBar:
             self.widget.action.toolbar['text'] = t
 
             if unsuccess:
-                lr_vars.Logger.error('{} param не были обработаны:\n\t{}'.format(
-                    fail, '\n\t'.join(unsuccess)), parent=self.widget.action)
+                i = '{} param не были обработаны:\n\t{}'.format(fail, '\n\t'.join(unsuccess))
+                lr_vars.Logger.error(i, parent=self.widget.action)
 
             lr_lib.gui.etc.color_change.background_color_set(self.widget.action, color='')  # action оригинальный цвет
             self.widget.action.set_combo_len()
@@ -100,7 +102,8 @@ class ProgressBar:
         """
         выход self.start
         """
-        item = list(self.item0[0])
+        item = self.item0[0]
+        item = list(item)
         item[1] = None  # выход
         self.item0[:] = [item]
         return

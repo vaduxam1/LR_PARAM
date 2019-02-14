@@ -14,6 +14,12 @@ import lr_lib.core_gui.group_param.gp_job
 from lr_lib.gui.widj.dialog import K_FIND, K_SKIP, CREATE_or_FIND
 
 
+TT1 = '''
+2) Поиск param в [ ACTION.C ] тексте:
+Поиск re.findall(regexp, text) слов в тексте.
+'''.strip()
+
+
 def group_param_search_by_act_re(
         action: 'lr_lib.gui.action.main_action.ActionWindow',
         params_source,
@@ -27,13 +33,12 @@ def group_param_search_by_act_re(
     group params поиск, на основе регулярных выражений
     """
     if ask:
+        itx = '\n'.join(lr_lib.core.var.vars_param.REGEXP_PARAMS)
         y = lr_lib.gui.widj.dialog.YesNoCancel(
             [K_FIND, K_SKIP],
             title='2.1) запрос: action.c regexp',
-            is_text='\n'.join(lr_lib.core.var.vars_param.REGEXP_PARAMS),
-            text_before='2) Поиск param в [ ACTION.C ] тексте:\n\n'
-                        'Поиск re.findall(regexp, text) слов в тексте, '
-                        'например zkau_12 для "value=zkau_12".',
+            is_text=itx,
+            text_before=TT1,
             text_after='добавить/удалить',
             parent=action,
         )
@@ -96,7 +101,8 @@ def group_param_search_quotes(params_source, regexp=RegExp, ) -> iter((str,)):
     params = filter(str.strip, params)
 
     for param in params:
-        if all(map(ValidLetters, param)):
+        valid = map(ValidLetters, param)
+        if all(valid):
             yield param  # не содержит неподходящих символов
         continue
 

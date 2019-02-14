@@ -38,16 +38,19 @@ def _ask_params(params: [str, ], action: 'lr_lib.gui.action.main_action.ActionWi
             return item
 
     new_len_params = len(params)
-    lr_vars.Logger.info('Имеется {l} ранее созданных param.\nДля создания выбрано/найдено {p}/{_p} param.\n'.format(
-        _p=old_len_params, p=new_len_params, l=len(action.web_action.websReport.wrsp_and_param_names)))
+    i = 'Имеется {l} ранее созданных param.\nДля создания выбрано/найдено {p}/{_p} param.\n'
+    i = i.format(_p=old_len_params, p=new_len_params, l=len(action.web_action.websReport.wrsp_and_param_names))
+    lr_vars.Logger.info(i)
 
     item = (new_len_params, params)
     return item
 
 
-def responce_files_texts(folder=lr_vars.DEFAULT_FILES_FOLDER, name_check=bool,
-                         encoding='utf-8', errors='replace',
-                         ) -> iter([(str, str), ]):
+def responce_files_texts(
+        folder=lr_vars.DEFAULT_FILES_FOLDER, name_check=bool,
+        encoding='utf-8',
+        errors='replace',
+) -> iter([(str, str), ]):
     """
     файлы ответов и запросов и все остальные
     """

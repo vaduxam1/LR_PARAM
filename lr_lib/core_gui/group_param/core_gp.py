@@ -12,7 +12,7 @@ from lr_lib.core.var import vars as lr_vars
 
 
 @lr_lib.core.var.vars_other.T_POOL_decorator
-def group_param(event, params: [str, ], widget=None, ask=True) -> None:
+def group_param(event, params: [str, ], widget=None, ask=True, ) -> None:
     """
     нахождение и замена для группы web_reg_save_param's
     """
@@ -39,9 +39,10 @@ def group_param(event, params: [str, ], widget=None, ask=True) -> None:
     return
 
 
-def _group_param_iter(params: [str, ],
-                      action: 'lr_lib.gui.action.main_action.ActionWindow',
-                      ) -> iter((int, dict, str, [str, ]), ):
+def _group_param_iter(
+        params: [str, ],
+        action: 'lr_lib.gui.action.main_action.ActionWindow',
+) -> iter((int, dict, str, [str, ]), ):
     """
     ядро - найти и заменить группу web_reg_save_param
     """
@@ -54,9 +55,10 @@ def _group_param_iter(params: [str, ],
     web_actions = tuple(action.web_action.get_web_snapshot_all())
     replace = action.web_action.replace_bodys_iter(web_actions)  # сопрограмма-заменить
     next(replace)
+    wrsp_get = iter(wrsp_dict_queue.get, None)
     try:
 
-        for (counter, wrsp_dict) in enumerate(iter(wrsp_dict_queue.get, None), start=1):
+        for (counter, wrsp_dict) in enumerate(wrsp_get, start=1):
             wrsp = lr_lib.core.wrsp.param.create_web_reg_save_param(wrsp_dict)  # WRSP
 
             # вставить web_reg_save_param перед web
@@ -81,9 +83,12 @@ def _group_param_iter(params: [str, ],
 
 
 @lr_lib.core.var.vars_other.T_POOL_decorator
-def _thread_wrsp_dict_creator(wrsp_dicts: queue.Queue, params: [str, ], unsuccess: [],
-                              action: 'lr_lib.gui.action.main_action.ActionWindow',
-                              ) -> None:
+def _thread_wrsp_dict_creator(
+        wrsp_dicts: 'queue.Queue',
+        params: [str, ],
+        unsuccess: [str, ],
+        action: 'lr_lib.gui.action.main_action.ActionWindow',
+) -> None:
     """
     ядро - создать wrsp_dicts в фоне, чтобы не терять время, при показе popup окон
     """
@@ -92,10 +97,10 @@ def _thread_wrsp_dict_creator(wrsp_dicts: queue.Queue, params: [str, ], unsucces
             lr_vars.VarParam.set(param, action=action, set_file=True)  # найти param, создать wrsp_dict
             dt = lr_vars.VarWrspDict.get()
             wrsp_dicts.put(dt)  # вернуть wrsp_dict
-        except Exception:
+        except Exception as ex:
             unsuccess.append(param)
-            lr_lib.etc.excepthook.excepthook(*sys.exc_info())
+            lr_lib.etc.excepthook.excepthook(ex)
         continue
 
-    wrsp_dicts.put_nowait(None)  # exit
+    wrsp_dicts.put(None)  # exit
     return

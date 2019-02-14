@@ -10,6 +10,11 @@ import lr_lib.core_gui.group_param.gp_filter
 import lr_lib.core_gui.group_param.gp_job
 from lr_lib.gui.widj.dialog import K_FIND, K_SKIP, CREATE_or_FIND
 
+TT1 = '''
+4) Поиск param str.split('&') способом.
+
+найдено {} шт'
+'''.strip()
 
 def group_param_search_by_split(
         action: 'lr_lib.gui.action.main_action.ActionWindow',
@@ -25,30 +30,12 @@ def group_param_search_by_split(
     """
     params = set()
     param_texts = lr_lib.core_gui.group_param.gp_job._text_from_params_source(params_source)
-
-    for (file, text_) in param_texts:
-        for text in text_.split('\n'):
-            st = text.split('=')
-            for sa in st[1:]:
-                ps = sa.split('&')
-                pa = ps[0]
-
-                if '%' in pa:
-                    pp = pa.split('%22')
-                else:
-                    pp = [pa]
-                for pm in pp:
-                    if any(a in pm for a in ' %'):
-                        continue
-
-                    param = pm.replace('"', '').strip()
-                    params.add(param)  # добавить
-                    continue
-                continue
-            continue
+    for param in split(param_texts):
+        params.add(param)  # добавить
         continue
 
-    if action_text and (not isinstance(action_text, str)):
+    ats = isinstance(action_text, str)
+    if action_text and (not ats):
         action_text = action.web_action._all_web_body_text()
     params = lr_lib.core_gui.group_param.gp_filter.param_sort(params, action_text=action_text)
 
@@ -59,8 +46,7 @@ def group_param_search_by_split(
             default_key=cf,
             title='4) запрос/ответ: split Поиск param в RequestBody/RequestHeader файлах.',
             is_text='\n'.join(params),
-            text_before='4) Поиск param в RequestBody/RequestHeader файлах, каталога "data".'
-                        '\n\nнайдено {} шт'.format(len(params)),
+            text_before=TT1.format(len(params)),
             text_after='добавить/удалить: необходимо удалить "лишнее", то что не является param',
             parent=action,
             color=lr_lib.core.var.vars_highlight.PopUpWindColor1,
@@ -76,4 +62,40 @@ def group_param_search_by_split(
 
     if wrsp_create:  # создать wrsp
         lr_lib.core_gui.group_param.core_gp.group_param(None, params, widget=action.tk_text, ask=False)
+
     return params
+
+
+denySymb = ' %'  # запрещенный символы в param
+allowParamFilter = lambda param: (not any(d in param for d in denySymb))
+NullSymb = '''"'''  # заменить на ''
+
+
+def split(param_texts: ([str, str],), ) -> iter((str, )):
+    """
+    найти param, split способом
+    """
+    for (file, text_) in param_texts:
+        for text in text_.split('\n'):
+            st = text.split('=')
+
+            for sa in st[1:]:
+                pa = sa.split('&')[0]
+
+                if '%' in pa:
+                    params = pa.split('%22')
+                else:
+                    params = [pa]
+
+                for param in filter(allowParamFilter, params):
+                    for s in NullSymb:
+                        param = param.replace(s, '')
+                        continue
+                    param = param.strip()
+
+                    yield param
+                    continue
+                continue
+            continue
+        continue
+    return
