@@ -190,8 +190,8 @@ class ActionWebsAndLines:
         return
 
     def _set_text_list(self, iter_lines: (str,)) -> None:
-        """с
-        оздать все web_action объекты
+        """
+        создать все web_action объекты
         """
         iter_lines = map(str.rstrip, iter_lines)
         self.webs_and_lines.clear()
@@ -299,7 +299,9 @@ class ActionWebsAndLines:
         return
 
     def set_transaction_name(self, strip_line: str) -> None:
-        """проверить линию, сохранить имя transaction"""
+        """
+        проверить линию, сохранить имя transaction
+        """
         if strip_line.startswith('lr_'):  # lr_start_transaction("login");
             if strip_line.startswith('lr_start_transaction'):
                 transac = strip_line.split('"', 2)

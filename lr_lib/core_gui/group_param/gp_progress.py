@@ -62,13 +62,14 @@ class ProgressBar:
         fail = len(unsuccess)
 
         if wrsp_dict:  # прогресс работы
-            self.widget.action.toolbar['text'] = progress_str.format(
+            i = progress_str.format(
                 counter=counter,
                 len_params=self.len_params,
                 fail=fail,
                 proc=round(counter / self.p1),
                 wrsp=wrsp,
             )
+            self.widget.action.toolbar['text'] = i
             # action цвет по кругу
             lr_lib.gui.etc.color_change.background_color_set(self.widget.action, color=None)
             # перезапуск с задержкой

@@ -5,6 +5,7 @@ import inspect
 import json
 import tkinter as tk
 import tkinter.ttk as ttk
+from collections import OrderedDict
 
 import lr_lib
 import lr_lib.core.var.vars as lr_vars
@@ -33,7 +34,7 @@ class Setting(tk.Toplevel):
         self.init()
         return
 
-    def init(self, max_row=30, font='Arial 7', ) -> None:
+    def init(self, max_row=31, font='Arial 7', ) -> None:
         """
         создание
         """
@@ -102,7 +103,10 @@ def _get_source_var_comment(source: [str, ], attr: str) -> str:
     """
     vs = '{} ='.format(attr)
     _vs = [v for v in source if v.startswith(vs)]
-    vs1 = _vs[0]
+    try:
+        vs1 = _vs[0]
+    except IndexError:
+        return ''
 
     ind = source.index(vs1)
     vs0 = source[ind - 1]  # + пред строка
@@ -134,7 +138,7 @@ def _get_source_var_comment(source: [str, ], attr: str) -> str:
 
 
 TkVars = (tk.IntVar, tk.StringVar, tk.BooleanVar,)
-AllowTypes = [str, tuple, list, set, dict, ]
+AllowTypes = [str, int, float, tuple, list, set, dict, OrderedDict, ]  # типы переменных для вывода
 AllowTypes.extend(TkVars)
 
 

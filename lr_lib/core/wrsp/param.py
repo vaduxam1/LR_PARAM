@@ -36,6 +36,7 @@ web_reg_save_param("{web_reg_name}",
     "RB={rb}",
     "Ord={param_ord}",
     "Search={search_key}",
+    "NotFound=ERROR",
     LAST); 
 """
 
