@@ -32,16 +32,17 @@ def _set_file_name(name: str) -> None:
     return
 
 
-def _set_file(file: dict, errors='replace') -> None:
+def _set_file(file: dict, errors='replace', first_param_part4_num=0) -> None:
     """
     чение файла в lr_vars.VarFileText
     """
     ff = file['File']
     fname = ff['FullName']
     with open(fname, encoding=lr_lib.core.var.vars_other.VarEncode.get(), errors=errors) as f:
-        lr_vars.VarFileText.set(f.read())
+        file_text = f.read()
+        lr_vars.VarFileText.set(file_text)
 
-    lr_vars.VarPartNum.set(0)  # варианты param в файле, начинать с начала - 0
+    lr_vars.VarPartNum.set(first_param_part4_num)  # выбрать номер варианта вхождения param в файл
 
     ct = ff['timeCreate']
     if not ct:  # создать статистику, если нет
@@ -54,29 +55,33 @@ def _set_file(file: dict, errors='replace') -> None:
     return
 
 
-def _is_mutable_bound(st: str, b1: '{', b2: '}', a2=0) -> int:
+def _is_mutable_bound(stri: str, bound_left: '{', bound_right: '}', _equation=0, _indx=0, ) -> int:
     """
     находится ли внутри скобок {...}
     """
-    for (e, s) in enumerate(st, start=1):
-        if s == b1:
-            a2 += 1
-        elif s == b2:
-            if a2:
-                a2 -= 1
+    for (_indx, symb) in enumerate(stri, start=1):
+        if symb == bound_left:
+            _equation += 1
+        elif symb == bound_right:
+            if _equation:
+                _equation -= 1
             else:
-                return e
+                return _indx  # внутри скобок
+        else:
+            pass
         continue
-    return 0
+    return _indx  # не внутри скобок
 
 
 def is_mutable_bound(left: str, right: str, b1='{', b2='}') -> [int, int]:
     """
     находится ли внутри скобок
     """
-    ml = _is_mutable_bound(left[::-1], b2, b1)
+    left_ = left[::-1]
+    ml = _is_mutable_bound(left_, b2, b1)
     mr = _is_mutable_bound(right, b1, b2)
-    return [ml, mr]
+    item = [ml, mr]
+    return item
 
 
 ER1 = '''
@@ -95,7 +100,8 @@ def set_part_num(num=0) -> None:
     param = lr_vars.VarParam.get()
     assert param, 'Пустой param(1)[{tp}]:"{p}"'.format(tp=type(param), p=param)
 
-    lr_vars.VarWrspDict.set({})
+    lr_vars.VarWrspDict.set(dict())  # clear
+
     text = lr_vars.VarFileText.get()
     split_text = text.split(param)
 
@@ -108,7 +114,9 @@ def set_part_num(num=0) -> None:
         rb = __rb[:ir]
     except Exception:
         f = lr_vars.VarFile.get()
-        e = ER1.format(len(lr_vars.FilesWithParam), num, len(split_text), f)
+        lf = len(lr_vars.FilesWithParam)
+        ls = len(split_text)
+        e = ER1.format(lf, num, ls, f)
         lr_vars.Logger.error(e)
         raise
 
@@ -119,6 +127,8 @@ def set_part_num(num=0) -> None:
     elif lr_vars.VarPartNumEmptyRbNext.get() and (not rb):
         next_3_or_4_if_bad_or_enmpy_lb_rb('пустом[RB]')
         return
+    else:
+        pass
 
     # обрезать по \n
     if lr_vars.VarReturnLB.get():
@@ -151,12 +161,14 @@ def set_part_num(num=0) -> None:
     elif lr_vars.VarPartNumEmptyRbNext.get() and not rb.strip():
         next_3_or_4_if_bad_or_enmpy_lb_rb('пустом[RB]')
         return
-    if lr_vars.VarPartNumDenyLbNext.get() and not lr_lib.core.etc.lbrb_checker.check_bound_lb(__lb):
+    elif lr_vars.VarPartNumDenyLbNext.get() and (not lr_lib.core.etc.lbrb_checker.check_bound_lb(__lb)):
         next_3_or_4_if_bad_or_enmpy_lb_rb('недопустимом[LB]')
         return
-    if lr_vars.VarPartNumDenyRbNext.get() and (not lr_lib.core.etc.lbrb_checker.check_bound_rb(__rb)):
+    elif lr_vars.VarPartNumDenyRbNext.get() and (not lr_lib.core.etc.lbrb_checker.check_bound_rb(__rb)):
         next_3_or_4_if_bad_or_enmpy_lb_rb('недопустимом[RB]')
         return
+    else:
+        pass
 
     # сохранить
     lr_vars.VarLB.set(lb)
@@ -176,13 +188,16 @@ def lb_rb_split_end(lb: str, rb: str) -> (str, str):
         if llb < 5:
             for s in lr_lib.core.var.vars_param.StripLBEnd1:
                 lb = lb.rsplit(s, 1)
-                i = (1 if (len(lb) == 2) else 0)
+                _llb = len(lb)
+                i = (1 if (_llb == 2) else 0)
                 lb = lb[i]
                 continue
         if (llb > 2) and any(map(lb.startswith, lr_lib.core.var.vars_param.StripLBEnd2)):
             lb = lb[2:].lstrip()
         elif (llb > 1) and any(map(lb.startswith, lr_lib.core.var.vars_param.StripLBEnd3)):
             lb = lb[1:].lstrip()
+        else:
+            pass
 
     if lr_vars.VarREnd.get():
         lrb = len(rb)
@@ -194,11 +209,14 @@ def lb_rb_split_end(lb: str, rb: str) -> (str, str):
             rb = rb[:-2].rstrip()
         elif (lrb > 1) and any(map(rb.endswith, lr_lib.core.var.vars_param.StripRBEnd3)):
             rb = rb[:-1].rstrip()
+        else:
+            pass
 
-    return lb, rb
+    item = (lb, rb)
+    return item
 
 
-def lb_rb_split_list_set(__lb: str, __rb: str, lb: str, rb: str) -> (str, str):
+def lb_rb_split_list_set(__lb: str, __rb: str, lb: str, rb: str, r_min=1, r_max=3, ) -> (str, str):
     """
     lr_vars.VarSplitListNumRB.set(1) если {}: {...,'value':'param',...} / или .set(1) если []
     """
@@ -213,21 +231,26 @@ def lb_rb_split_list_set(__lb: str, __rb: str, lb: str, rb: str) -> (str, str):
     if _l or _r:
         bound1 = is_mutable_bound(_l, _r, b1='{', b2='}')
         bound2 = is_mutable_bound(_l, _r, b1='[', b2=']')
-        for (indx_1, indx_2, allow_1, allow_2) in zip(bound1, bound2, [vlb1, vrb1], [vlb2, vrb2]):
+
+        vb1 = [vlb1, vrb1, ]
+        vb2 = [vlb2, vrb2, ]
+        zi = zip(bound1, bound2, vb1, vb2, )
+        for (indx_1, indx_2, allow_1, allow_2) in zi:
 
             if allow_1 and indx_1:
                 if indx_2:
                     if indx_1 < indx_2:
-                        lr_vars.VarSplitListNumRB.set(1)
+                        lr_vars.VarSplitListNumRB.set(r_min)
                     elif allow_2:
-                        lr_vars.VarSplitListNumRB.set(3)
+                        lr_vars.VarSplitListNumRB.set(r_max)
                 else:
-                    lr_vars.VarSplitListNumRB.set(1)
+                    lr_vars.VarSplitListNumRB.set(r_min)
                 break
             elif allow_2 and indx_2:
-                lr_vars.VarSplitListNumRB.set(3)
+                lr_vars.VarSplitListNumRB.set(r_max)
                 break
-
+            else:
+                pass
             continue
 
     try:
@@ -299,7 +322,8 @@ def gui_updater_comboFiles() -> None:
     return
 
 
-NF3 = ('%s\nNEXT файл(3), при {text} в (5):\n {indx}-> {ni}/{len_files} : {f} -> {next_file}' % lr_vars.SEP)
+NF3 = '%s\nNEXT файл(3), при {text} в (5):\n {indx}-> {ni}/{len_files} : {f} -> {next_file}'
+NF3 = (NF3 % lr_vars.SEP)
 NP4 = '\n\n next вхождение(4), при {text} в (5):\n\t\t[ {num}-> {n}/{pc} ] : {f}'
 UW = '''
 Все возможные LB/RB(5), для формирования param "{p}", пустые/недопустимые.
@@ -339,8 +363,9 @@ def next_3_or_4_if_bad_or_enmpy_lb_rb(text='') -> None:
 
             lr_vars.MainThreadUpdater.submit(gui_updater_comboFiles)
             lf = len(lr_vars.FilesWithParam)
+            pc = file_new['Param']['Count']
             i = NF3.format(len_files=lf, indx=(index + 1), ni=(new_i + 1), f=name, next_file=new_file_name, text=text, )
-            i += NP4.format(num=1, n=1, pc=file_new['Param']['Count'], f=new_file_name, text=text, )
+            i += NP4.format(num=1, n=1, pc=pc, f=new_file_name, text=text, )
             lr_vars.Logger.trace(i)
 
             # установить
