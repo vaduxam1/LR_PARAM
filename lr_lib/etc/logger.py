@@ -10,7 +10,7 @@ from tkinter import messagebox
 
 import lr_lib
 import lr_lib.core.var.vars as lr_vars
-import lr_lib.core.var.vars_other
+import lr_lib.core.var.etc.vars_other
 
 formatter = u'\n[ %(levelname)s ]: %(filename)s %(funcName)s:%(lineno)d %(threadName)s %(asctime)s.%(msecs)d \n%(message)s'
 datefmt = "%H:%M:%S"
@@ -108,7 +108,7 @@ def LoggerLevelCreator(levels: {str: int}) -> None:
 
 
 @contextlib.contextmanager
-def init(name='__main__', encoding='cp1251', levels=lr_lib.core.var.vars_other.loggingLevels,
+def init(name='__main__', encoding='cp1251', levels=lr_lib.core.var.etc.vars_other.loggingLevels,
          ) -> iter((logging.getLogger,)):
     """
     инит логера с выводом в потоке

@@ -4,9 +4,10 @@
 import argparse
 
 import lr_lib
+import lr_lib.core.var.etc.init_vars
+import lr_lib.core.var.etc.vars_other
 import lr_lib.core.var.vars as lr_vars
 import lr_lib.core.var.vars_highlight
-import lr_lib.core.var.vars_other
 import lr_lib.core.var.vars_param
 
 
@@ -14,7 +15,7 @@ def init(as_console: bool) -> dict:
     """
     стартовать core
     """
-    lr_lib.core.var.vars_core.init()  # связь основных Var
+    lr_lib.core.var.etc.init_vars.init()  # связь основных Var
     lr_lib.core.var.vars_highlight.init_highlight_words()  # слова для подсветки
     lr_lib.core.var.vars_param.DENY_PARAMS_update_and_lower()  # слова для подсветки
 
@@ -52,7 +53,7 @@ def _console_vars_setter(c_args: dict) -> None:
     if 'max_inf' in c_args:
         lr_vars.VarSearchMaxSnapshot.set(c_args['max_inf'])
     if 'encoding' in c_args:
-        lr_lib.core.var.vars_other.VarEncode.set(c_args['encoding'])
+        lr_lib.core.var.etc.vars_other.VarEncode.set(c_args['encoding'])
     lr_vars.VarFileNamesNumsShow.set(c_args['file_names'])
     lr_vars.VarAllFilesStatistic.set(c_args['statistic'])
     return

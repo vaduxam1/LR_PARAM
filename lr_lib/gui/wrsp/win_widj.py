@@ -7,7 +7,7 @@ import tkinter.ttk as ttk
 
 import lr_lib
 import lr_lib.core.var.vars as lr_vars
-import lr_lib.core.var.vars_other
+import lr_lib.core.var.etc.vars_other
 import lr_lib.core.wrsp.files
 import lr_lib.gui.widj.lbrb5
 import lr_lib.gui.wrsp.win_part_lbrb
@@ -205,7 +205,7 @@ class WinWidj(lr_lib.gui.wrsp.win_part_lbrb.WinPartsLbRb):
         """
         отображение всякой информации
         """
-        e = lr_lib.core.var.vars_other.VarEncode.get()
+        e = lr_lib.core.var.etc.vars_other.VarEncode.get()
         t = time.strftime('%H:%M:%S')
         i = '{} | {} | ParamClipBoardSearchHotKey[{}]'.format(e, t, lr_vars.FIND_PARAM_HOTKEY,)
 

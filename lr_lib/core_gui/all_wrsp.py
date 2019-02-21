@@ -3,14 +3,15 @@
 
 import lr_lib
 import lr_lib.core
-import lr_lib.core.var.vars_other
+import lr_lib.core.var.var_callback.part_num
+import lr_lib.core.var.etc.vars_other
 import lr_lib.core_gui.action_lib
 import lr_lib.etc.excepthook
 import lr_lib.gui.etc.color_progress
 from lr_lib.core.var import vars as lr_vars
 
 
-@lr_lib.core.var.vars_other.T_POOL_decorator
+@lr_lib.core.var.etc.vars_other.T_POOL_decorator
 def all_wrsp_dict_web_reg_save_param(event, wrsp_web_=None) -> None:
     """
     все варианты создания web_reg_save_param, искать не ограничивая верхний номер Snapshot
@@ -90,7 +91,7 @@ def _all_wrsp(action: 'lr_lib.gui.action.main_action.ActionWindow') -> iter(([di
 def _next_wrsp() -> 'iter([dict, str]) or None':
     """поиск следующего возможного wrsp"""
     try:
-        lr_lib.core.var.vars_core.next_3_or_4_if_bad_or_enmpy_lb_rb('поиск всех корректных wrsp_dict')
+        lr_lib.core.var.var_callback.part_num.next_3_or_4_if_bad_or_enmpy_lb_rb('поиск всех корректных wrsp_dict')
     except UserWarning as ex:
         return  # конец поиска
     else:

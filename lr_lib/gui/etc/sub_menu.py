@@ -6,7 +6,7 @@ import tkinter as tk
 import lr_lib
 import lr_lib.core.var.vars as lr_vars
 import lr_lib.core.var.vars_highlight
-import lr_lib.core.var.vars_other
+import lr_lib.core.var.etc.vars_other
 import lr_lib.core_gui.action_lib
 import lr_lib.core_gui.all_wrsp
 import lr_lib.core_gui.group_param.gp_act_lb
@@ -71,7 +71,7 @@ def rClicker(event) -> str:
                 return
             submenu_param.add_cascade(label='* одиночный -> найти и заменить', underline=0, command=cmd10,)
 
-            @lr_lib.core.var.vars_other.T_POOL_decorator
+            @lr_lib.core.var.etc.vars_other.T_POOL_decorator
             def cmd11(e=event) -> None:
                 b = e.widget.selection_get()
                 action = e.widget.action
@@ -81,7 +81,7 @@ def rClicker(event) -> str:
                 return
             submenu_param.add_cascade(label='группа(по налалу имени) -> найти и заменить', underline=0, command=cmd11,)
 
-            @lr_lib.core.var.vars_other.T_POOL_decorator
+            @lr_lib.core.var.etc.vars_other.T_POOL_decorator
             def cmd12(e=event) -> None:
                 w = [['web', e.widget.action], 'all']
                 b = [e.widget.selection_get(), ]

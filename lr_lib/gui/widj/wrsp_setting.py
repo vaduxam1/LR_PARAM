@@ -5,7 +5,7 @@ import tkinter as tk
 
 import lr_lib
 import lr_lib.core.var.vars as lr_vars
-import lr_lib.core.var.vars_other
+import lr_lib.core.var.etc.vars_other
 import lr_lib.core_gui.rename
 
 

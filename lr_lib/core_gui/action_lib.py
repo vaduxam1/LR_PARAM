@@ -10,14 +10,14 @@ import urllib.parse
 
 import lr_lib
 import lr_lib.core.action.web_
-import lr_lib.core.var.vars_core
+import lr_lib.core.var.etc.init_vars
 import lr_lib.core.var.vars_highlight
-import lr_lib.core.var.vars_other
+import lr_lib.core.var.etc.vars_other
 import lr_lib.gui.widj.responce_files
 from lr_lib.core.var import vars as lr_vars
 
 
-@lr_lib.core.var.vars_other.T_POOL_decorator
+@lr_lib.core.var.etc.vars_other.T_POOL_decorator
 def mouse_web_reg_save_param(
         widget: 'lr_lib.gui.widj.highlight_text.HighlightText',
         param: str,
@@ -67,7 +67,7 @@ def mouse_web_reg_save_param(
     return
 
 
-@lr_lib.core.var.vars_other.T_POOL_decorator
+@lr_lib.core.var.etc.vars_other.T_POOL_decorator
 def rClick_Param(event, *args, **kwargs) -> None:
     """
     web_reg_save_param из выделения, меню правой кнопки мыши, с отображением в виджетах lr_vars.Window окна
@@ -156,7 +156,7 @@ def rClick_Search(event) -> None:
     return
 
 
-@lr_lib.core.var.vars_other.T_POOL_decorator
+@lr_lib.core.var.etc.vars_other.T_POOL_decorator
 def encoder(event, action=None) -> None:
     """
     декодирование выделения
@@ -349,7 +349,7 @@ def wrsp_text_from_selection(event) -> object:
     return wrsp
 
 
-@lr_lib.core.var.vars_other.T_POOL_decorator
+@lr_lib.core.var.etc.vars_other.T_POOL_decorator
 def rClick_web_reg_save_param_regenerate(event, new_lb_rb=True, selection=None, replace=True) -> (dict, str):
     """
     из выделения, переформатировать LB/RB в уже созданном web_reg_save_param, меню правой кнопки мыши

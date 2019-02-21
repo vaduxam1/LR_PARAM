@@ -1,6 +1,6 @@
 ﻿# -*- coding: UTF-8 -*-
-# не используется, приведен как пример
-# получения web_reg_save_param, для всех возможных вариантов VarPartNum/VarFile
+# не используется, приведен как пример получения web_reg_save_param,
+#   для всех возможных вариантов VarPartNum/VarFile
 
 import lr_lib
 import lr_lib.core.var.vars as lr_vars

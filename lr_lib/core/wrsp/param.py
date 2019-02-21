@@ -8,7 +8,7 @@ import time
 
 import lr_lib
 import lr_lib.core.var.vars as lr_vars
-import lr_lib.core.var.vars_other
+import lr_lib.core.var.etc.vars_other
 import lr_lib.core.var.vars_param
 
 LR_COMENT = '//lr:'  # определять как комментарий утилиты
@@ -429,13 +429,13 @@ def get_search_data(param: str) -> dict:
             NotPrintable=lr_lib.core.etc.other.not_printable(param),
         ),
         File=dict(
-            encoding=lr_lib.core.var.vars_other.VarEncode.get(),
+            encoding=lr_lib.core.var.etc.vars_other.VarEncode.get(),
         ),
     )
     return search_data
 
 
-def get_files_with_param(param: str, action=None, set_file=True) -> None:
+def get_files_with_param(param: str, action=None, set_file=True, execute=None,) -> None:
     """
     найти файлы с param
     """
@@ -447,12 +447,15 @@ def get_files_with_param(param: str, action=None, set_file=True) -> None:
 
     g = lr_vars.VarStrongSearchInFile.get()
     param_searcher = (search_param_in_file if g else _search_param_in_file)
-    execute = (lr_vars.M_POOL.imap_unordered if lr_vars.FindParamPOOLEnable else map)
+    if execute is None:
+        execute = (lr_vars.M_POOL.imap_unordered if lr_vars.FindParamPOOLEnable else map)
 
     # (2) поиск
     executer = execute(param_searcher, files)
     executer = filter(bool, executer)
-    lr_vars.FilesWithParam = sorted(executer, key=lr_lib.core.etc.other.sort_files)
+    p_files = sorted(executer, key=lr_lib.core.etc.other.sort_files)
+    lr_vars.FilesWithParam = p_files
+
     if not lr_vars.FilesWithParam:
         p = param_not_found_err_text(action, files, search_data, param)
         raise UserWarning(p)
@@ -505,8 +508,11 @@ def param_not_found_err_text(action, files: [dict, ], search_data: dict, param: 
     laf = len(lr_vars.AllFiles)
     if action:
         action_infs = action.web_action.action_infs
-        (lai, a_min, a_max, afa) = (len(action_infs), min(action_infs), max(action_infs),
-                                    (laf - len(action.web_action.drop_files)))
+        lai = len(action_infs),
+        a_min = min(action_infs),
+        a_max = max(action_infs),
+        law = len(action.web_action.drop_files)
+        afa = (laf - law)
     else:
         lai = a_min = a_max = afa = None
 
@@ -520,17 +526,20 @@ def param_not_found_err_text(action, files: [dict, ], search_data: dict, param: 
 
     tal = tuple(lr_lib.core.etc.other.get_files_infs(lr_vars.AllFiles))
     files_infs = len(tal)
+    mt = max(tal)
+    mit = min(tal)
     tu = tuple(lr_lib.core.etc.other.get_files_infs(files))
     lenfi = len(tu)
     fld = lr_vars.VarFilesFolder.get()
+    lf = len(files)
 
     error = Err.format(
-        ai_min=min(tal),
+        ai_min=mit,
         ai=lai,
         afa=afa,
-        f_=len(files),
+        f_=lf,
         param=param,
-        ai_max=max(tal),
+        ai_max=mt,
         folder=fld,
         i=files_infs,
         min_iaf=min_iaf,
@@ -561,28 +570,36 @@ def find_param_ord() -> (int, int):
 
 
 #
-AIE1 = '''Формирование Ord для web_reg_save_param невозможно, тк поле пусто
+AIE1 = '''
+Формирование Ord для web_reg_save_param невозможно, тк поле пусто
 [param, lb, rb, text] == {empty}
-VarWrspDict={wrsp}\nVarPartNum={pn}, max={len_lbti}
-VarFile={fl}'''
+VarWrspDict={wrsp}
+VarPartNum={pn}, max={len_lbti}
+VarFile={fl}
+'''.strip()
 
-AIE2 = 'Формирование web_reg_save_param невозможно, тк файл не содержит LB(5)\n{wrsp}'
+AIE2 = '''
+Формирование web_reg_save_param невозможно, тк файл не содержит LB(5)
+{wrsp}
+'''.strip()
 
 
 def new_find_param_ord() -> (int, int):
     """
     получить Ord, версия после 7.2.0
     """
-    Items = (param, lb, rb, text) = (
-        lr_vars.VarParam.get(), lr_vars.VarLB.get(), lr_vars.VarRB.get(), lr_vars.VarFileText.get(),
-    )
+    param = lr_vars.VarParam.get()
+    lb = lr_vars.VarLB.get()
+    rb = lr_vars.VarRB.get()
+    text = lr_vars.VarFileText.get()
+    items = (param, lb, rb, text, )
 
-    lb_text_index = [len(part) for part in text.split(lb)]  # индексы для определения param в тексте
+    lb_text_index = list(map(len, text.split(lb)))  # индексы для определения param в тексте
     len_lbti = len(lb_text_index)
 
-    assert all(Items), AIE1.format(
+    assert all(items), AIE1.format(
         wrsp=lr_vars.VarWrspDict.get(),
-        empty=list(map(bool, Items)),
+        empty=list(map(bool, items)),
         pn=lr_vars.VarPartNum.get(),
         len_lbti=len_lbti,
         fl=lr_vars.VarFile.get(),
@@ -593,7 +610,8 @@ def new_find_param_ord() -> (int, int):
     iter_index = iter(lb_text_index)  # следующий LB index
     next(iter_index, None)  # тк следующий
     param_rb = (param + rb)
-    (param_rb_len, len_lb) = (len(param_rb), len(lb))
+    param_rb_len = len(param_rb)
+    len_lb = len(lb)
 
     for i in lb_text_index:
         index += (i + len_lb)  # нижняя граница

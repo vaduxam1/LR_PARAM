@@ -6,7 +6,7 @@ import tkinter.ttk as ttk
 
 import lr_lib.core.var.vars as lr_vars
 import lr_lib.core.var.vars_highlight
-import lr_lib.core.var.vars_other
+import lr_lib.core.var.etc.vars_other
 import lr_lib.gui.wrsp.win_block
 
 
@@ -35,7 +35,7 @@ class WinText(lr_lib.gui.wrsp.win_block.WinBlock):
         сообщения в конец текста gui
         """
         lg = lr_vars.VarWindowLogger.get()
-        if lr_lib.core.var.vars_other.loggingLevels[lg] <= lr_lib.core.var.vars_other.loggingLevels[levelname]:
+        if lr_lib.core.var.etc.vars_other.loggingLevels[lg] <= lr_lib.core.var.etc.vars_other.loggingLevels[levelname]:
             self.tk_text.insert(tk.END, '{}\n'.format(text))
             self.tk_text.see(tk.END)
         return

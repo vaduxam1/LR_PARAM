@@ -2,16 +2,15 @@
 # ядро - нахождение и замена group_param
 
 import queue
-import sys
 
 import lr_lib
-import lr_lib.core.var.vars_other
+import lr_lib.core.var.etc.vars_other
 import lr_lib.core_gui.group_param.gp_progress
 import lr_lib.core_gui.group_param.gp_var
 from lr_lib.core.var import vars as lr_vars
 
 
-@lr_lib.core.var.vars_other.T_POOL_decorator
+@lr_lib.core.var.etc.vars_other.T_POOL_decorator
 def group_param(event, params: [str, ], widget=None, ask=True, ) -> None:
     """
     нахождение и замена для группы web_reg_save_param's
@@ -82,7 +81,7 @@ def _group_param_iter(
     return
 
 
-@lr_lib.core.var.vars_other.T_POOL_decorator
+@lr_lib.core.var.etc.vars_other.T_POOL_decorator
 def _thread_wrsp_dict_creator(
         wrsp_dicts: 'queue.Queue',
         params: [str, ],

@@ -17,7 +17,7 @@ import lr_lib.core_gui.group_param.gp_response_re
 import lr_lib.core_gui.rename
 import lr_lib.gui.widj.dialog
 import lr_lib.gui.widj.tooltip
-from lr_lib.core.var.vars_other import T_POOL_decorator
+from lr_lib.core.var.etc.vars_other import T_POOL_decorator
 from lr_lib.core_gui.group_param.gp_filter import param_sort
 from lr_lib.core_gui.run.r_item import RItem
 from lr_lib.core_gui.run.r_other import block

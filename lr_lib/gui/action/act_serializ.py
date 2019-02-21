@@ -6,7 +6,7 @@ import tkinter as tk
 
 import lr_lib
 import lr_lib.core.var.vars as lr_vars
-import lr_lib.core.var.vars_other
+import lr_lib.core.var.etc.vars_other
 import lr_lib.gui.action._other
 import lr_lib.gui.action.act_backup
 import lr_lib.gui.etc.gui_other
@@ -85,7 +85,7 @@ class TkTextWebSerialization(lr_lib.gui.action.act_backup.ActBackup):
         self.action_file = file or lr_lib.gui.action._other.get_action_file(lr_vars.VarFilesFolder.get())
 
         if os.path.isfile(self.action_file):
-            with open(self.action_file, errors=errors, encoding=lr_lib.core.var.vars_other.VarEncode.get()) as text:
+            with open(self.action_file, errors=errors, encoding=lr_lib.core.var.etc.vars_other.VarEncode.get()) as text:
                 self.tk_text_to_web_action(text=text, websReport=True)
             if callback:
                 callback()
@@ -106,7 +106,7 @@ class TkTextWebSerialization(lr_lib.gui.action.act_backup.ActBackup):
                 parent=self,
             )
         if file_name:
-            with open(file_name, 'w', errors=errors, encoding=lr_lib.core.var.vars_other.VarEncode.get()) as act:
+            with open(file_name, 'w', errors=errors, encoding=lr_lib.core.var.etc.vars_other.VarEncode.get()) as act:
                 act.write(self.tk_text.get(1.0, tk.END))
         return
 

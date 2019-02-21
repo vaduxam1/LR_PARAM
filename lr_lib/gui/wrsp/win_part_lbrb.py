@@ -8,7 +8,7 @@ import tkinter.ttk as ttk
 import lr_lib
 import lr_lib.core.var.vars as lr_vars
 import lr_lib.core.var.vars_highlight
-import lr_lib.core.var.vars_other
+import lr_lib.core.var.etc.vars_other
 import lr_lib.core.var.vars_param
 import lr_lib.gui.wrsp.win_text
 
@@ -261,7 +261,7 @@ class WinPartsLbRb(lr_lib.gui.wrsp.win_text.WinText):
         self.comboParts_change()
         return
 
-    @lr_lib.core.var.vars_other.T_POOL_decorator
+    @lr_lib.core.var.etc.vars_other.T_POOL_decorator
     def lr_note(self, ob) -> None:
         """
         открыть в блокноте

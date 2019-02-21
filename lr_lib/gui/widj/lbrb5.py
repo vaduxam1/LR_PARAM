@@ -7,7 +7,7 @@ import tkinter.ttk as ttk
 import lr_lib
 import lr_lib.core.var.vars as lr_vars
 import lr_lib.core.var.vars_highlight
-import lr_lib.core.var.vars_other
+import lr_lib.core.var.etc.vars_other
 
 
 class LBRBText(tk.Text):
@@ -74,7 +74,7 @@ class LBRBText(tk.Text):
             cls.bounds['LB'].set(lb)
         except Exception as ex:
             lr_vars.Logger.error('LB {}'.format(ex.args))
-            r = lb.encode(lr_lib.core.var.vars_other.VarEncode.get(), errors='replace')
+            r = lb.encode(lr_lib.core.var.etc.vars_other.VarEncode.get(), errors='replace')
             cls.bounds['LB'].set(r)
 
         rb = lr_vars.VarRB.get()
@@ -82,7 +82,7 @@ class LBRBText(tk.Text):
             cls.bounds['RB'].set(rb)
         except Exception as ex:
             lr_vars.Logger.error('RB {}'.format(ex.args))
-            r = lb.encode(lr_lib.core.var.vars_other.VarEncode.get(), errors='replace')
+            r = lb.encode(lr_lib.core.var.etc.vars_other.VarEncode.get(), errors='replace')
             cls.bounds['RB'].set(r)
         return
 

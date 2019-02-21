@@ -7,7 +7,7 @@ import tkinter.messagebox
 
 import lr_lib
 import lr_lib.core.var.vars as lr_vars
-import lr_lib.core.var.vars_other
+import lr_lib.core.var.etc.vars_other
 import lr_lib.core_gui.action_lib
 import lr_lib.core_gui.group_param.core_gp
 import lr_lib.core_gui.rename
@@ -147,35 +147,35 @@ class ActionWindow(lr_lib.gui.action.act_win.ActWin):
         cmd1 = lambda: lr_lib.core_gui.run.run_setting.RunSettingWindow(self)
         filemenu4.add_command(label="* Найти и Создать WRSP: расширенный вариант", command=cmd1,)
 
-        @lr_lib.core.var.vars_other.T_POOL_decorator
+        @lr_lib.core.var.etc.vars_other.T_POOL_decorator
         def cmd2() -> None:
             f = progress_decor(group_param_search_by_lb, self)
             f(self, [['web', self], 'all'], wrsp_create=True,)
             return
         filemenu4.add_command(label="1) по LB", command=cmd2,)
 
-        @lr_lib.core.var.vars_other.T_POOL_decorator
+        @lr_lib.core.var.etc.vars_other.T_POOL_decorator
         def cmd3() -> None:
             f = progress_decor(group_param_search_by_act_re, self)
             f(self, [['web', self], 'all'], wrsp_create=True, )
             return
         filemenu4.add_command(label="2) по regexp", command=cmd3,)
 
-        @lr_lib.core.var.vars_other.T_POOL_decorator
+        @lr_lib.core.var.etc.vars_other.T_POOL_decorator
         def cmd4() -> None:
             f = progress_decor(group_param_search_by_resp_re, self)
             f(self, [['web', self], 'all'], wrsp_create=True, )
             return
         filemenu4.add_command(label="3) по regexp c постобработкой результата", command=cmd4,)
 
-        @lr_lib.core.var.vars_other.T_POOL_decorator
+        @lr_lib.core.var.etc.vars_other.T_POOL_decorator
         def cmd5() -> None:
             f = progress_decor(group_param_search_by_split, self)
             f(self, [['web', self], 'all'], wrsp_create=True, )
             return
         filemenu4.add_command(label="4) split способ", command=cmd5,)
 
-        @lr_lib.core.var.vars_other.T_POOL_decorator
+        @lr_lib.core.var.etc.vars_other.T_POOL_decorator
         def cmd6() -> None:
             f = progress_decor(group_param_search_by_exist_param, self)
             wp = list(self.web_action.websReport.wrsp_and_param_names.values())
@@ -183,7 +183,7 @@ class ActionWindow(lr_lib.gui.action.act_win.ActWin):
             return
         filemenu4.add_command(label="5) LAST: по начальным символам известных", command=cmd6,)
 
-        @lr_lib.core.var.vars_other.T_POOL_decorator
+        @lr_lib.core.var.etc.vars_other.T_POOL_decorator
         def cmd7() -> None:
             f = progress_decor(group_param_search_by_lb_post, self)
             f(self, [['web', self], 'all'], wrsp_create=True,)

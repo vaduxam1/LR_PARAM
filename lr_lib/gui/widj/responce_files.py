@@ -9,7 +9,7 @@ from tkinter import filedialog
 import lr_lib
 import lr_lib.core.var.vars as lr_vars
 import lr_lib.core.var.vars_highlight
-import lr_lib.core.var.vars_other
+import lr_lib.core.var.etc.vars_other
 
 
 class RespFiles(tk.Toplevel):
@@ -43,7 +43,7 @@ class RespFiles(tk.Toplevel):
             lr_lib.core.etc.other._openTextInEditor(full_name)
 
         file_dt = lr_lib.core.wrsp.files.file_dict_creator(
-            ent.get(), full_name, inf_num=0, enc=lr_lib.core.var.vars_other.VarEncode.get(), inf_key='', deny=True,
+            ent.get(), full_name, inf_num=0, enc=lr_lib.core.var.etc.vars_other.VarEncode.get(), inf_key='', deny=True,
             stats=True,
         )
         del file_dt['Param']

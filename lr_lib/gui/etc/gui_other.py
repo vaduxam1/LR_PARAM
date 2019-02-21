@@ -3,7 +3,7 @@
 
 import lr_lib
 import lr_lib.core.var.vars as lr_vars
-import lr_lib.core.var.vars_other
+import lr_lib.core.var.etc.vars_other
 from lr_lib.core.var.vars import Tk
 
 
@@ -35,7 +35,7 @@ def repA(widget) -> None:
         parent=widget.action,
         t_enc=True,
     )
-    lr_lib.core.var.vars_other.T_POOL_decorator(y.ask)()
+    lr_lib.core.var.etc.vars_other.T_POOL_decorator(y.ask)()
     return
 
 
@@ -68,7 +68,7 @@ def repB(widget, counter=None, st='\n----\n') -> None:
         parent=widget.action,
         t_enc=True,
     )
-    lr_lib.core.var.vars_other.T_POOL_decorator(y.ask)()
+    lr_lib.core.var.etc.vars_other.T_POOL_decorator(y.ask)()
     # lr_vars.Logger.trace('{}\n\n{}'.format(tb, ta))
     return
 

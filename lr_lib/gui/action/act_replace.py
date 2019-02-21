@@ -6,7 +6,7 @@ from tkinter import messagebox
 
 import lr_lib
 import lr_lib.core.var.vars as lr_vars
-import lr_lib.core.var.vars_other
+import lr_lib.core.var.etc.vars_other
 import lr_lib.core.var.vars_param
 import lr_lib.etc.template
 import lr_lib.gui.action.act_search
@@ -64,7 +64,7 @@ class ActReplaceRemove(lr_lib.gui.action.act_search.ActSearch):
         )
         return
 
-    @lr_lib.core.var.vars_other.T_POOL_decorator
+    @lr_lib.core.var.etc.vars_other.T_POOL_decorator
     def remove_web_dummy_template_new(self, template='', **kwargs) -> None:
         """
         удалить web_(например dummy или google) по пользовательскому шаблону - расширенный вариант.
@@ -171,7 +171,7 @@ class ActReplaceRemove(lr_lib.gui.action.act_search.ActSearch):
         ync.ask()
         return
 
-    @lr_lib.core.var.vars_other.T_POOL_decorator
+    @lr_lib.core.var.etc.vars_other.T_POOL_decorator
     def remove_web_dummy_template(self, *args, force=True) -> None:
         """
         для WebDummyTemplate_List - удалить все dummy web_
@@ -343,7 +343,7 @@ class ActReplaceRemove(lr_lib.gui.action.act_search.ActSearch):
                 self.tk_text_to_web_action(ls, websReport=True)
         return
 
-    @lr_lib.core.var.vars_other.T_POOL_decorator
+    @lr_lib.core.var.etc.vars_other.T_POOL_decorator
     def all_transaction_rename(self, *args) -> None:
         """
         переименавать все транзакции

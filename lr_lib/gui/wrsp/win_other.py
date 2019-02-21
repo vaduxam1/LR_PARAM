@@ -7,7 +7,7 @@ import tkinter.ttk as ttk
 
 import lr_lib
 import lr_lib.core.var.vars as lr_vars
-import lr_lib.core.var.vars_other
+import lr_lib.core.var.etc.vars_other
 import lr_lib.gui.wrsp.win_filesort
 
 
@@ -69,7 +69,7 @@ class WinOther(lr_lib.gui.wrsp.win_filesort.WinFileSort):
             self.mid_frame, variable=lr_vars.VarOrdVersion, padx=0, pady=0, font=lr_vars.DefaultFont, text='ord',
         )
 
-        log_vals = list(lr_lib.core.var.vars_other.loggingLevels.keys())
+        log_vals = list(lr_lib.core.var.etc.vars_other.loggingLevels.keys())
         self.comboLogger = ttk.Combobox(
             self.last_frame, textvariable=lr_vars.VarWindowLogger, justify='center', font=lr_vars.DefaultFont,
             width=5, style="BW.TButton",
@@ -122,7 +122,7 @@ class WinOther(lr_lib.gui.wrsp.win_filesort.WinFileSort):
         self._block(False)
         return
 
-    @lr_lib.core.var.vars_other.T_POOL_decorator
+    @lr_lib.core.var.etc.vars_other.T_POOL_decorator
     def param_file_editor(self, *args):
         """
         открыть param файл в editor
@@ -136,7 +136,7 @@ class WinOther(lr_lib.gui.wrsp.win_filesort.WinFileSort):
         очистить поля ввода
         """
         self.show_frame_info_working()
-        lr_lib.core.var.vars_other.clearVars()
+        lr_lib.core.var.etc.vars_other.clearVars()
         self.LB.set('')
         self.RB.set('')
 

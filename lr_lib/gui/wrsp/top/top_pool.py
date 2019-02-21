@@ -7,7 +7,7 @@ import tkinter.ttk as ttk
 import lr_lib
 import lr_lib.core.var.vars as lr_vars
 import lr_lib.core.var.vars_highlight
-import lr_lib.core.var.vars_other
+import lr_lib.core.var.etc.vars_other
 
 
 class TopPoolSetting(tk.Toplevel):
@@ -146,7 +146,7 @@ class TopPoolSetting(tk.Toplevel):
         self.action.last_frame_text_set()
         return
 
-    @lr_lib.core.var.vars_other.T_POOL_decorator
+    @lr_lib.core.var.etc.vars_other.T_POOL_decorator
     def pool_state_updater(self) -> None:
         """
         SThreadPool(threading.Thread) текст состояния пула

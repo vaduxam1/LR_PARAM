@@ -5,9 +5,9 @@ import itertools
 import os
 import string
 
-import lr_lib.core.var._var
+import lr_lib.core.var.etc.var_ob
 import lr_lib.core.var.vars
-import lr_lib.core.var.vars_other
+import lr_lib.core.var.etc.vars_other
 import lr_lib.core.var.vars_param
 import lr_lib.etc.help
 
@@ -43,9 +43,10 @@ def random_color(ckeck=True, all_color='ABCDEF1234567890', r=6, ) -> str:
 
 
 ColorIterator = random_color()
-VarColorTeg = lr_lib.core.var._var.Var(value=set(lr_lib.etc.help.COLORS.keys()))
+VarColorTeg = lr_lib.core.var.etc.var_ob.Var(value=set(lr_lib.etc.help.COLORS.keys()))
 _LB_LIST_highlight = {'uuid_', 'dtid', 'sessionid', 'Snapshot', 'Snapshot=t', 'EXTRARES', '.inf', }
-_LB_LIST_highlight.update(lr_lib.core.var.vars_other._unpunct(s) for s in lr_lib.core.var.vars_param.LB_PARAM_FIND_LIST)
+_LB_LIST_highlight.update(
+    lr_lib.core.var.etc.vars_other._unpunct(s) for s in lr_lib.core.var.vars_param.LB_PARAM_FIND_LIST)
 tnrvf = set('\\{}'.format(s) for s in 'tnrvf')  #
 PopUpWindColor1 = 'LightGrey'  # просто какойто общий цвет для выделения PopUpWindow
 highlight_words = set()  # слова для подсветки
