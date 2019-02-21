@@ -36,6 +36,7 @@ class YesNoCancel(tk.Toplevel):
             t_enc=False,
             color=None,
             btn_font='Arial 9 bold',
+            label_combo_text=''
     ):
         """
         :param buttons: [str, ]: ['Найти', 'Выход']: названия кнопок
@@ -84,8 +85,10 @@ class YesNoCancel(tk.Toplevel):
         if self.combo_dict:
             values = list(self.combo_dict.keys())
 
+            # LabelFrame
+            self.label_combo = tk.LabelFrame(self, text=label_combo_text, )
             # Combobox
-            self.combo = ttk.Combobox(self, textvariable=self.combo_var, values=values, )
+            self.combo = ttk.Combobox(self.label_combo, textvariable=self.combo_var, values=values, width=35, )
 
             def enc(*a) -> None:
                 """выбор в Combobox -> вывод нового текста в self.tk_text"""
@@ -106,8 +109,9 @@ class YesNoCancel(tk.Toplevel):
 
         bl = list(map(len, buttons))
         width = max(bl)
-        if width > 20:
-            width = 20
+        max_width = 30
+        if width > max_width:
+            width = max_width
         i = 10
 
         # Button's
@@ -137,6 +141,7 @@ class YesNoCancel(tk.Toplevel):
             continue
 
         if self.combo_dict:
+            self.label_combo.grid(row=(i + 1), column=0, padx=0, pady=0)
             self.combo.grid(row=(i + 1), column=0, padx=0, pady=0)
 
         # tk.Text

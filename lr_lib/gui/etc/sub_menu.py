@@ -136,11 +136,12 @@ def rClicker(event) -> str:
 
             def action_goto(e, _search: str) -> None:
                 """перейти к _search обрасти в action.c"""
+                action = lr_lib.core_gui.action_lib.event_action_getter(event)
                 try:
-                    event.widget.action.search_entry.set(_search)
-                    ev = event.widget.action.search_entry.get()
-                    event.widget.action.search_in_action(ev)
-                    event.widget.action.tk_text_see()
+                    action.search_entry.set(_search)
+                    ev = action.search_entry.get()
+                    action.search_in_action(ev)
+                    action.tk_text_see()
                 except (AttributeError, tk.TclError) as ex:
                     pass
                 return

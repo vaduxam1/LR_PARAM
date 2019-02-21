@@ -123,12 +123,13 @@ def remove_web_reg_save_param_from_action(event, selection=None, find=True) -> N
     """
     if selection is None:
         selection = event.widget.selection_get()
+    action = event_action_getter(event)
 
-    param = event.widget.action.web_action.web_reg_save_param_remove(selection)
-    event.widget.action.web_action_to_tk_text(websReport=True)  # вставить в action.c
+    param = action.web_action.web_reg_save_param_remove(selection)
+    action.web_action_to_tk_text(websReport=True)  # вставить в action.c
 
     if find and param:
-        event.widget.action.search_in_action(word=param)
+        action.search_in_action(word=param)
     return
 
 
@@ -171,8 +172,9 @@ def rClick_Search(event) -> None:
     поиск выделения в тексте, меню правой кнопки мыши
     """
     selection = event.widget.selection_get()
+    action = event_action_getter(event)
     try:
-        event.widget.action.search_in_action(word=selection)
+        action.search_in_action(word=selection)
     except AttributeError as ex:
         pass
     return
@@ -256,9 +258,10 @@ def rClick_add_highlight(event, option: str, color: str, val: str, find=False) -
         return
 
     selection = event.widget.selection_get()
+    action = event_action_getter(event)
 
     if val == 'добавить':
-        event.widget.action.tk_text.highlight_mode(selection, option, color)
+        action.tk_text.highlight_mode(selection, option, color)
     else:
         try:
             ob = hd[option][color]
@@ -266,10 +269,10 @@ def rClick_add_highlight(event, option: str, color: str, val: str, find=False) -
         except KeyError as ex:
             pass
 
-    event.widget.action.save_action_file(file_name=False)
+    action.save_action_file(file_name=False)
     if find:
-        event.widget.action.search_in_action(word=selection)
-        event.widget.action.tk_text_see()
+        action.search_in_action(word=selection)
+        action.tk_text_see()
     return
 
 

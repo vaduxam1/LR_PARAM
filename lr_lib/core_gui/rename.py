@@ -5,6 +5,7 @@ import tkinter as tk
 from typing import Iterable
 
 import lr_lib
+import lr_lib.core_gui.action_lib
 import lr_lib.core.var.etc.vars_other
 
 ABounds = [
@@ -141,11 +142,10 @@ def rename_transaction(event, parent=None, s='lr_start_transaction("', e='lr_end
     except IndexError:
         old_name = selection.split(e, 1)[1].split('"', 1)[0]
 
+    action = lr_lib.core_gui.action_lib.event_action_getter(event)
+
     if not parent:
-        try:
-            parent = event.widget.action
-        except AttributeError as ex:
-            pass
+        parent = action
 
     y = lr_lib.gui.widj.dialog.YesNoCancel(
         ['Переименовать', 'Отмена', ],
@@ -160,17 +160,17 @@ def rename_transaction(event, parent=None, s='lr_start_transaction("', e='lr_end
 
     if y.ask() == 'Переименовать':
         new_name = y.text.strip()
-        lit = event.widget.action.tk_text.get(1.0, tk.END).split('\n')
+        lit = action.tk_text.get(1.0, tk.END).split('\n')
         for (e, line) in enumerate(lit):
             ln = line.lstrip()
             if ln.startswith(s1) or ln.startswith(s2):
                 lit[e] = line.replace(old_name, new_name)
             continue
 
-        event.widget.action.backup()
+        action.backup()
         event.widget.delete(1.0, tk.END)
         event.widget.insert(1.0, '\n'.join(lit))  # вставить
-        event.widget.action.save_action_file(file_name=False)
+        action.save_action_file(file_name=False)
     return
 
 

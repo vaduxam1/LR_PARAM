@@ -25,17 +25,21 @@ web_submit_data("
 '''  # пример шаблона web, для удаления
 
 IsTextA = '''
-Отображенный пример Template необходимо заменить своим. Сравнивает Template построчно со всеми web_ из action.c. Найденные web_ удаляются.
+Отображенный пример Template можно заменить своим. 
+Сравнивает Template построчно с web_*'s из action.c.
+Найденные web_ удаляются.
 '''.strip()
 
 IsTextB = '''
-Template_Line считается эквивалентной ActionWeb_Line, если AW_Line начинается на T_Line: AW.startswith(T).
-Для выбора web, содержаших различающиеся строки, например номер в "Snapshot=t5.inf", необходимо обрезать эту строку в Template так: "Snapshot=t
-Порядок самих строк внутри Action.Web_ и Template может быть любым.
-
-Выбрать в комбобоксе:
- 1) Нестрогое соответствие: web_ содержит все отображенные линии, и любые другие.
- 2) Строгое соответствие: web_ содержит только отображенные линии, т.е. кол-во линий web_ и Template должно совпадать.
+Для поиска группы Web_ подходящих под Template соответствие, необходимо выбрать в комбобоксе один из вариантов:
+ 1) "Нестрогое" соответствие: Web_ должен содержать все отображенные Template-линии, и может содержать другие.
+ 2) "Строгое" соответствие: Web_ содержит только отображенные Template-линии, других линий в нем быть не может.
+ ^ Порядок строк внутри Web_ и Template может быть любым. 
+ ^ Начальные/конечные пробельные символоы строк Web_ и Template, не учитываются при сравнении.
+ ^ Template_Line строка считается эквивалентной ActionWeb_Line, если AW_Line начинается на T_Line: AW.startswith(T).
+Для выбора группы Web_, с различающимися строками, например номер "Snapshot=t5.inf", можно обрезать её в Template так:
+            "Snapshot=t
+Используя "Нестрогое" соответствие, можно искать Web_, например используя в Template только одну строку.
 '''.strip()
 
 
@@ -75,6 +79,7 @@ class ActReplaceRemove(lr_lib.gui.action.act_search.ActSearch):
             или например любые с этим адресом и имеющие snapsot
                  "URL=http://ssl.elk.minfin.ru:8080/",
                  "Snapshot=
+        без учета начальных и конечных пробельных символов, строк template и web_
         """
         if not template:
             template = WT0
@@ -156,8 +161,8 @@ class ActReplaceRemove(lr_lib.gui.action.act_search.ActSearch):
 
         # удаление
         combo_dict = {
-            '1) Нестрогое': lambda: is_eq(False),
-            '2) Строгое': lambda: is_eq(True),
+            '1) "Нестрогое" соответствие': lambda: is_eq(False),
+            '2) "Строгое" соответствие': lambda: is_eq(True),
         }
 
         ync = lr_lib.gui.widj.dialog.YesNoCancel(
@@ -168,6 +173,7 @@ class ActReplaceRemove(lr_lib.gui.action.act_search.ActSearch):
             parent=self,
             is_text=template.strip(),
             combo_dict=combo_dict,
+            label_combo_text='поиск Web_ по соответствию с Template:',
         )
         ync.ask()
         return

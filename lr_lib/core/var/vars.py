@@ -213,7 +213,7 @@ FilesCreatePortionSize = 15  # порция, число обрабатываем
 # пулы
 
 MainThreadUpdater = None  # выполнять callback из main потока # lr_lib.etc.pool.other.MainThreadUpdater
-_MTUT = 0.25  # сек - влияет на общую отзывчивость интерфейса(=0.25: отзывчивый переход по тексту)
+_MTUT = 0.2  # сек - влияет на общую отзывчивость интерфейса(=0.25: отзывчивый переход по тексту)
 MainThreadUpdateTime = tk.IntVar(value=(_MTUT * 1000))  # интервал(мс) проверки очереди, callback(из потоков) + скорость обновления подсветки
 
 try:
