@@ -262,7 +262,7 @@ class TextLineNumbers(tk.Canvas):
     номера линий tk.Text
     """
 
-    def __init__(self, tk_text: HighlightText):
+    def __init__(self, tk_text: 'HighlightText'):
         super().__init__(tk_text.action, background=lr_lib.core.var.vars_highlight.Background)
         self.linenum = -1
 

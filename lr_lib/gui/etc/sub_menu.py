@@ -184,26 +184,35 @@ def rClicker(event) -> str:
             cmd24 = lambda e=event: lr_lib.core_gui.action_lib.add_highlight_words_to_file(e)
             submenu.add_cascade(label='сорх в файл', underline=0, command=cmd24,)
 
-            vl = ['добавить', 'удалить']
-            for val in vl:
-                vSub = tk.Menu(submenu, tearoff=False)
-                submenu.add_cascade(label=val, menu=vSub, underline=0)
-                for option in lr_lib.core.var.vars_highlight.VarDefaultColorTeg:
-                    sub = tk.Menu(vSub, tearoff=False)
-                    vSub.add_cascade(label=option, menu=sub, underline=0)
-                    for color in colors:
+            vald = 'удалить'
 
-                        def cmd(e=event, o=option, c=color, v=val, f=True) -> None:
-                            """add_highlight"""
-                            lr_lib.core_gui.action_lib.rClick_add_highlight(e, o, c, v, find=f)
-                            return
+            def cmd26(e=event, o='', c='', v=vald, f=True) -> None:
+                """remove_highlight"""
+                lr_lib.core_gui.action_lib.rClick_add_highlight(e, o, c, v, find=f)
+                return
 
-                        sub.add_command(label=color, command=cmd)
-                        continue
+            submenu.add_cascade(label=vald, underline=0, command=cmd26, )
+
+            # подсветка
+            val = 'добавить'
+            vSub = tk.Menu(submenu, tearoff=False)
+            submenu.add_cascade(label=val, menu=vSub, underline=0)
+            for option in lr_lib.core.var.vars_highlight.VarDefaultColorTeg:
+                sub = tk.Menu(vSub, tearoff=False)
+                vSub.add_cascade(label=option, menu=sub, underline=0)
+                for color in colors:
+
+                    def _cmd(e=event, o=option, c=color, v=val, f=True) -> None:
+                        """add_highlight"""
+                        lr_lib.core_gui.action_lib.rClick_add_highlight(e, o, c, v, find=f)
+                        return
+
+                    sub.add_command(label=color, command=_cmd)
                     continue
                 continue
 
             submenu_other.add_cascade(label=' подсветка', menu=submenu, underline=0)
+
         rmenu.tk_popup((event.x_root + 40), (event.y_root + 10), entry="0")
 
     except tk.TclError as ex:

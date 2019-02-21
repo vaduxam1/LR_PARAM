@@ -173,10 +173,7 @@ def rClick_Search(event) -> None:
     """
     selection = event.widget.selection_get()
     action = event_action_getter(event)
-    try:
-        action.search_in_action(word=selection)
-    except AttributeError as ex:
-        pass
+    action.search_in_action(word=selection)
     return
 
 
@@ -252,22 +249,22 @@ def rClick_add_highlight(event, option: str, color: str, val: str, find=False) -
     """
     для выделения, добавление color в highlight_dict, меню правой кнопки мыши
     """
-    try:
-        hd = event.widget.highlight_dict
-    except AttributeError:
-        return
-
     selection = event.widget.selection_get()
     action = event_action_getter(event)
 
     if val == 'добавить':
         action.tk_text.highlight_mode(selection, option, color)
-    else:
-        try:
-            ob = hd[option][color]
-            ob.remove(selection)
-        except KeyError as ex:
-            pass
+    else:  # удялять любые найденные для selection
+        for option in action.tk_text.highlight_dict:
+            c_dt = action.tk_text.highlight_dict[option]
+            for color in c_dt:
+                values = c_dt[color]  # <class 'set'>: {'mail.ru', '*/', 'yandex.ru', 'google.com', '/*', 'WARNING'}
+                try:
+                    values.remove(selection)  # удялить
+                except KeyError:
+                    pass
+                continue
+            continue
 
     action.save_action_file(file_name=False)
     if find:
