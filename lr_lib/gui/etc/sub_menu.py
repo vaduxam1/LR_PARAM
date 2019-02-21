@@ -66,7 +66,8 @@ def rClicker(event) -> str:
             rmenu.add_cascade(label='web_reg_save_param', menu=submenu_param, underline=0)
 
             def cmd10(e=event) -> None:
-                fn = progress_decor(lr_lib.core_gui.action_lib.rClick_Param, e.widget.action)
+                action = lr_lib.core_gui.action_lib.event_action_getter(e)
+                fn = progress_decor(lr_lib.core_gui.action_lib.rClick_Param, action)
                 fn(e, mode=['SearchAndReplace', ])
                 return
             submenu_param.add_cascade(label='* одиночный -> найти и заменить', underline=0, command=cmd10,)
@@ -74,7 +75,7 @@ def rClicker(event) -> str:
             @lr_lib.core.var.etc.vars_other.T_POOL_decorator
             def cmd11(e=event) -> None:
                 b = e.widget.selection_get()
-                action = e.widget.action
+                action = lr_lib.core_gui.action_lib.event_action_getter(e)
                 w = [['web', action], 'all']
                 fn = progress_decor(lr_lib.core_gui.group_param.gp_act_start.group_param_search_by_name, action)
                 fn(action, w, wrsp_create=True, text=b)
@@ -83,44 +84,50 @@ def rClicker(event) -> str:
 
             @lr_lib.core.var.etc.vars_other.T_POOL_decorator
             def cmd12(e=event) -> None:
-                w = [['web', e.widget.action], 'all']
+                action = lr_lib.core_gui.action_lib.event_action_getter(e)
+                w = [['web', action], 'all']
                 b = [e.widget.selection_get(), ]
-                fn = progress_decor(lr_lib.core_gui.group_param.gp_act_lb.group_param_search_by_lb, e.widget.action)
-                fn(e.widget.action, w, wrsp_create=True, lb_items=b, ask=False, MutableLBRegs=(),)
+                fn = progress_decor(lr_lib.core_gui.group_param.gp_act_lb.group_param_search_by_lb, action)
+                fn(action, w, wrsp_create=True, lb_items=b, ask=False, MutableLBRegs=(),)
                 return
             submenu_param.add_cascade(label='* группа(по LB=") -> найти и заменить', underline=0, command=cmd12,)
 
             def cmd13(e=event) -> None:
-                fn = progress_decor(lr_lib.core_gui.action_lib.rClick_web_reg_save_param_regenerate, e.widget.action)
+                action = lr_lib.core_gui.action_lib.event_action_getter(e)
+                fn = progress_decor(lr_lib.core_gui.action_lib.rClick_web_reg_save_param_regenerate, action)
                 fn(e, new_lb_rb=True,)
                 return
             submenu_param.add_cascade(label='* готовый -> пересоздать, с измененными LB/RB', underline=0,command=cmd13,)
 
             def cmd14(e=event) -> None:
-                fn = progress_decor(lr_lib.core_gui.action_lib.rClick_web_reg_save_param_regenerate, e.widget.action)
+                action = lr_lib.core_gui.action_lib.event_action_getter(e)
+                fn = progress_decor(lr_lib.core_gui.action_lib.rClick_web_reg_save_param_regenerate, action)
                 fn(e, new_lb_rb=False,)
                 return
             submenu_param.add_cascade(label='готовый -> пересоздать, с оригинальными LB/RB', underline=0,command=cmd14,)
 
             def cmd15(e=event) -> None:
-                fn = progress_decor(lr_lib.core_gui.action_lib.rClick_Param, e.widget.action)
+                action = lr_lib.core_gui.action_lib.event_action_getter(e)
+                fn = progress_decor(lr_lib.core_gui.action_lib.rClick_Param, action)
                 fn(e, mode=['highlight'],)
                 return
             submenu_param.add_cascade(label='одиночный -> найти и подсветить', underline=0, command=cmd15,)
 
             def cmd16(e=event) -> None:
-                fn = progress_decor(lr_lib.core_gui.action_lib.rClick_Param, e.widget.action)
+                action = lr_lib.core_gui.action_lib.event_action_getter(e)
+                fn = progress_decor(lr_lib.core_gui.action_lib.rClick_Param, action)
                 fn(e, mode=[],)
                 return
             submenu_param.add_cascade(label='одиночный -> только найти', underline=0, command=cmd16,)
 
             def cmd17(e=event) -> None:
-                fn = progress_decor(lr_lib.core_gui.action_lib.remove_web_reg_save_param_from_action, e.widget.action)
+                action = lr_lib.core_gui.action_lib.event_action_getter(e)
+                fn = progress_decor(lr_lib.core_gui.action_lib.remove_web_reg_save_param_from_action, action)
                 fn(e)
                 return
             submenu_param.add_cascade(label='* одиночный -> удалить по wrsp или param', underline=0, command=cmd17,)
 
-        cmd_18 = lambda e=event: e.widget.action.save_action_file(file_name=False)
+        cmd_18 = lambda e=event: lr_lib.core_gui.action_lib.event_action_getter(e).save_action_file(file_name=False)
         nclst = [('Сохр. пользоват. изменения в тексте', cmd_18), ]
         for (txt, cmd) in nclst:
             rmenu.add_command(label=txt, command=cmd)
