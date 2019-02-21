@@ -23,7 +23,7 @@ def set_file(file: dict, errors='replace', first_param_part4_num=0) -> None:
     fname = ff['FullName']
     with open(fname, encoding=lr_lib.core.var.etc.vars_other.VarEncode.get(), errors=errors) as f:
         file_text = f.read()
-        lr_vars.VarFileText.set(file_text)
+    lr_vars.VarFileText.set(file_text)
 
     lr_vars.VarPartNum.set(first_param_part4_num)  # выбрать номер варианта вхождения param в файл
 
