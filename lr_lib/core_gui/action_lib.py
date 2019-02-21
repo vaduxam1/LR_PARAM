@@ -190,8 +190,8 @@ def encoder(event, action=None) -> None:
     if not action:
         try:
             action = widget.action
-        except AttributeError as ex:
-            pass
+        except AttributeError:
+            pass  # предназначено не для action виджета
 
     selection = widget.selection_get().strip()
 
@@ -237,10 +237,10 @@ def add_highlight_words_to_file(event) -> None:
     """
     сохранить слово для подсветки в файл - "навсегда"
     """
-    selection = event.widget.selection_get()
-
+    selection = event.widget.selection_get().strip()
+    selection += '\n'
     with open(lr_lib.core.var.vars_highlight.highlight_words_main_file, 'a') as f:
-        f.write(selection + '\n')
+        f.write(selection)
 
     rClick_add_highlight(event, 'foreground', lr_lib.core.var.vars_highlight.DefaultColor, 'добавить', find=True)
     return
@@ -261,7 +261,8 @@ def rClick_add_highlight(event, option: str, color: str, val: str, find=False) -
         event.widget.action.tk_text.highlight_mode(selection, option, color)
     else:
         try:
-            hd[option][color].remove(selection)
+            ob = hd[option][color]
+            ob.remove(selection)
         except KeyError as ex:
             pass
 
@@ -307,9 +308,9 @@ def file_from_selection(event) -> str:
     if os.path.isfile(full_name):
         lr_lib.core.etc.other._openTextInEditor(full_name)
     else:
-        ls = len(selection)
-        i = 'файл не найден :\n"{}" : len={}\n{}'
-        i = i.format(selection, ls, full_name)
+        len_selection = len(selection)
+        i = 'файл не найден :\n"{selection}" : len={selection}\n{file_name}'
+        i = i.format(selection, len_select=len_selection, file_name=full_name, )
         lr_vars.Logger.warning(i, log=False)
 
     return full_name
@@ -330,9 +331,9 @@ def snapshot_text_from_selection(event) -> int:
     web_ = next(webs, None)
 
     if web_ is None:
-        ls = len(selection)
-        i = 'web_.snapshot не найден :\n"{}" : len={}\n{}'
-        i = i.format(selection, ls, snapshot)
+        len_selection = len(selection)
+        i = 'web_.snapshot не найден :\n"{selection}" : len={len_selection}\n{snapshot}'
+        i = i.format(selection=selection, len_selection=len_selection, snapshot=snapshot, )
         lr_vars.Logger.warning(i, log=False)
     else:
         i = web_.to_str(_all_stat=True)
@@ -360,9 +361,9 @@ def wrsp_text_from_selection(event) -> object:
         wrsp = next(w, None)
 
     if wrsp is None:
-        ls = len(selection)
-        i = 'wrsp не найден :\n"{}" : len={}\n{}'
-        i = i.format(selection, ls, action)
+        len_selection = len(selection)
+        i = 'wrsp не найден :\n"{selection}" : len={len_selection}, id_={action}'
+        i = i.format(selection=selection, len_selection=len_selection, action=action.id_, )
         lr_vars.Logger.warning(i, log=False)
     else:
         i = wrsp.to_str(_all_stat=True)
@@ -378,12 +379,8 @@ def rClick_web_reg_save_param_regenerate(event, new_lb_rb=True, selection=None, 
     """
     if selection is None:
         selection = event.widget.selection_get()
-    try:
-        action = event.widget.action
-    except:
-        vals = lr_vars.Window.action_windows.values()
-        vals = iter(vals)
-        action = next(vals)
+
+    action = event_action_getter(event)
 
     if lr_lib.core.wrsp.param.wrsp_lr_start not in selection:
         s = 'Ошибка, необходимо выделять весь блок, созданного web_reg_save_param, вместе с комментариями\n' \
