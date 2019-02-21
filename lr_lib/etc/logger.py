@@ -9,11 +9,12 @@ import queue
 from tkinter import messagebox
 
 import lr_lib
-import lr_lib.core.var.vars as lr_vars
 import lr_lib.core.var.etc.vars_other
+import lr_lib.core.var.vars as lr_vars
+from lr_lib.etc.sysinfo import system_info
 
-formatter = u'\n[ %(levelname)s ]: %(filename)s %(funcName)s:%(lineno)d %(threadName)s %(asctime)s.%(msecs)d \n%(message)s'
-datefmt = "%H:%M:%S"
+Fmt = u'[ %(levelname)s ]: %(filename)s %(funcName)s:%(lineno)d %(threadName)s %(asctime)s.%(msecs)d \n%(message)s'
+DateFmt = "%H:%M:%S"
 
 
 class GuiHandler(logging.Handler):
@@ -23,7 +24,7 @@ class GuiHandler(logging.Handler):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.setFormatter(logging.Formatter(formatter, datefmt=datefmt))
+        self.setFormatter(logging.Formatter(Fmt, datefmt=DateFmt))
         return
 
     def emit(self, record: logging) -> None:
@@ -42,7 +43,7 @@ class ConsoleHandler(logging.StreamHandler):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.setFormatter(logging.Formatter(formatter, datefmt=datefmt))
+        self.setFormatter(logging.Formatter(Fmt, datefmt=DateFmt))
         return
 
 
@@ -55,7 +56,7 @@ class LogHandler(logging.FileHandler):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.setFormatter(logging.Formatter(formatter, datefmt=datefmt))
+        self.setFormatter(logging.Formatter(Fmt, datefmt=DateFmt))
         return
 
 
@@ -108,8 +109,11 @@ def LoggerLevelCreator(levels: {str: int}) -> None:
 
 
 @contextlib.contextmanager
-def init(name='__main__', encoding='cp1251', levels=lr_lib.core.var.etc.vars_other.loggingLevels,
-         ) -> iter((logging.getLogger,)):
+def init(
+        name='__main__',
+        encoding='cp1251',
+        levels=lr_lib.core.var.etc.vars_other.loggingLevels,
+) -> iter((logging.getLogger,)):
     """
     инит логера с выводом в потоке
     """
@@ -118,6 +122,11 @@ def init(name='__main__', encoding='cp1251', levels=lr_lib.core.var.etc.vars_oth
     (Logger, listener) = LoggerCreator(name, encoding=encoding)
     try:
         listener.start()
+
+        i = 'version={v}, defaults.VarEncode={ce}\n{si}'
+        i = i.format(v=lr_vars.VERSION, ce=lr_lib.core.var.etc.vars_other.VarEncode.get(), si=system_info(), )
+        Logger.info(i)
+
         yield Logger
     except Exception:
         raise

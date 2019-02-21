@@ -9,14 +9,13 @@ import contextlib
 import sys
 
 import lr_lib.core.main_core
-import lr_lib.core.var.vars as lr_vars
 import lr_lib.core.var.etc.vars_other
+import lr_lib.core.var.vars as lr_vars
 import lr_lib.etc.excepthook
 import lr_lib.etc.keyb
 import lr_lib.etc.logger
 import lr_lib.etc.pool.main_pool
 import lr_lib.etc.pool.other
-import lr_lib.etc.sysinfo
 import lr_lib.gui.main_gui
 
 
@@ -25,15 +24,15 @@ def init(excepthook=True):
     инит дополнительных классов, сохр. их в lr_vars, запуск core/gui
     """
     # lr_vars.Logger
-    with lr_lib.etc.logger.init(name='__main__', encoding='cp1251',
-                                levels=lr_lib.core.var.etc.vars_other.loggingLevels) as lr_vars.Logger:
-        lr_vars.Logger.info('version={v}, defaults.VarEncode={ce}\n{si}'.format(
-            v=lr_vars.VERSION, ce=lr_lib.core.var.etc.vars_other.VarEncode.get(), si=lr_lib.etc.sysinfo.system_info()))
+    with lr_lib.etc.logger.init() as lr_vars.Logger:
 
         # lr_vars.MainThreadUpdater
-        with lr_lib.etc.pool.other.MainThreadUpdater().init() as lr_vars.MainThreadUpdater:
+        mtu = lr_lib.etc.pool.other.MainThreadUpdater()
+        with mtu.init() as lr_vars.MainThreadUpdater:
+
             # lr_vars.M_POOL, lr_vars.T_POOL
             with lr_lib.etc.pool.main_pool.init() as (lr_vars.M_POOL, lr_vars.T_POOL):
+
                 # core/gui
                 _start(excepthook=excepthook)
     return
@@ -46,6 +45,7 @@ def _start(excepthook=True, console_args=sys.argv) -> iter(((None, None, None),)
     """
     if excepthook:  # перехват raise -> lr_vars.Logger.error
         lr_vars.Tk.report_callback_exception = lr_lib.etc.excepthook.excepthook
+
     try:
 
         as_console = bool(console_args[1:])
@@ -63,8 +63,10 @@ def _start(excepthook=True, console_args=sys.argv) -> iter(((None, None, None),)
         lr_lib.etc.excepthook.excepthook(ex)
         raise
     else:
-        lr_vars.Logger.trace('Exit\nas_console={c}\nconsole_args={cas}\nc_args={ca}'.format(
-            c=as_console, cas=console_args, ca=c_args))
+        i = 'Exit\nas_console={c}\nconsole_args={cas}\nc_args={ca}'
+        i = i.format(c=as_console, cas=console_args, ca=c_args, )
+        lr_vars.Logger.trace(i)
+
     finally:
         if excepthook:
             lr_vars.Tk.report_callback_exception = lr_vars.original_callback_exception

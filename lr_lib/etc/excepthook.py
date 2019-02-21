@@ -93,7 +93,9 @@ def get_tb(exc_type, exc_val, exc_tb, err_name: str) -> str:
                         break
                 continue
             _, f = os.path.split(fileName)
-            left[0] = '\n!!! {e} [ {f} : строка {l} ]\n{line}\n'.format(e=err_name, line=left[0], f=f, l=lineNum)
+
+            s = '\n!!! {e} [ {f} : строка {l} ]\n{line}\n'
+            left[0] = s.format(e=err_name, line=left[0], f=f, l=lineNum, )
             left.reverse()
 
             right = []
