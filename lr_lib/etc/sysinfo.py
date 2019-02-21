@@ -2,9 +2,10 @@
 # инфо о системе
 
 import sys
+from typing import Iterable
 
 
-def system_info() -> iter((str,)):
+def system_info() -> Iterable[str]:
     """
     всякая ненужная инфа(при старте скрипта)
     """
@@ -12,7 +13,7 @@ def system_info() -> iter((str,)):
     return s
 
 
-def _system_info() -> iter((str,)):
+def _system_info() -> Iterable[str]:
     """
     всякая ненужная инфа(при старте скрипта)
     """
@@ -33,7 +34,7 @@ def _system_info() -> iter((str,)):
             pass
         return
 
-    def create_obj_attrs_message(obj: object, attrs: str) -> iter((str,)):
+    def create_obj_attrs_message(obj: object, attrs: str) -> Iterable[str]:
         """
         формирование сообщения для всех атрибутов объекта
         """
@@ -50,7 +51,7 @@ def _system_info() -> iter((str,)):
             continue
         return
 
-    def get_messages() -> iter((str,)):
+    def get_messages() -> Iterable[str]:
         """
         все сообщения для вывода
         """
@@ -90,7 +91,7 @@ def str_separator(message: str, s_width='#', s_height='#', t='  ', max_=70, n=5)
     сообщение в рамке
     """
 
-    def len_split(_m: [str, ]) -> iter((str, )):
+    def len_split(_m: [str, ]) -> Iterable[str]:
         """
         макс длина строки по '\n'
         """

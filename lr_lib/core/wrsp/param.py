@@ -5,6 +5,7 @@ import copy
 import random
 import string
 import time
+from typing import Iterable
 
 import lr_lib
 import lr_lib.core.var.vars as lr_vars
@@ -350,7 +351,7 @@ def search_param_in_file(file: dict) -> (dict or None):
     return
 
 
-def create_files_with_search_data(files: (dict,), search_data: dict, action=None, action_infs=()) -> iter((dict,)):
+def create_files_with_search_data(files: (dict,), search_data: dict, action=None, action_infs=()) -> Iterable[dict]:
     """
     с учетом inf - создать копию файла и обновить search_data
     """
@@ -401,7 +402,7 @@ def create_files_with_search_data(files: (dict,), search_data: dict, action=None
     return
 
 
-def set_param_in_action_inf(action, param: str) -> iter((int,)):
+def set_param_in_action_inf(action, param: str) -> Iterable[int]:
     """
     первый action-inf в котором расположен param, тк inf-номер запроса <= inf-номер web_reg_save_param
     """

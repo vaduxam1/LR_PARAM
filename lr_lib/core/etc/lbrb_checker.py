@@ -1,13 +1,14 @@
 ﻿# -*- coding: UTF-8 -*-
 # проверка LB RB (5) полей, на корректность
 
+from typing import Iterable
 
 import lr_lib.core.var.vars as lr_vars
 import lr_lib.core.var.vars_highlight
 import lr_lib.core.var.vars_param
 
 
-def check_in_text_param_all_bound_lb_rb(text=None, param=None) -> iter((bool,)):
+def check_in_text_param_all_bound_lb_rb(text=None, param=None) -> Iterable[bool]:
     """
     проверить корректность всех вхождений param в text
     """

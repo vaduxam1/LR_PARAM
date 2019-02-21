@@ -1,6 +1,8 @@
 # -*- coding: UTF-8 -*-
 # нахождение param, в файлах ответов split
 
+from typing import Iterable
+
 import lr_lib
 import lr_lib.core.var.vars_highlight
 import lr_lib.core.var.vars_param
@@ -71,7 +73,7 @@ allowParamFilter = lambda param: (not any(d in param for d in denySymb))
 NullSymb = '''"'''  # заменить на ''
 
 
-def split(param_texts: ([str, str],), ) -> iter((str, )):
+def split(param_texts: ([str, str],), ) -> Iterable[str]:
     """
     найти param, split способом
     """

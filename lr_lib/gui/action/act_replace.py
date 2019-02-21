@@ -3,6 +3,7 @@
 
 import tkinter as tk
 from tkinter import messagebox
+from typing import Iterable
 
 import lr_lib
 import lr_lib.core.var.vars as lr_vars
@@ -325,7 +326,7 @@ class ActReplaceRemove(lr_lib.gui.action.act_search.ActSearch):
         assert text
         num = 0
 
-        def filter_lines() -> iter((str,)):
+        def filter_lines() -> Iterable[str]:
             nonlocal num
             for line in text.split('\n'):
                 if line.lstrip().startswith(word):

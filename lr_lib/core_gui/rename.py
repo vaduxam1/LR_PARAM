@@ -2,6 +2,7 @@
 # переименование wrsp, и др.
 
 import tkinter as tk
+from typing import Iterable
 
 import lr_lib
 import lr_lib.core.var.etc.vars_other
@@ -47,7 +48,7 @@ def all_wrsp_auto_rename(gui: 'lr_lib.gui.action.main_action.ActionWindow', *arg
     return
 
 
-def _lbrb_wrsps(wrsps: ('lr_lib.core.action.web_.WebRegSaveParam',)) -> iter((str,)):
+def _lbrb_wrsps(wrsps: ('lr_lib.core.action.web_.WebRegSaveParam',)) -> Iterable[str]:
     """
     для всех wrsps, найти LR/RB из wrsp текста, и сформировать новое имя wrsp
     """
@@ -91,7 +92,7 @@ def _get_bound(line, spl, _s='",') -> str:
     return ln
 
 
-def _split_rename(text: str) -> iter((str,)):
+def _split_rename(text: str) -> Iterable[str]:
     """
     "P_6725_1__jsessionid__OLD" -> "P_6725_1__jsessionid__NEW"
     """

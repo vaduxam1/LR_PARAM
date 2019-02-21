@@ -2,6 +2,7 @@
 # фильтрация и сортировка param
 
 import string
+from typing import Iterable
 
 import lr_lib.core
 from lr_lib.core.var import vars as lr_vars
@@ -32,7 +33,7 @@ def param_sort(params: [str, ], reverse=True, _filter=True, deny_param_filter=Tr
 _PFDeny_1 = ('-' + string.ascii_lowercase)  # не {param} слова "-321" или "t11"
 
 
-def param_filter(params: [str, ], deny_param_filter=True, action=None, ) -> iter((str,)):
+def param_filter(params: [str, ], deny_param_filter=True, action=None, ) -> Iterable[str]:
     """
     отфильтровать лишние param
     """
@@ -141,7 +142,7 @@ def _param_filter(params: [str, ], ) -> [str, ]:
     return
 
 
-def only_in_action_param_filter(params: [str, ], action_text=None) -> iter((str,)):
+def only_in_action_param_filter(params: [str, ], action_text=None) -> Iterable[str]:
     """
     удалить param которых нету в action.c
     """

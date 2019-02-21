@@ -6,6 +6,7 @@ import json
 import tkinter as tk
 import tkinter.ttk as ttk
 from collections import OrderedDict
+from typing import Iterable
 
 import lr_lib
 import lr_lib.core.var.vars as lr_vars
@@ -142,7 +143,7 @@ AllowTypes = [str, int, float, tuple, list, set, dict, OrderedDict, ]  # тип�
 AllowTypes.extend(TkVars)
 
 
-def attr_filter(dt: dict, allow_types=tuple(AllowTypes), ) -> iter((str,)):
+def attr_filter(dt: dict, allow_types=tuple(AllowTypes), ) -> Iterable[str]:
     """
     исключить ненужные атрибуты
     """

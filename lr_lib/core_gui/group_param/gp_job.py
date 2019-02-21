@@ -17,6 +17,8 @@
 # Специальный - те расчитан на то что текст имеет определенный синтаксис, чтото вроде {"item": ['zul.sel.Treecell': {'bJsPt3', 'bJsPt4'}]}
 #           за счет синтаксиса, можно вытаскивать только то что надо
 
+from typing import Iterable
+
 import lr_lib
 import lr_lib.core
 import lr_lib.core.etc.lbrb_checker
@@ -25,7 +27,7 @@ from lr_lib.core.var import vars as lr_vars
 from lr_lib.core_gui.group_param.gp_var import responce_files_texts
 
 
-def _get_text_for_web(mode: str, action: 'lr_lib.gui.action.main_action.ActionWindow') -> iter(([str, str],)):
+def _get_text_for_web(mode: str, action: 'lr_lib.gui.action.main_action.ActionWindow') -> Iterable['(str, str)']:
     """
     текст для web объектов
     """
@@ -44,7 +46,8 @@ def _get_text_for_web(mode: str, action: 'lr_lib.gui.action.main_action.ActionWi
     else:
         n = ''
         items = action.web_action._to_str()
-        yield from ((n, t) for t in items)
+        it = ((n, t) for t in items)
+        yield from it
     return
 
 
@@ -55,7 +58,7 @@ name_check3 = lambda file_name: (not (name_check1(file_name) or name_check2(file
 
 def _text_from_params_source(
         params_source: 'str or lr_lib.gui.action.main_action.ActionWindow',
-) -> iter(([str, str],)):
+) -> Iterable['(str, str)']:
     """
     тексты для поиска param
     """
@@ -84,7 +87,7 @@ def _group_param_search_by_exist_param(
         exist_params: [str, ],
         params_source,
         **kwargs
-) -> iter((str,)):
+) -> Iterable[str]:
     """
     поиск по началу имени - взять n первых символов для повторного поиска param по началу имени
     """
@@ -99,7 +102,7 @@ def _group_param_search_by_exist_param(
     return
 
 
-def _group_param_search_by_lb(lb_items: [str, ], params_source) -> iter((str,)):
+def _group_param_search_by_lb(lb_items: [str, ], params_source) -> Iterable[str]:
     """
     поиск по LB
     """
@@ -112,7 +115,7 @@ def _group_param_search_by_param_part(
         param_parts: ["zkau_", ],
         params_source,
         **kwargs
-) -> iter(("zkau_5650", "zkau_5680",)):
+) -> Iterable['("zkau_5650", "zkau_5680",)']:
     """
     для группы parts
     """
@@ -131,7 +134,7 @@ def _params_by_part(
         text: str,
         part_mode=True,
         allow=lr_lib.core.var.vars_param.param_valid_letters,
-) -> iter(("zkau_5650", "zkau_5680",)):
+) -> Iterable['("zkau_5650", "zkau_5680",)']:
     """
     поиск в action.c, всех param, в имени которых есть param_part / или по LB
     part_mode=False - поиск param в action, по LB=
@@ -181,7 +184,7 @@ def _params_by_part(
     return
 
 
-def all_lb_from(text: str, param: str) -> iter((str,)):
+def all_lb_from(text: str, param: str) -> Iterable[str]:
     """
     поиск новых lb, для param, в text
     """

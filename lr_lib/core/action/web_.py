@@ -1,6 +1,8 @@
 # -*- coding: UTF-8 -*-
 # классы lr web_ запросов
 
+from typing import Iterable
+
 import lr_lib
 import lr_lib.core.etc.lbrb_checker
 import lr_lib.core.var.vars as lr_vars
@@ -42,7 +44,7 @@ def read_web_type(first_line: str, s1='("', s2='(') -> str:
     raise UserWarning(u)
 
 
-def _body_replace(body_split: [str, ], len_body_split: int, search: str, replace: str, is_wrsp=True) -> iter((str,)):
+def _body_replace(body_split: [str, ], len_body_split: int, search: str, replace: str, is_wrsp=True) -> Iterable[str]:
     """
     замена search в body
     """

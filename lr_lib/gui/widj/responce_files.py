@@ -5,6 +5,7 @@ import os
 import tkinter as tk
 import tkinter.ttk as ttk
 from tkinter import filedialog
+from typing import Iterable
 
 import lr_lib
 import lr_lib.core.var.vars as lr_vars
@@ -84,7 +85,7 @@ class RespFiles(tk.Toplevel):
         files_cmb.bind("<<ComboboxSelected>>", lambda *a: self.combo_select(files_cmb, folder, cbx_var))
         lr_lib.gui.widj.tooltip.createToolTip(files_cmb, text)
 
-        def get_inf_files() -> iter((str,)):
+        def get_inf_files() -> Iterable[str]:
             """все inf файлы директории"""
             folder_files = next(os.walk(folder))
             for file in folder_files[2]:

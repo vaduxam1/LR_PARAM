@@ -7,6 +7,7 @@ import logging.handlers
 import os
 import queue
 from tkinter import messagebox
+from typing import Iterable
 
 import lr_lib
 import lr_lib.core.var.etc.vars_other
@@ -113,7 +114,7 @@ def init(
         name='__main__',
         encoding='cp1251',
         levels=lr_lib.core.var.etc.vars_other.loggingLevels,
-) -> iter((logging.getLogger,)):
+) -> Iterable['logging.getLogger']:
     """
     инит логера с выводом в потоке
     """

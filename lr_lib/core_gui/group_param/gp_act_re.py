@@ -2,6 +2,7 @@
 # нахождение param, в action.c файле, на основе регулярных выражений
 
 import re
+from typing import Iterable
 
 import lr_lib
 import lr_lib.core.etc.lbrb_checker
@@ -92,7 +93,7 @@ ValidLetters = lr_lib.core.var.vars_param.param_valid_letters.__contains__  # ф
 RegExp = r'=(.+?)\"'  # re.findall по умолчанию
 
 
-def group_param_search_quotes(params_source, regexp=RegExp, ) -> iter((str,)):
+def group_param_search_quotes(params_source, regexp=RegExp, ) -> Iterable[str]:
     """
     фильтр поиск param, по regexp, например внутри кавычек
     """
@@ -108,7 +109,7 @@ def group_param_search_quotes(params_source, regexp=RegExp, ) -> iter((str,)):
     return
 
 
-def _get_params(params_source, regexp=RegExp, ) -> iter((str,)):
+def _get_params(params_source, regexp=RegExp, ) -> Iterable[str]:
     """
     поиск param, по regexp, например внутри кавычек
     """

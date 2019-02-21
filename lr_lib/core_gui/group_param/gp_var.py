@@ -2,6 +2,7 @@
 # разное
 
 import os
+from typing import Iterable
 
 import lr_lib
 import lr_lib.core_gui.group_param.gp_filter
@@ -50,7 +51,7 @@ def responce_files_texts(
         folder=lr_vars.DEFAULT_FILES_FOLDER, name_check=bool,
         encoding='utf-8',
         errors='replace',
-) -> iter([(str, str), ]):
+) -> Iterable['(str, str)']:
     """
     файлы ответов и запросов и все остальные
     """

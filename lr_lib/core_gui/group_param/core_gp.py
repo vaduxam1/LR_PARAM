@@ -2,6 +2,7 @@
 # ядро - нахождение и замена group_param
 
 import queue
+from typing import Iterable
 
 import lr_lib
 import lr_lib.core.var.etc.vars_other
@@ -41,7 +42,7 @@ def group_param(event, params: [str, ], widget=None, ask=True, ) -> None:
 def _group_param_iter(
         params: [str, ],
         action: 'lr_lib.gui.action.main_action.ActionWindow',
-) -> iter((int, dict, str, [str, ]), ):
+) -> Iterable['(int, dict, str, [str, ])']:
     """
     ядро - найти и заменить группу web_reg_save_param
     """

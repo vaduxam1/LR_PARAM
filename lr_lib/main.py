@@ -5,6 +5,8 @@
 # if __name__ == '__main__':
 # init()
 
+from typing import Iterable
+
 import contextlib
 import sys
 
@@ -39,7 +41,7 @@ def init(excepthook=True):
 
 
 @contextlib.contextmanager
-def _start(excepthook=True, console_args=sys.argv) -> iter(((None, None, None),)):
+def _start(excepthook=True, console_args=sys.argv) -> Iterable['(None, None, None)']:
     """
     запуск core/gui
     """

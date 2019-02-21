@@ -11,13 +11,14 @@ import subprocess
 import tempfile
 import time
 import types
+from typing import Iterable
 
 import lr_lib.core.var.vars as lr_vars
 
 ALW = set(string.printable).__contains__
 
 
-def _chunks(iterable: list, chunk_size: int) -> iter([iter, ]):
+def _chunks(iterable: list, chunk_size: int) -> iter:
     """
     Yield successive n-sized chunks from l. - не работает с генераторами
     """
@@ -30,7 +31,7 @@ def _chunks(iterable: list, chunk_size: int) -> iter([iter, ]):
     return
 
 
-def chunks(iterable: iter, chunk_size: int) -> iter((iter,)):
+def chunks(iterable: iter, chunk_size: int) -> Iterable[iter]:
     """
     iter-версия, работает с генераторами, Yield successive n-sized chunks from l.
     """
@@ -188,12 +189,13 @@ def param_files_info() -> str:
     return r
 
 
-def get_files_infs(files: [dict, ]) -> iter({int, }):
+def get_files_infs(files: [dict, ]) -> Iterable[int]:
     """
     inf-номера файлов
     """
     s = set(n for file in files for n in file['Snapshot']['Nums'])
-    yield from sorted(s)
+    s = sorted(s)
+    yield from s
     return
 
 
@@ -260,7 +262,7 @@ def exec_time(func: callable) -> callable:
     return wrap
 
 
-def get_files_names(folder: str, i_num: int, file_key='File', file_mask='t{}.inf') -> iter((str,)):
+def get_files_names(folder: str, i_num: int, file_key='File', file_mask='t{}.inf') -> Iterable[str]:
     """
     все имена файлов из t{i_num}.inf
     """

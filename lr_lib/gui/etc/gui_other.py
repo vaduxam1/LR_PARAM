@@ -1,6 +1,8 @@
 # -*- coding: UTF-8 -*-
 # всякое для gui
 
+from typing import Iterable
+
 import lr_lib
 import lr_lib.core.var.vars as lr_vars
 import lr_lib.core.var.etc.vars_other
@@ -73,7 +75,7 @@ def repB(widget, counter=None, st='\n----\n') -> None:
     return
 
 
-def get_transaction(text: str) -> iter((str,)):
+def get_transaction(text: str) -> Iterable[str]:
     """
     имена транзакций
     """

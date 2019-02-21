@@ -3,6 +3,7 @@
 
 import string
 import tkinter as tk
+from typing import Iterable
 
 import lr_lib
 import lr_lib.core.var.vars as lr_vars
@@ -142,7 +143,7 @@ class HighlightLines:
         return
 
 
-def join_indxs(index: int, *indxs: sorted) -> iter((int, int), ):
+def join_indxs(index: int, *indxs: sorted) -> Iterable['(int, int)']:
     """
     join_indxs(*sorted(indxs))
     объединить идущие подряд индексы, увеличить посл.индекс (+1):

@@ -7,6 +7,7 @@ import itertools
 import os
 import string
 import time
+from typing import Iterable
 
 import lr_lib
 import lr_lib.core.etc.other
@@ -97,7 +98,7 @@ def get_inf_file_num(file: str, inf_num=0, ) -> int:
     return inf_num
 
 
-def get_folder_infs(folder: str) -> iter((str, int), ):
+def get_folder_infs(folder: str) -> Iterable['(str, int)']:
     """
     inf файлы/номера каталога
     """
@@ -110,7 +111,7 @@ def get_folder_infs(folder: str) -> iter((str, int), ):
     return
 
 
-def create_files_from_infs(folder: str, enc: str, allow_deny: bool, statistic: bool, executer=None, ) -> iter([dict, ]):
+def create_files_from_infs(folder: str, enc: str, allow_deny: bool, statistic: bool, executer=None, ) -> None:
     """
     создать файлы ответов, из всех t*.ini файлов
     """
@@ -150,7 +151,7 @@ def get_files_portions(args: [(str, str, bool, bool), ((str, int),)]) -> [dict, 
     return files_
 
 
-def _create_files_from_inf(args: [(str, str, bool, bool), (str, int)]) -> iter((dict,)):
+def _create_files_from_inf(args: [(str, str, bool, bool), (str, int)]) -> Iterable[dict]:
     """
     создать файлы ответов, из одного inf-файла
     """
@@ -284,7 +285,7 @@ def get_file_with_kwargs(files: (dict,), **kwargs) -> dict:
     return
 
 
-def get_files_with_kwargs(files: (dict,), key='File', **kwargs) -> iter((dict,)):
+def get_files_with_kwargs(files: (dict,), key='File', **kwargs) -> Iterable[dict]:
     """
     найти файлы, содержащие kwargs
     """

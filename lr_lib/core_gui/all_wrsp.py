@@ -1,6 +1,8 @@
 # -*- coding: UTF-8 -*-
 # все варианты создания web_reg_save_param
 
+from typing import Iterable
+
 import lr_lib
 import lr_lib.core
 import lr_lib.core.var.var_callback.part_num
@@ -77,7 +79,7 @@ def _wrsp_text_delta_remove(wr: (dict, str), ) -> str:
     return without_delta
 
 
-def _all_wrsp(action: 'lr_lib.gui.action.main_action.ActionWindow') -> iter(([dict, str], )):
+def _all_wrsp(action: 'lr_lib.gui.action.main_action.ActionWindow') -> Iterable['(dict, str)']:
     """поиск всех возможных wrsp"""
     with lr_lib.gui.etc.color_progress.ColorProgress(action):
         wr = _wr_create()  # первый/текущий wrsp
@@ -88,7 +90,7 @@ def _all_wrsp(action: 'lr_lib.gui.action.main_action.ActionWindow') -> iter(([di
     return
 
 
-def _next_wrsp() -> 'iter([dict, str]) or None':
+def _next_wrsp() -> 'Iterable[(dict, str)] or None':
     """поиск следующего возможного wrsp"""
     try:
         lr_lib.core.var.var_callback.part_num.next_3_or_4_if_bad_or_enmpy_lb_rb('поиск всех корректных wrsp_dict')

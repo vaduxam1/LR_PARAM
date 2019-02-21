@@ -2,12 +2,14 @@
 # не используется, приведен как пример получения web_reg_save_param,
 #   для всех возможных вариантов VarPartNum/VarFile
 
+from typing import Iterable
+
 import lr_lib
 import lr_lib.core.var.vars as lr_vars
 import lr_lib.core.wrsp.param
 
 
-def all_wrsp_variant() -> iter(([dict, str],)):
+def all_wrsp_variant() -> Iterable['(dict, str)']:
     """
     получить web_reg_save_param, для всех вариантов VarPartNum/VarFile
     """
@@ -28,7 +30,7 @@ def wrsp_item() -> [dict, str]:
     return item
 
 
-def next_part_or_file(_work=True) -> iter((bool,)):
+def next_part_or_file(_work=True) -> Iterable[bool]:
     """
     все варианты param-вхождений и файлов
     True - смена вхождения(4) / False - смена файла(3)
