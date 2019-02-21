@@ -4,6 +4,7 @@
 import multiprocessing
 import os
 import time
+import logging
 import tkinter as tk
 
 import lr_lib.core.var.etc.var_ob
@@ -181,7 +182,10 @@ tcl_nonwordchars = '[^a-zA-Z0-9_.!-]'  # область выделения дв�
 # #####################################
 # логирование
 
-Logger = None  # lr_lib.etc.logger.Logger # вывод сообщений во все Handler: Logger.info('m', notepad=True, parent=act)
+try:
+    Logger: 'logging' = None  # lr_lib.etc.logger.Logger # вывод сообщений во все Handler: Logger.info('m', notepad=True, parent=act)
+except Exception as ex:
+    Logger = None  # lr_lib.etc.logger.Logger # вывод сообщений во все Handler: Logger.info('m', notepad=True, parent=act)
 log_overdrive = 'a'  # запись/перезапись лога
 logFolder = 'lr_logs'  # каталог лога
 logName = 'server_%s.log' % time.strftime('%d.%m')  # имя лога
@@ -212,7 +216,10 @@ MainThreadUpdater = None  # выполнять callback из main потока #
 _MTUT = 0.25  # сек - влияет на общую отзывчивость интерфейса(=0.25: отзывчивый переход по тексту)
 MainThreadUpdateTime = tk.IntVar(value=(_MTUT * 1000))  # интервал(мс) проверки очереди, callback(из потоков) + скорость обновления подсветки
 
-M_POOL = None  # пул процессов  # lr_lib.etc.pool.main_pool.POOL
+try:
+    M_POOL: 'lr_lib.etc.pool.main_pool.POOL' = None  # пул процессов
+except Exception as ex:
+    M_POOL = None  # пул процессов  # lr_lib.etc.pool.main_pool.POOL
 M_POOL_NAME = 'multiprocessing.Pool'  # тип основной пул
 cpu_count = multiprocessing.cpu_count()
 M_POOL_Size = (cpu_count if (cpu_count < 5) else 4)  # основной MP пул(int/None)

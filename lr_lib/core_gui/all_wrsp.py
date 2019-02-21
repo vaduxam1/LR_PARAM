@@ -1,7 +1,7 @@
 # -*- coding: UTF-8 -*-
 # все варианты создания web_reg_save_param
 
-from typing import Iterable
+from typing import Iterable, Tuple
 
 import lr_lib
 import lr_lib.core
@@ -79,7 +79,7 @@ def _wrsp_text_delta_remove(wr: (dict, str), ) -> str:
     return without_delta
 
 
-def _all_wrsp(action: 'lr_lib.gui.action.main_action.ActionWindow') -> Iterable['(dict, str)']:
+def _all_wrsp(action: 'lr_lib.gui.action.main_action.ActionWindow') -> Iterable[Tuple[dict, str]]:
     """поиск всех возможных wrsp"""
     with lr_lib.gui.etc.color_progress.ColorProgress(action):
         wr = _wr_create()  # первый/текущий wrsp

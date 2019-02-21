@@ -17,7 +17,7 @@
 # Специальный - те расчитан на то что текст имеет определенный синтаксис, чтото вроде {"item": ['zul.sel.Treecell': {'bJsPt3', 'bJsPt4'}]}
 #           за счет синтаксиса, можно вытаскивать только то что надо
 
-from typing import Iterable
+from typing import Iterable, Tuple
 
 import lr_lib
 import lr_lib.core
@@ -27,7 +27,7 @@ from lr_lib.core.var import vars as lr_vars
 from lr_lib.core_gui.group_param.gp_var import responce_files_texts
 
 
-def _get_text_for_web(mode: str, action: 'lr_lib.gui.action.main_action.ActionWindow') -> Iterable['(str, str)']:
+def _get_text_for_web(mode: str, action: 'lr_lib.gui.action.main_action.ActionWindow') -> Iterable[Tuple[str, str]]:
     """
     текст для web объектов
     """
@@ -58,7 +58,7 @@ name_check3 = lambda file_name: (not (name_check1(file_name) or name_check2(file
 
 def _text_from_params_source(
         params_source: 'str or lr_lib.gui.action.main_action.ActionWindow',
-) -> Iterable['(str, str)']:
+) -> Iterable[Tuple[str, str]]:
     """
     тексты для поиска param
     """
@@ -115,7 +115,7 @@ def _group_param_search_by_param_part(
         param_parts: ["zkau_", ],
         params_source,
         **kwargs
-) -> Iterable['("zkau_5650", "zkau_5680",)']:
+) -> Iterable[Tuple["zkau_5650", "zkau_5680"]]:
     """
     для группы parts
     """
@@ -134,7 +134,7 @@ def _params_by_part(
         text: str,
         part_mode=True,
         allow=lr_lib.core.var.vars_param.param_valid_letters,
-) -> Iterable['("zkau_5650", "zkau_5680",)']:
+) -> Iterable[Tuple["zkau_5650", "zkau_5680"]]:
     """
     поиск в action.c, всех param, в имени которых есть param_part / или по LB
     part_mode=False - поиск param в action, по LB=

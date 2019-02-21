@@ -6,7 +6,7 @@ import contextlib
 import multiprocessing.dummy
 import multiprocessing.pool
 import tkinter
-from typing import Iterable
+from typing import Iterable, Tuple
 
 import lr_lib.core.var.vars as lr_vars
 import lr_lib.etc.pool.other
@@ -98,17 +98,18 @@ class POOL:
         return
 
 
-@contextlib.contextmanager
-def init() -> Iterable['(POOL, POOL)']:
+# @contextlib.contextmanager
+def init() -> Tuple[POOL, POOL]:
     """
     создание пулов
     """
     M_POOL = POOL(lr_vars.M_POOL_NAME, lr_vars.M_POOL_Size)
     T_POOL = POOL(lr_vars.T_POOL_NAME, lr_vars.T_POOL_Size)
     item = (M_POOL, T_POOL)
-    try:
-        yield item
-    finally:
-        lr_vars.M_POOL.pool_exit()
-        lr_vars.T_POOL.pool_exit()
+    return item
+
+
+def exit() -> None:
+    lr_vars.M_POOL.pool_exit()
+    lr_vars.T_POOL.pool_exit()
     return

@@ -4,7 +4,7 @@
 import collections
 import copy
 import string
-from typing import Iterable
+from typing import Iterable, Tuple
 
 import lr_lib
 import lr_lib.core.action.web_
@@ -159,7 +159,7 @@ class WebReport:
                 continue
             return
 
-        def web_reg(snapshot: int) -> Iterable['(str, dict)']:
+        def web_reg(snapshot: int) -> Iterable[Tuple[str, dict]]:
             web = self.ActionWebsAndLines.get_web_by(web_snapshot_all, snapshot=snapshot)
             web = next(web)
             for wrsp in web.web_reg_save_param_list:

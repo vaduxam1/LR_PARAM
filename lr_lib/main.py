@@ -5,7 +5,7 @@
 # if __name__ == '__main__':
 # init()
 
-from typing import Iterable
+from typing import Iterable, Tuple
 
 import contextlib
 import sys
@@ -27,21 +27,21 @@ def init(excepthook=True):
     """
     # lr_vars.Logger
     with lr_lib.etc.logger.init() as lr_vars.Logger:
-
         # lr_vars.MainThreadUpdater
         mtu = lr_lib.etc.pool.other.MainThreadUpdater()
         with mtu.init() as lr_vars.MainThreadUpdater:
 
             # lr_vars.M_POOL, lr_vars.T_POOL
-            with lr_lib.etc.pool.main_pool.init() as (lr_vars.M_POOL, lr_vars.T_POOL):
-
-                # core/gui
+            (lr_vars.M_POOL, lr_vars.T_POOL) = lr_lib.etc.pool.main_pool.init()
+            try:  # core/gui
                 _start(excepthook=excepthook)
+            finally:
+                lr_lib.etc.pool.main_pool.exit()
     return
 
 
 @contextlib.contextmanager
-def _start(excepthook=True, console_args=sys.argv) -> Iterable['(None, None, None)']:
+def _start(excepthook=True, console_args=sys.argv) -> Iterable[Tuple[None, None, None]]:
     """
     запуск core/gui
     """

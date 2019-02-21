@@ -114,7 +114,7 @@ def init(
         name='__main__',
         encoding='cp1251',
         levels=lr_lib.core.var.etc.vars_other.loggingLevels,
-) -> Iterable['logging.getLogger']:
+) -> Iterable[logging.getLogger]:
     """
     инит логера с выводом в потоке
     """

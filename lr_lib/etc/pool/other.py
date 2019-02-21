@@ -16,6 +16,7 @@ class MainThreadUpdater:
     def __init__(self):
         self.working = None
         self.queue_in = queue.Queue()  # очередь выполнения callback
+        lr_vars.M_POOL
         return
 
     def submit(self, callback: callable) -> None:

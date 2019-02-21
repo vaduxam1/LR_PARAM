@@ -7,7 +7,7 @@ import itertools
 import os
 import string
 import time
-from typing import Iterable
+from typing import Iterable, Tuple
 
 import lr_lib
 import lr_lib.core.etc.other
@@ -98,7 +98,7 @@ def get_inf_file_num(file: str, inf_num=0, ) -> int:
     return inf_num
 
 
-def get_folder_infs(folder: str) -> Iterable['(str, int)']:
+def get_folder_infs(folder: str) -> Iterable[Tuple[str, int]]:
     """
     inf файлы/номера каталога
     """

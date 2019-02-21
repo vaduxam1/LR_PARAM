@@ -2,14 +2,14 @@
 # не используется, приведен как пример получения web_reg_save_param,
 #   для всех возможных вариантов VarPartNum/VarFile
 
-from typing import Iterable
+from typing import Iterable, Tuple
 
 import lr_lib
 import lr_lib.core.var.vars as lr_vars
 import lr_lib.core.wrsp.param
 
 
-def all_wrsp_variant() -> Iterable['(dict, str)']:
+def all_wrsp_variant() -> Iterable[Tuple[dict, str]]:
     """
     получить web_reg_save_param, для всех вариантов VarPartNum/VarFile
     """
