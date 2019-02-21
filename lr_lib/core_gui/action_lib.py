@@ -19,9 +19,7 @@ from lr_lib.core.var import vars as lr_vars
 
 
 def _block_decor(func: 'callable') -> 'callable':
-    """
-    декоратор widget.action.block - widget должен быть первым аогументом
-    """
+    """декоратор widget.action.block - widget должен быть первым аргументом"""
     functools.wraps(func)
 
     def wrapper(widget: 'lr_lib.gui.widj.highlight_text.HighlightText', *args, **kwargs):
@@ -71,8 +69,7 @@ def mouse_web_reg_save_param(
             tk.messagebox.showinfo(p, s, parent=action)
 
             def callback() -> None:
-                """callback - тк search_in_action почемуто асинхронно вызывается.
-                переход на первый созданный [param}"""
+                """callback тк search_in_action почемуто асинхронно вызывается + переход на первый созданный [param}"""
                 try:
                     action.search_res_combo.current(1)
                 except tk.TclError:
@@ -115,6 +112,7 @@ def rClick_Param(event, *args, **kwargs) -> None:
         """автозамена param в action.c"""
         mouse_web_reg_save_param(widget, param, *args, set_param=False, **kwargs)
         return
+
     lr_vars.Window.get_files(param=param, callback=callback, action=action)
     return
 
@@ -389,9 +387,9 @@ def rClick_web_reg_save_param_regenerate(event, new_lb_rb=True, selection=None, 
 
     if lr_lib.core.wrsp.param.wrsp_lr_start not in selection:
         s = 'Ошибка, необходимо выделять весь блок, созданного web_reg_save_param, вместе с комментариями\n' \
-            'Сейчас "{wr}" не содержится в выделенном тексте:\n{selection}'
-        s = s.format(wr=lr_lib.core.wrsp.param.wrsp_lr_start, selection=selection[:1000])
-        tk.messagebox.showwarning(str(rClick_web_reg_save_param_regenerate), s, parent=action)
+            'Сейчас "{wrsp}" не содержится в выделенном тексте:\n{selection}'
+        s = s.format(wrsp=lr_lib.core.wrsp.param.wrsp_lr_start, selection=selection[:1000])
+        tk.messagebox.showwarning('изменить LB/RB в созданном web_reg_save_param', s, parent=action)
         return
 
     file_name = selection.split(lr_lib.core.wrsp.param.wrsp_file_start, 1)[-1]
