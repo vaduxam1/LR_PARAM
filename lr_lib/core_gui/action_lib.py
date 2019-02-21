@@ -2,6 +2,7 @@
 # команды из меню мыши
 
 import codecs
+import functools
 import html
 import os
 import re
@@ -11,13 +12,28 @@ import urllib.parse
 import lr_lib
 import lr_lib.core.action.web_
 import lr_lib.core.var.etc.init_vars
-import lr_lib.core.var.vars_highlight
 import lr_lib.core.var.etc.vars_other
+import lr_lib.core.var.vars_highlight
 import lr_lib.gui.widj.responce_files
 from lr_lib.core.var import vars as lr_vars
 
 
+def _block_decor(func: 'callable') -> 'callable':
+    """
+    декоратор widget.action.block - widget должен быть первым аогументом
+    """
+    functools.wraps(func)
+
+    def wrapper(widget: 'lr_lib.gui.widj.highlight_text.HighlightText', *args, **kwargs):
+        with widget.action.block():
+            out = func(widget, *args, **kwargs)
+        return out
+
+    return wrapper
+
+
 @lr_lib.core.var.etc.vars_other.T_POOL_decorator
+@_block_decor
 def mouse_web_reg_save_param(
         widget: 'lr_lib.gui.widj.highlight_text.HighlightText',
         param: str,
@@ -27,43 +43,48 @@ def mouse_web_reg_save_param(
         set_param=True,
 ) -> None:
     """
-    в окне action.c, для param, автозамена, залить цветом, установить виджеты
+    автозамена param в action.c, залить цветом, установить виджеты
     """
-    with widget.action.block():
-        if 'SearchAndReplace' in mode:
-            if not wrsp_dict:
-                if set_param:
-                    lr_vars.VarParam.set(param, action=widget.action, set_file=True)
-                    wrsp_dict = lr_lib.core.wrsp.param.wrsp_dict_creator()
-                else:
-                    wrsp_dict = lr_vars.VarWrspDict.get()
+    action = widget.action
 
-            # найти и заменить в action.c
-            widget.action.SearchAndReplace(search=param, wrsp_dict=wrsp_dict, is_wrsp=True, backup=True, wrsp=wrsp)
+    if 'SearchAndReplace' in mode:
+        if not wrsp_dict:
+            if set_param:
+                lr_vars.VarParam.set(param, action=action, set_file=True)
+                wrsp_dict = lr_lib.core.wrsp.param.wrsp_dict_creator()
+            else:
+                wrsp_dict = lr_vars.VarWrspDict.get()
 
+        # найти и заменить в action.c
+        action.SearchAndReplace(search=param, wrsp_dict=wrsp_dict, is_wrsp=True, backup=True, wrsp=wrsp)
+
+        popup = lr_vars.VarShowPopupWindow.get()
+        final_wnd = action.final_wnd_var.get()
+        if popup and final_wnd:
             w = wrsp_dict['web_reg_name']
-            if lr_vars.VarShowPopupWindow.get() and widget.action.final_wnd_var.get():
-                widget.action.search_in_action(word=w)
+            action.search_in_action(word=w)
 
-                s = '{wr}\n\n{wd}'.format(wr=widget.action.web_action.websReport.param_statistic[w], wd=wrsp_dict)
-                lr_vars.Logger.debug(s)
-                tk.messagebox.showinfo(wrsp_dict['param'], s, parent=widget.action)
+            param_statistic = action.web_action.websReport.param_statistic[w]
+            s = '{param_statistic}\n\n{wrsp_dict}'.format(param_statistic=param_statistic, wrsp_dict=wrsp_dict)
+            p = wrsp_dict['param']
+            lr_vars.Logger.debug(s)
+            tk.messagebox.showinfo(p, s, parent=action)
 
-                def callback() -> None:
-                    """callback - тк search_in_action почемуто асинхронно вызывается.
-                    переход на первый созданный [param}"""
-                    try:
-                        widget.action.search_res_combo.current(1)
-                    except tk.TclError:
-                        widget.action.search_res_combo.current(0)
-                    widget.action.tk_text_see()
-                    return
+            def callback() -> None:
+                """callback - тк search_in_action почемуто асинхронно вызывается.
+                переход на первый созданный [param}"""
+                try:
+                    action.search_res_combo.current(1)
+                except tk.TclError:
+                    action.search_res_combo.current(0)
+                action.tk_text_see()
+                return
 
-                lr_vars.MainThreadUpdater.submit(callback)
+            lr_vars.MainThreadUpdater.submit(callback)
 
-        elif 'highlight' in mode:
-            widget.action.tk_text.highlight_mode(param)
-            widget.action.tk_text.highlight_apply()
+    elif 'highlight' in mode:
+        action.tk_text.highlight_mode(param)
+        action.tk_text.highlight_apply()
     return
 
 
@@ -90,7 +111,10 @@ def rClick_Param(event, *args, **kwargs) -> None:
         action = lr_vars.Window.get_main_action()
         widget = action.tk_text  # lr_lib.gui.widj.highlight_text.HighlightText
 
-    callback = lambda: mouse_web_reg_save_param(widget, param, *args, set_param=False, **kwargs)
+    def callback() -> None:
+        """автозамена param в action.c"""
+        mouse_web_reg_save_param(widget, param, *args, set_param=False, **kwargs)
+        return
     lr_vars.Window.get_files(param=param, callback=callback, action=action)
     return
 
@@ -110,7 +134,7 @@ def remove_web_reg_save_param_from_action(event, selection=None, find=True) -> N
     return
 
 
-def event_action_getter(event):
+def event_action_getter(event) -> 'lr_lib.gui.action.main_action.ActionWindow':
     """
     если передали не event.widget.'action', то найти action
     """

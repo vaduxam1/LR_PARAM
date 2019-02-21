@@ -102,7 +102,9 @@ def get_folder_infs(folder: str) -> Iterable[Tuple[str, int]]:
     """
     inf файлы/номера каталога
     """
-    for file in next(os.walk(folder))[2]:
+    path = os.walk(folder)
+    items = next(path)
+    for file in items[2]:
         num = get_inf_file_num(file)
         if num:
             item = (file, num)
