@@ -89,9 +89,11 @@ def find_version_changes(ver: str) -> str:
         text = er.format(e=ex.__class__.__name__, ea=ex.args, )
         return text
 
-    for v in version_changes:
-        if ver_to_int(v) > current_ver:
-            it = [v, version_changes[v]]
+    for ver_num in version_changes:
+        new_ver = ver_to_int(ver_num)
+        if new_ver > current_ver:
+            changes = version_changes[ver_num]
+            it = [ver_num, changes]
             description.append(it)
         else:
             break
@@ -122,9 +124,11 @@ VersionChanges = collections.OrderedDict({
 
 #     'v11.6.1': '''
 # * -
-# * удалить подсветку для выделенного фрагмента, в один клик
-# * добавлены новые типы переменных, для вывода в меню "Setting" - настройка "на лету" переменных утилиты
-# * контекстное меню "правой кнопки мыши", работало только для action.c окна, теперь работает для всех виджетов
+# * удалить подсветку для выделенного фрагмента, не выбирая удаляемый цвет(удалит любой)
+# * новые типы переменных, для вывода в меню "Setting" - настройка "на лету" переменных утилиты
+# * многие команды меню правой кнопки мыши, корректно работали только в action.c окне, теперь работает для всех виджетов
+# * изменены описания диалог окон для некоторых действий
+# * добавлены аннотации в правильном формате
 # * общий рефакторинг
 #         ''',
 

@@ -32,7 +32,7 @@ def init(excepthook=True):
         with mtu.init() as lr_vars.MainThreadUpdater:
 
             # lr_vars.M_POOL, lr_vars.T_POOL
-            (lr_vars.M_POOL, lr_vars.T_POOL) = lr_lib.etc.pool.main_pool.init()
+            lr_lib.etc.pool.main_pool.init()
             try:  # core/gui
                 _start(excepthook=excepthook)
             finally:

@@ -4,6 +4,7 @@
 import sys
 import threading
 from queue import Empty, PriorityQueue
+from typing import Any, Callable, Iterable, Tuple
 
 import lr_lib
 import lr_lib.core.var.vars as lr_vars
@@ -73,15 +74,24 @@ class SThreadIOQueue:
         return
 
 
+defaultNoPoolAttr = (True, )  # любое корректное значение по умолчанию для _NoPool
+
+
 class _NoPool:
     """
-    заглушка пула для SThread
+    заглушка пула для SThread - все выполняется в главном потоке
+    вроде когдато гдето терялся traceback, но с использованием _NoPool(выполнение только в главном потоке) не терялось
     """
     size = 1
 
-    def __getattr__(self, item):
+    def __getattr__(self, item: Any) -> Tuple[bool]:
         """self.pool.working -> True"""
-        return [True]
+        return defaultNoPoolAttr
+
+    def map(self, func: Callable[[Any], Any], iterable: Iterable[Any]):
+        """вроде тут он нужен?"""
+        m = map(func, iterable)
+        return m
 
 
 class SThread(threading.Thread, SThreadIOQueue):
@@ -110,16 +120,15 @@ class SThread(threading.Thread, SThreadIOQueue):
             while self.pool.working:
                 try:  # получить задачу / поток занят
                     (priority, task) = self.queue_in.get(timeout=self.timeout)
-                    self.task = task
-
                 except Empty:  # таймаут бездействия
                     if self.pool.size > self.size_min:
                         return
-                except Exception:
-                    lr_lib.etc.excepthook.excepthook(*sys.exc_info())
+                except Exception as ex:
+                    lr_lib.etc.excepthook.excepthook(ex)
                     return
 
                 else:
+                    self.task = task
                     try:  # выполнить задачу
                         task.target(*task.args, **task.kwargs)
                         continue
@@ -131,17 +140,20 @@ class SThread(threading.Thread, SThreadIOQueue):
                         return
 
                     finally:  # поток свободен
-                        self.task = self.queue_in.task_done()
+                        self.task = None
+                        self.queue_in.task_done()
                 continue
         finally:  # выход потока
-            self.task = self.pool._remove_thread(th=self)
+            self.task = None
+            self.pool._remove_thread(th=self)
         return
 
     def __bool__(self) -> bool:
         """
         поток свободен/занят
         """
-        return bool(self.task)
+        b = bool(self.task)
+        return b
 
 
 class SThreadPool(SThreadIOQueue):
@@ -172,10 +184,12 @@ class SThreadPool(SThreadIOQueue):
         """
         for _ in range(th_count):
             th = self._create_thread()
+
             DLOCK.acquire()
             self.threads.append(th)
             self._set_pool_size()
             DLOCK.release()
+
             th.start()
             continue
         return
@@ -214,8 +228,10 @@ class SThreadPool(SThreadIOQueue):
         выход
         """
         self.working = False
-        for _ in range(lr_vars.SThreadPoolSizeMax.get()):
-            self.queue_in.put((0, None))
+        m = lr_vars.SThreadPoolSizeMax.get()
+        for _ in range(m):
+            i = (0, None)
+            self.queue_in.put(i)
             continue
         return
 

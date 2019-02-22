@@ -2,15 +2,18 @@
 # M_POOL(процессы), T_POOL(потоки) пулы
 
 import concurrent.futures
-import contextlib
 import multiprocessing.dummy
 import multiprocessing.pool
 import tkinter
-from typing import Iterable, Tuple
+from typing import Any
 
 import lr_lib.core.var.vars as lr_vars
 import lr_lib.etc.pool.other
 import lr_lib.etc.pool.sthread
+
+
+STPName = 'SThreadPool(threading.Thread)'
+NAPName = ['NoPool', 'AsyncPool', ]
 
 
 class POOL:
@@ -18,9 +21,9 @@ class POOL:
     пул потоков, с возможностью выбора его типа
     """
     pools = {
-        # 'AsyncPool': lr_lib.etc.pool.other.AsyncPool,
-        'NoPool': lr_lib.etc.pool.other.NoPool,
-        'SThreadPool(threading.Thread)': lr_lib.etc.pool.sthread.SThreadPool,
+        # NAPName[1]: lr_lib.etc.pool.other.AsyncPool,
+        NAPName[0]: lr_lib.etc.pool.other.NoPool,
+        STPName: lr_lib.etc.pool.sthread.SThreadPool,
         'concurrent.futures.ThreadPoolExecutor': concurrent.futures.ThreadPoolExecutor,
         'concurrent.futures.ProcessPoolExecutor': concurrent.futures.ProcessPoolExecutor,
         'multiprocessing.Pool': multiprocessing.Pool,
@@ -42,7 +45,7 @@ class POOL:
         self.reset()
         return
 
-    def __getattr__(self, item: str):
+    def __getattr__(self, item: str) -> Any:
         """
         перенаправление вызовов в self.pool
         """
@@ -50,7 +53,9 @@ class POOL:
             item = 'imap'
         if (item == 'imap') and (not hasattr(self.pool, 'imap')):
             item = 'map'
-        return getattr(self.pool, item)
+
+        attr = getattr(self.pool, item)
+        return attr
 
     def reset(self, *args) -> None:
         """
@@ -66,9 +71,9 @@ class POOL:
             if 'concurrent.futures.' in n:
                 m = (s or None)
                 self.set_pool(n, max_workers=m)
-            elif n in ['NoPool', 'AsyncPool']:
+            elif n in NAPName:
                 self.set_pool(n)
-            elif n == 'SThreadPool(threading.Thread)':
+            elif n == STPName:
                 self.set_pool(n, s, parent=self)
             else:
                 self.set_pool(n, processes=s)
@@ -78,10 +83,12 @@ class POOL:
         """
         создать пул
         """
-        self.pool = self.pools[name](*args, **kwargs)
-        return self.pool
+        pool = self.pools[name]
+        pool = pool(*args, **kwargs)
+        self.pool = pool
+        return pool
 
-    def pool_exit(self, ex=Exception) -> None:
+    def pool_exit(self) -> None:
         """закрыть пул"""
         try:
             self.pool.shutdown()
@@ -98,15 +105,13 @@ class POOL:
         return
 
 
-# @contextlib.contextmanager
-def init() -> Tuple[POOL, POOL]:
+def init() -> None:
     """
     создание пулов
     """
-    M_POOL = POOL(lr_vars.M_POOL_NAME, lr_vars.M_POOL_Size)
-    T_POOL = POOL(lr_vars.T_POOL_NAME, lr_vars.T_POOL_Size)
-    item = (M_POOL, T_POOL)
-    return item
+    lr_vars.M_POOL = POOL(lr_vars.M_POOL_NAME, lr_vars.M_POOL_Size)
+    lr_vars.T_POOL = POOL(lr_vars.T_POOL_NAME, lr_vars.T_POOL_Size)
+    return
 
 
 def exit() -> None:

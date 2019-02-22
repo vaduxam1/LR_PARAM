@@ -16,7 +16,6 @@ class MainThreadUpdater:
     def __init__(self):
         self.working = None
         self.queue_in = queue.Queue()  # очередь выполнения callback
-        lr_vars.M_POOL
         return
 
     def submit(self, callback: callable) -> None:
@@ -67,11 +66,13 @@ class NoPool:
 
     @staticmethod
     def map(fn: callable, args: tuple) -> iter:
-        yield from map(fn, args)
+        m = map(fn, args)
+        yield from m
         return
 
     def submit(self, func: callable, *args, **kwargs):
-        return func(*args, **kwargs)
+        s = func(*args, **kwargs)
+        return s
 
 
 # import asyncio
