@@ -24,13 +24,23 @@ def excepthook(*args) -> None:
 
     full_tb_write(exc_type, exc_val, exc_tb)
 
-    ern = exc_type.__name__
-    if lr_vars.Window:
-        cmd = lambda: lr_vars.Window.err_to_widgts(exc_type, exc_val, exc_tb, ern)
-        lr_vars.MainThreadUpdater.submit(cmd)
+    try:
+        ern = exc_type.__name__
+        if lr_vars.Window:
+            def err_wind_show() -> None:
+                """показ popup окна с ошибкой"""
+                lr_vars.Window.err_to_widgts(exc_type, exc_val, exc_tb, ern)
+                return
+            lr_vars.MainThreadUpdater.submit(err_wind_show)
 
-    e = get_tb(exc_type, exc_val, exc_tb, ern)
-    lr_vars.Logger.critical(e)
+        e = get_tb(exc_type, exc_val, exc_tb, ern)
+        lr_vars.Logger.critical(e)
+
+    except Exception as ex:  # например до инита Logger
+        print([ex, ex.args])
+        traceback.print_tb(ex.__traceback__, file=sys.stdout)
+        print(lr_vars.SEP)
+        traceback.print_tb(exc_tb, file=sys.stdout)
     return
 
 

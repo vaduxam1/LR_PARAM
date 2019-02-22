@@ -21,7 +21,7 @@ import lr_lib.etc.pool.other
 import lr_lib.gui.main_gui
 
 
-def init(excepthook=True):
+def init(excepthook=True, exit_code=True, ) -> True:
     """
     инит дополнительных классов, сохр. их в lr_vars, запуск core/gui
     """
@@ -37,7 +37,7 @@ def init(excepthook=True):
                 _start(excepthook=excepthook)
             finally:
                 lr_lib.etc.pool.main_pool.exit()
-    return
+    return exit_code
 
 
 @contextlib.contextmanager

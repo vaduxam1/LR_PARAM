@@ -73,7 +73,7 @@ class NoPool:
         yield from m
         return
 
-    def submit(self, func: Callable[[Any], Any], *args, **kwargs):
+    def submit(self, func: Callable[[Any], Any], *args, **kwargs) -> Any:
         s = func(*args, **kwargs)
         return s
 
