@@ -40,17 +40,18 @@ class Setting(tk.Toplevel):
         создание
         """
         col = 0
-        modeles = [
+        modules = [
             lr_vars,
             lr_lib.core.var.vars_highlight,
             lr_lib.core.wrsp.param,
             lr_lib.core.var.vars_param,
         ]
 
-        for module in modeles:
+        for module in modules:
             _source = inspect.getsource(module)
             source = _source.split('\n')
-            source = list(filter(bool, map(str.strip, source)))
+            source = map(str.strip, source)
+            source = list(filter(bool, source))
 
             col += 1
             row = 0
@@ -98,7 +99,7 @@ class Setting(tk.Toplevel):
         return
 
 
-def _get_source_var_comment(source: [str, ], attr: str) -> str:
+def _get_source_var_comment(source: [str, ], attr: str, cmnt='#', ) -> str:
     """
     подсказки к кнопкам насройки vars из каментов исходного кода
     """
@@ -111,13 +112,13 @@ def _get_source_var_comment(source: [str, ], attr: str) -> str:
 
     ind = source.index(vs1)
     vs0 = source[ind - 1]  # + пред строка
-    if vs0.startswith('#'):
+    if vs0.startswith(cmnt):
         vs0 = (vs0 + '\n')
     else:
         vs0 = ''
 
-    if '#' in vs1:
-        vs1 = vs1.split('#', 1)
+    if cmnt in vs1:
+        vs1 = vs1.split(cmnt, 1)
         vs1 = vs1[1]
     else:
         vs1 = ''
@@ -126,9 +127,10 @@ def _get_source_var_comment(source: [str, ], attr: str) -> str:
 
     if not var_source:  # искать до первого #
         for line in source[ind:]:
-            if '#' in line:
-                ls = line.split('#', 1)
-                if len(ls) == 2:
+            if cmnt in line:
+                ls = line.split(cmnt, 1)
+                lls = len(ls)
+                if lls == 2:
                     var_source = ls[1]
                 else:
                     var_source = '?'
@@ -138,9 +140,9 @@ def _get_source_var_comment(source: [str, ], attr: str) -> str:
     return var_source
 
 
-TkVars = (tk.IntVar, tk.StringVar, tk.BooleanVar,)
-AllowTypes = [str, int, float, tuple, list, set, dict, OrderedDict, ]  # типы переменных для вывода
-AllowTypes.extend(TkVars)
+TkVars = (tk.IntVar, tk.StringVar, tk.BooleanVar,)  # tk. типы переменных для вывода
+AllowTypes = [str, int, float, tuple, list, set, dict, OrderedDict, ]  # любые типы переменных для вывода
+AllowTypes.extend(TkVars)  # типы переменных для вывода
 
 
 def attr_filter(dt: dict, allow_types=tuple(AllowTypes), ) -> Iterable[str]:
@@ -149,8 +151,8 @@ def attr_filter(dt: dict, allow_types=tuple(AllowTypes), ) -> Iterable[str]:
     """
     for attr in dt:
         da = dt[attr]
-        if (not attr.startswith('__')) and isinstance(da, allow_types) and (len(attr) > 1) \
-                and (not callable(da)):
+        la = len(attr)
+        if (la > 1) and (not attr.startswith('__')) and isinstance(da, allow_types) and (not callable(da)):
             yield attr
         continue
     return
@@ -178,7 +180,7 @@ def _var_editor(parent, var_dict, var_name, ) -> None:
     except Exception as ex:  # TypeError: object of type 'IntVar' has no len()
         lenv = None
 
-        # Toplevel
+    # Toplevel
     top_level = tk.Toplevel(parent)
     top_level.attributes('-topmost', True)
     title = '{n} | type({tp}) | len({ln})'.format(tp=type(var), ln=lenv, n=var_name, )
@@ -207,9 +209,7 @@ def _var_editor(parent, var_dict, var_name, ) -> None:
     # Scrollbar
     text_scrolly = ttk.Scrollbar(top_level, orient=tk.VERTICAL, command=tk_text.yview)
     text_scrollx = ttk.Scrollbar(top_level, orient=tk.HORIZONTAL, command=tk_text.xview)
-    tk_text.configure(
-        yscrollcommand=text_scrolly.set, xscrollcommand=text_scrollx.set, bd=0, padx=0, pady=0,
-    )
+    tk_text.configure(yscrollcommand=text_scrolly.set, xscrollcommand=text_scrollx.set, bd=0, padx=0, pady=0,)
 
     # grid
     tk_text.grid(row=0, column=0, sticky=tk.NSEW)

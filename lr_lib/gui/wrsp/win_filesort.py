@@ -45,7 +45,8 @@ class WinFileSort(lr_lib.gui.wrsp.win_maxmin.WinMaxMin):
         задать комбо(1/2) сортировки
         """
         keys = set(itertools.chain(*lr_vars.AllFiles))
-        self.sortKey1['values'] = list(filter(deny_keys, keys))
+        keys = filter(deny_keys, keys)
+        self.sortKey1['values'] = list(keys)
 
         k1 = lr_vars.VarFileSortKey1.get()
         self.sortKey1.set(k1)
@@ -55,14 +56,14 @@ class WinFileSort(lr_lib.gui.wrsp.win_maxmin.WinMaxMin):
         self.sortKey2.set(k2)
         return
 
-    def setSortKey1(self, *args, _t=(),) -> None:
+    def setSortKey1(self, *args, _none=(), ) -> None:
         """
         комбо сортировки 1
         """
         k1 = self.sortKey1.get()
         lr_vars.VarFileSortKey1.set(k1)
         ic = itertools.chain(lr_vars.AllFiles, lr_vars.FilesWithParam)
-        s = set(k for f in ic for k in f.get(k1, _t))
+        s = set(k for f in ic for k in f.get(k1, _none))
 
         self.sortKey2['values'] = list(s)
         self.sortKey2.set('')
