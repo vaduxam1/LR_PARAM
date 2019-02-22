@@ -6,6 +6,7 @@ from typing import Iterable, Tuple, List
 
 import lr_lib
 import lr_lib.core.var.etc.vars_other
+import lr_lib.core_gui.action_lib
 import lr_lib.core_gui.group_param.gp_progress
 import lr_lib.core_gui.group_param.gp_var
 from lr_lib.core.var import vars as lr_vars
@@ -18,20 +19,21 @@ def group_param(event, params: [str, ], widget=None, ask=True, ) -> None:
     """
     if widget is None:
         widget = event.widget
+    action = lr_lib.core_gui.action_lib.event_action_getter(event)
 
     # пользовательское редактирование params
-    ap = lr_lib.core_gui.group_param.gp_var._ask_params(params, widget.action, ask=ask)
+    ap = lr_lib.core_gui.group_param.gp_var._ask_params(params, action, ask=ask)
     (len_params, params) = ap
     if not len_params:
         return
 
     # заменить params
     with lr_vars.Window.block(force=True):
-        with widget.action.block():
-            widget.action.backup()
+        with action.block():
+            action.backup()
             with lr_lib.core_gui.group_param.gp_progress.ProgressBar(len_params, widget) as progress_bar:
                 # создание
-                create_iterator = _group_param_iter(params, widget.action)
+                create_iterator = _group_param_iter(params, action)
                 # прогресс
                 for item in create_iterator:
                     progress_bar.update(item)

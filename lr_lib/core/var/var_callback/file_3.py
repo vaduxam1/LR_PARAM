@@ -21,7 +21,8 @@ def set_file(file: dict, errors='replace', first_param_part4_num=0) -> None:
     """
     ff = file['File']
     fname = ff['FullName']
-    with open(fname, encoding=lr_lib.core.var.etc.vars_other.VarEncode.get(), errors=errors) as f:
+    enc = lr_lib.core.var.etc.vars_other.VarEncode.get()
+    with open(fname, encoding=enc, errors=errors) as f:
         file_text = f.read()
     lr_vars.VarFileText.set(file_text)
 
