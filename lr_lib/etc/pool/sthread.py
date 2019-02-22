@@ -79,19 +79,13 @@ defaultNoPoolAttr = (True, )  # любое корректное значение
 
 class _NoPool:
     """
-    заглушка пула для SThread - все выполняется в главном потоке
-    вроде когдато гдето терялся traceback, но с использованием _NoPool(выполнение только в главном потоке) не терялось
+    заглушка пула для SThread
     """
     size = 1
 
     def __getattr__(self, item: Any) -> Tuple[bool]:
         """self.pool.working -> True"""
         return defaultNoPoolAttr
-
-    def map(self, func: Callable[[Any], Any], iterable: Iterable[Any]):
-        """вроде тут он нужен?"""
-        m = map(func, iterable)
-        return m
 
 
 class SThread(threading.Thread, SThreadIOQueue):

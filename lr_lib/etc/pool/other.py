@@ -3,6 +3,7 @@
 
 import contextlib
 import queue
+from typing import Any, Callable, Iterable, Tuple
 
 import lr_lib
 import lr_lib.core.var.vars as lr_vars
@@ -62,15 +63,17 @@ class MainThreadUpdater:
 class NoPool:
     """
     заглушка пула для однопоточного выполнения, для POOL_
+     все выполняется в главном потоке
+    вроде когдато гдето терялся traceback, но с использованием _NoPool(выполнение только в главном потоке) не терялось
     """
 
     @staticmethod
-    def map(fn: callable, args: tuple) -> iter:
-        m = map(fn, args)
+    def map(self, func: Callable[[Any], Any], iterable: Iterable[Any]) -> Iterable[Any]:
+        m = map(func, iterable)
         yield from m
         return
 
-    def submit(self, func: callable, *args, **kwargs):
+    def submit(self, func: Callable[[Any], Any], *args, **kwargs):
         s = func(*args, **kwargs)
         return s
 
