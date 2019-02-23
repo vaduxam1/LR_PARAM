@@ -4,8 +4,9 @@
 import concurrent.futures
 import multiprocessing.dummy
 import multiprocessing.pool
+import contextlib
 import tkinter
-from typing import Any
+from typing import Any, Tuple
 
 import lr_lib.core.var.vars as lr_vars
 import lr_lib.etc.pool.other
@@ -105,16 +106,35 @@ class POOL:
         return
 
 
+@contextlib.contextmanager
 def init() -> None:
     """
-    создание пулов
+    создание старт и выход пулов
     """
-    lr_vars.M_POOL = POOL(lr_vars.M_POOL_NAME, lr_vars.M_POOL_Size)
-    lr_vars.T_POOL = POOL(lr_vars.T_POOL_NAME, lr_vars.T_POOL_Size)
+    pool_list = pools_start()
+    try:
+        yield pool_list
+    finally:
+        pools_exit(pool_list)
     return
 
 
-def exit() -> None:
-    lr_vars.M_POOL.pool_exit()
-    lr_vars.T_POOL.pool_exit()
+def pools_start() -> Tuple['POOL', 'POOL']:
+    """
+    старт пулов
+    """
+    M_POOL = POOL(lr_vars.M_POOL_NAME, lr_vars.M_POOL_Size)
+    T_POOL = POOL(lr_vars.T_POOL_NAME, lr_vars.T_POOL_Size)
+
+    pool_list = (M_POOL, T_POOL)
+    return pool_list
+
+
+def pools_exit(pool_list: Tuple['POOL', 'POOL']) -> None:
+    """
+    выход из пулов
+    """
+    for pool in pool_list:
+        pool.pool_exit()
+        continue
     return

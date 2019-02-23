@@ -2,6 +2,7 @@
 # примеры разных пулов потоков + (запуск подсветки линий tk_text в MainThreadUpdater)
 
 import contextlib
+import sys
 import queue
 from typing import Any, Callable, Iterable, Tuple
 
@@ -17,6 +18,7 @@ class MainThreadUpdater:
     def __init__(self):
         self.working = None
         self.queue_in = queue.Queue()  # очередь выполнения callback
+        self.sleep = lr_vars.MainThreadUpdateTime.get()
         return
 
     def submit(self, callback: Callable) -> None:
@@ -27,7 +29,7 @@ class MainThreadUpdater:
         return
 
     @contextlib.contextmanager
-    def init(self) -> iter:
+    def init(self) -> Iterable['MainThreadUpdater']:
         """
         вызов _queue_listener
         """
@@ -50,13 +52,14 @@ class MainThreadUpdater:
                 break
             try:  # выполнить callback
                 callback()
-            except Exception as ex:
-                lr_lib.etc.excepthook.excepthook(ex)
+            except Exception:
+                ex = sys.exc_info()
+                lr_lib.etc.excepthook.excepthook(*ex)
             continue
         else:
             return
 
-        lr_vars.Tk.after(lr_vars.MainThreadUpdateTime.get(), self._queue_listener)  # перезапуск
+        lr_vars.Tk.after(self.sleep, self._queue_listener)  # перезапуск
         return
 
 

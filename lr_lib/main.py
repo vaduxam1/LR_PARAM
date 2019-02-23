@@ -21,55 +21,60 @@ import lr_lib.etc.pool.other
 import lr_lib.gui.main_gui
 
 
-def init(excepthook=True, exit_code=True, ) -> True:
+def init(excepthook=True, ) -> True:
     """
     инит дополнительных классов, сохр. их в lr_vars, запуск core/gui
     """
     # lr_vars.Logger
     with lr_lib.etc.logger.init() as lr_vars.Logger:
         # lr_vars.MainThreadUpdater
-        mtu = lr_lib.etc.pool.other.MainThreadUpdater()
-        with mtu.init() as lr_vars.MainThreadUpdater:
-
+        with lr_lib.etc.pool.other.MainThreadUpdater().init() as lr_vars.MainThreadUpdater:
             # lr_vars.M_POOL, lr_vars.T_POOL
-            lr_lib.etc.pool.main_pool.init()
-            try:  # core/gui
-                _start(excepthook=excepthook)
-            finally:
-                lr_lib.etc.pool.main_pool.exit()
+            with lr_lib.etc.pool.main_pool.init() as (lr_vars.M_POOL, lr_vars.T_POOL):
+                # core/gui
+                exit_code = start(excepthook=excepthook)
     return exit_code
 
 
 @contextlib.contextmanager
-def _start(excepthook=True, console_args=sys.argv) -> Iterable[Tuple[None, None, None]]:
+def start(excepthook=True, console_args=sys.argv, exit_code=False, ) -> bool:
     """
-    запуск core/gui
+    запуск core/gui в excepthook обработчике raise
     """
     if excepthook:  # перехват raise -> lr_vars.Logger.error
         lr_vars.Tk.report_callback_exception = lr_lib.etc.excepthook.excepthook
 
     try:
-
-        as_console = bool(console_args[1:])
-        c_args = lr_lib.core.main_core.init(as_console=as_console)
-
-        if as_console:  # консольное использование
-            lr_lib.core.main_core.start(c_args, echo=True)
-
-        else:  # gui использование
-            with lr_lib.etc.keyb.keyboard_listener():  # hotkey(param from clipboard)
-                lr_lib.gui.main_gui.init(c_args)
-                lr_lib.gui.main_gui.start(action=True, lock=True)
-
+        exit_code = (as_console, c_args) = main(console_args)
     except Exception as ex:
         lr_lib.etc.excepthook.excepthook(ex)
         raise
-    else:
-        i = 'Exit\nas_console={c}\nconsole_args={cas}\nc_args={ca}'
-        i = i.format(c=as_console, cas=console_args, ca=c_args, )
-        lr_vars.Logger.trace(i)
-
     finally:
-        if excepthook:
-            lr_vars.Tk.report_callback_exception = lr_vars.original_callback_exception
-    return
+        lr_vars.Tk.report_callback_exception = lr_vars.original_callback_exception
+
+    i = 'Exit\nas_console={c}\nconsole_args={cas}\nc_args={ca}'
+    i = i.format(c=as_console, cas=console_args, ca=c_args, )
+    lr_vars.Logger.debug(i)
+
+    exit_code = bool(exit_code)
+    return exit_code
+
+
+def main(console_args: Tuple[str]) -> Tuple[bool, dict]:
+    """
+    запуск core/gui
+    """
+    as_console = bool(console_args[1:])
+    # core
+    c_args = lr_lib.core.main_core.init(as_console=as_console)
+
+    if as_console:  # консольное использование
+        lr_lib.core.main_core.start(c_args, echo=True)
+    else:  # обычное использование
+        with lr_lib.etc.keyb.keyboard_listener():  # hotkey(param from clipboard)
+            # gui
+            lr_lib.gui.main_gui.init(c_args)
+            lr_lib.gui.main_gui.start(action=True, lock=True)
+
+    item = (as_console, c_args)
+    return item

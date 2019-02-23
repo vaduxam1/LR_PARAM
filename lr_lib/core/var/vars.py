@@ -183,10 +183,7 @@ tcl_nonwordchars = '[^a-zA-Z0-9_.!-]'  # область выделения дв�
 # #####################################
 # логирование
 
-try:
-    Logger: 'logging' = None  # lr_lib.etc.logger.Logger # вывод сообщений во все Handler: Logger.info('m', notepad=True, parent=act)
-except Exception as ex:
-    Logger = None  # lr_lib.etc.logger.Logger # вывод сообщений во все Handler: Logger.info('m', notepad=True, parent=act)
+Logger = logging.Logger('')  # lr_lib.etc.logger.Logger # переопределится, вывод сообщений во все Handler: Logger.info('m', notepad=True, parent=act)
 log_overdrive = 'a'  # запись/перезапись лога
 logFolder = 'lr_logs'  # каталог лога
 logName = 'server_%s.log' % time.strftime('%d.%m')  # имя лога

@@ -7,17 +7,18 @@ from lr_lib.main import init
 from lr_lib.etc.excepthook import excepthook
 
 
-def main(exit_code=False) -> int:
+def main(code=False) -> int:
     """
     старт утилиты.
-    :return: int: OK = 0 / Fail = 1 : Process finished with exit code 0
+    :return: int: OK = 0 / Fail = 1
+        Process finished with exit code 0
     """
     try:
-        exit_code = init()  # True
+        code = init()  # True
     except Exception as ex:
         excepthook(ex)
-
-    exit_code = int(not exit_code)  # OK = 0
+    finally:
+        exit_code = int(not code)  # OK = 0
     return exit_code
 
 
