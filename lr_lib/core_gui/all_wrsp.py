@@ -32,7 +32,8 @@ def all_wrsp_dict_web_reg_save_param(event, wrsp_web_=None) -> None:
             action.max_inf_cbx_var.set(m)
 
         if wrsp_web_:
-            action.search_in_action(word=wrsp_web_.to_str())
+            w = wrsp_web_.to_str()
+            action.search_in_action(word=w)
     return
 
 

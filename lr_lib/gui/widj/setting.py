@@ -6,7 +6,7 @@ import json
 import tkinter as tk
 import tkinter.ttk as ttk
 from collections import OrderedDict
-from typing import Iterable
+from typing import Iterable, List
 
 import lr_lib
 import lr_lib.core.var.vars as lr_vars
@@ -102,7 +102,7 @@ class Setting(tk.Toplevel):
         return
 
 
-def _get_source_var_comment(source: [str, ], attr: str, cmnt='#', ) -> str:
+def _get_source_var_comment(source: List[str], attr: str, cmnt='#', ) -> str:
     """
     подсказки к кнопкам насройки vars из каментов исходного кода
     """
@@ -172,7 +172,7 @@ def to_json(var, _var: 'repr') -> str:
     return txt
 
 
-def _var_editor(parent, var_dict, var_name, ) -> None:
+def _var_editor(parent, var_dict: dict, var_name: str, ) -> None:
     """
     Toplevel tk.Text + scroll_XY
     """
@@ -226,7 +226,7 @@ def _var_editor(parent, var_dict, var_name, ) -> None:
     filemenu = tk.Menu(top_level, tearoff=0)
     menubar.add_cascade(label="reset/save", menu=filemenu)
 
-    def _save(value_txt) -> None:
+    def _save(value_txt: str) -> None:
         """пересохранить var"""
         value = eval(value_txt)
         if isinstance(var, TkVars):

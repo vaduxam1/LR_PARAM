@@ -1,6 +1,8 @@
 # -*- coding: UTF-8 -*-
 # улаление web_ из action.с (dummy и тд)
 
+from typing import List
+
 
 def dummy_remove(web_: [str, ], mode=False) -> bool:
     """
@@ -93,7 +95,7 @@ WebDummyTemplate_Part_Endswith = '''
 WebDummyTemplate_Part_ = tuple(filter(bool, map(str.strip, WebDummyTemplate_Part_Endswith.split('\n'))))
 
 
-def dummy_endswith_remove(web_: [str, ]) -> bool:
+def dummy_endswith_remove(web_: List[str]) -> bool:
     """
     web_submit_data похожая на WebDummyTemplate_Part_, или нет
     """

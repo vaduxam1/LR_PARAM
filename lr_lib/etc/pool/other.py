@@ -19,7 +19,7 @@ class MainThreadUpdater:
         self.queue_in = queue.Queue()  # очередь выполнения callback
         return
 
-    def submit(self, callback: callable) -> None:
+    def submit(self, callback: Callable) -> None:
         """
         добавить в очередь выполнения
         """
@@ -80,7 +80,7 @@ class NoPool:
 
 # import asyncio
 # @asyncio.coroutine
-# def async_worker(executor: callable, fn: callable, args: tuple, e=None):
+# def async_worker(executor: Callable, fn: Callable, args: tuple, e=None):
 #     result = yield from executor(e, fn, args)
 #     return result
 #
@@ -91,17 +91,17 @@ class NoPool:
 #         self.loop = asyncio.get_event_loop()
 #         return
 #
-#     def map(self, fn: callable, args: list):
+#     def map(self, fn: Callable, args: list):
 #         return self.loop.run_until_complete(self.async_map(fn, args))
 #
-#     def submit(self, fn: callable, *args, **kwargs) -> None:
+#     def submit(self, fn: Callable, *args, **kwargs) -> None:
 #         def callback(*_, a=args, kw=kwargs):
 #             return fn(*a, **kw)
 #         f = self.async_map(callback, [None])
 #         return self.loop.run_until_complete(f)
 #
 #     @asyncio.coroutine
-#     def async_map(self, fn: callable, args: list):
+#     def async_map(self, fn: Callable, args: list):
 #         workers = [asyncio.ensure_future(async_worker(self.loop.run_in_executor, fn, a), loop=self.loop) for a in args]
 #         result = yield from asyncio.gather(*workers, loop=self.loop)
 #         return result

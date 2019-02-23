@@ -35,7 +35,7 @@ class RespFiles(tk.Toplevel):
         self.response_widj_creator(folder_response, desc='файлы при воспроизведении', side='bottom')
         return
 
-    def combo_select(self, ent: tk.Entry, folder: str, cbx_var: tk.BooleanVar):
+    def combo_select(self, ent: 'tk.Entry', folder: str, cbx_var: 'tk.BooleanVar'):
         """
         self.files_cmb select
         """

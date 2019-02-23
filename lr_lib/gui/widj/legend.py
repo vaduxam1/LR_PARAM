@@ -5,6 +5,7 @@ import collections
 import itertools
 import tkinter as tk
 import tkinter.ttk as ttk
+from typing import Iterable, Tuple, List
 
 import lr_lib
 import lr_lib.core.var.vars as lr_vars
@@ -15,7 +16,7 @@ import lr_lib.gui.widj.tooltip_canvas
 _S = {'white', 'black', 'navy', 'grey', 'alice'}
 
 
-def clrs() -> [str, ]:
+def clrs() -> List[str]:
     """
     цвет
     """
@@ -286,7 +287,7 @@ class WebLegend(tk.Toplevel):
             self.transac(transacts)
             return
 
-    def transac(self, transacts) -> None:
+    def transac(self, transacts: List[Tuple[int, str]]) -> None:
         """
         соответствие номеров(из окна легенды) и имен транзакций
         """

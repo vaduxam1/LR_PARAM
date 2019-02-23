@@ -2,7 +2,7 @@
 # инфо о системе
 
 import sys
-from typing import Iterable
+from typing import Iterable, List, Tuple
 
 
 def system_info() -> Iterable[str]:
@@ -71,7 +71,7 @@ def _system_info() -> Iterable[str]:
     return
 
 
-def _separator(msg: (str,), max_len: int) -> (str,):
+def _separator(msg: Tuple[str], max_len: int) -> Iterable[str]:
     """
     выравнивание пробелами для сообщения в рамки
     """
@@ -91,7 +91,7 @@ def str_separator(message: str, s_width='#', s_height='#', t='  ', max_=70, n=5)
     сообщение в рамке
     """
 
-    def len_split(_m: [str, ]) -> Iterable[str]:
+    def len_split(_m: List[str]) -> Iterable[str]:
         """
         макс длина строки по '\n'
         """

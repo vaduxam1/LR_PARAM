@@ -152,7 +152,7 @@ class TopPoolSetting(tk.Toplevel):
         SThreadPool(threading.Thread) текст состояния пула
         """
 
-        def pool_state_string(st=lambda i: '{0:<6} : {1}'.format(*i)) -> str:
+        def pool_state_string() -> str:
             """
             инфо о потоках T_POOL
             """
@@ -172,9 +172,9 @@ class TopPoolSetting(tk.Toplevel):
             return
 
         y = lr_lib.gui.widj.dialog.YesNoCancel(
-            ['выйти', ],
-            'T_POOL\nмонитор',
-            'инфо о задачах, выполняющихся в SThread потоках',
+            buttons=['выйти', ],
+            text_before='T_POOL\nмонитор',
+            text_after='инфо о задачах, выполняющихся в SThread потоках',
             title=lr_vars.VERSION,
             parent=self.action,
             is_text=pool_state_string(),

@@ -3,6 +3,7 @@
 
 import codecs
 import queue
+from typing import Iterable, Tuple, List, Callable
 
 import tkinter as tk
 import tkinter.messagebox
@@ -24,7 +25,7 @@ class YesNoCancel(tk.Toplevel):
 
     def __init__(
             self,
-            buttons: [str, ],
+            buttons: List[str],
             text_before: str,
             text_after: str,
             title: str,

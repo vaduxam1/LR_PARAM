@@ -3,7 +3,7 @@
 
 import string
 import tkinter as tk
-from typing import Iterable, Tuple
+from typing import Iterable, Tuple, Set, Dict, Callable
 
 import lr_lib
 import lr_lib.core.var.vars as lr_vars
@@ -15,7 +15,10 @@ class HighlightLines:
     подсветка линий текста
     """
 
-    def __init__(self, tk_text: 'lr_lib.gui.widj.highlight_text.HighlightText', tegs_names: {str, (str,), }):
+    def __init__(self,
+                 tk_text: 'lr_lib.gui.widj.highlight_text.HighlightText',
+                 tegs_names: Dict[str, Set[Tuple[str, int]]],
+                 ):
         self.tk_text = tk_text
         self.id = id(self)
 
@@ -62,7 +65,7 @@ class HighlightLines:
         lr_vars.MainThreadUpdater.submit(set)
         return
 
-    def set_top_bottom(self, on_sreen_line_nums: (int, int), __highlight=True) -> None:
+    def set_top_bottom(self, on_sreen_line_nums: Tuple[int, int], __highlight=True) -> None:
         """
         новые границы показанных линий
         """
@@ -81,7 +84,7 @@ class HighlightLines:
             self.after(self.HighlightAfter1, self.highlight_top_bottom_lines, self.on_sreen_line_nums)
         return
 
-    def highlight_top_bottom_lines(self, on_sreen_line_nums: (int, int)) -> None:
+    def highlight_top_bottom_lines(self, on_sreen_line_nums: Tuple[int, int]) -> None:
         """
         подсветить все линии на экране
         получать индексы и подсвечивать on-screen линии текста, пока top и bottom не изменились
@@ -95,7 +98,7 @@ class HighlightLines:
             continue
         return
 
-    def _line_tegs_add(self, line_num: int, on_sreen_line_nums: (int, int), XY='{}.{}'.format) -> None:
+    def _line_tegs_add(self, line_num: int, on_sreen_line_nums: Tuple[int, int], XY='{}.{}'.format) -> None:
         """
         вычислить координаты подсветки одной линии и подсветить
         """
@@ -165,7 +168,7 @@ def join_indxs(index: int, *indxs: sorted) -> Iterable[Tuple[int, int]]:
     return
 
 
-def generate_line_tags_names_indxs(line: str, setdefault: callable, teg_names: {str: {(str, int)}}) -> None:
+def generate_line_tags_names_indxs(line: str, setdefault: Callable, teg_names: Dict[str, Set[Tuple[str, int]]]) -> None:
     """
     индексы tags для подсветки, для линии - слова из словаря
     teg_names={'backgroundorange': {('warning', 7),...
@@ -197,7 +200,7 @@ punctuation_digits = set(string.punctuation + string.digits)
 whitespace_letters = set(string.whitespace + string.ascii_letters)
 
 
-def genetate_line_tags_purct_etc_indxs(line: str, setdefault: callable) -> None:
+def genetate_line_tags_purct_etc_indxs(line: str, setdefault: Callable) -> None:
     """
     индексы подсветки для линии - пунктуация, цифры и не ASCII
     """

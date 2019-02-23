@@ -1,6 +1,8 @@
 # -*- coding: UTF-8 -*-
 # гирлянда - смена цветов кнопок
 
+from typing import Iterable, Tuple, Set, Dict, Callable
+
 import lr_lib.core.var.vars_highlight
 from lr_lib.core.var import vars as lr_vars
 
@@ -43,7 +45,7 @@ def background_color_set(self, color='', _types=('Button',), obs=None) -> None:
     return
 
 
-def _rnd_color(self, color) -> str:
+def _rnd_color(self, color: 'str or None or ""') -> str:
     """
     вернуть имя цвета
     :param color: None-случайный/False-оригинальный/str-"Red"
@@ -56,7 +58,7 @@ def _rnd_color(self, color) -> str:
     return color
 
 
-def DiR(ob, _types=('button',)):
+def DiR(ob, _types=('button',)) -> Iterable:
     """
     объекты для смены цвета
     """

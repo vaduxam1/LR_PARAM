@@ -2,6 +2,7 @@
 # разное
 
 import os
+from typing import Callable
 
 import lr_lib
 import lr_lib.core.var.vars as lr_vars
@@ -32,13 +33,13 @@ ver = lr_vars.VERSION
 
 def auto_update_action_info_lab(
         self,
-        config: callable,
+        config: Callable,
         tk_text: 'lr_lib.gui.widj.highlight_text.HighlightText',
         id_: int,
         timeout: int,
-        check_run: callable,
-        title: callable,
-        _set_title: callable,
+        check_run: Callable,
+        title: Callable,
+        _set_title: Callable,
 ) -> None:
     """
     обновление action.label с процентами и пулом

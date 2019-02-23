@@ -53,7 +53,7 @@ class ActBackup(lr_lib.gui.action.act_block.ActBlock):
         i = os.path.join(lr_vars.BackupFolder, n)
         return i
 
-    def destroy(self):
+    def destroy(self) -> None:
         """
         выход
         """
@@ -66,4 +66,5 @@ class ActBackup(lr_lib.gui.action.act_block.ActBlock):
         except KeyError as ex:
             pass
 
-        return super().destroy()
+        super().destroy()
+        return

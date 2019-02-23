@@ -5,6 +5,7 @@ import copy
 import re
 import tkinter as tk
 from tkinter.font import Font
+from typing import Iterable, Tuple, List, Dict, Set
 
 import lr_lib
 import lr_lib.core.var.vars as lr_vars
@@ -100,7 +101,7 @@ class HighlightText(tk.Text):
         self.insert(1.0, text)
         return
 
-    def _text_checkbox(self) -> (str, str, int, int):
+    def _text_checkbox(self) -> Tuple[str, str, int, int]:
         """
         text checkbox's get,
         + дополнительно используется как self.__class__._text_checkbox(parent) - color/nocolor?
@@ -109,7 +110,8 @@ class HighlightText(tk.Text):
         s = ('italic' if self.slant_var.get() else 'roman')
         u = (1 if self.underline_var.get() else 0)
         o = (1 if self.overstrike_var.get() else 0)
-        return w, s, u, o,
+        ww = (w, s, u, o,)
+        return ww
 
     def set_tegs(self, *a, remove=False, parent=None, ground=('background', 'foreground',)) -> None:
         """
@@ -173,7 +175,7 @@ class HighlightText(tk.Text):
             self.action.report_position()  # показать
         return
 
-    def get_tegs_names(self) -> {str: {str, }}:
+    def get_tegs_names(self) -> Dict[str, Set[Tuple[str, int]]]:
         """
         _tegs_names + \\xCE\\xE1
         """
@@ -213,7 +215,7 @@ class HighlightText(tk.Text):
 
         return tegs_names
 
-    def web_add_highlight(self, web_) -> None:
+    def web_add_highlight(self, web_: 'lr_lib.core.action.web_.WebSnapshot') -> None:
         """
         подсветить web_
         """
