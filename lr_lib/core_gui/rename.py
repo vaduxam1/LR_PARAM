@@ -2,7 +2,7 @@
 # переименование wrsp, и др.
 
 import tkinter as tk
-from typing import Iterable
+from typing import Iterable, Tuple
 
 import lr_lib
 import lr_lib.core_gui.action_lib
@@ -49,7 +49,7 @@ def all_wrsp_auto_rename(gui: 'lr_lib.gui.action.main_action.ActionWindow', *arg
     return
 
 
-def _lbrb_wrsps(wrsps: ('lr_lib.core.action.web_.WebRegSaveParam',)) -> Iterable[str]:
+def _lbrb_wrsps(wrsps: Tuple['lr_lib.core.action.web_.WebRegSaveParam']) -> Iterable[str]:
     """
     для всех wrsps, найти LR/RB из wrsp текста, и сформировать новое имя wrsp
     """
@@ -79,7 +79,7 @@ def _lbrb_wrsps(wrsps: ('lr_lib.core.action.web_.WebRegSaveParam',)) -> Iterable
     return
 
 
-def _get_bound(line, spl, _s='",') -> str:
+def _get_bound(line: str, spl, _s='",') -> str:
     """
     извлечь LR/RB из текста wrsp
     :param line: '"LB/IC=item:",'

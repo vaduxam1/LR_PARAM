@@ -3,13 +3,14 @@
 
 import contextlib
 import tkinter as tk
+from typing import Iterable, Tuple, List, Callable
 
 import lr_lib
 from lr_lib.core.var import vars as lr_vars
 
 
 @contextlib.contextmanager
-def block(self) -> iter:
+def block(self) -> Iterable:
     """
     заблокировать/разблокировать виджеты в gui
     """
@@ -66,7 +67,7 @@ def item_getattr(item, state: str) -> None:
     return
 
 
-def set_state_widg(var, widgs: list) -> 'callable':
+def set_state_widg(var, widgs: List) -> Callable:
     """
     widg: normal/disabled
     """

@@ -1,7 +1,7 @@
 # -*- coding: UTF-8 -*-
 # нахождение param, в файлах ответов split
 
-from typing import Iterable
+from typing import Iterable, List, Tuple
 
 import lr_lib
 import lr_lib.core.var.vars_highlight
@@ -20,13 +20,13 @@ TT1 = '''
 
 def group_param_search_by_split(
         action: 'lr_lib.gui.action.main_action.ActionWindow',
-        params_source,
+        params_source: 'str or lr_lib.gui.action.main_action.ActionWindow',
         wrsp_create=False,
         action_text=True,
         ask=True,
         ask2=True,
         **kwargs,
-) -> [str, ]:
+) -> List[str]:
     """
     поиск param в RequestBody/RequestHeader файлах
     """
@@ -73,7 +73,7 @@ allowParamFilter = lambda param: (not any(d in param for d in denySymb))
 NullSymb = '''"'''  # заменить на ''
 
 
-def split(param_texts: ([str, str],), ) -> Iterable[str]:
+def split(param_texts: Iterable[Tuple[str, str]], ) -> Iterable[str]:
     """
     найти param, split способом
     """

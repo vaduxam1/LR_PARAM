@@ -1,6 +1,7 @@
 # -*- coding: UTF-8 -*-
 # окно ячейка Настраиваемый запуск поиска WRSP
 import tkinter as tk
+from typing import Iterable, Tuple, List, Callable
 
 import lr_lib
 from lr_lib.core.var.etc.vars_other import T_POOL_decorator
@@ -16,8 +17,8 @@ class RItem:
     """
 
     def __init__(self,
-                 parent: 'RunSettingWindow',
-                 function: 'callable',
+                 parent: 'lr_lib.core_gui.run.run_setting.RunSettingWindow',
+                 function: Callable,
                  main_label: str,
                  _act_num=1,
                  files_req=True,
@@ -207,7 +208,7 @@ class RItem:
         self.act_radio.set(a)
         return
 
-    def get_params(self, ask=False, ask2=False, wrsp_create=False, i_params=None, ) -> [str, ]:
+    def get_params(self, ask=False, ask2=False, wrsp_create=False, i_params=None, ) -> List[str]:
         """
         получить params
         """
@@ -234,7 +235,7 @@ class RItem:
             )
         return params
 
-    def get_params_source(self) -> list:
+    def get_params_source(self) -> List:
         """
         найти params_source
         """

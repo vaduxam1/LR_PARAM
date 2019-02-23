@@ -3,6 +3,7 @@
 
 import itertools
 import re
+from typing import Iterable, Tuple, List
 
 import lr_lib
 import lr_lib.core.etc.lbrb_checker
@@ -15,7 +16,7 @@ from lr_lib.core.var import vars as lr_vars
 from lr_lib.gui.widj.dialog import K_FIND, K_SKIP, CREATE_or_FIND
 
 
-def param_from_str_1(stri: "'\\'zul.wnd.Window\\',\\'bJsP0\\',{'") -> (str, str):
+def param_from_str_1(stri: "'\\'zul.wnd.Window\\',\\'bJsP0\\',{'") -> Tuple[str, str]:
     """"
     '\w+.\w+.\w+','\w+',{
     """
@@ -24,7 +25,7 @@ def param_from_str_1(stri: "'\\'zul.wnd.Window\\',\\'bJsP0\\',{'") -> (str, str)
     return item
 
 
-def param_from_str_2(stri: "Value=bJsPk0&") -> (str, str):
+def param_from_str_2(stri: "Value=bJsPk0&") -> Tuple[str, str]:
     """"
     stri("dtid=\w+&")
     """
@@ -56,13 +57,13 @@ TT2 = '''
 
 def group_param_search_by_resp_re(
         action: 'lr_lib.gui.action.main_action.ActionWindow',
-        params_source,
+        params_source: 'lr_lib.gui.action.main_action.ActionWindow',
         wrsp_create=False,
         action_text=True,
         ask=True,
         ask2=True,
         **kwargs,
-) -> [str, ]:
+) -> List[str]:
     """
     поиск param, для action.c, по regexp и дальнейшей обработке результата
     """

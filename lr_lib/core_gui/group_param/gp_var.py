@@ -2,7 +2,7 @@
 # разное
 
 import os
-from typing import Iterable, Tuple
+from typing import Iterable, Tuple, List
 
 import lr_lib
 import lr_lib.core_gui.group_param.gp_filter
@@ -11,7 +11,8 @@ from lr_lib.core.var import vars as lr_vars
 from lr_lib.gui.widj.dialog import K_FIND, K_SKIP, K_CANCEL
 
 
-def _ask_params(params: [str, ], action: 'lr_lib.gui.action.main_action.ActionWindow', ask=True) -> (int, [str, ]):
+def _ask_params(params: List[str], action: 'lr_lib.gui.action.main_action.ActionWindow',
+                ask=True) -> Tuple[int, List[str]]:
     """
     спросить о создании params, -> 0 - не создавать
     """

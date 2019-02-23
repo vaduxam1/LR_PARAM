@@ -61,7 +61,7 @@ def _all_wrsp_dict_web_reg_save_param(action: 'lr_lib.gui.action.main_action.Act
     return
 
 
-def _check_wrsp_duplicate(wr: (dict, str), dups=None) -> bool:
+def _check_wrsp_duplicate(wr: Tuple[dict, str], dups=None) -> bool:
     """проверить, не создан ли ранее, такой же wrsp. False - создан, те дубликат."""
     wrsp = _wrsp_text_delta_remove(wr)
     if dups is None:
@@ -71,7 +71,7 @@ def _check_wrsp_duplicate(wr: (dict, str), dups=None) -> bool:
     return not duplicate
 
 
-def _wrsp_text_delta_remove(wr: (dict, str), ) -> str:
+def _wrsp_text_delta_remove(wr: Tuple[dict, str], ) -> str:
     """убрать 'вариативную' часть wrsp текста"""
     (wrsp_dict, wrsp) = wr
     delta = wrsp_dict['web_reg_name']
@@ -101,11 +101,11 @@ def _next_wrsp() -> 'Iterable[(dict, str)] or None':
     return wr
 
 
-def _wr_create() -> [dict, str]:
+def _wr_create() -> Tuple[dict, str]:
     """создание wrsp"""
     wrsp_dict = lr_lib.core.wrsp.param.wrsp_dict_creator()
     wrsp_text = lr_lib.core.wrsp.param.create_web_reg_save_param(wrsp_dict)
-    wr = [wrsp_dict, wrsp_text]
+    wr = (wrsp_dict, wrsp_text)
     return wr
 
 

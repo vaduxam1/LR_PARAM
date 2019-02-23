@@ -2,6 +2,7 @@
 # нахождение param, в action.c файле, по символам(LB) слева от param
 import re
 import tkinter as tk
+from typing import Iterable, Tuple, List, Callable
 
 import lr_lib
 import lr_lib.core.var.vars_highlight
@@ -26,7 +27,7 @@ T4 = '1) найдено {} шт'
 
 def group_param_search_by_lb(
         action: 'lr_lib.gui.action.main_action.ActionWindow',
-        params_source,
+        params_source: 'str or lr_lib.gui.action.main_action.ActionWindow',
         lb_items=None,
         ask=True,
         ask2=True,
@@ -97,7 +98,12 @@ def group_param_search_by_lb(
     return params
 
 
-def _ask_lb_items(action: 'lr_lib.gui.action.main_action.ActionWindow', lb_items: [str, ], t1: str, t2: str) -> [str, ]:
+def _ask_lb_items(
+        action: 'lr_lib.gui.action.main_action.ActionWindow',
+        lb_items: List[str],
+        t1: str,
+        t2: str,
+) -> List[str]:
     """
     диалог окно поиск param
     """

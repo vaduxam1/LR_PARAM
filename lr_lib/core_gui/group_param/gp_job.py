@@ -17,7 +17,7 @@
 # Специальный - те расчитан на то что текст имеет определенный синтаксис, чтото вроде {"item": ['zul.sel.Treecell': {'bJsPt3', 'bJsPt4'}]}
 #           за счет синтаксиса, можно вытаскивать только то что надо
 
-from typing import Iterable, Tuple
+from typing import Iterable, Tuple, List
 
 import lr_lib
 import lr_lib.core
@@ -58,7 +58,7 @@ name_check3 = lambda file_name: (not (name_check1(file_name) or name_check2(file
 
 def _text_from_params_source(
         params_source: 'str or lr_lib.gui.action.main_action.ActionWindow',
-) -> Iterable[Tuple[str, str]]:
+) -> Iterable[str]:
     """
     тексты для поиска param
     """
@@ -84,8 +84,8 @@ def _text_from_params_source(
 
 
 def _group_param_search_by_exist_param(
-        exist_params: [str, ],
-        params_source,
+        exist_params: List[str],
+        params_source: 'lr_lib.gui.action.main_action.ActionWindow',
         **kwargs
 ) -> Iterable[str]:
     """
@@ -102,7 +102,7 @@ def _group_param_search_by_exist_param(
     return
 
 
-def _group_param_search_by_lb(lb_items: [str, ], params_source) -> Iterable[str]:
+def _group_param_search_by_lb(lb_items: List[str], params_source) -> Iterable[str]:
     """
     поиск по LB
     """
@@ -112,10 +112,10 @@ def _group_param_search_by_lb(lb_items: [str, ], params_source) -> Iterable[str]
 
 
 def _group_param_search_by_param_part(
-        param_parts: ["zkau_", ],
-        params_source,
+        param_parts: List[str],
+        params_source: 'lr_lib.gui.action.main_action.ActionWindow',
         **kwargs
-) -> Iterable[Tuple["zkau_5650", "zkau_5680"]]:
+) -> Iterable[str]:
     """
     для группы parts
     """
@@ -130,11 +130,11 @@ def _group_param_search_by_param_part(
 
 
 def _params_by_part(
-        param_part: "zkau_",
+        param_part: str,
         text: str,
         part_mode=True,
         allow=lr_lib.core.var.vars_param.param_valid_letters,
-) -> Iterable[Tuple["zkau_5650", "zkau_5680"]]:
+) -> Iterable[str]:
     """
     поиск в action.c, всех param, в имени которых есть param_part / или по LB
     part_mode=False - поиск param в action, по LB=

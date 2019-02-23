@@ -13,7 +13,7 @@ from lr_lib.core.var import vars as lr_vars
 
 
 @lr_lib.core.var.etc.vars_other.T_POOL_decorator
-def group_param(event, params: [str, ], widget=None, ask=True, ) -> None:
+def group_param(event, params: List[str], widget=None, ask=True, ) -> None:
     """
     нахождение и замена для группы web_reg_save_param's
     """
@@ -42,7 +42,7 @@ def group_param(event, params: [str, ], widget=None, ask=True, ) -> None:
 
 
 def _group_param_iter(
-        params: [str, ],
+        params: List[str],
         action: 'lr_lib.gui.action.main_action.ActionWindow',
 ) -> Iterable[Tuple[int, dict, str, List[str]]]:
     """
@@ -87,8 +87,8 @@ def _group_param_iter(
 @lr_lib.core.var.etc.vars_other.T_POOL_decorator
 def _thread_wrsp_dict_creator(
         wrsp_dicts: 'queue.Queue',
-        params: [str, ],
-        unsuccess: [str, ],
+        params: List[str],
+        unsuccess: List[str],
         action: 'lr_lib.gui.action.main_action.ActionWindow',
 ) -> None:
     """

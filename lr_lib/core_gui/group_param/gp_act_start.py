@@ -1,6 +1,8 @@
 # -*- coding: UTF-8 -*-
 # нахождение param, в action.c файле, по началу имени param
 
+from typing import Iterable, List, Tuple
+
 import lr_lib
 import lr_lib.core.etc.lbrb_checker
 import lr_lib.core.var.vars_highlight
@@ -28,14 +30,14 @@ TB1 = '''
 
 def group_param_search_by_name(
         action: 'lr_lib.gui.action.main_action.ActionWindow',
-        params_source,
+        params_source: 'str or lr_lib.gui.action.main_action.ActionWindow',
         wrsp_create=False,
         text=None,
         ask=True,
         ask2=True,
         action_text=True,
         **kwargs,
-) -> ["zkau_5650", "zkau_5680", ]:
+) -> Tuple[str, str]:
     """
     поиск в action.c, всех уникальных param, в имени которых есть param_part
     """
@@ -108,7 +110,7 @@ TB2 = '''
 
 def group_param_search_by_exist_param(
         action: 'lr_lib.gui.action.main_action.ActionWindow',
-        params_source,
+        params_source: 'lr_lib.gui.action.main_action.ActionWindow',
         exist_params=(),
         wrsp_create=False,
         action_text=True,
@@ -117,7 +119,7 @@ def group_param_search_by_exist_param(
         add=True,
         i_params=None,
         **kwargs,
-) -> [str, ]:
+) -> List[str]:
     """
     поиск по началу имени - взять n первых символов для повторного поиска param по началу имени
     """

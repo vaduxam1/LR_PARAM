@@ -132,7 +132,7 @@ class RunSettingWindow(tk.Toplevel):
         lr_lib.gui.widj.tooltip.createToolTip(self.secondary_param_spin, TT_PN)
 
         # Spinbox
-        def _MinParamLen_minus_1(*args):
+        def _MinParamLen_minus_1(*args) -> None:
             """тк нумерация с 0"""
             n = lr_vars._MinParamLen.get()
             lr_vars.MinParamLen = n

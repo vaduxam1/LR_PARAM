@@ -2,14 +2,20 @@
 # фильтрация и сортировка param
 
 import string
-from typing import Iterable, List
+from typing import Iterable, List, Set
 
 import lr_lib.core
 from lr_lib.core.var import vars as lr_vars
 import lr_lib.core.var.vars_param as vars_param
 
 
-def param_sort(params: List[str], reverse=True, _filter=True, deny_param_filter=True, action_text=None, ) -> List[str]:
+def param_sort(
+        params: Iterable[str],
+        reverse=True,
+        _filter=True,
+        deny_param_filter=True,
+        action_text=None,
+) -> List[str]:
     """
     отсортировать param по длине, тк если имеются похожие имена, лучше сначала заменять самые длинные,
     тк иначе например заменяя "zkau_1" - можно ошибочно заменить и для "zkau_11"

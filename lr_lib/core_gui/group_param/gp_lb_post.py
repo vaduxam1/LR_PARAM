@@ -1,6 +1,8 @@
 # -*- coding: UTF-8 -*-
 # нахождение param, пост LB
 
+from typing import Iterable, Tuple, List, Callable
+
 import lr_lib
 import lr_lib.core.etc.lbrb_checker
 import lr_lib.core.var.vars_highlight
@@ -15,7 +17,7 @@ from lr_lib.gui.widj.dialog import K_FIND, K_SKIP, CREATE_or_FIND
 
 def group_param_search_by_lb_post(
         action: 'lr_lib.gui.action.main_action.ActionWindow',
-        params_source,
+        params_source: 'lr_lib.gui.action.main_action.ActionWindow',
         exist_params=(),
         wrsp_create=False,
         action_text=True,
@@ -23,7 +25,7 @@ def group_param_search_by_lb_post(
         ask2=True,
         i_params=None,
         **kwargs,
-) -> [str, ]:
+) -> List[str]:
     """
     Метод основан том, что если часть {param} имен уже известна,
     то можно извлечь, для каждого {param}, для каждого файла, каждый LB.

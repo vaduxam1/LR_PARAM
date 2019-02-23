@@ -3,6 +3,7 @@
 
 import lr_lib.gui.etc.color_change
 from lr_lib.core.var import vars as lr_vars
+from typing import Iterable, Tuple, List, Callable
 
 progress_str = '{proc}% : {counter}/{len_params} | fail={fail}\n{wrsp}'
 final_str = '{state} | создано сейчас = {param} / fail={fail} : {unsuc} | всего {param_counter}'
@@ -23,7 +24,7 @@ class ProgressBar:
         self.item0 = [item, ]  # [(counter, wrsp_dict, wrsp, unsuccess)]
         return
 
-    def __enter__(self) -> 'callable':
+    def __enter__(self) -> 'ProgressBar':
         """
         старт
         """
@@ -31,7 +32,7 @@ class ProgressBar:
         self.start()
         return self
 
-    def __exit__(self, exc_type, exc_val, exc_tb) -> tuple:
+    def __exit__(self, exc_type, exc_val, exc_tb) -> Tuple:
         """
         стоп
         """
@@ -40,7 +41,7 @@ class ProgressBar:
         item = (exc_type, exc_val, exc_tb)
         return item
 
-    def update(self, item: (int, dict, str, list)) -> None:
+    def update(self, item: Tuple[int, dict, str, list]) -> None:
         """
         добавить данные для progressbar
         """

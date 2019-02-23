@@ -8,6 +8,7 @@ import os
 import re
 import tkinter as tk
 import urllib.parse
+from typing import Iterable, Tuple, List, Callable
 
 import lr_lib
 import lr_lib.core.action.web_
@@ -18,7 +19,7 @@ import lr_lib.gui.widj.responce_files
 from lr_lib.core.var import vars as lr_vars
 
 
-def _block_decor(func: 'callable') -> 'callable':
+def _block_decor(func: Callable) -> Callable:
     """декоратор widget.action.block - widget должен быть первым аргументом"""
     functools.wraps(func)
 
@@ -373,7 +374,7 @@ def wrsp_text_from_selection(event) -> object:
 
 
 @lr_lib.core.var.etc.vars_other.T_POOL_decorator
-def rClick_web_reg_save_param_regenerate(event, new_lb_rb=True, selection=None, replace=True) -> (dict, str):
+def rClick_web_reg_save_param_regenerate(event, new_lb_rb=True, selection=None, replace=True) -> Tuple[dict, str]:
     """
     из выделения, переформатировать LB/RB в уже созданном web_reg_save_param, меню правой кнопки мыши
     """
