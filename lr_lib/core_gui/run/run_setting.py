@@ -3,6 +3,7 @@
 
 import tkinter as tk
 import tkinter.messagebox
+from typing import List
 
 import lr_lib
 import lr_lib.core.var.vars as lr_vars
@@ -251,7 +252,7 @@ class RunSettingWindow(tk.Toplevel):
         """
         params = set()
 
-        def param_count_search_info(item: 'RItem', i_params: set) -> None:
+        def param_count_search_info(item: 'RItem', i_params: List[str]) -> None:
             """сколько param, нашел конкретный метод поиска"""
             if not isinstance(i_params, set):
                 i_params = set(i_params)
@@ -284,7 +285,7 @@ class RunSettingWindow(tk.Toplevel):
         #  <-- поиск param <--
 
         y = lr_lib.gui.widj.dialog.YesNoCancel(
-            [K_FIND, K_SKIP],
+            buttons=[K_FIND, K_SKIP],
             default_key=K_FIND,
             title='создание WRSP',
             is_text='\n'.join(params),
