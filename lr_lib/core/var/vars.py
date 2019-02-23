@@ -6,6 +6,7 @@ import os
 import time
 import logging
 import tkinter as tk
+from tkinter import Tk
 
 import lr_lib.core.var.etc.var_ob
 
@@ -14,7 +15,7 @@ import lr_lib.core.var.etc.var_ob
 
 VERSION = 'v11.6.1'  # версия утилиты
 lib_folder = 'lr_lib'  # каталог py-файлов утилиты
-Tk = tk.Tk()
+Tk: Tk = tk.Tk()
 original_callback_exception = Tk.report_callback_exception  # переопределение обработчика raise
 
 Window = None  # класс gui окна # lr_lib.gui.wrsp.main_window.Window

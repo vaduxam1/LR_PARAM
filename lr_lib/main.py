@@ -74,7 +74,8 @@ def main(console_args: Tuple[str]) -> Tuple[bool, dict]:
         with lr_lib.etc.keyb.keyboard_listener():  # hotkey(param from clipboard)
             # gui
             lr_lib.gui.main_gui.init(c_args)
-            lr_lib.gui.main_gui.start(action=True, lock=True)
+            # блокировать главный поток
+            lr_lib.gui.main_gui.start()
 
-    item = (as_console, c_args)
-    return item
+    exit_code = (as_console, c_args)
+    return exit_code

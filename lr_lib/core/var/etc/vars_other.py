@@ -55,8 +55,8 @@ def T_POOL_decorator(func: Callable) -> Callable:
         elif hasattr(lr_lib.core.var.vars.T_POOL, 'apply_async'):
             out = lr_lib.core.var.vars.T_POOL.apply_async(func, args, kwargs)
         else:
-            raise AttributeError('у пула({p}) нет атрибута submit или apply_async\n{f}\n{a}\n{k}'.format(
-                f=func, a=args, k=kwargs, p=lr_lib.core.var.vars.T_POOL.pool))
+            e = 'у пула({p}) нет атрибута submit или apply_async\n{f}\n{a}\n{k}'
+            raise AttributeError(e.format(f=func, a=args, k=kwargs, p=lr_lib.core.var.vars.T_POOL.pool))
         return out
 
     return wrap
