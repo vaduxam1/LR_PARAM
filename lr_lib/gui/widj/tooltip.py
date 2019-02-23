@@ -19,6 +19,10 @@ def tt_clear() -> None:
     tips = list(ActiveTips.keys())
     for tip in tips:
         try:
+            lr_vars.Tk.after_cancel(ActiveTips[tip])
+        except Exception as ex:
+            pass
+        try:
             tip.hidetip()
         except Exception as ex:
             pass
@@ -86,7 +90,8 @@ def widget_values_counter(widget) -> (int, int):
     i = li = 0
     try:
         _i = list(widget['values'])
-        i = (_i.index(widget.get()) + 1)
+        w = widget.get()
+        i = (_i.index(w) + 1)
     except Exception as ex:
         pass
     try:
@@ -140,13 +145,15 @@ def createToolTip(widget, text: str) -> None:
             Lock.release()
         return
 
-    def enter(event, wait=750, ) -> None:
+    def enter(event, ) -> None:
         """
         событие входа мыши на виджет
         """
         Lock.acquire()
-        ActiveTips[toolTip] = lr_vars.Tk.after(wait, _enter, event)
-        Lock.release()
+        try:
+            ActiveTips[toolTip] = lr_vars.Tk.after(lr_vars.TT_WAIT, _enter, event)
+        finally:
+            Lock.release()
         return
 
     widget.bind('<Enter>', enter)

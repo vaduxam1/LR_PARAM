@@ -7,9 +7,9 @@ import string
 
 import lr_lib.core.var.etc.var_ob
 import lr_lib.core.var.vars
-import lr_lib.core.var.etc.vars_other
 import lr_lib.core.var.vars_param
 import lr_lib.etc.help
+from lr_lib.core.var.etc.vars_other import _unpunct
 
 HighlightOn = True  # включить подсветку
 HighlightAfter0 = 1500  # задержка(мс), перед перезапуском проверки необходимости подсветки
@@ -45,8 +45,7 @@ def random_color(ckeck=True, all_color='ABCDEF1234567890', r=6, ) -> str:
 ColorIterator = random_color()
 VarColorTeg = lr_lib.core.var.etc.var_ob.Var(value=set(lr_lib.etc.help.COLORS.keys()))
 _LB_LIST_highlight = {'uuid_', 'dtid', 'sessionid', 'Snapshot', 'Snapshot=t', 'EXTRARES', '.inf', }
-_LB_LIST_highlight.update(
-    lr_lib.core.var.etc.vars_other._unpunct(s) for s in lr_lib.core.var.vars_param.LB_PARAM_FIND_LIST)
+_LB_LIST_highlight.update(map(_unpunct, lr_lib.core.var.vars_param.LB_PARAM_FIND_LIST))
 tnrvf = set('\\{}'.format(s) for s in 'tnrvf')  #
 PopUpWindColor1 = 'LightGrey'  # просто какойто общий цвет для выделения PopUpWindow
 highlight_words = set()  # слова для подсветки
@@ -58,7 +57,8 @@ def init_highlight_words() -> None:
     """
     for file in next(os.walk(highlight_words_folder))[2]:
         if file.startswith(highlight_words_files_startswith):
-            with open(os.path.join(highlight_words_folder, file)) as hws:
+            f = os.path.join(highlight_words_folder, file)
+            with open(f) as hws:
                 for line in hws:
                     lr = line.rstrip('\n')
                     ls = lr.strip()

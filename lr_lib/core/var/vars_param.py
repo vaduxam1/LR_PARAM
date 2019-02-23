@@ -143,7 +143,7 @@ MutableLBRegs = [
 # LB/RB обрежутся до этих строк
 _SplitList0 = list('{},=$?')
 _SplitList1 = list('{}=$;,')
-_SplitList2 = ['\\n', '\\', '"']
+_SplitList2 = ['\\n', '\\', '"', ]
 _SplitList_3 = (_SplitList1 + _SplitList2)
 SplitList = tuple(_SplitList0 + _SplitList2 + list(string.digits))  # LB/RB обрежутся до этих строк
 

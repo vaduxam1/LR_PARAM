@@ -142,6 +142,7 @@ Legend_scroll_len_modificator = 75  # модификатор длины скро
 VarShowPopupWindow = tk.BooleanVar(value=True)  # показ popup - ошибок, финальных и др окон
 SEP = ('_' * 50)  # строка разделитель сообщений
 VarToolTipTimeout = tk.StringVar(value=2000)  # время жизни всплывающкй подсказки, в мс
+TT_WAIT = 750  # мсек, время перед появлением всплывающей подсказки
 
 ToolTipFont = ('Arial', '7', 'bold italic')  # всплывающие подсказки
 DefaultFont = 'Arial 7'  # шрифт кнопок и тд

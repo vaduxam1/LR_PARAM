@@ -38,8 +38,9 @@ def check_git_ver() -> None:
     _s = "По адресу {url} доступно последнее [{git_version}] обновление утилиты.\n\n{version_changes}"
     ttl = _t.format(version=lr_vars.VERSION, )
     msg = _s.format(url=lr_vars.githubDownloadUrl, git_version=git_version, version_changes=version_changes, )
+    m = '{t}\n\n{m}'.format(t=ttl, m=msg, )
 
-    lr_vars.Logger.info('{t}\n\n{m}'.format(t=ttl, m=msg, ))
+    lr_vars.Logger.info(m)
     tkinter.messagebox.showwarning(ttl, msg)
     return
 
@@ -78,7 +79,8 @@ def find_version_changes(ver: str) -> str:
     ch_text = ch_text.decode('utf-8')
     ch_changes = ch_text.rsplit(VName, 1)
     if len(ch_changes) != 2:
-        return 'описание изменений для версии не определено!'
+        e = 'описание изменений для версии не определено!'
+        return e
 
     ch_changes = ch_changes[1].split('=', 1)
     changes = ch_changes[1]
@@ -124,12 +126,9 @@ VersionChanges = collections.OrderedDict({
 
 #     'v11.6.1': '''
 # * -
-# * удалить подсветку для выделенного фрагмента, не выбирая удаляемый цвет(удалит любой)
-# * новые типы переменных, для вывода в меню "Setting" - настройка "на лету" переменных утилиты
 # * многие команды меню правой кнопки мыши, корректно работали только в action.c окне, теперь работает для всех виджетов
-# * изменены описания диалог окон для некоторых действий
-# * добавлены аннотации в правильном формате
-# * общий рефакторинг
+# * изменены описания диалог окон некоторых действий, исправлено поведение tooltip, исправлено меню удалить цвет, другие мелкие фиксы
+# * общий рефакторинг, добавлены аннотации в правильном формате
 #         ''',
 
     'v11.6.0': '''

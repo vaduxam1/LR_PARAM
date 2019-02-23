@@ -66,7 +66,8 @@ SnapInComentS = 'Snap['
 SnapInComentE = ']'
 Snap1 = '"Snapshot=t'
 Snap2 = '.inf",'
-Snap = '%s{num}%s' % (Snap1, Snap2)
+_Snap = '%s{num}%s'
+Snap = (_Snap % (Snap1, Snap2))
 Web_LAST = 'LAST);'  #
 
 
@@ -150,6 +151,24 @@ def wrsp_dict_creator(is_param=True) -> dict:
     # if file['Snapshot']['inf_key'] == 'ResponseHeaderFile':
     #     search_key = 'Headers'
 
+    fi = lr_vars.FilesWithParam.index(file)
+    fi += 1
+    files_all = len(lr_vars.AllFiles)
+    param_all = sum(f['Param']['Count'] for f in lr_vars.FilesWithParam)
+    create_time = time.strftime('%H:%M:%S-%d/%m/%y')
+    Lb_len = len(Lb)
+    Rb_len = len(Rb)
+    lb_len = len(lb)
+    rb_len = len(rb)
+    lb_NotPrintable = lr_lib.core.etc.other.not_printable(lb)
+    rb_NotPrintable = lr_lib.core.etc.other.not_printable(rb)
+    all_inf_min = min(all_infs)
+    all_inf_max = max(all_infs)
+    all_inf_len = len(all_infs)
+    _param_inf_min = min(param_infs)
+    _param_inf_max = max(param_infs)
+    _param_inf_all = len(param_infs)
+
     web_reg_save_param_dict = dict(
         lb=lb,
         rb=rb,
@@ -158,24 +177,24 @@ def wrsp_dict_creator(is_param=True) -> dict:
         param_part=param_num,
         param_count=param_count,
         param_files=len_param_files,
-        file_index=lr_vars.FilesWithParam.index(file) + 1,
-        files_all=len(lr_vars.AllFiles),
-        param_all=sum(f['Param']['Count'] for f in lr_vars.FilesWithParam),
-        create_time=time.strftime('%H:%M:%S-%d/%m/%y'),
+        file_index=fi,
+        files_all=files_all,
+        param_all=param_all,
+        create_time=create_time,
         inf_nums=snapshots,
-        Lb_len=len(Lb),
-        Rb_len=len(Rb),
-        lb_len=len(lb),
-        rb_len=len(rb),
-        lb_NotPrintable=lr_lib.core.etc.other.not_printable(lb),
-        rb_NotPrintable=lr_lib.core.etc.other.not_printable(rb),
+        Lb_len=Lb_len,
+        Rb_len=Rb_len,
+        lb_len=lb_len,
+        rb_len=rb_len,
+        lb_NotPrintable=lb_NotPrintable,
+        rb_NotPrintable=rb_NotPrintable,
         param_text_index=param_index,
-        all_inf_min=min(all_infs),
-        all_inf_max=max(all_infs),
-        all_inf_len=len(all_infs),
-        _param_inf_min=min(param_infs),
-        _param_inf_max=max(param_infs),
-        _param_inf_all=len(param_infs),
+        all_inf_min=all_inf_min,
+        all_inf_max=all_inf_max,
+        all_inf_len=all_inf_len,
+        _param_inf_min=_param_inf_min,
+        _param_inf_max=_param_inf_max,
+        _param_inf_all=_param_inf_all,
         search_key=search_key,
         param=param,
     )

@@ -41,7 +41,6 @@ class RItem:
         self.main_label = tk.LabelFrame(
             self.parent.main_label, text=main_label, font='Arial 8 bold', fg='blue', labelanchor=tk.NW, bd=5,
         )
-        lr_lib.gui.widj.tooltip.createToolTip(self.main_label, label_title)
 
         # LabelFrame
         tt_sl = 'поиск {param} производить в:'
@@ -174,7 +173,8 @@ class RItem:
             self.main_label, text=tt_on, font='Arial 8', justify='left', fg=ColorHide, variable=self._cbx_on,
             command=set_state_widg(self._cbx_on, self.main_label.winfo_children()),
         )
-        tt2 = 'вкл/выкл использование метода поиска {param}'
+        tt2 = 'вкл/выкл использование метода поиска {param}\n'
+        tt2 += label_title
         lr_lib.gui.widj.tooltip.createToolTip(self.cbx_on, tt2)
 
         # grid

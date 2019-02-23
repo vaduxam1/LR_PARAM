@@ -19,6 +19,9 @@ import lr_lib.core_gui.rename
 import lr_lib.gui.widj.tooltip
 
 
+MaxTableRows = 35
+
+
 class Setting(tk.Toplevel):
     """
     настройка var
@@ -35,7 +38,7 @@ class Setting(tk.Toplevel):
         self.init()
         return
 
-    def init(self, max_row=31, font='Arial 7', ) -> None:
+    def init(self, max_row=MaxTableRows, font='Arial 7', ) -> None:
         """
         создание
         """
@@ -173,21 +176,22 @@ def _var_editor(parent, var_dict, var_name, ) -> None:
     """
     Toplevel tk.Text + scroll_XY
     """
-    var = var_dict[var_name]
+    # Toplevel
+    top_level = tk.Toplevel(parent)
+    top_level.attributes('-topmost', True)
+    top_level.grid_columnconfigure(0, weight=1)
+    top_level.grid_rowconfigure(0, weight=1)
 
+    var = var_dict[var_name]
+    typev = type(var)
     try:
         lenv = len(var)
     except Exception as ex:  # TypeError: object of type 'IntVar' has no len()
         lenv = None
 
-    # Toplevel
-    top_level = tk.Toplevel(parent)
-    top_level.attributes('-topmost', True)
-    title = '{n} | type({tp}) | len({ln})'.format(tp=type(var), ln=lenv, n=var_name, )
+    t = '{var_name} | type({typev}) | len({lenv})'
+    title = t.format(typev=typev, lenv=lenv, var_name=var_name, )
     top_level.title(title)
-
-    top_level.grid_columnconfigure(0, weight=1)
-    top_level.grid_rowconfigure(0, weight=1)
 
     # Text
     tk_text = tk.Text(
