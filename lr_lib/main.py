@@ -37,7 +37,7 @@ def init(excepthook=True, ) -> True:
 
 
 @contextlib.contextmanager
-def start(excepthook=True, console_args=sys.argv, exit_code=False, ) -> bool:
+def start(excepthook=True, console_args=sys.argv, ) -> bool:
     """
     запуск core/gui в excepthook обработчике raise
     """
