@@ -18,13 +18,10 @@ class HighlightText(tk.Text):
     """
 
     def __init__(self, action: 'lr_lib.gui.action.main_action.ActionWindow', *args, **kwargs):
-        super().__init__(action, *args, **kwargs)
+        super().__init__(action, *args, undo=True, maxundo=999, autoseparators=True, **kwargs)
         self.cursor_position = self.index(tk.INSERT)  # координаты текущей позиции в tk.Text
 
         self.action = action  # parent
-
-        self.bind_all("<Control-z>", self.undo)
-        self.bind_all("<Control-y>", self.redo)
 
         self.highlight_dict = copy.deepcopy(lr_lib.core.var.vars_highlight.VarDefaultColorTeg)
 
@@ -94,12 +91,6 @@ class HighlightText(tk.Text):
             self.highlight_lines.highlight_callback()
             lr_vars.Tk.after(self.highlight_lines.HighlightAfter0, self.after_callback)
         return
-
-    def undo(self, event):
-        return self.edit_undo()
-
-    def redo(self, event):
-        return self.edit_redo()
 
     def new_text_set(self, text: str) -> None:
         """

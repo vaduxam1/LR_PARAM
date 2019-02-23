@@ -20,13 +20,13 @@ def all_wrsp_variant() -> Iterable[Tuple[dict, str]]:
     return
 
 
-def wrsp_item() -> [dict, str]:
+def wrsp_item() -> Tuple[dict, str]:
     """
     сформировать web_reg_save_param
     """
     wrsp_dict = lr_lib.core.wrsp.param.wrsp_dict_creator()  # dict с данными для формирования WRSP
     web_reg_save_param = lr_lib.core.wrsp.param.create_web_reg_save_param(wrsp_dict)  # WRSP для вставки в LR
-    item = [wrsp_dict, web_reg_save_param]
+    item = (wrsp_dict, web_reg_save_param)
     return item
 
 
