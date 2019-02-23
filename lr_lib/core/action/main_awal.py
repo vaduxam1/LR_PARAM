@@ -1,12 +1,12 @@
 # -*- coding: UTF-8 -*-
 # внутреннее предсталление action.c текста
 
-from typing import Iterable
+from typing import Iterable, Tuple, List
 
 import lr_lib
 import lr_lib.core.action.report
 import lr_lib.core.action.transac
-import lr_lib.core.action.web_
+import lr_lib.core.action.web_ as lr_web
 import lr_lib.core.var.vars as lr_vars
 import lr_lib.core.wrsp.param
 import lr_lib.gui.action.main_action
@@ -59,7 +59,7 @@ class ActionWebsAndLines:
             continue
         return
 
-    def get_web_all(self) -> Iterable[lr_lib.core.action.web_.WebAny]:
+    def get_web_all(self) -> Iterable[lr_web.WebAny]:
         """
         все объекты
         """
@@ -69,7 +69,7 @@ class ActionWebsAndLines:
             continue
         return
 
-    def get_web_by(self, webs: (lr_lib.core.action.web_.WebAny,), **kwargs) -> Iterable[lr_lib.core.action.web_.WebAny]:
+    def get_web_by(self, webs: Iterable[lr_web.WebAny], **kwargs) -> Iterable[lr_web.WebAny]:
         """
         объекты по kwargs условию: kwargs={'abc': [123]} -> web's.abc == [123]
         """
@@ -86,7 +86,7 @@ class ActionWebsAndLines:
             continue
         return
 
-    def get_web_snapshot_all(self) -> Iterable[lr_lib.core.action.web_.WebSnapshot]:
+    def get_web_snapshot_all(self) -> Iterable[lr_web.WebSnapshot]:
         """
         snapshot объекты
         """
@@ -97,7 +97,7 @@ class ActionWebsAndLines:
             continue
         return
 
-    def get_web_snapshot_by(self, **kwargs) -> Iterable[lr_lib.core.action.web_.WebSnapshot]:
+    def get_web_snapshot_by(self, **kwargs) -> Iterable[lr_web.WebSnapshot]:
         """
         snapshot объекты по kwargs условию
         """
@@ -108,7 +108,7 @@ class ActionWebsAndLines:
             continue
         return
 
-    def get_web_reg_save_param_all(self) -> Iterable[lr_lib.core.action.web_.WebRegSaveParam]:
+    def get_web_reg_save_param_all(self) -> Iterable[lr_web.WebRegSaveParam]:
         """
         web_reg_save_param объекты
         """
@@ -119,7 +119,7 @@ class ActionWebsAndLines:
             continue
         return
 
-    def get_web_reg_save_param_by(self, **kwargs) -> Iterable[lr_lib.core.action.web_.WebRegSaveParam]:
+    def get_web_reg_save_param_by(self, **kwargs) -> Iterable[lr_web.WebRegSaveParam]:
         """
         web_reg_save_param объекты по kwargs условию
         """
@@ -130,7 +130,7 @@ class ActionWebsAndLines:
             continue
         return
 
-    def replace_bodys(self, replace_list: [(str, str), ], is_wrsp=True) -> None:
+    def replace_bodys(self, replace_list: List[Tuple[str, str]], is_wrsp=True) -> None:
         """
         заменить группу param, во всех web_ body
         """
@@ -143,14 +143,14 @@ class ActionWebsAndLines:
             body = web_.get_body()
 
             for (search, replace) in replace_list:
-                body = lr_lib.core.action.web_.body_replace(body, search, replace, is_wrsp=is_wrsp)
+                body = lr_web.body_replace(body, search, replace, is_wrsp=is_wrsp)
                 continue
 
             web_.set_body(body)
             continue
         return
 
-    def replace_bodys_iter(self, web_actions: (lr_lib.core.action.web_.WebAny,), is_wrsp=True) -> None:
+    def replace_bodys_iter(self, web_actions: Iterable[lr_web.WebAny], is_wrsp=True) -> None:
         """
         заменить группу param, во всех web_ body - сопрограмма
         """
@@ -160,7 +160,7 @@ class ActionWebsAndLines:
 
             for web_ in web_actions:
                 body = web_.get_body()
-                new_body = lr_lib.core.action.web_.body_replace(body, search, replace, is_wrsp=is_wrsp)
+                new_body = lr_web.body_replace(body, search, replace, is_wrsp=is_wrsp)
                 if body != new_body:
                     web_.set_body(new_body)
                 continue
@@ -169,7 +169,7 @@ class ActionWebsAndLines:
             continue
         return
 
-    def _add_to_text_list(self, element: (str or lr_lib.core.action.web_.WebAny)) -> None:
+    def _add_to_text_list(self, element: 'str or lr_web.WebAny', ) -> None:
         """
         объединять строки, идущие подряд
         """
@@ -182,7 +182,7 @@ class ActionWebsAndLines:
             self.webs_and_lines.append(element)
         return
 
-    def set_text_list(self, text_list: [str, ], websReport=True) -> None:
+    def set_text_list(self, text_list: List[str], websReport=True) -> None:
         """
         создать все web_action объекты
         """
@@ -199,7 +199,7 @@ class ActionWebsAndLines:
         self.drop_file_none_inf_num_in_action()
         return
 
-    def _set_text_list(self, iter_lines: (str,)) -> None:
+    def _set_text_list(self, iter_lines: Iterable[str]) -> None:
         """
         создать все web_action объекты
         """
@@ -238,7 +238,7 @@ class ActionWebsAndLines:
 
             elif SLINE.startswith(lr_lib.core.wrsp.param._block_startswith):  # начало блока web_
                 web_list = [LINE]  # web_ текст Snapshot запроса
-                w_type = lr_lib.core.action.web_.read_web_type(LINE)
+                w_type = lr_web.read_web_type(LINE)
 
                 if SLINE.endswith(lr_lib.core.wrsp.param._block_endswith) or SLINE.endswith('('):  # тело запроса
 
@@ -253,7 +253,7 @@ class ActionWebsAndLines:
 
                     if w_type.startswith('web_reg_save_param'):
                         # создать WebRegSaveParam
-                        web_ = lr_lib.core.action.web_.WebRegSaveParam(
+                        web_ = lr_web.WebRegSaveParam(
                             self,
                             web_list,
                             COMMENT,
@@ -266,7 +266,7 @@ class ActionWebsAndLines:
                     else:
                         if (len(web_list) < 3) or (not any(lr_lib.core.wrsp.param.Snap1 in ln for ln in web_list)):
                             # создать WebAny
-                            web_ = lr_lib.core.action.web_.WebAny(
+                            web_ = lr_web.WebAny(
                                 self,
                                 web_list,
                                 COMMENT,
@@ -278,7 +278,7 @@ class ActionWebsAndLines:
 
                         else:
                             # создать WebSnapshot
-                            web_ = lr_lib.core.action.web_.WebSnapshot(
+                            web_ = lr_web.WebSnapshot(
                                 self,
                                 web_list,
                                 COMMENT,
@@ -296,7 +296,7 @@ class ActionWebsAndLines:
                     t = self.transactions._current()
 
                     # создать WebAny
-                    web_ = lr_lib.core.action.web_.WebAny(
+                    web_ = lr_web.WebAny(
                         self,
                         web_list,
                         COMMENT,
@@ -333,7 +333,7 @@ class ActionWebsAndLines:
             self._add_to_text_list(mc)
 
         if RegParamList:
-            rpl = map(lr_lib.core.action.web_.WebRegSaveParam.to_str, RegParamList)
+            rpl = map(lr_web.WebRegSaveParam.to_str, RegParamList)
             a = '\n// ERROR web_reg_save_param !\n{0}'
             a = a.format('\n\n'.join(rpl))
             self._add_to_text_list(a)
@@ -362,9 +362,9 @@ class ActionWebsAndLines:
 
     def web_reg_save_param_insert(
             self,
-            wrsp_dict_or_snapshot: (dict or int),
+            wrsp_dict_or_snapshot: 'dict or int',
             wrsp='',
-    ) -> lr_lib.core.action.web_.WebRegSaveParam:
+    ) -> lr_web.WebRegSaveParam:
         """
         вставить web_reg_save_param
         """
@@ -398,7 +398,7 @@ class ActionWebsAndLines:
 
         w_lines = w_lines.split('\n')
         # создать WebRegSaveParam
-        wrsp_web_ = lr_lib.core.action.web_.WebRegSaveParam(
+        wrsp_web_ = lr_web.WebRegSaveParam(
             self,
             w_lines,
             comments,
@@ -455,7 +455,7 @@ class ActionWebsAndLines:
                 line = line.strip('\n')
                 line = '\n{0}'.format(line)
                 yield line
-            elif isinstance(line, lr_lib.core.action.web_.WebSnapshot):  # snapshot Web
+            elif isinstance(line, lr_web.WebSnapshot):  # snapshot Web
                 line = line.to_str()
                 line = '\n\n{0}\n'.format(line)
                 yield line

@@ -7,7 +7,7 @@ import itertools
 import os
 import string
 import time
-from typing import Iterable, Tuple
+from typing import Iterable, Tuple, List, Callable, Any
 
 import lr_lib
 import lr_lib.core.etc.other
@@ -17,17 +17,18 @@ import lr_lib.core.var.vars_param
 import lr_lib.etc.excepthook
 
 
-def is_responce_file(name: str) -> (str, str):
+def is_responce_file(name: str) -> Tuple[str, str]:
     """
     вернуть файлы ответов, отбраковать "вероятно ненужные" файлы
     """
     (n, ext) = os.path.splitext(name)
-    if (name in lr_lib.core.var.vars_param.DENY_FILES) or (ext in lr_lib.core.var.vars_param.DENY_EXT) or any(
-            (p in n) for p in
-            lr_lib.core.var.vars_param.DENY_PART_NAME):
-        return
+    if (name in lr_lib.core.var.vars_param.DENY_FILES) \
+            or (ext in lr_lib.core.var.vars_param.DENY_EXT) \
+            or any((p in n) for p in lr_lib.core.var.vars_param.DENY_PART_NAME):
+        return ()
     else:
-        return n, ext
+        it = (n, ext)
+        return it
 
 
 default = -1
@@ -142,7 +143,7 @@ def create_files_from_infs(folder: str, enc: str, allow_deny: bool, statistic: b
     return
 
 
-def get_files_portions(args: [(str, str, bool, bool), ((str, int),)]) -> [dict, ]:
+def get_files_portions(args: '[(str, str, bool, bool), ((str, int),)]') -> List[dict]:
     """
     создать файлы, для порции inf-файлов
     """
@@ -153,7 +154,7 @@ def get_files_portions(args: [(str, str, bool, bool), ((str, int),)]) -> [dict, 
     return files_
 
 
-def _create_files_from_inf(args: [(str, str, bool, bool), (str, int)]) -> Iterable[dict]:
+def _create_files_from_inf(args: '[(str, str, bool, bool), (str, int)]') -> Iterable[dict]:
     """
     создать файлы ответов, из одного inf-файла
     """
@@ -275,7 +276,7 @@ def init() -> None:
     return
 
 
-def get_file_with_kwargs(files: (dict,), **kwargs) -> dict:
+def get_file_with_kwargs(files: Tuple[dict], **kwargs) -> dict:
     """
     вернуть первый файл, содержащий kwargs
     """
@@ -287,7 +288,7 @@ def get_file_with_kwargs(files: (dict,), **kwargs) -> dict:
     return
 
 
-def get_files_with_kwargs(files: (dict,), key='File', **kwargs) -> Iterable[dict]:
+def get_files_with_kwargs(files: Tuple[dict], key='File', **kwargs) -> Iterable[dict]:
     """
     найти файлы, содержащие kwargs
     """
@@ -361,7 +362,7 @@ def _set_fileFile_stats(fileFile: dict, text: str,
 
 
 @lr_lib.core.var.etc.vars_other.T_POOL_decorator
-def thread_set_stat(files: [dict, ]) -> None:
+def thread_set_stat(files: List[dict]) -> None:
     """
     создавать статистику в фоне, для всех файлов
     """

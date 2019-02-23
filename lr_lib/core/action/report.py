@@ -4,7 +4,7 @@
 import collections
 import copy
 import string
-from typing import Iterable, Tuple
+from typing import Iterable, Tuple, List
 
 import lr_lib
 import lr_lib.core.action.web_
@@ -150,7 +150,7 @@ class WebReport:
 
         web_snapshot_all = tuple(self.ActionWebsAndLines.get_web_snapshot_all())
 
-        def get_stats(name: str, deny=('snapshots', 'transaction_names', 'snapshots_count',)) -> iter:
+        def get_stats(name: str, deny=('snapshots', 'transaction_names', 'snapshots_count',)) -> Iterable:
             wps = self.param_statistic[name]
             for k in wps:
                 if k not in deny:
@@ -310,7 +310,7 @@ class WebReport:
         return
 
 
-def snapshot_diapason_string(infs: [int, ]) -> str:
+def snapshot_diapason_string(infs: List[int]) -> str:
     """
     если inf min=max указать только одно
     """

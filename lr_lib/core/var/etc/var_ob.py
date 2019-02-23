@@ -1,6 +1,8 @@
 ﻿# -*- coding: UTF-8 -*-
 # Var - вероятно хотел сделать потокобезопасную tkiner.Var(value=any_type) переменную
 
+from typing import Iterable, Tuple, List, Callable, Any
+
 
 def default_callback(value, *args, **kwargs) -> None:
     """
@@ -25,7 +27,7 @@ class Var:
         self.callback_set = callback_set  # выполнить callback при установке
         return
 
-    def set(self, value, *args, callback=True, **kwargs) -> None:
+    def set(self, value: Any, *args, callback=True, **kwargs) -> None:
         """
         установить
         """
@@ -35,7 +37,7 @@ class Var:
             self.callback_set(value, *args, **kwargs)
         return
 
-    def get(self):
+    def get(self) -> Any:
         """
         получить
         """

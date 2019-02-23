@@ -1,6 +1,8 @@
 ﻿# -*- coding: UTF-8 -*-
 # сформировать VarLB VarRB
 
+from typing import Iterable, Tuple, List, Callable, Any
+
 import lr_lib
 from lr_lib.core.var import vars as lr_vars
 from lr_lib.core.var.var_callback.mutable_bound import lb_rb_split_list_set
@@ -92,7 +94,7 @@ def set_param_part_num(num=0) -> None:
     return
 
 
-def lb_rb_split_end(lb: str, rb: str) -> (str, str):
+def lb_rb_split_end(lb: str, rb: str) -> Tuple[str, str]:
     """
     обрезать конечные символы lb rb
     """

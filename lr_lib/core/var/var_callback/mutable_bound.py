@@ -1,12 +1,14 @@
 ﻿# -*- coding: UTF-8 -*-
 # автоустановка VarSplitListNum
 
-import lr_lib
 import string  # для eval
+from typing import Iterable, Tuple, List, Callable, Any
+
+import lr_lib
 from lr_lib.core.var import vars as lr_vars
 
 
-def lb_rb_split_list_set(__lb: str, __rb: str, lb: str, rb: str, r_min=1, r_max=3, ) -> (str, str):
+def lb_rb_split_list_set(__lb: str, __rb: str, lb: str, rb: str, r_min=1, r_max=3, ) -> Tuple[str, str]:
     """
     автоустановка VarSplitListNum, если param находится внутри {} или [] скобок
     lr_vars.VarSplitListNumRB.set(1) если {}: {...,'value':'param',...} / или .set(1) если []
@@ -99,14 +101,14 @@ def lb_rb_split_list_set(__lb: str, __rb: str, lb: str, rb: str, r_min=1, r_max=
     return item
 
 
-def is_mutable_bound(left: str, right: str, b1='{', b2='}') -> [int, int]:
+def is_mutable_bound(left: str, right: str, b1='{', b2='}') -> Tuple[int, int]:
     """
     находится ли внутри bound скобок, для lb и rb
     """
     left_ = left[::-1]
     ml = _is_mutable_bound(left_, b2, b1)
     mr = _is_mutable_bound(right, b1, b2)
-    item = [ml, mr]
+    item = (ml, mr)
     return item
 
 
@@ -135,7 +137,7 @@ def _is_mutable_bound(
     return _indx  # не внутри скобок
 
 
-def splitters_combo(combo) -> [str, ]:
+def splitters_combo(combo: 'tkinter.ttk.Combobox') -> List[str, ]:
     """
     eval разделителей из gui
     """

@@ -11,14 +11,14 @@ import subprocess
 import tempfile
 import time
 import types
-from typing import Iterable
+from typing import Iterable, Tuple, List, Callable, Any
 
 import lr_lib.core.var.vars as lr_vars
 
 ALW = set(string.printable).__contains__
 
 
-def _chunks(iterable: list, chunk_size: int) -> iter:
+def _chunks(iterable: list, chunk_size: int) -> Iterable:
     """
     Yield successive n-sized chunks from l. - не работает с генераторами
     """
@@ -48,7 +48,7 @@ def chunks(iterable: iter, chunk_size: int) -> Iterable[iter]:
     return
 
 
-def _chunks_range(chunk_range: (int,), iterable) -> iter:
+def _chunks_range(chunk_range: Iterable[int], iterable: Iterable) -> Iterable:
     """
     next(iterable) для chunks
     """
@@ -62,7 +62,7 @@ def _chunks_range(chunk_range: (int,), iterable) -> iter:
     return
 
 
-def numericalSort(value: str, numbers=re.compile(r'(\d+)')) -> list:
+def numericalSort(value: str, numbers=re.compile(r'(\d+)')) -> List:
     """
     корректная сортировка файлов с inf-номерами в имени
     """
@@ -84,7 +84,7 @@ def _snapshot_file_name(name: str) -> str:
     return name
 
 
-def sort_files(file: dict):
+def sort_files(file: dict) -> Any:
     """
     сортировка файлов, по ключам
     """
@@ -189,7 +189,7 @@ def param_files_info() -> str:
     return r
 
 
-def get_files_infs(files: [dict, ]) -> Iterable[int]:
+def get_files_infs(files: List[dict]) -> Iterable[int]:
     """
     inf-номера файлов
     """
@@ -199,7 +199,7 @@ def get_files_infs(files: [dict, ]) -> Iterable[int]:
     return
 
 
-def only_ascii_symbols(item: (str,), allow=ALW, ) -> iter:
+def only_ascii_symbols(item: Tuple[str], allow=ALW, ) -> Iterable:
     """
     только allow символы
     """
@@ -212,7 +212,7 @@ def only_ascii_symbols(item: (str,), allow=ALW, ) -> iter:
     return
 
 
-def iter_to_list(item: iter) -> list:
+def iter_to_list(item: Iterable) -> List:
     """
     прирвести iter к list
     """
@@ -222,7 +222,7 @@ def iter_to_list(item: iter) -> list:
     return li
 
 
-def _openTextInEditor(file: str):
+def _openTextInEditor(file: str) -> 'subprocess.Popen':
     """
     открытие файл в Блокноте
     """
@@ -245,7 +245,7 @@ def openTextInEditor(text: str) -> None:
     return
 
 
-def exec_time(func: callable) -> callable:
+def exec_time(func: Callable) -> Callable:
     """
     время выполнения func
     """

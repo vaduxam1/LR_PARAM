@@ -2,18 +2,14 @@
 # фильтрация и сортировка param
 
 import string
-from typing import Iterable
+from typing import Iterable, List
 
 import lr_lib.core
 from lr_lib.core.var import vars as lr_vars
-from lr_lib.core.var.vars_param import (
-    DENY_Startswitch_PARAMS, DENY_PARAMS_LOWER, param_splitters, param_valid_letters, DENY_Force_Startswitch_PARAMS,
-    DENY_ENABLE, DENY_Force_Endswitch_PARAMS, DENY_Force_Contains_PARAMS, DENY_PARAMS_EQ,
-    DENY_Force_Contains_Lower_PARAMS
-)
+import lr_lib.core.var.vars_param as vars_param
 
 
-def param_sort(params: [str, ], reverse=True, _filter=True, deny_param_filter=True, action_text=None, ) -> [str, ]:
+def param_sort(params: List[str], reverse=True, _filter=True, deny_param_filter=True, action_text=None, ) -> List[str]:
     """
     отсортировать param по длине, тк если имеются похожие имена, лучше сначала заменять самые длинные,
     тк иначе например заменяя "zkau_1" - можно ошибочно заменить и для "zkau_11"
@@ -33,7 +29,7 @@ def param_sort(params: [str, ], reverse=True, _filter=True, deny_param_filter=Tr
 _PFDeny_1 = ('-' + string.ascii_lowercase)  # не {param} слова "-321" или "t11"
 
 
-def param_filter(params: [str, ], deny_param_filter=True, action=None, ) -> Iterable[str]:
+def param_filter(params: List[str], deny_param_filter=True, action=None, ) -> Iterable[str]:
     """
     отфильтровать лишние param
     """
@@ -44,7 +40,7 @@ def param_filter(params: [str, ], deny_param_filter=True, action=None, ) -> Iter
         return
 
     deny_numeric = (not lr_vars.AllowOnlyNumericParam.get())
-    deny = DENY_ENABLE.get()
+    deny = vars_param.DENY_ENABLE.get()
     if not action:
         action = lr_vars.Window.get_main_action()
 
@@ -53,22 +49,22 @@ def param_filter(params: [str, ], deny_param_filter=True, action=None, ) -> Iter
 
         if deny:
             p_lower = param.lower()
-            if any(map(param.startswith, DENY_Force_Startswitch_PARAMS)):
+            if any(map(param.startswith, vars_param.DENY_Force_Startswitch_PARAMS)):
                 continue
-            elif p_lower in DENY_PARAMS_LOWER:
+            elif p_lower in vars_param.DENY_PARAMS_LOWER:
                 continue
-            elif any(map(param.endswith, DENY_Force_Endswitch_PARAMS)):
+            elif any(map(param.endswith, vars_param.DENY_Force_Endswitch_PARAMS)):
                 continue
-            elif param in DENY_PARAMS_EQ:
+            elif param in vars_param.DENY_PARAMS_EQ:
                 continue
-            elif any(a in p_lower for a in DENY_Force_Contains_Lower_PARAMS):
+            elif any(a in p_lower for a in vars_param.DENY_Force_Contains_Lower_PARAMS):
                 continue
-            elif any(a in param for a in DENY_Force_Contains_PARAMS):
+            elif any(a in param for a in vars_param.DENY_Force_Contains_PARAMS):
                 continue
 
         if (len_p < lr_vars.MinParamLen) or (len_p > lr_vars.MaxParamLen):
             continue
-        elif not all(map(param_valid_letters.__contains__, param)):
+        elif not all(map(vars_param.param_valid_letters.__contains__, param)):
             continue  # "asd wer*&3"
         elif filter_deny_onUpper(param):
             continue  # "onScreen"
@@ -105,7 +101,7 @@ def filter_deny_onUpper(param: str, n=2, s='on', ) -> bool:
     return state
 
 
-def _param_filter(params: [str, ], ) -> [str, ]:
+def _param_filter(params: List[str], ) -> List[str]:
     """
     удалить не param-слова
     """
@@ -116,13 +112,13 @@ def _param_filter(params: [str, ], ) -> [str, ]:
         len_p = len(param)
         if (len_p < lr_vars.MinParamLen) or (len_p > lr_vars.MaxParamLen):
             continue
-        elif any(map(param_splitters.__contains__, param)):
+        elif any(map(vars_param.param_splitters.__contains__, param)):
             continue
         elif all(map(str.isnumeric, param)) and (len_p < _MinParamNumsOnlyLen):
             continue
 
         check = True
-        for dp in DENY_Startswitch_PARAMS:
+        for dp in vars_param.DENY_Startswitch_PARAMS:
             if param.startswith(dp):  # "uuid_1" - "статичный" параметр, не требующий парамертизации
                 ps = param.split(dp, 2)
                 lps = len(ps)
@@ -142,7 +138,7 @@ def _param_filter(params: [str, ], ) -> [str, ]:
     return
 
 
-def only_in_action_param_filter(params: [str, ], action_text=None) -> Iterable[str]:
+def only_in_action_param_filter(params: List[str], action_text=None) -> Iterable[str]:
     """
     удалить param которых нету в action.c
     """

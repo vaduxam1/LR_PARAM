@@ -5,6 +5,7 @@ import encodings.aliases
 import functools
 import string
 import tkinter as tk
+from typing import Iterable, Tuple, List, Callable, Any
 
 import lr_lib.core.var.vars
 
@@ -44,11 +45,11 @@ def _unpunct(st: str) -> str:
     return ''
 
 
-def T_POOL_decorator(func: callable):
+def T_POOL_decorator(func: Callable) -> Callable:
     """декоратор, выполнения func в T_POOL потоке"""
 
     @functools.wraps(func)
-    def wrap(*args, **kwargs):
+    def wrap(*args, **kwargs) -> Any:
         if hasattr(lr_lib.core.var.vars.T_POOL, 'submit'):
             out = lr_lib.core.var.vars.T_POOL.submit(func, *args, **kwargs)
         elif hasattr(lr_lib.core.var.vars.T_POOL, 'apply_async'):

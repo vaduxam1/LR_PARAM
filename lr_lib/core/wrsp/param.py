@@ -5,7 +5,7 @@ import copy
 import random
 import string
 import time
-from typing import Iterable
+from typing import Iterable, Tuple, List, Callable, Any
 
 import lr_lib
 import lr_lib.core.var.vars as lr_vars
@@ -100,7 +100,7 @@ def create_web_reg_save_param(wrsp_dict=None) -> str:
     return s
 
 
-def create_web_reg_save_param_and_dict(wrsp_dict=None) -> (str, dict):
+def create_web_reg_save_param_and_dict(wrsp_dict=None) -> Tuple[str, dict]:
     """
     сформировать web_reg_save_param и его словарь
     """
@@ -128,10 +128,11 @@ def wrsp_dict_creator(is_param=True) -> dict:
     param_infs = tuple(lr_lib.core.etc.other.get_files_infs(lr_vars.FilesWithParam))
     len_param_files = len(lr_vars.FilesWithParam)
     file = lr_vars.VarFile.get()
-    param_num = (lr_vars.VarPartNum.get() + 1)  # нумерация с 0
-    param_count = file['Param']['Count']
     Lb = lr_vars.VarLB.get()
     Rb = lr_vars.VarRB.get()
+    param_count = file['Param']['Count']
+    param_num = lr_vars.VarPartNum.get()
+    param_num += 1  # нумерация с 0
 
     # экранирование
     lb = screening_wrsp(Lb)
@@ -199,7 +200,8 @@ def wrsp_dict_creator(is_param=True) -> dict:
         param=param,
     )
 
-    (m1, m2) = (file['Param']['inf_min'], file['Param']['inf_max'])
+    m1 = file['Param']['inf_min']
+    m2 = file['Param']['inf_max']
     li = list(i for i in all_infs if (m1 <= i <= m2))
     web_reg_save_param_dict['search_inf_len'] = len(li)
     # file['File'] ключи
@@ -333,7 +335,7 @@ def _search_param_in_file(file: dict) -> dict:
     return
 
 
-def search_param_in_file(file: dict) -> (dict or None):
+def search_param_in_file(file: dict) -> 'dict or None':
     """
     найти кол-во {param} в файле, с контролем LB RB
     """
@@ -370,7 +372,7 @@ def search_param_in_file(file: dict) -> (dict or None):
     return
 
 
-def create_files_with_search_data(files: (dict,), search_data: dict, action=None, action_infs=()) -> Iterable[dict]:
+def create_files_with_search_data(files: Tuple[dict], search_data: dict, action=None, action_infs=()) -> Iterable[dict]:
     """
     с учетом inf - создать копию файла и обновить search_data
     """
@@ -421,7 +423,7 @@ def create_files_with_search_data(files: (dict,), search_data: dict, action=None
     return
 
 
-def set_param_in_action_inf(action, param: str) -> Iterable[int]:
+def set_param_in_action_inf(action: 'lr_lib.gui.action.main_action.ActionWindow', param: str) -> Iterable[int]:
     """
     первый action-inf в котором расположен param, тк inf-номер запроса <= inf-номер web_reg_save_param
     """
@@ -521,7 +523,7 @@ search_data: {d}
 '''  #
 
 
-def param_not_found_err_text(action, files: [dict, ], search_data: dict, param: str) -> str:
+def param_not_found_err_text(action, files: List[dict], search_data: dict, param: str) -> str:
     """
     текст ошибки - param не найден
     """
@@ -573,7 +575,7 @@ def param_not_found_err_text(action, files: [dict, ], search_data: dict, param: 
     return error
 
 
-def find_param_ord() -> (int, int):
+def find_param_ord() -> Tuple[int, int]:
     """
     получить Ord
     """
@@ -604,7 +606,7 @@ AIE2 = '''
 '''.strip()
 
 
-def new_find_param_ord() -> (int, int):
+def new_find_param_ord() -> Tuple[int, int]:
     """
     получить Ord, версия после 7.2.0
     """
@@ -650,7 +652,7 @@ def new_find_param_ord() -> (int, int):
     return
 
 
-def old_find_param_ord() -> (int, int):
+def old_find_param_ord() -> Tuple[int, int]:
     """
     получить Ord, версия до 7.2.0 - не ищет ord если символы LB(начало) и RB(конец) пересекаются
     """

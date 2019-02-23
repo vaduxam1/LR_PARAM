@@ -2,6 +2,7 @@
 # старт core
 
 import argparse
+from typing import Iterable, Tuple, List, Callable, Any, Dict
 
 import lr_lib
 import lr_lib.core.var.etc.init_vars
@@ -59,7 +60,7 @@ def _console_vars_setter(c_args: dict) -> None:
     return
 
 
-def _console_argument_parser() -> {str: str}:
+def _console_argument_parser() -> Dict[str, str]:
     """
     ArgumentParser - аргументы из консоли
     """

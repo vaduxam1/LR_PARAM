@@ -1,7 +1,7 @@
 # -*- coding: UTF-8 -*-
 # классы lr web_ запросов
 
-from typing import Iterable
+from typing import Iterable, Tuple, List, Dict
 
 import lr_lib
 import lr_lib.core.etc.lbrb_checker
@@ -44,7 +44,7 @@ def read_web_type(first_line: str, s1='("', s2='(') -> str:
     raise UserWarning(u)
 
 
-def _body_replace(body_split: [str, ], len_body_split: int, search: str, replace: str, is_wrsp=True) -> Iterable[str]:
+def _body_replace(body_split: List[str], len_body_split: int, search: str, replace: str, is_wrsp=True) -> Iterable[str]:
     """
     замена search в body
     """
@@ -81,21 +81,6 @@ def body_replace(body: str, search: str, replace: str, is_wrsp=True) -> str:
     return body
 
 
-def bodys_replace(replace_args: ({int: str}, [(str, str), ]), is_wrsp=True) -> [str, ]:
-    """
-    замена param's в body's
-    """
-    (body_portion, replace_list) = replace_args
-    for i in body_portion:
-        for (search, replace) in replace_list:
-            pi = body_portion[i]
-            bp = body_replace(pi, search, replace, is_wrsp=is_wrsp)
-            body_portion[i] = bp
-            continue
-        continue
-    return body_portion
-
-
 class WebAny:
     """
     любые web_
@@ -105,7 +90,7 @@ class WebAny:
     def __init__(
             self,
             parent_: 'lr_lib.core.action.main_awal.ActionWebsAndLines',
-            lines_list: list,
+            lines_list: List[str],
             comments: str,
             transaction: str,
             _type='',
@@ -377,7 +362,7 @@ class WebSnapshot(WebAny):
     def __init__(
             self,
             parent_: 'lr_lib.core.action.main_awal.ActionWebsAndLines',
-            lines_list: list,
+            lines_list: List[str],
             comments: str,
             transaction='',
             _type='',
@@ -456,7 +441,7 @@ class WebRegSaveParam(WebAny):
     def __init__(
             self,
             parent_: 'lr_lib.core.action.main_awal.ActionWebsAndLines',
-            lines_list: list,
+            lines_list: List[str],
             comments: str,
             transaction='',
             _type='',
