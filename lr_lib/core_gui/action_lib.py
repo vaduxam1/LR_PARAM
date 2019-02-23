@@ -8,6 +8,7 @@ import os
 import re
 import tkinter as tk
 import urllib.parse
+import base64
 from typing import Iterable, Tuple, List, Callable
 
 import lr_lib
@@ -196,11 +197,12 @@ def encoder(event, action=None) -> None:
     selection = widget.selection_get().strip()
 
     combo_dict = {
-        'cp1251': lambda: selection.encode('cp1251').decode(errors='replace'),
-        'utf-8': lambda: selection.encode('utf-8').decode(errors='replace'),
-        'unquote': lambda: urllib.parse.unquote(selection),
-        'unescape': lambda: html.unescape(selection),
+        'cp1251': lambda: selection.encode('cp1251', errors='replace').decode(errors='replace'),
+        'utf-8': lambda: selection.encode('utf-8', errors='replace').decode(errors='replace'),
         'unicode_escape': lambda: codecs.decode(selection, 'unicode_escape', 'replace'),
+        'unquote': lambda: urllib.parse.unquote(selection),  # value%22%3A%22%24z!t%23d%3A2019.
+        'unescape': lambda: html.unescape(selection),  # '&pound;682m'
+        'base64': lambda: base64.b64decode(selection).decode(),  # dGhpcyBpcyBzdHJpbmcgZXhhbXBsZS4uLi53b3chISE=
     }
 
     parent = (action or widget)
