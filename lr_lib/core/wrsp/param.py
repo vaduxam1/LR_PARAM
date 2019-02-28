@@ -523,7 +523,7 @@ search_data: {d}
 '''  #
 
 
-def param_not_found_err_text(action, files: List[dict], search_data: dict, param: str) -> str:
+def param_not_found_err_text(action, files: Tuple[dict], search_data: dict, param: str) -> str:
     """
     текст ошибки - param не найден
     """

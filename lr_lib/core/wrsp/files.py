@@ -7,7 +7,7 @@ import itertools
 import os
 import string
 import time
-from typing import Iterable, Tuple, List, Callable, Any
+from typing import Iterable, Tuple, List, Callable, Any, Iterator
 
 import lr_lib
 import lr_lib.core.etc.other
@@ -143,23 +143,22 @@ def create_files_from_infs(folder: str, enc: str, allow_deny: bool, statistic: b
     return
 
 
-def get_files_portions(args: '[(str, str, bool, bool), ((str, int),)]') -> List[dict]:
+def get_files_portions(args: Tuple[Tuple[str, str, bool, bool], Tuple[Tuple[str, int]]]) -> Tuple[dict]:
     """
     создать файлы, для порции inf-файлов
     """
     (arg, files) = args
     gn = ((arg, file) for file in files)
     files_gen = map(_create_files_from_inf, gn)
-    files_ = tuple(itertools.chain(*files_gen))
-    return files_
+    files = tuple(file for files in files_gen for file in files)
+    return files
 
 
-def _create_files_from_inf(args: '[(str, str, bool, bool), (str, int)]') -> Iterable[dict]:
+def _create_files_from_inf(args: Tuple[Tuple[str, str, bool, bool], Tuple[str, int]]) -> Iterator[dict]:
     """
     создать файлы ответов, из одного inf-файла
     """
     ((folder, enc, allow_deny, statistic), (file, num)) = args
-
     try:  # ConfigParser(вроде когдато были какието проблемы, с кодировкой?)
         config = configparser.ConfigParser()
         cf = os.path.join(folder, file)
@@ -283,12 +282,12 @@ def get_file_with_kwargs(files: Tuple[dict], **kwargs) -> dict:
     if not kwargs:
         n = lr_vars.VarFileName.get()
         kwargs = dict(Name=n)
-    for file in get_files_with_kwargs(files, **kwargs):
-        return file
-    return
+    files = get_files_with_kwargs(files, **kwargs)
+    file = next(files, None)
+    return file
 
 
-def get_files_with_kwargs(files: Tuple[dict], key='File', **kwargs) -> Iterable[dict]:
+def get_files_with_kwargs(files: Tuple[dict], key='File', **kwargs) -> Iterator[dict]:
     """
     найти файлы, содержащие kwargs
     """

@@ -106,11 +106,14 @@ def str_separator(message: str, s_width='#', s_height='#', t='  ', max_=70, n=5)
         return
 
     msg = tuple(len_split(message.split('\n')))
-    ml = max(len(a) for a in msg)
-    s = '{t}{0}%s{1}%s{0}'
-    s1 = s % (s_width, s_width)
-    s_ = s1.format(s_height, s_width * ml, t=t)
-    m1 = s % (' ', ' ')
-    m_ = '\n'.join(m1.format(s_height, m, t=t) for m in _separator(msg, ml))
+    ml = max(map(len, msg))
+
+    f = '{t}{0}%s{1}%s{0}'
+    sf = (f % (s_width, s_width))
+    mf = (f % (' ', ' '))
+
+    s_ = sf.format(s_height, (s_width * ml), t=t)
+    m_ = '\n'.join(mf.format(s_height, ms, t=t) for ms in _separator(msg, ml))
+
     i = '{0}\n{1}\n{0}'.format(s_, m_)
     return i

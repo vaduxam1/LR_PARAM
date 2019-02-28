@@ -189,7 +189,7 @@ def param_files_info() -> str:
     return r
 
 
-def get_files_infs(files: List[dict]) -> Iterable[int]:
+def get_files_infs(files: Iterable[dict]) -> Iterable[int]:
     """
     inf-номера файлов
     """

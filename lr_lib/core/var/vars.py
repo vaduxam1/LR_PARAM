@@ -7,7 +7,8 @@ import time
 import logging
 import tkinter as tk
 
-import lr_lib.core.var.etc.var_ob
+import lr_lib
+import lr_lib.core.var.etc.var_ob as lr_var
 
 #####################################
 # главные переменные
@@ -20,14 +21,14 @@ original_callback_exception = Tk.report_callback_exception  # переопред
 Window = None  # класс gui окна # lr_lib.gui.wrsp.main_window.Window
 AllFiles = []  # все файлы ответов
 FilesWithParam = []  # файлы ответов, с param
-VarParam = lr_lib.core.var.etc.var_ob.Var(value='')  # {param} для поиска
-VarFileName = lr_lib.core.var.etc.var_ob.Var(value='')  # выбранное имя файла с {param}
-VarFile = lr_lib.core.var.etc.var_ob.Var(value={})  # выбранный словарь файла с {param}
-VarPartNum = lr_lib.core.var.etc.var_ob.Var(value=0)  # номер вхождения param
-VarLB = lr_lib.core.var.etc.var_ob.Var(value='')  # текст LB
-VarRB = lr_lib.core.var.etc.var_ob.Var(value='')  # текст RB
-VarFileText = lr_lib.core.var.etc.var_ob.Var(value='')  # тект файла
-VarWrspDict = lr_lib.core.var.etc.var_ob.Var(value={})  # текущий web_reg_save_param словарь
+VarParam = lr_var.Var(value='')  # {param} для поиска
+VarFileName = lr_var.Var(value='')  # выбранное имя файла с {param}
+VarFile = lr_var.Var(value={})  # выбранный словарь файла с {param}
+VarPartNum = lr_var.Var(value=0)  # номер вхождения param
+VarLB = lr_var.Var(value='')  # текст LB
+VarRB = lr_var.Var(value='')  # текст RB
+VarFileText = lr_var.Var(value='')  # тект файла
+VarWrspDict = lr_var.Var(value={})  # текущий web_reg_save_param словарь
 VarWrspDictList = []  # все возможные web_reg_save_param словари, для данного param
 
 #####################################
@@ -58,8 +59,8 @@ ReplaceParamDialogWindow = True  # вкл диалог окна(автозаме
 
 AllowOnlyNumericParam = tk.BooleanVar(value=False)  # разрешить имена {param}, состоящие только из цифр
 
-VarFileSortKey1 = lr_lib.core.var.etc.var_ob.Var(value='Snapshot')  # сортировка файлов
-VarFileSortKey2 = lr_lib.core.var.etc.var_ob.Var(value='Nums')  # сортировка файлов
+VarFileSortKey1 = lr_var.Var(value='Snapshot')  # сортировка файлов
+VarFileSortKey2 = lr_var.Var(value='Nums')  # сортировка файлов
 VarFirstLastFile = tk.IntVar(value=1)  # 0=первый, выбрать последний или первый файл из FilesWithParam
 VarOrdVersion = tk.IntVar(value=1)  # версия(старая/новая) функции для получения Ord, например если не ищется?
 VarFileNamesNumsShow = tk.BooleanVar(value=True)  # показывать инфо о найденых файлах с param
@@ -91,7 +92,7 @@ AskLbRbMaxLen = 30  # макс длина LB/RB, в вопросе при авт
 DEFAULT_LB_RB_MIN_HEIGHT = 3  # высота полей LB/RB(5)
 VarActComboLenMin = tk.IntVar(value=2)  # min ширина Listbox виджетов
 VarActComboLenMax = tk.IntVar(value=75)  # max ширина Listbox виджетов
-VarMaxComboFilesWidth = lr_lib.core.var.etc.var_ob.Var(value=75)  # макс ширина combobox выбора файлов(3)
+VarMaxComboFilesWidth = lr_var.Var(value=75)  # макс ширина combobox выбора файлов(3)
 MaxFileStringWidth = 250  # макс ширина подсказки для файлов(3)
 
 DefaultActionForceAsk = False  # Автозамена - подтверждать любую замену
