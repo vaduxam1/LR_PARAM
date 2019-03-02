@@ -36,7 +36,7 @@ def check_git_ver() -> None:
     version_changes = find_version_changes(lr_vars.VERSION)
 
     _t = "Для версии {version} доступно обновление."
-    _s = "По адресу {url} доступно последнее [{git_version}] обновление утилиты.\n\n{version_changes}"
+    _s = "По адресу {url} доступно последнее {git_version} обновление утилиты.\n{version_changes}"
     ttl = _t.format(version=lr_vars.VERSION, )
     msg = _s.format(url=lr_vars.githubDownloadUrl, git_version=git_version, version_changes=version_changes, )
     m = '{t}\n\n{m}'.format(t=ttl, m=msg, )
@@ -103,8 +103,11 @@ def find_version_changes(ver: str) -> str:
         continue
 
     if description:
-        t = ' [ {ver} ]:{desc}'
-        text = '\n'.join(t.format(ver=v, desc=d, ) for (v, d) in description)
+        t = '{s} {ver} {s}\n{desc}'
+        s = ('_' * 35)
+        abd = lambda d: '\n'.join(' {0}) {1}'.format(a, b) for (a, b) in enumerate(
+            (filter(bool, map(str.strip, d.split('\n* ')))), start=1))
+        text = '\n'.join(t.format(ver=v, desc=abd(d), s=s, ) for (v, d) in description)
     else:
         text = 'описание изменений для версии не задано!'
     return text
@@ -187,4 +190,4 @@ VersionChanges = collections.OrderedDict({
 * общий рефакторинг
         ''',
 
-})
+})  # "\n* " - признак отдельного пункта изменений в версии - это строка для enumerate, изпользовать в описании нельзя
