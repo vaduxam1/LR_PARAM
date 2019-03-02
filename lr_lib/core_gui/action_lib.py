@@ -202,7 +202,7 @@ def encoder(event, action=None) -> None:
         'unicode_escape': lambda: codecs.decode(selection, 'unicode_escape', 'replace'),
         'unquote': lambda: urllib.parse.unquote(selection),  # value%22%3A%22%24z!t%23d%3A2019.
         'unescape': lambda: html.unescape(selection),  # '&pound;682m'
-        'base64': lambda: base64.b64decode(selection).decode(),  # dGhpcyBpcyBzdHJpbmcgZXhhbXBsZS4uLi53b3chISE=
+        'base64': lambda: base64.b64decode(selection).decode(errors='replace'),  # dGhpcyBpcyBzdHJpbmcgZXhhbXBsZS4uLi53b3chISE=
     }
 
     parent = (action or widget)
@@ -263,7 +263,7 @@ def rClick_add_highlight(event, option: str, color: str, val: str, find=False) -
             for color in c_dt:
                 values = c_dt[color]  # <class 'set'>: {'mail.ru', '*/', 'yandex.ru', 'google.com', '/*', 'WARNING'}
                 try:
-                    values.remove(selection)  # удялить
+                    values.remove(selection)  # удалить
                 except KeyError:
                     pass
                 continue

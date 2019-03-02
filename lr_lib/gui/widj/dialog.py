@@ -193,7 +193,10 @@ class YesNoCancel(tk.Toplevel):
         стереть = новый текст в self.tk_text
         """
         self.tk_text.delete(1.0, tk.END)
-        self.tk_text.insert(1.0, text)
+        try:
+            self.tk_text.insert(1.0, text)
+        except tk.TclError as ex:
+            self.tk_text.insert(1.0, text.encode(errors='replace').decode(errors='replace'))
         return
 
     def _wind_attributes(self) -> None:
