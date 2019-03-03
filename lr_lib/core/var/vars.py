@@ -131,8 +131,10 @@ VarSplitListNumRB = tk.IntVar(value=2)  # Не учитывать n символ
 
 #####################################
 # gui
-maxundo = 999  # max число ctrl-z в action.c
+maxundo = 1000  # max число ctrl-z в action.c
+
 linenumbers_width = 100  # ширина action-виджета с номерами линий
+linenumbers_wrsp_len = 9  # макс число символов имени wrsp в action-виджете с номерами линий
 
 _Tk_WIND_SIZE = [600, 700]  # размер главного окна
 _Tk_ActionWIND_SIZE = [1100, 600]  # размер action окна

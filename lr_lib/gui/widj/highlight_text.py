@@ -5,7 +5,7 @@ import copy
 import re
 import tkinter as tk
 from tkinter.font import Font
-from typing import Iterable, Tuple, List, Dict, Set
+from typing import Iterable, Tuple, List, Dict, Set, Any
 
 import lr_lib
 import lr_lib.core.var.vars as lr_vars
@@ -258,6 +258,12 @@ class HighlightText(tk.Text):
         return
 
 
+normal_font = Font(family="Arial", size=8, slant='italic', )
+normal_font2 = Font(family="Eras Medium ITC", size=11, weight="bold", )
+bold_font = Font(family="Georgia", size=9, weight="bold", )
+bold_font2 = Font(family="Arial", size=8, weight="bold", slant='italic', )
+
+
 class TextLineNumbers(tk.Canvas):
     """
     номера линий tk.Text
@@ -288,12 +294,22 @@ class TextLineNumbers(tk.Canvas):
             linenum = int(linenum)  # номер линии
 
             try:  # "тип" линии
-                line_type = self.linenumbers[linenum]
+                (line_type, bold) = self.linenumbers[linenum]
             except KeyError as ex:
-                line_type = ''
+                (line_type, bold) = ('', False)
 
             self.linenum = '{linenum} {line_type}'.format(linenum=linenum, line_type=line_type, )
-            self.create_text(2, y, anchor="nw", text=self.linenum)
+
+            if bold:
+                f = bold_font
+            elif bold == '':
+                f = bold_font2
+            elif bold == False:
+                f = normal_font
+            else:  # None
+                f = normal_font2
+
+            self.create_text(2, y, anchor="nw", text=self.linenum, font=f)
 
             i = self.tk_text.index("%s+1line" % i)
             continue
@@ -308,61 +324,80 @@ class TextLineNumbers(tk.Canvas):
         split = text.split('\n')
 
         for (line_num, line) in enumerate(split, start=1):
-            line_type = self.get_line_type(line)
-            self.linenumbers[line_num] = line_type
+            item = self.get_line_type(line)
+            self.linenumbers[line_num] = item
             continue
         return
 
-    def get_line_type(self, line: str, i=10) -> str:
+    def get_line_type(self, line: str, i=20) -> Tuple[str, Any]:
         """определить "тип" линии, для показа в TextLineNumbers"""
         line = line.strip()
+        bold = False
+
         if line.startswith('web_reg_save_param'):
             if 'web_reg_save_param("' in line:
                 s = line.split('web_reg_save_param("', 1)[1]
                 s = s.split('"', 1)[0].strip()
             else:
                 s = 'P'
-            t = '+{%s} '
-            t = (t % s[:9])
+            line_type = '{ %s }'
+            line_type = (line_type % s[:lr_vars.linenumbers_wrsp_len])
+            bold = ''
+
         elif line.startswith('"Snapshot=t'):
-            t = line.split('"Snapshot=t', 1)[1]
-            t = t.split('.', 1)[0]
-            t = 'inf={0}'.format(t)
+            line_type = line.split('"Snapshot=t', 1)[1]
+            line_type = line_type.split('.', 1)[0]
+            line_type = 'inf={0}'.format(line_type)
+            bold = ''
+
         elif line.startswith('web_'):
-            t = ' _( web )_'
+            line_type = line.split('(')[0]
+            line_type = ''.join(s[0] for s in line_type.split('_'))
+            line_type = ' ( {0} )'.format(line_type)
+            bold = True
+
         elif line.startswith('lr_start_transaction'):
-            t = ('>' * i)
+            line_type = ('>' * i)
+            bold = None
+
         elif line.startswith('lr_end_transaction'):
-            t = ('<' * i)
+            line_type = ('<' * i)
+            bold = None
+
         elif line.startswith('lr_'):
-            t = ' [ lr ]'
+            line_type = ' [ lr ]'
+
         elif '", "Value=' in line:
-            t = line.split('", "Value=', 1)[1]
-            t = t.split('", ENDITEM,', 1)[0]
-            if t.startswith('on'):
-                t = t[2:]
-            elif t[1:3] == 'on':
-                t = t[3:]
-            elif t == 'dummy':
+            line_type = line.split('", "Value=', 1)[1]
+            line_type = line_type.split('", ENDITEM,', 1)[0]
+            if line_type.startswith('on'):
+                line_type = line_type[2:]
+            elif line_type[1:3] == 'on':
+                line_type = line_type[3:]
+            elif line_type == 'dummy':
                 pass  # как есть
             elif any((p in line) for p in self.tk_text.action.web_action.websReport.wrsp_and_param_names):
-                t = '={p}'
+                line_type = '={p}'
             elif any(a in line for a in _alst):
-                t = ''
+                line_type = ''
             else:
-                t = '?'
-        elif '\"items\":' in line:
-            t = '?'
-        else:
-            t = ''
+                line_type = '?'
 
-        if (not t) and (not line.startswith('//')):
+        elif '\"items\":' in line:
+            line_type = '?'
+
+        else:
+            line_type = ''
+
+        if (not line_type) and (not line.startswith('//')):
             for p in self.tk_text.action.web_action.websReport.wrsp_and_param_names:
                 if p in line:
-                    t = '={p}'
+                    line_type = '={p}'
                     break
                 continue
-        return t
+
+        item = (line_type, bold)
+        return item
 
 
 _alst = ['pageX', 'left\\":', '{\\"\\":', 'Value=i", ENDITEM', ]
