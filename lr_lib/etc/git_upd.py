@@ -104,7 +104,7 @@ def find_version_changes(ver: str) -> str:
 
     if description:
         t = '{s} {ver} {s}\n{desc}'
-        s = ('_' * 35)
+        s = ('_' * 3)
         abd = lambda d: '\n'.join(' {0}) {1}'.format(a, b) for (a, b) in enumerate(
             (filter(bool, map(str.strip, d.split('\n* ')))), start=1))
         text = '\n'.join(t.format(ver=v, desc=abd(d), s=s, ) for (v, d) in description)
