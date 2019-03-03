@@ -576,7 +576,7 @@ class ActionWindow(lr_lib.gui.action.act_win.ActWin):
 
         self.tk_text.grid(row=0, column=1, sticky=tk.NSEW, columnspan=201)
         self.tk_text.linenumbers.grid(row=0, column=0, sticky=tk.NSEW)
-        self.tk_text.linenumbers.config(width=30)
+        self.tk_text.linenumbers.config(width=lr_vars.linenumbers_width)
 
         self.max_inf_cbx.grid(row=7, column=1, sticky=tk.NSEW)
         self.add_inf_cbx.grid(row=8, column=1, sticky=tk.NSEW)

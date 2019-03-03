@@ -65,9 +65,9 @@ class Setting(tk.Toplevel):
             lab.grid(row=0, column=col, sticky=tk.NSEW)
 
             dt = module.__dict__
-            attrs = sorted(attr_filter(dt))
+            attrs = sorted(attr_filter(dt), key=str.lower)
 
-            for attr in attrs:
+            for (num, attr) in enumerate(attrs, start=1):
                 val = dt[attr]
 
                 row += 1
@@ -84,7 +84,8 @@ class Setting(tk.Toplevel):
                 except Exception as ex:
                     lenv = None
                 ln = (' {}'.format(lenv) if (lenv is not None) else '')
-                btxt = '{at} : {t}{ln}'.format(t=val.__class__.__name__, at=attr, ln=ln, )
+                t = val.__class__.__name__
+                btxt = '{num}) {at} : {t}{ln}'.format(num=num, t=t, at=attr, ln=ln, )
 
                 # Button
                 cmd = lambda dt=dt, at=attr: _var_editor(self, dt, at, )  # cmd

@@ -49,7 +49,8 @@ def auto_update_action_info_lab(
 
     lines = tk_text.highlight_lines
     (top, bottom) = lines.on_sreen_line_nums
-    p = round(int(tk_text.linenumbers.linenum) // lines._max_line_proc)
+    linenum = str(tk_text.linenumbers.linenum).split(' ', 1)[0]
+    p = round(int(linenum) // lines._max_line_proc)
     title(ttl(txt=_set_title(), top=top, bottom=bottom, v=ver, lmax=lines._max_line, p=p))
 
     try:

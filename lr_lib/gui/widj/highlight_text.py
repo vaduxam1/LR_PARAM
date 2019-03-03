@@ -19,7 +19,7 @@ class HighlightText(tk.Text):
     """
 
     def __init__(self, action: 'lr_lib.gui.action.main_action.ActionWindow', *args, **kwargs):
-        super().__init__(action, *args, undo=True, maxundo=999, autoseparators=True, **kwargs)
+        super().__init__(action, *args, undo=True, maxundo=lr_vars.maxundo, autoseparators=True, **kwargs)
         self.cursor_position = self.index(tk.INSERT)  # координаты текущей позиции в tk.Text
 
         self.action = action  # parent
@@ -76,7 +76,9 @@ class HighlightText(tk.Text):
         """
         пересоздать self.highlight_lines
         """
-        self.highlight_lines = lr_lib.gui.widj.highlight.HighlightLines(self, self.get_tegs_names())
+        tn = self.get_tegs_names()
+        self.highlight_lines = lr_lib.gui.widj.highlight.HighlightLines(self, tn)
+        self.linenumbers.add_linenumbers()  # "тип" линии, для показа в TextLineNumbers
         return self.highlight_lines
 
     def after_callback(self) -> None:
@@ -131,11 +133,14 @@ class HighlightText(tk.Text):
         (w, s, u, o) = self.__class__._text_checkbox(parent)
 
         size = parent.size_var.get()
-        fnt = Font(family=parent.font_var.get(), size=size, weight=w, slant=s, underline=u, overstrike=o)
+        ff = parent.font_var.get()
+        fnt = Font(family=ff, size=size, weight=w, slant=s, underline=u, overstrike=o)
 
         for g in ground:
             for color in tegs:
-                self.tag_config((g + color), **{g: color, 'font': fnt, })
+                dc = {g: color, 'font': fnt, }
+                gd = (g + color)
+                self.tag_config(gd, **dc)
                 continue
             continue
         return
@@ -145,7 +150,8 @@ class HighlightText(tk.Text):
         сбросить текст настройки цветов
         """
         self.highlight_dict.clear()
-        self.highlight_dict.update(copy.deepcopy(lr_lib.core.var.vars_highlight.VarDefaultColorTeg))
+        d = copy.deepcopy(lr_lib.core.var.vars_highlight.VarDefaultColorTeg)
+        self.highlight_dict.update(d)
         if highlight:
             self.highlight_apply()
         return
@@ -157,7 +163,9 @@ class HighlightText(tk.Text):
         if size is None:
             size = self.size_var.get()
         (w, s, u, o) = self._text_checkbox()
-        self.configure(font=Font(family=self.font_var.get(), size=size, weight=w, slant=s, underline=u, overstrike=o))
+        ff = self.font_var.get()
+        f = Font(family=ff, size=size, weight=w, slant=s, underline=u, overstrike=o)
+        self.configure(font=f)
         return
 
     def highlight_apply(self, *a) -> None:
@@ -258,7 +266,7 @@ class TextLineNumbers(tk.Canvas):
     def __init__(self, tk_text: 'HighlightText'):
         super().__init__(tk_text.action, background=lr_lib.core.var.vars_highlight.Background)
         self.linenum = -1
-
+        self.linenumbers = {}  # {1: str, 2: WebSnapshot, }  связь номеров линий, и типа находящегося там контента
         self.tk_text = tk_text
         return
 
@@ -276,9 +284,85 @@ class TextLineNumbers(tk.Canvas):
                 break
 
             y = dline[1]
-            self.linenum = str(i).split(".", 1)[0]
+            linenum = str(i).split(".", 1)[0]
+            linenum = int(linenum)  # номер линии
+
+            try:  # "тип" линии
+                line_type = self.linenumbers[linenum]
+            except KeyError as ex:
+                line_type = ''
+
+            self.linenum = '{linenum} {line_type}'.format(linenum=linenum, line_type=line_type, )
             self.create_text(2, y, anchor="nw", text=self.linenum)
+
             i = self.tk_text.index("%s+1line" % i)
             continue
-
         return
+
+    def add_linenumbers(self) -> None:
+        """
+        создать self.linenumbers: line_num += 1 : для каждого '\n'
+        """
+        self.linenumbers.clear()
+        text = self.tk_text.get('1.0', tk.END)
+        split = text.split('\n')
+
+        for (line_num, line) in enumerate(split, start=1):
+            line_type = self.get_line_type(line)
+            self.linenumbers[line_num] = line_type
+            continue
+        return
+
+    def get_line_type(self, line: str, i=10) -> str:
+        """определить "тип" линии, для показа в TextLineNumbers"""
+        line = line.strip()
+        if line.startswith('web_reg_save_param'):
+            if 'web_reg_save_param("' in line:
+                s = line.split('web_reg_save_param("', 1)[1]
+                s = s.split('"', 1)[0].strip()
+            else:
+                s = 'P'
+            t = '+{%s} '
+            t = (t % s[:9])
+        elif line.startswith('"Snapshot=t'):
+            t = line.split('"Snapshot=t', 1)[1]
+            t = t.split('.', 1)[0]
+            t = 'inf={0}'.format(t)
+        elif line.startswith('web_'):
+            t = ' _( web )_'
+        elif line.startswith('lr_start_transaction'):
+            t = ('>' * i)
+        elif line.startswith('lr_end_transaction'):
+            t = ('<' * i)
+        elif line.startswith('lr_'):
+            t = ' [ lr ]'
+        elif '", "Value=' in line:
+            t = line.split('", "Value=', 1)[1]
+            t = t.split('", ENDITEM,', 1)[0]
+            if t.startswith('on'):
+                t = t[2:]
+            elif t[1:3] == 'on':
+                t = t[3:]
+            elif t == 'dummy':
+                pass  # как есть
+            elif any((p in line) for p in self.tk_text.action.web_action.websReport.wrsp_and_param_names):
+                t = '={p}'
+            elif any(a in line for a in _alst):
+                t = ''
+            else:
+                t = '?'
+        elif '\"items\":' in line:
+            t = '?'
+        else:
+            t = ''
+
+        if (not t) and (not line.startswith('//')):
+            for p in self.tk_text.action.web_action.websReport.wrsp_and_param_names:
+                if p in line:
+                    t = '={p}'
+                    break
+                continue
+        return t
+
+
+_alst = ['pageX', 'left\\":', '{\\"\\":', 'Value=i", ENDITEM', ]

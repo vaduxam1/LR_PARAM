@@ -436,8 +436,7 @@ class ActionWebsAndLines:
         if websReport:
             self.websReport.create()
 
-        s = self._to_str()
-        s = ''.join(s).strip()
+        s = ''.join(self._to_str())
         return s
 
     def _to_str(self, n_sign=True) -> Iterable[str]:
@@ -445,20 +444,29 @@ class ActionWebsAndLines:
         Весь action текст как строка.
         Форматирование переносов строк '\n' в блоках текста и между ними.
         """
+        no_first = False
         for line in self.webs_and_lines:
             is_line_str = isinstance(line, str)
 
+            # дополнительная линия
             if is_line_str != n_sign:
-                yield '\n'  # перенос, при смене str/WEB_
+                _line = '\n'
+                yield _line  # перенос, при смене str/WEB_
 
+            # основная линия
             if is_line_str:  # str
                 line = line.strip('\n')
-                line = '\n{0}'.format(line)
+                if no_first:
+                    line = '\n{0}'.format(line)
+                else:
+                    no_first = True
                 yield line
+
             elif isinstance(line, lr_web.WebSnapshot):  # snapshot Web
                 line = line.to_str()
                 line = '\n\n{0}\n'.format(line)
                 yield line
+
             else:  # не snapshot Web
                 line = line.to_str()
                 line = '\n{0}'.format(line)
@@ -466,6 +474,8 @@ class ActionWebsAndLines:
 
             n_sign = is_line_str
             continue
+
+        self.action.tk_text.linenumbers.add_linenumbers()
         return
 
     def _all_web_body_text(self) -> str:
