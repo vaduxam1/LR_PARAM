@@ -378,12 +378,14 @@ class TextLineNumbers(tk.Canvas):
                 pass  # как есть
             elif any((p in line) for p in self.tk_text.action.web_action.websReport.wrsp_and_param_names):
                 line_type = '={p}'
+            elif any(a in line for a in _alst2):
+                line_type = '?'
             elif any(a in line for a in _alst):
                 line_type = ''
             else:
                 line_type = '?'
 
-        elif '\"items\":' in line:
+        elif any(a in line for a in _alst2):
             line_type = '?'
 
         else:
@@ -401,3 +403,4 @@ class TextLineNumbers(tk.Canvas):
 
 
 _alst = ['pageX', 'left\\":', '{\\"\\":', 'Value=i", ENDITEM', ]
+_alst2 = ['"items', '"contentId', ]
