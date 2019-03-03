@@ -259,8 +259,8 @@ class HighlightText(tk.Text):
 
 
 normal_font = Font(family="Arial", size=8, slant='italic', )
-normal_font2 = Font(family="Eras Medium ITC", size=11, weight="bold", )
-bold_font = Font(family="Georgia", size=9, weight="bold", )
+normal_font2 = Font(family="Eras Medium ITC", size=10, weight="bold", )
+bold_font = Font(family="Georgia", size=8, weight="bold", )
 bold_font2 = Font(family="Arial", size=8, weight="bold", slant='italic', )
 
 
