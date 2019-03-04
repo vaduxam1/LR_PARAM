@@ -129,7 +129,7 @@ VName = 'VersionChanges'  # одноименно с переменной ниж�
 VersionChanges = collections.OrderedDict({
 
     'v11.6.3': '''
-* в меню правой кнопки мыши, добавлен "Переход по тексту" action.c - по именам transaction/web_reg_save_param/Snapshot/WARNING/...
+* в меню правой кнопки мыши, добавлен "Переход по тексту" action.c, по именам transaction/web_reg_save_param/Snapshot/WARNING/...
     ''',
 
     'v11.6.2': '''
