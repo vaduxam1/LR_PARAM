@@ -11,6 +11,7 @@ import lr_lib
 import lr_lib.core.var.vars as lr_vars
 import lr_lib.core.var.vars_highlight
 import lr_lib.gui.widj.highlight
+import lr_lib.core.action.web_ as lr_web
 
 
 class HighlightText(tk.Text):
@@ -366,6 +367,10 @@ class TextLineNumbers(tk.Canvas):
 
         elif line.startswith('lr_'):
             line_type = ' [ lr ]'
+
+        elif line.startswith(lr_web.WARN):
+            line_type = 'WARNING'
+            bold = None
 
         elif '", "Value=' in line:
             line_type = line.split('", "Value=', 1)[1]

@@ -7,6 +7,8 @@ import lr_lib
 import lr_lib.core.etc.lbrb_checker
 import lr_lib.core.var.vars as lr_vars
 
+WARN = '{0} WARNING: '.format(lr_lib.core.wrsp.param.LR_COMENT)
+
 
 class Snapshot:
     """
@@ -110,6 +112,8 @@ class WebAny:
         snapshot = self._read_snapshot()
         self.snapshot = Snapshot(snapshot)
 
+        self.warning = False  # есть ли warning
+
         self.comments = comments.lstrip('\n').rstrip()
         if self.comments:
             self.comments = '\n{}'.format(self.comments)
@@ -146,18 +150,22 @@ class WebAny:
 
         if lr_vars.VarWebStatsWarn.get() or _all_stat:
             if self.snapshot.inf in self.ActionWebsAndLines.websReport.rus_webs:
-                s = '\n\t{} WARNING: NO ASCII Symbols(rus?)'.format(lr_lib.core.wrsp.param.LR_COMENT)
+                s = '\n\t{0}NO ASCII Symbols(rus?)'.format(WARN)
                 comments += s
             if (len(self.lines_list) > 2) and (not self.snapshot.inf):
-                s = '\n\t{} WARNING: no "Snapshot=t.inf" (del?)'.format(lr_lib.core.wrsp.param.LR_COMENT)
+                s = '\n\t{0}no "Snapshot=t.inf" (del?)'.format(WARN)
                 comments += s
 
         warn = self.check_for_warnings()
         st = '\n'.join(self.lines_list)
 
         t = '{warn}\n{coment}\n{snap_text}'
-        text = t.format(coment=comments, snap_text=st, warn=warn).strip('\n')
-        return text
+        txt = t.format(coment=comments, snap_text=st, warn=warn).strip('\n')
+        if WARN in txt:
+            self.warning = True
+        else:
+            self.warning = False
+        return txt
 
     def _read_name(self, name='') -> str:
         """
@@ -195,7 +203,7 @@ class WebAny:
         """
         спросить о замене param
         """
-        buttons = (ys, yta, no, nta, rais) = ('Да', 'Да, для Всех', 'Нет', 'Нет, для Всех', 'Преврать',)
+        buttons = (ys, yta, no, nta, rais) = ['Да', 'Да, для Всех', 'Нет', 'Нет, для Всех', 'Преврать',]
         dk = (nta, yta, rais)
 
         if ask_dict and (a in ask_dict for a in dk):
@@ -346,7 +354,7 @@ class WebAny:
             continue
 
         if warnings:
-            s = '\n\t{c} WARNING: '.format(c=lr_lib.core.wrsp.param.LR_COMENT, )
+            s = '\n\t{0}'.format(WARN)
             warn = s.join(warnings)
             warn = (s + warn)
         else:
@@ -383,6 +391,7 @@ class WebSnapshot(WebAny):
     def to_str(self, _all_stat=False) -> str:
         """
         весь текст web_
+        + установить self.warning
         """
         if lr_vars.VarWebStatsTransac.get() or _all_stat:
             _tr = self.ActionWebsAndLines.websReport.stats_transaction_web(self)
@@ -413,11 +422,16 @@ class WebSnapshot(WebAny):
                     bad_wrsp.append(w.param)
                 continue
             if bad_wrsp:
-                t = '\t{c} WARNING: WrspInAndOutUsage: {lp}={p}\n{t}'
-                text = t.format(t=text, c=lr_lib.core.wrsp.param.LR_COMENT, p=bad_wrsp, lp=len(bad_wrsp),)
+                t = '\t{w}WrspInAndOutUsage: {lp}={p}\n{t}'
+                text = t.format(t=text, w=WARN, p=bad_wrsp, lp=len(bad_wrsp),)
 
         wrsps = ''.join(map(WebRegSaveParam.to_str, self.web_reg_save_param_list))
         txt = '{wrsp}{stat_string}\n{text}'.format(stat_string=stat_string, text=text, wrsp=wrsps).strip('\n')
+
+        if WARN in txt:
+            self.warning = True
+        else:
+            self.warning = False
         return txt
 
     def get_body(self, a=1, b=-1) -> str:
@@ -493,22 +507,28 @@ class WebRegSaveParam(WebAny):
         if lr_vars.VarWebStatsWarn.get() or _all_stat:
             rep = self.ActionWebsAndLines.websReport.param_statistic[self.name]
             if not rep['param_count']:
-                s = '\n{c} WARNING: NoWebRegSaveParamUsage?'
-                comments += s.format(c=lr_lib.core.wrsp.param.LR_COMENT)
+                s = '\n{0}NoWebRegSaveParamUsage?'
+                comments += s.format(WARN)
             elif self.snapshot.inf >= min(filter(bool, rep['snapshots'])):
-                s = '\n{c} WARNING: WrspInAndOutUsage wrsp.snapshot >= usage.snapshot'
-                comments += s.format(c=lr_lib.core.wrsp.param.LR_COMENT)
+                s = '\n{0}WrspInAndOutUsage wrsp.snapshot >= usage.snapshot'
+                comments += s.format(WARN)
 
         if lr_vars.VarWRSPStatsTransac.get() or _all_stat:
             usage_string = self.usage_string(_all_stat=_all_stat)
         else:
             usage_string = ''
 
-        txt = '{usage_string}{coment_text}\n{snap_text}'.format(
-            usage_string=usage_string, coment_text=comments, snap_text='\n'.join(self.lines_list),
-        )
-        ts = '\n{}\n'.format(txt.strip('\n'))
-        return ts
+        s = '{usage_string}{coment_text}\n{snap_text}'
+        txt = '\n'.join(self.lines_list)
+        txt = s.format(usage_string=usage_string, coment_text=comments, snap_text=txt,)
+        txt = txt.strip('\n')
+        txt = '\n{0}\n'.format(txt)
+
+        if WARN in txt:
+            self.warning = True
+        else:
+            self.warning = False
+        return txt
 
     def usage_string(self, _all_stat=False) -> str:
         """

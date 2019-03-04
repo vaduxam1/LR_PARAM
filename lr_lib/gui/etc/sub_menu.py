@@ -22,6 +22,7 @@ def rClicker(event) -> str:
     """
     try:
         event.widget.focus()
+        action = lr_lib.core_gui.action_lib.event_action_getter(event)
 
         try:
             selection = event.widget.selection_get()
@@ -137,21 +138,69 @@ def rClicker(event) -> str:
         web_reg_name = dt.get('web_reg_name')
         param = dt.get('param')
 
+        # goto
+        submenu_goto = tk.Menu(rmenu, tearoff=False)
+        rmenu.add_cascade(label='Переход по тексту', menu=submenu_goto, underline=0)
+        ntn = action.web_action.transactions._no_transaction_name
+        tss_filter = lambda vals: [v for v in vals if (ntn not in v)]
+        snaps = action.web_action.get_web_snapshot_all()
+
+        z_values = zip(
+            [
+                'transaction start',
+                'transaction end',
+                'web_reg_save_param',
+                'param',
+                'все Snapshot',
+                'с русскими буквами',
+                'Snapshot с WARNING',
+            ],  # name
+            [
+                tss_filter(action.web_action.transactions.start_stop['start']),
+                tss_filter(action.web_action.transactions.start_stop['stop']),
+                action.web_action.websReport.wrsp_and_param_names.keys(),
+                action.web_action.websReport.wrsp_and_param_names.values(),
+                action.web_action.action_infs,
+                action.web_action.websReport.rus_webs.keys(),
+                [str(w.snapshot.inf) for w in snaps if w.warning],
+            ],  # value
+            [
+                'lr_start_transaction("',
+                'lr_end_transaction("',
+                '"',
+                '"',
+                '"Snapshot=t',
+                '"Snapshot=t',
+                '"Snapshot=t',
+            ],  # add_start
+            [
+                '"',
+                '"',
+                '"',
+                '"',
+                '.inf",',
+                '.inf",',
+                '.inf",',
+            ],  # add_end
+        )
+        for (name, values, add_start, add_end) in z_values:
+            vSub = tk.Menu(submenu_goto, tearoff=False)
+            submenu_goto.add_cascade(label=name, menu=vSub, underline=0)
+
+            for value in values:
+                def _cmd(event=event, value=value, add_start=add_start, add_end=add_end, ) -> None:
+                    """перейти по тексту в action.c"""
+                    search = '{0}{1}{2}'.format(add_start, value, add_end)
+                    action_goto(event, search)
+                    return
+
+                vSub.add_command(label=value, command=_cmd)
+                continue
+            continue
+
         if web_reg_name or param:
             submenu_goto = tk.Menu(rmenu, tearoff=False)
             rmenu.add_cascade(label=' Быстрый перход', menu=submenu_goto, underline=0)
-
-            def action_goto(e, _search: str) -> None:
-                """перейти к _search обрасти в action.c"""
-                action = lr_lib.core_gui.action_lib.event_action_getter(event)
-                try:
-                    action.search_entry.set(_search)
-                    ev = action.search_entry.get()
-                    action.search_in_action(ev)
-                    action.tk_text_see()
-                except (AttributeError, tk.TclError) as ex:
-                    pass
-                return
 
             if web_reg_name:
                 n = ('{%s}' % web_reg_name)
@@ -225,6 +274,21 @@ def rClicker(event) -> str:
     except tk.TclError as ex:
         pass
     return "break"
+
+
+def action_goto(event, _search: str) -> None:
+    """
+    перейти к _search обрасти в action.c
+    """
+    action = lr_lib.core_gui.action_lib.event_action_getter(event)
+    try:
+        action.search_entry.set(_search)
+        ev = action.search_entry.get()
+        action.search_in_action(ev)
+        action.tk_text_see()
+    except (AttributeError, tk.TclError) as ex:
+        pass
+    return
 
 
 def rClickbinder(widget, wdg=('Text', 'Entry', 'Listbox', 'Label')) -> None:
