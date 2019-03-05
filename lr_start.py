@@ -1,7 +1,10 @@
 ﻿# -*- coding: UTF-8 -*-
-# v11.6.1 __main__
+# v11.6.4 __main__
 
 import sys
+
+from lr_lib.whl.whl_installer  import check_py_modules_and_install_whl
+check_py_modules_and_install_whl()  # запускать перед импортом остальных
 
 from lr_lib.main import init
 from lr_lib.etc.excepthook import excepthook
