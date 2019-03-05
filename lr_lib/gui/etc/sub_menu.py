@@ -1,4 +1,4 @@
-# -*- coding: UTF-8 -*-
+﻿# -*- coding: UTF-8 -*-
 # меню мыши
 
 import tkinter as tk
@@ -188,7 +188,7 @@ def rClicker(event) -> str:
             submenu_goto.add_cascade(label=name, menu=vSub, underline=0)
 
             for value in values:
-                def _cmd(event=event, value=value, add_start=add_start, add_end=add_end, ) -> None:
+                def _cmd(event=event, value=value, add_start=add_start, add_end=add_end) -> None:
                     """перейти по тексту в action.c"""
                     search = '{0}{1}{2}'.format(add_start, value, add_end)
                     action_goto(event, search)

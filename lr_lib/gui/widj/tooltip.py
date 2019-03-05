@@ -1,4 +1,4 @@
-# -*- coding: UTF-8 -*-
+﻿# -*- coding: UTF-8 -*-
 # всплывающие подсказки
 
 import collections
@@ -145,7 +145,7 @@ def createToolTip(widget, text: str) -> None:
             Lock.release()
         return
 
-    def enter(event, ) -> None:
+    def enter(event) -> None:
         """
         событие входа мыши на виджет
         """

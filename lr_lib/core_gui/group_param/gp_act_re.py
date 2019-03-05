@@ -1,4 +1,4 @@
-# -*- coding: UTF-8 -*-
+﻿# -*- coding: UTF-8 -*-
 # нахождение param, в action.c файле, на основе регулярных выражений
 
 import re
@@ -27,7 +27,7 @@ def group_param_search_by_act_re(
         action_text=True,
         ask=True,
         ask2=True,
-        **kwargs,
+        **kwargs
 ) -> List[str]:
     """
     group params поиск, на основе регулярных выражений
@@ -112,7 +112,7 @@ def group_param_search_quotes(
     return
 
 
-def _get_params(params_source: 'str or lr_lib.gui.action.main_action.ActionWindow', regexp=RegExp, ) -> Iterable[str]:
+def _get_params(params_source: 'str or lr_lib.gui.action.main_action.ActionWindow', regexp=RegExp) -> Iterable[str]:
     """
     поиск param, по regexp, например внутри кавычек
     """

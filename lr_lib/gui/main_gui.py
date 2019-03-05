@@ -22,7 +22,7 @@ def init(c_args=None) -> None:
     return
 
 
-def start(new_action_window=True, ) -> None:
+def start(new_action_window=True) -> None:
     """
     action + lock
     """

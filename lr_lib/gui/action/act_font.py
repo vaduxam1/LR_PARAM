@@ -117,7 +117,7 @@ class ActFont(lr_lib.gui.action.act_replace.ActReplaceRemove):
             return
         self.background_color_combo.bind("<KeyRelease-Return>", cmd0)
 
-        def cmd1(*a, t=('Text', 'rame', 'bel',), ) -> None:
+        def cmd1(*a, t=('Text', 'rame', 'bel',)) -> None:
             """
             _types - любые c подходящим type()
             """

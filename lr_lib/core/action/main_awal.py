@@ -1,4 +1,4 @@
-# -*- coding: UTF-8 -*-
+﻿# -*- coding: UTF-8 -*-
 # внутреннее предсталление action.c текста
 
 from typing import Iterable, Tuple, List
@@ -169,7 +169,7 @@ class ActionWebsAndLines:
             continue
         return
 
-    def _add_to_text_list(self, element: 'str or lr_web.WebAny', ) -> None:
+    def _add_to_text_list(self, element: 'str or lr_web.WebAny') -> None:
         """
         объединять строки, идущие подряд
         """
@@ -344,7 +344,7 @@ class ActionWebsAndLines:
             lr_vars.Logger.critical(e)
         return
 
-    def set_transaction_name(self, strip_line: str, sep='"', ) -> None:
+    def set_transaction_name(self, strip_line: str, sep='"') -> None:
         """
         проверить линию, сохранить имя transaction
         """

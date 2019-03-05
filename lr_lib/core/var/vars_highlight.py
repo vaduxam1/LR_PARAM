@@ -25,7 +25,7 @@ highlight_words_files_startswith = 'highlight_words'  #
 _COLORS = itertools.cycle(lr_lib.etc.help.COLORS.keys())  #
 
 
-def random_color(ckeck=True, all_color='ABCDEF1234567890', r=6, ) -> str:
+def random_color(ckeck=True, all_color='ABCDEF1234567890', r=6) -> str:
     """
     итератор - случайный цвет
     """

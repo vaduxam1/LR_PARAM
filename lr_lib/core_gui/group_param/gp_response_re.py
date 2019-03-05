@@ -62,7 +62,7 @@ def group_param_search_by_resp_re(
         action_text=True,
         ask=True,
         ask2=True,
-        **kwargs,
+        **kwargs
 ) -> List[str]:
     """
     поиск param, для action.c, по regexp и дальнейшей обработке результата

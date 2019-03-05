@@ -1,4 +1,4 @@
-# -*- coding: UTF-8 -*-
+﻿# -*- coding: UTF-8 -*-
 # все варианты создания web_reg_save_param
 
 from typing import Iterable, Tuple
@@ -72,7 +72,7 @@ def _check_wrsp_duplicate(wr: Tuple[dict, str], dups=None) -> bool:
     return not duplicate
 
 
-def _wrsp_text_delta_remove(wr: Tuple[dict, str], ) -> str:
+def _wrsp_text_delta_remove(wr: Tuple[dict, str]) -> str:
     """убрать 'вариативную' часть wrsp текста"""
     (wrsp_dict, wrsp) = wr
     delta = wrsp_dict['web_reg_name']
@@ -121,7 +121,7 @@ snapshot первого использования "{p}".'''
 Title = '"{s}":len={l} | Найдено {f} вариантов создания web_reg_save_param.'
 
 
-def _ask_wrsp_create(param: str, action: 'lr_lib.gui.action.main_action.ActionWindow', ) -> 'str or None':
+def _ask_wrsp_create(param: str, action: 'lr_lib.gui.action.main_action.ActionWindow') -> 'str or None':
     """вопрос о создании wrsp, -> str создать, None - нет"""
     len_dl = len(lr_vars.VarWrspDictList)
     infs = list(lr_lib.core.wrsp.param.set_param_in_action_inf(action, param))

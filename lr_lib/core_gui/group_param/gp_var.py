@@ -51,7 +51,7 @@ def _ask_params(params: List[str], action: 'lr_lib.gui.action.main_action.Action
 def responce_files_texts(
         folder=lr_vars.DEFAULT_FILES_FOLDER, name_check=bool,
         encoding='utf-8',
-        errors='replace',
+        errors='replace'
 ) -> Iterable[Tuple[str, str]]:
     """
     файлы ответов и запросов и все остальные

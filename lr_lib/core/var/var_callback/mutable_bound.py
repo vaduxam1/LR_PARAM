@@ -8,7 +8,7 @@ import lr_lib
 from lr_lib.core.var import vars as lr_vars
 
 
-def lb_rb_split_list_set(__lb: str, __rb: str, lb: str, rb: str, r_min=1, r_max=3, ) -> Tuple[str, str]:
+def lb_rb_split_list_set(__lb: str, __rb: str, lb: str, rb: str, r_min=1, r_max=3) -> Tuple[str, str]:
     """
     автоустановка VarSplitListNum, если param находится внутри {} или [] скобок
     lr_vars.VarSplitListNumRB.set(1) если {}: {...,'value':'param',...} / или .set(1) если []

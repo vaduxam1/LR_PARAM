@@ -1,4 +1,4 @@
-# -*- coding: UTF-8 -*-
+﻿# -*- coding: UTF-8 -*-
 # AllFiles, создание словарей файлов
 
 import collections
@@ -88,7 +88,7 @@ def file_dict_creator(name: str, full_name: str, inf_num: int, enc: str, inf_key
     return file
 
 
-def get_inf_file_num(file: str, inf_num=0, ) -> int:
+def get_inf_file_num(file: str, inf_num=0) -> int:
     """
     если file - t*.inf, вернуть номер Snapshot
     """
@@ -114,7 +114,7 @@ def get_folder_infs(folder: str) -> Iterable[Tuple[str, int]]:
     return
 
 
-def create_files_from_infs(folder: str, enc: str, allow_deny: bool, statistic: bool, executer=None, ) -> None:
+def create_files_from_infs(folder: str, enc: str, allow_deny: bool, statistic: bool, executer=None) -> None:
     """
     создать файлы ответов, из всех t*.ini файлов
     """

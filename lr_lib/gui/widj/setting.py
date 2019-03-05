@@ -1,4 +1,4 @@
-# -*- coding: UTF-8 -*-
+﻿# -*- coding: UTF-8 -*-
 # окно настройки
 
 import inspect
@@ -38,7 +38,7 @@ class Setting(tk.Toplevel):
         self.init()
         return
 
-    def init(self, max_row=MaxTableRows, font='Arial 7', ) -> None:
+    def init(self, max_row=MaxTableRows, font='Arial 7') -> None:
         """
         создание
         """
@@ -103,7 +103,7 @@ class Setting(tk.Toplevel):
         return
 
 
-def _get_source_var_comment(source: List[str], attr: str, cmnt='#', ) -> str:
+def _get_source_var_comment(source: List[str], attr: str, cmnt='#') -> str:
     """
     подсказки к кнопкам насройки vars из каментов исходного кода
     """
@@ -149,7 +149,7 @@ AllowTypes = [str, int, float, tuple, list, set, dict, OrderedDict, ]  # люб�
 AllowTypes.extend(TkVars)  # типы переменных для вывода
 
 
-def attr_filter(dt: dict, allow_types=tuple(AllowTypes), ) -> Iterable[str]:
+def attr_filter(dt: dict, allow_types=tuple(AllowTypes)) -> Iterable[str]:
     """
     исключить ненужные атрибуты
     """
@@ -173,7 +173,7 @@ def to_json(var, _var: 'repr') -> str:
     return txt
 
 
-def _var_editor(parent, var_dict: dict, var_name: str, ) -> None:
+def _var_editor(parent, var_dict: dict, var_name: str) -> None:
     """
     Toplevel tk.Text + scroll_XY
     """

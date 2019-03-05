@@ -219,10 +219,7 @@ MainThreadUpdater = None  # выполнять callback из main потока #
 _MTUT = 0.2  # сек - влияет на общую отзывчивость интерфейса(=0.25: отзывчивый переход по тексту)
 MainThreadUpdateTime = tk.IntVar(value=(_MTUT * 1000))  # интервал(мс) проверки очереди, callback(из потоков) + скорость обновления подсветки
 
-try:
-    M_POOL: 'lr_lib.etc.pool.main_pool.POOL' = None  # пул процессов
-except Exception as ex:
-    M_POOL = None  # пул процессов  # lr_lib.etc.pool.main_pool.POOL
+M_POOL = None  # пул процессов  # lr_lib.etc.pool.main_pool.POOL
 M_POOL_NAME = 'multiprocessing.Pool'  # тип основной пул
 cpu_count = multiprocessing.cpu_count()
 M_POOL_Size = (cpu_count if (cpu_count < 5) else 4)  # основной MP пул(int/None)

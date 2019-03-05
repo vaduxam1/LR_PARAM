@@ -128,7 +128,7 @@ def file_string(file=None, deny=(), min_width=25, max_width=50) -> str:
     return s
 
 
-def not_printable(s: str, printable=ALW, ) -> int:
+def not_printable(s: str, printable=ALW) -> int:
     """
     кол-во непечатных символов строки
     """
@@ -199,7 +199,7 @@ def get_files_infs(files: Iterable[dict]) -> Iterable[int]:
     return
 
 
-def only_ascii_symbols(item: Tuple[str], allow=ALW, ) -> Iterable:
+def only_ascii_symbols(item: Tuple[str], allow=ALW) -> Iterable:
     """
     только allow символы
     """

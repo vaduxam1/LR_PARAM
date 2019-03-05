@@ -24,7 +24,7 @@ def group_param_search_by_lb_post(
         ask=True,
         ask2=True,
         i_params=None,
-        **kwargs,
+        **kwargs
 ) -> List[str]:
     """
     Метод основан том, что если часть {param} имен уже известна,

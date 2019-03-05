@@ -36,7 +36,7 @@ def group_param_search_by_name(
         ask=True,
         ask2=True,
         action_text=True,
-        **kwargs,
+        **kwargs
 ) -> Tuple[str, str]:
     """
     поиск в action.c, всех уникальных param, в имени которых есть param_part
@@ -118,7 +118,7 @@ def group_param_search_by_exist_param(
         ask2=True,
         add=True,
         i_params=None,
-        **kwargs,
+        **kwargs
 ) -> List[str]:
     """
     поиск по началу имени - взять n первых символов для повторного поиска param по началу имени

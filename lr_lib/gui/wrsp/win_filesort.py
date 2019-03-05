@@ -56,7 +56,7 @@ class WinFileSort(lr_lib.gui.wrsp.win_maxmin.WinMaxMin):
         self.sortKey2.set(k2)
         return
 
-    def setSortKey1(self, *args, _none=(), ) -> None:
+    def setSortKey1(self, *args, _none=()) -> None:
         """
         комбо сортировки 1
         """

@@ -13,7 +13,7 @@ from lr_lib.core.var import vars as lr_vars
 
 
 @lr_lib.core.var.etc.vars_other.T_POOL_decorator
-def group_param(event, params: List[str], widget=None, ask=True, ) -> None:
+def group_param(event, params: List[str], widget=None, ask=True) -> None:
     """
     нахождение и замена для группы web_reg_save_param's
     """

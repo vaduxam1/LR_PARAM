@@ -1,4 +1,4 @@
-# -*- coding: UTF-8 -*-
+﻿# -*- coding: UTF-8 -*-
 # нахождение param, в файлах ответов split
 
 from typing import Iterable, List, Tuple
@@ -25,7 +25,7 @@ def group_param_search_by_split(
         action_text=True,
         ask=True,
         ask2=True,
-        **kwargs,
+        **kwargs
 ) -> List[str]:
     """
     поиск param в RequestBody/RequestHeader файлах
@@ -73,7 +73,7 @@ allowParamFilter = lambda param: (not any(d in param for d in denySymb))
 NullSymb = '''"'''  # заменить на ''
 
 
-def split(param_texts: Iterable[Tuple[str, str]], ) -> Iterable[str]:
+def split(param_texts: Iterable[Tuple[str, str]]) -> Iterable[str]:
     """
     найти param, split способом
     """

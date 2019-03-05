@@ -1,4 +1,4 @@
-# -*- coding: UTF-8 -*-
+﻿# -*- coding: UTF-8 -*-
 # фильтрация и сортировка param
 
 import string
@@ -14,7 +14,7 @@ def param_sort(
         reverse=True,
         _filter=True,
         deny_param_filter=True,
-        action_text=None,
+        action_text=None
 ) -> List[str]:
     """
     отсортировать param по длине, тк если имеются похожие имена, лучше сначала заменять самые длинные,
@@ -35,7 +35,7 @@ def param_sort(
 _PFDeny_1 = ('-' + string.ascii_lowercase)  # не {param} слова "-321" или "t11"
 
 
-def param_filter(params: List[str], deny_param_filter=True, action=None, ) -> Iterable[str]:
+def param_filter(params: List[str], deny_param_filter=True, action=None) -> Iterable[str]:
     """
     отфильтровать лишние param
     """
@@ -90,7 +90,7 @@ def param_filter(params: List[str], deny_param_filter=True, action=None, ) -> It
     return
 
 
-def filter_deny_onUpper(param: str, n=2, s='on', ) -> bool:
+def filter_deny_onUpper(param: str, n=2, s='on') -> bool:
     """
     находит "onScreen" - и много подобных "on"+Upper не нуждающихся в параметризации
     :param param: str: "zkau_123"
@@ -107,7 +107,7 @@ def filter_deny_onUpper(param: str, n=2, s='on', ) -> bool:
     return state
 
 
-def _param_filter(params: List[str], ) -> List[str]:
+def _param_filter(params: List[str]) -> List[str]:
     """
     удалить не param-слова
     """

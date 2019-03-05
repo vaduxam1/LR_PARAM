@@ -1,4 +1,4 @@
-# -*- coding: UTF-8 -*-
+﻿# -*- coding: UTF-8 -*-
 # переименование wrsp, и др.
 
 import tkinter as tk
@@ -175,7 +175,7 @@ def rename_transaction(event, parent=None, s='lr_start_transaction("', e='lr_end
 
 
 @lr_lib.core.var.etc.vars_other.T_POOL_decorator
-def all_wrsp_rename(gui: 'lr_lib.gui.action.main_action.ActionWindow', parent=None, ) -> None:
+def all_wrsp_rename(gui: 'lr_lib.gui.action.main_action.ActionWindow', parent=None) -> None:
     """
     переименавать все wrsp, вручную
     """

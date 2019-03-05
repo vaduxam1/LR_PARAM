@@ -1,4 +1,4 @@
-# -*- coding: UTF-8 -*-
+﻿# -*- coding: UTF-8 -*-
 # окно ячейка Настраиваемый запуск поиска WRSP
 import tkinter as tk
 from typing import Iterable, Tuple, List, Callable
@@ -208,7 +208,7 @@ class RItem:
         self.act_radio.set(a)
         return
 
-    def get_params(self, ask=False, ask2=False, wrsp_create=False, i_params=None, ) -> List[str]:
+    def get_params(self, ask=False, ask2=False, wrsp_create=False, i_params=None) -> List[str]:
         """
         получить params
         """

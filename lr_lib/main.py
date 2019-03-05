@@ -21,7 +21,7 @@ import lr_lib.etc.pool.other
 import lr_lib.gui.main_gui
 
 
-def init(excepthook=True, ) -> True:
+def init(excepthook=True) -> True:
     """
     инит дополнительных классов, сохр. их в lr_vars, запуск core/gui
     """
@@ -37,7 +37,7 @@ def init(excepthook=True, ) -> True:
 
 
 @contextlib.contextmanager
-def start(excepthook=True, console_args=sys.argv, ) -> bool:
+def start(excepthook=True, console_args=sys.argv) -> bool:
     """
     запуск core/gui в excepthook обработчике raise
     """
