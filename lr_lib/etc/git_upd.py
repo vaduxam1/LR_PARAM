@@ -106,7 +106,7 @@ def find_version_changes(ver: str) -> str:
         t = '{s} {ver} {s}\n{desc}'
         s = ('_' * 3)
         abd = lambda d: '\n'.join(' {0}) {1}'.format(a, b) for (a, b) in enumerate(
-            (filter(bool, map(str.strip, d.split('\n* ')))), start=1))
+            (filter(bool, map(str.strip, d.split(V_SEP)))), start=1))
         text = '\n'.join(t.format(ver=v, desc=abd(d), s=s, ) for (v, d) in description)
     else:
         text = 'описание изменений для версии не задано!'
@@ -205,4 +205,6 @@ VersionChanges = collections.OrderedDict({
 * общий рефакторинг
         ''',
 
-})  # "\n* " - признак отдельного пункта изменений в версии - это строка для enumerate, изпользовать в описании нельзя
+})  # "\n*" - признак отдельного пункта изменений в версии - это строка для enumerate, изпользовать в описании нельзя
+
+V_SEP = '\n*'  # "\n*" - признак отдельного пункта изменений в версии
