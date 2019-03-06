@@ -52,9 +52,9 @@ def check_py_modules_and_install_whl() -> None:
 def whl_install(whl_path: str, pip_path='', cmd_pip='{pip_path}pip.exe install {whl_path}') -> int:
     """
     whl-офлайн установка python библиотеки
-    :param whl_file_path: str: "lr_lib\whl\install\typing-3.6.6-py3-none-any.whl"
-    :param cmd_prefix: str: "c:\python34\Scripts\"
-    :param cmd_pip: 'pip.exe install {whl}'
+    :param whl_path: str: "lr_lib\whl\install\typing-3.6.6-py3-none-any.whl"
+    :param pip_path: str: "c:\python34\Scripts\"
+    :param cmd_pip: str: '{pip_path}pip.exe install {whl_path}'
     :return: int: 0:OK, AnyOther:Fail
     """
     cmd = cmd_pip.format(pip_path=pip_path, whl_path=whl_path)
