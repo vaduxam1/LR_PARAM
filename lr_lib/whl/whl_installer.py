@@ -62,5 +62,5 @@ def whl_install(whl_path: str, pip_path='', cmd_pip='{pip_path}pip.exe install {
         state = os.system(cmd)  # установка whl: 0:OK, AnyOther:Fail
     except Exception as ex:
         print('ImportError {cmd}\n'.format(cmd=cmd), [ex, ex.args])
-        state = 0
+        state = 2
     return state
