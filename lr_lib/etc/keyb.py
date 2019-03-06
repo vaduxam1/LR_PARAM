@@ -2,6 +2,7 @@
 # хоткей
 
 import contextlib
+import keyboard
 
 import lr_lib.core.var.vars as lr_vars
 
@@ -17,15 +18,12 @@ cd c:\Python36\Scripts\n
 def keyboard_listener() -> None:
     """
     перехват keyboard-hotkey
+    не работает в win10 x64: ctypes.ArgumentError: argument 3: <class 'OverflowError'>: int too long to convert
     """
     try:
-        import keyboard
-    except ImportError:
-        lr_vars.Logger.info(Err)
-        yield
-    else:  # hotkey
         keyboard.add_hotkey(lr_vars.FIND_PARAM_HOTKEY, get_param_clipboard_hotkey)
         yield
+    finally:
         keyboard.clear_all_hotkeys()
     return
 

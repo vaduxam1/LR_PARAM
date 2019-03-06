@@ -13,6 +13,7 @@ def check_py_modules_and_install_whl() -> None:
     try:  # перечислить модули для проверки
 
         import typing
+        import keyboard
 
     except ImportError:  # python < 3.5
         curr_dir = os.getcwd()
