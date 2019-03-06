@@ -16,14 +16,13 @@ whl_файл: typing-3.6.6-py3-none-any.whl | имя_модуля: typing
 
 def check_py_modules_and_install_whl() -> None:
     """
-    whl-офлайн установка библиотек, при необходимости, если они не установлена
+    whl-офлайн установка библиотек, при необходимости
     """
-    try:  # перечислить модули для проверки
-
+    try:  # модули, для проверки установлены ли они
         import typing
         import keyboard
 
-    except ImportError:  # установит все whl модули, из каталога whl файлов
+    except ImportError:  # установить все whl модули, из каталога whl файлов
         curr_dir = os.getcwd()
 
         # каталог whl файлов
@@ -32,10 +31,11 @@ def check_py_modules_and_install_whl() -> None:
         (__root, __folders, whl_files) = next(whl_f)  # файлы
 
         # pip
-        py_path = os.path.split(sys.executable)
-        pip_path = os.path.join(py_path[0], 'Scripts')
+        (py_path, py_exe) = os.path.split(sys.executable)
+        pip_path = os.path.join(py_path, 'Scripts')
 
         # pip install whl
+        # os.chdir(pip_path[:3])  # 'e:\' - не диск с python
         os.chdir(pip_path)
         try:
             for whl in whl_files:
@@ -45,6 +45,7 @@ def check_py_modules_and_install_whl() -> None:
                     print(ERR_INSTALL.format(whl=whl_path))
                 continue
         finally:
+            # os.chdir(curr_dir[:3])  # 'c:\'
             os.chdir(curr_dir)
     return
 
