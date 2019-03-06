@@ -2,7 +2,7 @@ rem v11.6.5 __main__
 @echo off
 set NLS_LANG=RUSSIAN_RUSSIA.CL8MSWIN1251
 
-rem // проверить наличие установленного python, по windows-ассоциации с файлом: ".py=Python.File"
+rem // check: is python exist, by windows-file-association: assoc = ".py=Python.File"
 assoc | findstr /i /r ".py=Python" > NUL
 
 if %errorlevel% == 0 (
