@@ -40,8 +40,8 @@ def check_py_modules_and_install_whl() -> None:
         try:
             for whl in whl_files:
                 whl_path = os.path.join(whl_dir, whl)
-                state = whl_install(whl_path)
-                if not state:
+                bad_state = whl_install(whl_path)
+                if bad_state:
                     print(ERR_INSTALL.format(whl=whl_path))
                 continue
         finally:
