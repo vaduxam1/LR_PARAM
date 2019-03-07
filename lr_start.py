@@ -3,11 +3,11 @@
 
 import sys
 
-from lr_lib.whl.whl_installer  import check_py_modules_and_install_whl
+from lr_lib.whl.whl_installer import check_py_modules_and_install_whl
 check_py_modules_and_install_whl()  # запускать перед импортом остальных
 
 from lr_lib.main import init
-from lr_lib.etc.excepthook import excepthook
+from lr_lib.etc.excepthook import full_tb_write
 
 
 def main(code=False) -> int:
@@ -17,14 +17,14 @@ def main(code=False) -> int:
         Process finished with exit code 0
     """
     try:
-        code = init()  # True
+        ec = init()
     except Exception as ex:
-        excepthook(ex)
-    finally:
-        exit_code = int(not code)  # OK = 0
-    return exit_code
+        ec = full_tb_write(ex)
+
+    ec = int(not ec)
+    return ec
 
 
 if __name__ == '__main__':
-    exit_code = main()
-    sys.exit(exit_code)
+    ec = main()
+    sys.exit(ec)

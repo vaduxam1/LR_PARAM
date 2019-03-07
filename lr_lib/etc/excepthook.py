@@ -44,7 +44,7 @@ def excepthook(*args) -> None:
     return
 
 
-def full_tb_write(*args):
+def full_tb_write(*args) -> False:
     """
     логировать полный traceback
     """
@@ -69,8 +69,7 @@ def full_tb_write(*args):
         log.write('{t}\n{v}'.format(t=exc_type, v=exc_val))
         log.write('\n{0}\n\t<<< traceback.print_tb\n{0}\n'.format(lr_vars.SEP))
 
-    item = (exc_type, exc_val, exc_tb)
-    return item
+    return False
 
 
 def get_tb(exc_type, exc_val, exc_tb, err_name: str) -> str:
@@ -102,7 +101,7 @@ def get_tb(exc_type, exc_val, exc_tb, err_name: str) -> str:
                     if len(left) == lr_vars.EHOME:
                         break
                 continue
-            _, f = os.path.split(fileName)
+            (_, f) = os.path.split(fileName)
 
             s = '\n!!! {e} [ {f} : строка {l} ]\n{line}\n'
             left[0] = s.format(e=err_name, line=left[0], f=f, l=lineNum, )

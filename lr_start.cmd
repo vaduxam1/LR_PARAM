@@ -19,6 +19,7 @@ if %errorlevel% == 0 (
     rem то не факт что он установится, прежде необходимо или удалить, или прописать.
     echo installing python-3.4.4
     lr_lib\whl\python-3.4.4.msi /quiet TargetDir=c:\Python34\ AssociateFiles=1
+
     rem set PATH=c:\Python34\;%PATH%
     rem Просмотр и изменение типов файлов, сопоставленных с расширением имен файлов
     ftype Python.File=c:\Python34\python.exe

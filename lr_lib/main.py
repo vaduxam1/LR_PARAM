@@ -32,8 +32,8 @@ def init(excepthook=True) -> True:
             # lr_vars.M_POOL, lr_vars.T_POOL
             with lr_lib.etc.pool.main_pool.init() as (lr_vars.M_POOL, lr_vars.T_POOL):
                 # core/gui
-                exit_code = start(excepthook=excepthook)
-    return exit_code
+                ec = start(excepthook=excepthook)
+    return ec
 
 
 @contextlib.contextmanager
@@ -45,7 +45,7 @@ def start(excepthook=True, console_args=sys.argv) -> bool:
         lr_vars.Tk.report_callback_exception = lr_lib.etc.excepthook.excepthook
 
     try:
-        exit_code = (as_console, c_args) = main(console_args)
+        ec = (as_console, c_args) = main(console_args)
     except Exception as ex:
         lr_lib.etc.excepthook.excepthook(ex)
         raise
@@ -56,8 +56,8 @@ def start(excepthook=True, console_args=sys.argv) -> bool:
     i = i.format(c=as_console, cas=console_args, ca=c_args, )
     lr_vars.Logger.debug(i)
 
-    exit_code = bool(exit_code)
-    return exit_code
+    ec = bool(ec)
+    return ec
 
 
 def main(console_args: Tuple[str]) -> Tuple[bool, dict]:
@@ -77,5 +77,5 @@ def main(console_args: Tuple[str]) -> Tuple[bool, dict]:
             # блокировать главный поток
             lr_lib.gui.main_gui.start()
 
-    exit_code = (as_console, c_args)
-    return exit_code
+    ec = (as_console, c_args)
+    return ec
