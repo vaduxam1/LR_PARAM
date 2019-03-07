@@ -28,37 +28,35 @@ def check_py_modules_and_install_whl() -> None:
         # каталог whl файлов
         whl_dir = os.path.join(curr_dir, 'lr_lib', 'whl', 'install')
         whl_f = os.walk(whl_dir)
-        (__root, __folders, whl_files) = next(whl_f)  # файлы
+        (_root, _folders, files_whl) = next(whl_f)  # файлы
 
         # pip
         (py_path, py_exe) = os.path.split(sys.executable)
         pip_path = os.path.join(py_path, 'Scripts')
 
         # pip install whl
-        # os.chdir(pip_path[:3])  # 'e:\' - не диск с python
-        os.chdir(pip_path)
-        try:
-            for whl in whl_files:
-                whl_path = os.path.join(whl_dir, whl)
-                bad_state = whl_install(whl_path)
-                if bad_state:
-                    print(ERR_INSTALL.format(whl=whl_path))
-                continue
-        finally:
-            # os.chdir(curr_dir[:3])  # 'c:\'
-            os.chdir(curr_dir)
+        for _whl in files_whl:
+            whl = os.path.join(whl_dir, _whl)
+            bad_state = whl_install(whl, pip_path)
+            if bad_state:
+                print(ERR_INSTALL.format(whl=whl))
+            continue
     return
 
 
-def whl_install(whl_path: str, pip_path='', cmd_pip='{pip_path}pip.exe install {whl_path}') -> int:
+def whl_install(whl: str, pip_path='') -> int:
     """
     whl-офлайн установка python библиотеки
-    :param whl_path: str: "lr_lib\whl\install\typing-3.6.6-py3-none-any.whl"
+    :param whl: str: "lr_lib\whl\install\typing-3.6.6-py3-none-any.whl"
     :param pip_path: str: "c:\python34\Scripts\"
-    :param cmd_pip: str: '{pip_path}pip.exe install {whl_path}'
     :return: int: 0:OK, AnyOther:Fail
     """
-    cmd = cmd_pip.format(pip_path=pip_path, whl_path=whl_path)
+    if pip_path:
+        pip = os.path.join(pip_path, 'pip.exe')
+        cmd = '{pip} install {whl}'.format(pip=pip, whl=whl)
+    else:
+        cmd = 'pip.exe install {whl}'.format(whl=whl)
+
     try:  # c:\python34\Scripts\pip.exe install lr_lib\whl\install\typing-3.6.6-py3-none-any.whl
         state = os.system(cmd)  # установка whl: 0:OK, AnyOther:Fail
     except Exception as ex:
