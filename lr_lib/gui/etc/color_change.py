@@ -1,7 +1,7 @@
 # -*- coding: UTF-8 -*-
 # гирлянда - смена цветов кнопок
 
-from typing import Iterable, Tuple, Set, Dict, Callable
+from typing import Iterable
 
 import lr_lib.core.var.vars_highlight
 from lr_lib.core.var import vars as lr_vars
@@ -9,7 +9,7 @@ from lr_lib.core.var import vars as lr_vars
 ColorCash = {}  # оригинальный цвет виджетов
 
 
-def background_color_set(self, color='', _types=('Button',), obs=None) -> None:
+def background_color_set(self, color='', _types=lr_vars.DiasbleTypes, obs=None) -> None:
     """
     поменять цвет всех виджетов
     """

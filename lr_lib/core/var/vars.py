@@ -136,6 +136,8 @@ maxundo = 1000  # max число ctrl-z в action.c
 linenumbers_width = 100  # ширина action-виджета с номерами линий
 linenumbers_wrsp_len = 6  # макс число символов имени wrsp в action-виджете с номерами линий - "P_6452"
 
+DiasbleTypes = ('button',)  # виджеты каких типов блокировать(часть имени типа): ('Check', 'Button', 'Radio', )
+
 _Tk_WIND_SIZE = [600, 700]  # размер главного окна
 _Tk_ActionWIND_SIZE = [1100, 600]  # размер action окна
 
