@@ -8,7 +8,7 @@ from lr_lib.core.var.etc.vars_other import T_POOL_decorator
 from lr_lib.core_gui.run.r_other import set_state_widg, block
 from lr_lib.gui.etc.color_progress import progress_decor
 
-ColorHide = 'DimGrey'
+ColorHide = 'black'
 
 
 class RItem:
@@ -138,7 +138,7 @@ class RItem:
         lr_lib.gui.widj.tooltip.createToolTip(self.cbx_other, tt7)
 
         # Button
-        tt_be = 'настраиваемый поиск/создание {param}'
+        tt_be = 'настраиваемый поиск и создание {param}'
         self.btn_edit = tk.Button(
             self.main_label, font='Arial 7', text=tt_be, padx=0, pady=0, relief='groove',
             command=lambda: T_POOL_decorator(self.get_params)(ask=True, ask2=True, wrsp_create=True),
@@ -149,7 +149,7 @@ class RItem:
         # Button
         tt_br = 'предпросмотр'
         self.btn_run = tk.Button(
-            self.search_label, font='Arial 7 bold', text=tt_br, padx=0, pady=0, relief='groove',
+            self.search_label, font='Arial 7', text=tt_br, padx=0, pady=0, relief='groove',
             command=lambda: T_POOL_decorator(self.get_params)(ask=False, ask2=True, wrsp_create=False),
         )
         tt3 = 'Поиск и просмотр {param},\nкоторые найдет этот метод поиска,\n' \
@@ -157,23 +157,27 @@ class RItem:
         lr_lib.gui.widj.tooltip.createToolTip(self.btn_run, tt3)
 
         # Checkbutton
-        tt_iap = 'Отсеять {param}, при отсутствии в action.c'
+        tt_iap = 'Отсеять {param}, ненайденные в action'
         self._cbx_only_in_act_param = tk.BooleanVar(value=only_in_act_param)
         self.cbx_only_in_act_param = tk.Checkbutton(
-            self.search_label, text=tt_iap, font='Arial 6 bold', justify='left',
-            variable=self._cbx_only_in_act_param, fg='grey',
+            self.search_label, text=tt_iap, font='Arial 7', justify='left',
+            variable=self._cbx_only_in_act_param, fg=ColorHide,
         )
         tt1 = 'В файлах ответов можно найти множество {param},\nкоторые не используются внутри "Action.c" файла.\n' \
               'Такие {param} создавать бесполезно.'
         lr_lib.gui.widj.tooltip.createToolTip(self.cbx_only_in_act_param, tt1)
 
         # Checkbutton
-        tt_on = 'вкл. / выкл.'
+        tt_on = 'Вкл. / Выкл.'
         self._cbx_on = tk.BooleanVar(value=enable)
+        disable_widg = [self.search_label_files, self.search_label_act, ]
+        disable_widg.extend(self.main_label.winfo_children())
+        cmd = set_state_widg(self._cbx_on, disable_widg)
         self.cbx_on = tk.Checkbutton(
-            self.main_label, text=tt_on, font='Arial 8', justify='left', fg=ColorHide, variable=self._cbx_on,
-            command=set_state_widg(self._cbx_on, self.main_label.winfo_children()),
+            self.main_label, text=tt_on, font='Arial 8 bold', justify='left', fg=ColorHide, variable=self._cbx_on,
+            command=cmd,
         )
+        cmd()  # заблокировать откл методы поиска
         tt2 = 'вкл/выкл использование метода поиска {param}\n'
         tt2 += label_title
         lr_lib.gui.widj.tooltip.createToolTip(self.cbx_on, tt2)

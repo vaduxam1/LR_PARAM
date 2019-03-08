@@ -3,7 +3,7 @@
 
 import contextlib
 import tkinter as tk
-from typing import Iterable, Tuple, List, Callable
+from typing import Iterable, Tuple, List, Callable, Any
 
 import lr_lib
 from lr_lib.core.var import vars as lr_vars
@@ -67,28 +67,25 @@ def item_getattr(item, state: str) -> None:
     return
 
 
-def set_state_widg(var, widgs: List) -> Callable:
+def set_state_widg(var: 'tk.Variable', widgs: List['tk.Widget']) -> Callable[[], None]:
     """
     widg: normal/disabled
     """
 
-    def _set_state_widg(*args, **kwargs) -> None:
-        v = var.get()
-        s = ('normal' if v else 'disabled')
-        for w in widgs:
-            try:
-                w.config(state=s)
-            except:
-                try:
-                    for ob in w.winfo_children():
-                        try:
-                            ob.config(state=s)
-                        except:
-                            pass
-                        continue
-                except:
-                    pass
-            continue
-        return
+    def _set_state(*_ar, **_kw) -> None:
+        is_on_state = var.get()
+        state = ('normal' if is_on_state else 'disabled')
 
-    return _set_state_widg
+        for w in widgs:
+            try: w.config(state=state)  # config
+            except:pass
+            try:  # ob children config
+                for ob in w.winfo_children():
+                    try: ob.config(state=state)  # config
+                    except:pass
+                    continue
+            except:pass
+            continue
+
+        return
+    return _set_state
