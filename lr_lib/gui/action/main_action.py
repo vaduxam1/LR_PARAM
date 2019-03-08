@@ -30,20 +30,20 @@ from lr_lib.gui.etc.color_progress import progress_decor
 class ActionWindow(lr_lib.gui.action.act_win.ActWin):
     """
     Окно action.c:
-        ActionWindow
-        lr_act_win.ActWin
-        lr_act_any.ActAny
-        lr_act_goto.ActGoto
-        lr_act_font.ActFont
-        lr_act_replace.ActReplaceRemove
-        lr_act_search.ActSearch
-        lr_act_serializ.TkTextWebSerialization
-        lr_act_backup.ActBackup
-        lr_act_block.ActBlock
-        lr_act_scroll.ActScrollText
-        lr_act_widj.ActWidj
-        lr_act_var.ActVar
-        lr_act_toplevel.ActToplevel
+      + main_action.ActionWindow
+        act_win.ActWin
+        act_any.ActAny
+        act_goto.ActGoto
+        act_font.ActFont
+        act_replace.ActReplaceRemove
+        act_search.ActSearch
+        act_serializ.TkTextWebSerialization
+        act_backup.ActBackup
+        act_block.ActBlock
+        act_scroll.ActScrollText
+        act_widj.ActWidj
+        act_var.ActVar
+        act_toplevel.ActToplevel
         tk.Toplevel
     """
 

@@ -13,6 +13,19 @@ import lr_lib.gui.wrsp.win_frame
 class WinAct(lr_lib.gui.wrsp.win_frame.WinFrame):
     """
     связь с lr_lib.gui.action.main_action.ActionWindow
+        main_window.Window
+        win_menu.WinMenu
+        win_folder.WinFolder
+        win_other.WinOther
+        win_filesort.WinFileSort
+        win_maxmin.WinMaxMin
+        win_widj.WinWidj
+        win_part_lbrb.WinPartsLbRb
+        win_text.WinText
+        win_block.WinBlock
+      + win_act.WinAct
+        win_frame.WinFrame
+        ttk.Frame
     """
 
     def __init__(self):

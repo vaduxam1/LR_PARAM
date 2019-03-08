@@ -23,6 +23,19 @@ Snapshot(все[{all_inf_min}:{all_inf_max}]={all_inf_len} -> поиск[{param_
 class WinWidj(lr_lib.gui.wrsp.win_part_lbrb.WinPartsLbRb):
     """
     основные виджеты: (1) (2) (3) (6)
+        main_window.Window
+        win_menu.WinMenu
+        win_folder.WinFolder
+        win_other.WinOther
+        win_filesort.WinFileSort
+        win_maxmin.WinMaxMin
+      + win_widj.WinWidj
+        win_part_lbrb.WinPartsLbRb
+        win_text.WinText
+        win_block.WinBlock
+        win_act.WinAct
+        win_frame.WinFrame
+        ttk.Frame
     """
     cbxClearShowVar = tk.IntVar(value=lr_vars.cbxClearShowVar)  # перед (2), очищать центральный виджет текста
     cbxWrspClipboard = tk.IntVar(value=lr_vars.cbxWrspClipboard)  # после (2), копировать wrsp в буфер обмена

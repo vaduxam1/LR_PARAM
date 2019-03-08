@@ -34,18 +34,18 @@ t6 = '(6) получить web_reg_save_param, с учетом (1)-(5)\n\t' \
 class Window(lr_lib.gui.wrsp.win_menu.WinMenu):
     """
     главное окно скрипта:
-        Window
-        lr_win_menu.WinMenu
-        lr_win_folder.WinFolder
-        lr_win_other.WinOther
-        lr_win_filesort.WinFileSort
-        lr_win_maxmin.WinMaxMin
-        lr_win_widj.WinWidj
-        lr_win_part_lbrb.WinPartsLbRb
-        lr_win_text.WinText
-        lr_win_block.WinBlock
-        lr_win_act.WinAct
-        lr_win_frame.WinFrame
+      + main_window.Window
+        win_menu.WinMenu
+        win_folder.WinFolder
+        win_other.WinOther
+        win_filesort.WinFileSort
+        win_maxmin.WinMaxMin
+        win_widj.WinWidj
+        win_part_lbrb.WinPartsLbRb
+        win_text.WinText
+        win_block.WinBlock
+        win_act.WinAct
+        win_frame.WinFrame
         ttk.Frame
     """
 

@@ -14,6 +14,21 @@ import lr_lib.gui.widj.highlight_text
 class ActScrollText(lr_lib.gui.action.act_widj.ActWidj):
     """
     скроллинг по тексту и запуск подсветки
+        main_action.ActionWindow
+        act_win.ActWin
+        act_any.ActAny
+        act_goto.ActGoto
+        act_font.ActFont
+        act_replace.ActReplaceRemove
+        act_search.ActSearch
+        act_serializ.TkTextWebSerialization
+        act_backup.ActBackup
+        act_block.ActBlock
+      + act_scroll.ActScrollText
+        act_widj.ActWidj
+        act_var.ActVar
+        act_toplevel.ActToplevel
+        tk.Toplevel
     """
 
     def __init__(self):

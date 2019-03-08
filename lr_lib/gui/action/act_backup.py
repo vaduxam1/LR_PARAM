@@ -13,6 +13,21 @@ from lr_lib.gui.etc.color_progress import progress_decor
 class ActBackup(lr_lib.gui.action.act_block.ActBlock):
     """
     бекап action
+        main_action.ActionWindow
+        act_win.ActWin
+        act_any.ActAny
+        act_goto.ActGoto
+        act_font.ActFont
+        act_replace.ActReplaceRemove
+        act_search.ActSearch
+        act_serializ.TkTextWebSerialization
+      + act_backup.ActBackup
+        act_block.ActBlock
+        act_scroll.ActScrollText
+        act_widj.ActWidj
+        act_var.ActVar
+        act_toplevel.ActToplevel
+        tk.Toplevel
     """
 
     def __init__(self):
