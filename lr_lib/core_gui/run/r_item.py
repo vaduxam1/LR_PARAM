@@ -172,9 +172,20 @@ class RItem:
         self._cbx_on = tk.BooleanVar(value=enable)
         disable_widg = [self.search_label_files, self.search_label_act, ]
         disable_widg.extend(self.main_label.winfo_children())
-        cmd = set_state_widg(self._cbx_on, disable_widg)
+
+        def main_name_color(fg_on='blue', fg_off='grey') -> None:
+            """цвет названия метода поиска"""
+            is_on = self._cbx_on.get()
+            if is_on:
+                self.main_label.config(fg=fg_on)
+            else:
+                self.main_label.config(fg=fg_off)
+            self.main_label.update()
+            return
+
+        cmd = set_state_widg(self._cbx_on, disable_widg, callback=main_name_color)
         self.cbx_on = tk.Checkbutton(
-            self.main_label, text=tt_on, font='Arial 8 bold', justify='left', fg=ColorHide, variable=self._cbx_on,
+            self.main_label, text=tt_on, font='Arial 8 bold', justify='left', bg='orange', variable=self._cbx_on,
             command=cmd,
         )
         cmd()  # заблокировать откл методы поиска

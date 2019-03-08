@@ -67,7 +67,7 @@ def item_getattr(item, state: str) -> None:
     return
 
 
-def set_state_widg(var: 'tk.Variable', widgs: List['tk.Widget']) -> Callable[[], None]:
+def set_state_widg(var: 'tk.Variable', widgs: List['tk.Widget'], callback=None) -> Callable[[], None]:
     """
     widg: normal/disabled
     """
@@ -87,5 +87,7 @@ def set_state_widg(var: 'tk.Variable', widgs: List['tk.Widget']) -> Callable[[],
             except:pass
             continue
 
+        if callback:
+            callback()
         return
     return _set_state
