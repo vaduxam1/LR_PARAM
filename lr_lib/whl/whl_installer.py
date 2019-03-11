@@ -5,12 +5,26 @@
 import sys
 import os
 
+ImpErr = '''
+Возможно python уже установлен, а offline-библиотеки-py-whl не подходят к нему.
+
+Тогда можно поступить любым из путей:
+    1) Установить python из "\lr_lib\whl\python-3.4.4.msi". 
+        Установить все whl из "\lr_lib\whl\install\",  путем выполнения в cmd: 
+            "c:\Python34\Scripts\pip.exe install имя_Файла_модуля.whl", 
+                например "pip.exe install typing-3.6.6-py3-none-any.whl". 
+        Запустить утилиту, именно с помощью данной версии python.
+
+    2) Доустановить библиотели из интернета, путем выполнения в cmd: 
+            "c:\Python\Scripts\pip.exe install имя_Модуля", 
+                например "pip.exe install typing". 
+'''
 
 ERR_INSTALL = '''
 ERROR: Ошибка офлайн установки файла_whl: {whl}
 Установку необходимо запустить вручную(требуется наличие интернета) из консоли cmd, пример:
-    c:\\python34\\Scripts\\pip.exe install имя_модуля
-whl_файл: typing-3.6.6-py3-none-any.whl | имя_модуля: typing
+    "c:\\python34\\Scripts\\pip.exe install имя_Модуля"
+имя_Файла_модуля: "typing-3.6.6-py3-none-any.whl" | имя_Модуля: "typing"
 '''
 
 
