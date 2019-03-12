@@ -13,10 +13,12 @@ import lr_lib.core.var.etc.var_ob as lr_var
 #####################################
 # главные переменные
 
-VERSION = 'v11.6.4'  # версия утилиты
+VERSION = 'v11.6.5'  # версия утилиты
 lib_folder = 'lr_lib'  # каталог py-файлов утилиты
 Tk = tk.Tk()
 original_callback_exception = Tk.report_callback_exception  # переопределение обработчика raise
+doc = 'LR_help.docx'  # имя хелп файла
+help_doc = os.path.join(lib_folder, doc)  # путь к хелп файлу
 
 Window = None  # класс gui окна # lr_lib.gui.wrsp.main_window.Window
 AllFiles = []  # все файлы ответов

@@ -1,6 +1,7 @@
 # -*- coding: UTF-8 -*-
 # меню gui окна
 
+import os
 import tkinter as tk
 from tkinter import filedialog
 
@@ -65,7 +66,12 @@ class WinMenu(lr_lib.gui.wrsp.win_folder.WinFolder):
 
         filemenu.add_command(label="LoadRunner action.c", command=self.new_action_window,)
 
-        cmd8 = lambda: lr_vars.Logger.info(lr_lib.etc.help.CODE + '\n' + lr_lib.etc.help.HELP)
+        def cmd8() -> None:
+            """help"""
+            h = (lr_lib.etc.help.CODE + '\n' + lr_lib.etc.help.HELP)
+            lr_vars.Logger.info(h)
+            os.system(lr_vars.help_doc)
+            return
         filemenu.add_command(label="Help", command=cmd8,)
 
         filemenu.add_command(label="Exit", command=lr_vars.Tk.destroy,)
