@@ -8,6 +8,7 @@ import time
 from typing import Iterable, Tuple, List, Callable, Any
 
 import lr_lib
+import lr_lib.core.etc.lbrb_checker
 import lr_lib.core.var.vars as lr_vars
 import lr_lib.core.var.etc.vars_other
 import lr_lib.core.var.vars_param
