@@ -33,8 +33,8 @@ def check_py_modules_and_install_whl() -> None:
     whl-офлайн установка библиотек, при необходимости
     """
     try:  # модули, для проверки установлены ли они
-        import typing
-        import keyboard
+        import typing  # в python < 3.5 ее нету
+        import keyboard  # вообще не/особо нужен
 
     except ImportError:  # установить все whl модули, из каталога whl файлов
         curr_dir = os.getcwd()
