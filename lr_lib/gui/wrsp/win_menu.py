@@ -70,7 +70,7 @@ class WinMenu(lr_lib.gui.wrsp.win_folder.WinFolder):
             """help"""
             h = (lr_lib.etc.help.CODE + '\n' + lr_lib.etc.help.HELP)
             lr_vars.Logger.info(h)
-            os.system(lr_vars.help_doc)
+            lr_vars.Tk.after(100, os.system, lr_vars.help_doc)  # after иначе не выводит Logger, тока открыто help_doc
             return
         filemenu.add_command(label="Help", command=cmd8,)
 
