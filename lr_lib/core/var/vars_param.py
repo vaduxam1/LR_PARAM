@@ -5,9 +5,6 @@ import itertools
 import string
 import tkinter as tk
 
-import lr_lib.core
-import lr_lib.core.var.vars_highlight
-
 ########
 # param
 
@@ -111,7 +108,9 @@ def DENY_PARAMS_update_and_lower() -> None:
     """
     обновить DENY_PARAMS из highlight_words, после инита highlight_words
     """
+    import lr_lib.core.var.vars_highlight  # переделать, тк импортировать можно только тут
     DENY_PARAMS_LOWER.update(lr_lib.core.var.vars_highlight.highlight_words)
+
     ldp = list(map(str.lower, map(str.strip, itertools.chain(DENY_PARAMS_LOWER, LRB_rep_list, LB_PARAM_FIND_LIST, ))))
     DENY_PARAMS_LOWER.clear()
     DENY_PARAMS_LOWER.update(ldp)

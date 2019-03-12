@@ -21,7 +21,7 @@ import lr_lib.etc.pool.other
 import lr_lib.gui.main_gui
 
 
-def init(excepthook=True) -> True:
+def init(**kwargs) -> True:
     """
     инит дополнительных классов, сохр. их в lr_vars, запуск core/gui
     """
@@ -32,8 +32,8 @@ def init(excepthook=True) -> True:
             # lr_vars.M_POOL, lr_vars.T_POOL
             with lr_lib.etc.pool.main_pool.init() as (lr_vars.M_POOL, lr_vars.T_POOL):
                 # core/gui
-                ec = start(excepthook=excepthook)
-    return ec
+                exit_state = start(**kwargs)
+    return exit_state
 
 
 @contextlib.contextmanager
@@ -45,7 +45,7 @@ def start(excepthook=True, console_args=sys.argv) -> bool:
         lr_vars.Tk.report_callback_exception = lr_lib.etc.excepthook.excepthook
 
     try:
-        ec = (as_console, c_args) = main(console_args)
+        item = (as_console, c_args) = main(console_args)
     except Exception as ex:
         lr_lib.etc.excepthook.excepthook(ex)
         raise
@@ -56,8 +56,8 @@ def start(excepthook=True, console_args=sys.argv) -> bool:
     i = i.format(c=as_console, cas=console_args, ca=c_args, )
     lr_vars.Logger.debug(i)
 
-    ec = bool(ec)
-    return ec
+    exit_state = bool(item)  # True
+    return exit_state
 
 
 def main(console_args: Tuple[str]) -> Tuple[bool, dict]:
@@ -77,5 +77,5 @@ def main(console_args: Tuple[str]) -> Tuple[bool, dict]:
             # блокировать главный поток
             lr_lib.gui.main_gui.start()
 
-    ec = (as_console, c_args)
-    return ec
+    item = (as_console, c_args)
+    return item
