@@ -124,8 +124,9 @@ def ver_to_int(ver: str) -> Tuple[int, ]:
     return vint
 
 
+V_SEP = '\n*'  # "\n*" - признак отдельного пункта изменений в версии
 VName = 'VersionChanges'  # одноименно с переменной ниже
-# должно располагатся в конце файла, для find_version_changes()
+# должно располагатся в конце файла, для find_version_changes(), дальше ничего не должно быть!
 VersionChanges = collections.OrderedDict({
 
     'v11.6.5': '''
@@ -207,6 +208,4 @@ VersionChanges = collections.OrderedDict({
 * общий рефакторинг
         ''',
 
-})  # "\n*" - признак отдельного пункта изменений в версии - это строка для enumerate, изпользовать в описании нельзя
-
-V_SEP = '\n*'  # "\n*" - признак отдельного пункта изменений в версии
+})
