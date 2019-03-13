@@ -23,7 +23,7 @@ def main() -> int:
         from lr_lib.main import init
     except ImportError as ex:
         print(lr_lib.whl.whl_installer.ImpErr, file=sys.stdout)
-        full_tb_write(ex)  # None
+        full_tb_write(ex)
 
     else:
         try:  # Старт утилиты
