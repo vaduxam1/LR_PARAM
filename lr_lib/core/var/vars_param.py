@@ -198,3 +198,8 @@ DENY_EXT = {
     '.inf', '.ico', '.gif', '.jpg', '.jpeg', '.bmp', '.tif', '.png', '.zip', '.rar', '.7z', '.gz', '.tar', '.c',
     '.css',
 }  # запрещенные расширения файлов, для файлов-ответов
+
+WFILE = 'wrsp_part_names.txt'  # дополнительные варианты поиска, для метода 5)
+LFILE = 'wrsp_lb.txt'  # дополнительные варианты поиска, для метода 1), 6)
+disk_wr_part_var = tk.BooleanVar(value=True)  # разрешить WFILE
+disk_lb_var = tk.BooleanVar(value=True)  # разрешить LFILE

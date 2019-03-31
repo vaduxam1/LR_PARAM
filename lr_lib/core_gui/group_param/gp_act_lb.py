@@ -1,6 +1,7 @@
 # -*- coding: UTF-8 -*-
 # нахождение param, в action.c файле, по символам(LB) слева от param
 import re
+import os
 import tkinter as tk
 from typing import Iterable, Tuple, List, Callable
 
@@ -13,6 +14,7 @@ import lr_lib.core_gui.group_param.gp_filter
 import lr_lib.core_gui.group_param.gp_job
 from lr_lib.core_gui.group_param.gp_var import responce_files_texts
 from lr_lib.gui.widj.dialog import K_FIND, K_SKIP, CREATE_or_FIND
+import lr_lib.core.var.vars as lr_vars
 
 T1 = '1.1) запрос: поиск param в action, используя action-LB'
 T2 = '1) Поиск param в [ ACTION.C ] тексте: используя action-LB символы.\n' \
@@ -52,6 +54,14 @@ def group_param_search_by_lb(
     if lb_items is None:
         lb_items = set(lr_lib.core.var.vars_param.LB_PARAM_FIND_LIST)
 
+    if lr_lib.core.var.vars_param.disk_lb_var.get():
+        f = os.path.join(lr_vars.lib_folder, lr_lib.core.var.vars_param.LFILE)
+        if os.path.exists(f):
+            with open(f, errors='replace') as f:
+                for _lb in filter(str.strip, f):
+                    lb_items.add(_lb)
+                    continue
+
     if MutableLBRegs:
         for text in texts_for_lb:
             for r in MutableLBRegs:
@@ -63,7 +73,7 @@ def group_param_search_by_lb(
     if ask:  # диалог окно поиск param
         lb_items = _ask_lb_items(action, lb_items, t1, t2)
 
-    lb_items = list(filter(str.strip, lb_items))
+    lb_items = list(filter(bool, map(str.strip, lb_items)))
     if not lb_items:
         return []
 
@@ -107,7 +117,7 @@ def _ask_lb_items(
     """
     диалог окно поиск param
     """
-    tt = '\n'.join(lb_items)
+    tt = '\n'.join(filter(bool, map(str.strip, lb_items)))
 
     y = lr_lib.gui.widj.dialog.YesNoCancel(
         buttons=[K_FIND, K_SKIP],

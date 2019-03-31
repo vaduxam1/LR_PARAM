@@ -56,7 +56,7 @@ def group_param_search_by_lb_post(
         y = lr_lib.gui.widj.dialog.YesNoCancel(
             [K_FIND, K_SKIP],
             title='6.1) запрос: пост LB',
-            is_text='\n'.join(lb_items),
+            is_text='\n'.join(filter(bool, map(str.strip, lb_items))),
             text_before=lr_lib.core_gui.run.r_texts.TT_LBP,
             text_after='добавить/удалить',
             parent=action,

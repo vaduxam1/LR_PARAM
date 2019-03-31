@@ -1,6 +1,7 @@
 # -*- coding: UTF-8 -*-
 # нахождение param, в action.c файле, по началу имени param
 
+import os
 from typing import Iterable, List, Tuple
 
 import lr_lib
@@ -43,11 +44,22 @@ def group_param_search_by_name(
     """
     if text is None:
         if ask:
+            pp = set()
+            if lr_lib.core.var.vars_param.disk_wr_part_var.get():
+                f = os.path.join(lr_vars.lib_folder, lr_lib.core.var.vars_param.WFILE)
+                if os.path.exists(f):
+                    with open(f, errors='replace') as f:
+                        for wn in filter(str.strip, f):
+                            pp.add(wn)
+                            continue
+            pp.update(lr_lib.core.var.vars_param.Params_names)
+            it = '\n'.join(filter(bool, map(str.strip, pp)))
+
             y = lr_lib.gui.widj.dialog.YesNoCancel(
                 [K_FIND, K_CANCEL],
                 default_key=K_FIND,
                 title='5.1) запрос: поиск param в action, используя начало param имен',
-                is_text='\n'.join(lr_lib.core.var.vars_param.Params_names),
+                is_text=it,
                 text_before=(TB1 % len(lr_lib.core.var.vars_param.Params_names)),
                 text_after='добавить/удалить',
                 parent=action,
@@ -133,12 +145,20 @@ def group_param_search_by_exist_param(
     if i_params:
         exist_params.update(i_params)
 
+    if lr_lib.core.var.vars_param.disk_wr_part_var.get():
+        f = os.path.join(lr_vars.lib_folder, lr_lib.core.var.vars_param.WFILE)
+        if os.path.exists(f):
+            with open(f, errors='replace') as f:
+                for wn in filter(str.strip, f):
+                    exist_params.add(wn)
+                    continue
+
     if ask:
         y = lr_lib.gui.widj.dialog.YesNoCancel(
             [K_FIND, K_SKIP],
             default_key=K_FIND,
             title='5.1) запрос: LAST поиск {param} по началу имени',
-            is_text='\n'.join(exist_params),
+            is_text='\n'.join(filter(bool, map(str.strip, exist_params))),
             text_before=TB2.format(ln=len(exist_params), n=lr_vars.SecondaryParamLen.get()),
             text_after='добавить/удалить',
             parent=action,

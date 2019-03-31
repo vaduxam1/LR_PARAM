@@ -2,10 +2,13 @@
 # окно Настраиваемый запуск поиска WRSP
 
 import tkinter as tk
+import tkinter.filedialog
 import tkinter.messagebox
+import os
 from typing import List
 
 import lr_lib
+import lr_lib.core.etc.lbrb_from_disk
 import lr_lib.core.var.vars as lr_vars
 import lr_lib.core.var.vars_param
 import lr_lib.core_gui.group_param.core_gp
@@ -119,6 +122,51 @@ class RunSettingWindow(tk.Toplevel):
             enable=False,
         )
 
+        # LabelFrame
+        ttt = 'Допллнительные правила поиска {param} для методов 1), 5), 6)'
+        self.disk_search_label = tk.LabelFrame(
+            self.main_label, text=ttt, font='Arial 7 bold',
+        )
+
+        # Checkbutton
+        self.disk_wr_part = tk.Checkbutton(
+            self.disk_search_label, anchor=tk.E, text='disk_wr', font=lr_vars.DefaultFont,
+            variable=lr_lib.core.var.vars_param.disk_wr_part_var,
+        )
+        yy1 = 'Добавить дополнительные варианты поиска, для метода 5)\n' \
+              'Из файла {f}\nЭто файл уже готовых скриптов на диске,\n' \
+              'его необходимо периодически/в первый раз сформировать кнопкой "поиск новых правил lb/param"'.format(
+            f=lr_lib.core.var.vars_param.WFILE)
+        lr_lib.gui.widj.tooltip.createToolTip(self.disk_wr_part, yy1)
+
+        # Checkbutton
+        self.disk_lb = tk.Checkbutton(
+            self.disk_search_label, anchor=tk.E, text='disk_lb', font=lr_vars.DefaultFont,
+            variable=lr_lib.core.var.vars_param.disk_lb_var,
+        )
+        yy2 = 'Добавить дополнительные варианты поиска, для методов 1), 6)\n' \
+              'Из файла {f}\nЭто файл уже готовых скриптов на диске,\n' \
+              'его необходимо периодически/в первый раз сформировать кнопкой "поиск новых правил lb/param"'.format(
+            f=lr_lib.core.var.vars_param.LFILE)
+        lr_lib.gui.widj.tooltip.createToolTip(self.disk_lb, yy2)
+
+        # Button
+        def disk_run_start():
+            d = tk.filedialog.askdirectory()
+            if d:
+                lr_lib.core.etc.lbrb_from_disk.main(d)
+            return
+        tt_tr = 'поиск новых правил lb/param из любых *.c скриптов выбранного каталога'
+        self.disk_run = tk.Button(
+            self.disk_search_label, font='Arial 8 bold', text=tt_tr, relief='groove', command=disk_run_start,
+            bg='Orange',
+        )
+        se = '\nВыбрать директорию из диалог окна\n' \
+             'Поиск произойдет во всех *.с файлах/под-директориях выбранной директории\n' \
+             'Результаты поиска сохрянятся в файлы, в каталог утилиты,\n' \
+             'и могут быть использованы в дальнейшем, для поиска wrsp'
+        lr_lib.gui.widj.tooltip.createToolTip(self.disk_run, (tt_tr + se))
+
         # Button
         tt_tr = 'Запуск'
         self.btn_run = tk.Button(
@@ -199,6 +247,11 @@ class RunSettingWindow(tk.Toplevel):
         self.item4.main_label.grid(row=1, column=4, sticky=tk.W, columnspan=3)
         self.item_last_startsw.main_label.grid(row=2, column=4, sticky=tk.W, columnspan=3)
         self.item_last_lb.main_label.grid(row=3, column=4, sticky=tk.W, columnspan=3)
+
+        self.disk_search_label.grid(row=50, column=0, sticky=tk.NSEW, rowspan=10, columnspan=50, )
+        self.disk_wr_part.grid(row=1, column=1, sticky=tk.NSEW, )
+        self.disk_lb.grid(row=1, column=2, sticky=tk.NSEW, )
+        self.disk_run.grid(row=1, column=3, sticky=tk.NSEW, )
 
         self.btn_run.grid(row=0, column=4, sticky=tk.NSEW, rowspan=1, columnspan=10, )
         self.tool_label.grid(row=0, column=0, sticky=tk.NSEW, rowspan=1, columnspan=4, )
@@ -281,6 +334,13 @@ class RunSettingWindow(tk.Toplevel):
         i_params = item.get_params(i_params=params)
         param_count_search_info(item, i_params)
         params.update(i_params)
+        if lr_lib.core.var.vars_param.disk_lb_var.get():
+            f = os.path.join(lr_vars.lib_folder, lr_lib.core.var.vars_param.LFILE)
+            if os.path.exists(f):
+                with open(f, errors='replace') as f:
+                    for _lb in filter(str.strip, f):
+                        params.add(_lb)
+                        continue
         params = param_sort(params, deny_param_filter=True)  # фильтровать
         #  <-- поиск param <--
 

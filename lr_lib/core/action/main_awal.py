@@ -182,7 +182,7 @@ class ActionWebsAndLines:
             self.webs_and_lines.append(element)
         return
 
-    def set_text_list(self, text_list: List[str], websReport=True) -> None:
+    def set_text_list(self, text_list: str, websReport=True) -> None:
         """
         создать все web_action объекты
         """

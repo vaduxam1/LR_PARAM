@@ -6,6 +6,7 @@ from typing import Iterable, Tuple, List, Dict
 import lr_lib
 import lr_lib.core.etc.lbrb_checker
 import lr_lib.core.var.vars as lr_vars
+from lr_lib.core.wrsp.param import wrsp_LB_start, wrsp_LB_end
 
 WARN = '{0} WARNING: '.format(lr_lib.core.wrsp.param.LR_COMENT)
 
@@ -98,7 +99,10 @@ class WebAny:
             _type='',
     ):
         self.ActionWebsAndLines = parent_
-        self.tk_text = self.ActionWebsAndLines.action.tk_text
+        try:
+            self.tk_text = self.ActionWebsAndLines.action.tk_text
+        except AttributeError:
+            self.tk_text = None
         self.lines_list = lines_list
 
         WebAny.count += 1
@@ -470,6 +474,17 @@ class WebRegSaveParam(WebAny):
         # print('\tparam:{}'.format(self.param))
         return
 
+    def get_lb(self) -> str:
+        ln = ''
+        for line in self.lines_list:
+            line = line.strip()
+            if line.startswith(wrsp_LB_start):
+                ln = line.split(wrsp_LB_start)[1]
+                ln = ln.split(wrsp_LB_end)[0]
+                break
+            continue
+        return ln
+
     def _read_param(self, param='') -> str:
         """
         найти исходное имя param из wrsp
@@ -505,13 +520,17 @@ class WebRegSaveParam(WebAny):
         comments = self.comments
 
         if lr_vars.VarWebStatsWarn.get() or _all_stat:
-            rep = self.ActionWebsAndLines.websReport.param_statistic[self.name]
-            if not rep['param_count']:
-                s = '\n{0}NoWebRegSaveParamUsage?'
-                comments += s.format(WARN)
-            elif self.snapshot.inf >= min(filter(bool, rep['snapshots'])):
-                s = '\n{0}WrspInAndOutUsage wrsp.snapshot >= usage.snapshot'
-                comments += s.format(WARN)
+            try:
+                rep = self.ActionWebsAndLines.websReport.param_statistic[self.name]
+            except KeyError as ex:
+                print(ex, ex.args)  # без action окна
+            else:
+                if not rep['param_count']:
+                    s = '\n{0}NoWebRegSaveParamUsage?'
+                    comments += s.format(WARN)
+                elif self.snapshot.inf >= min(filter(bool, rep['snapshots'])):
+                    s = '\n{0}WrspInAndOutUsage wrsp.snapshot >= usage.snapshot'
+                    comments += s.format(WARN)
 
         if lr_vars.VarWRSPStatsTransac.get() or _all_stat:
             usage_string = self.usage_string(_all_stat=_all_stat)

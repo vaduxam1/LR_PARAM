@@ -52,7 +52,10 @@ class WebReport:
         wrsp_all = tuple(self.ActionWebsAndLines.get_web_reg_save_param_all())
 
         for wr in wrsp_all:
-            self.ActionWebsAndLines.action.tk_text.web_add_highlight(wr)
+            try:
+                self.ActionWebsAndLines.action.tk_text.web_add_highlight(wr)
+            except AttributeError:
+                pass
 
             self.wrsp_and_param_names[wr.name] = wr.param
             self._wrsp[wr.name] = wr
@@ -72,7 +75,10 @@ class WebReport:
 
         wal = self.ActionWebsAndLines.get_web_all()
         for web in wal:
-            self.ActionWebsAndLines.action.tk_text.web_add_highlight(web)
+            try:
+                self.ActionWebsAndLines.action.tk_text.web_add_highlight(web)
+            except AttributeError:
+                pass
 
             snapshot = web.snapshot.inf
             transaction = web.transaction
