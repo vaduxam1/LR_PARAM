@@ -154,7 +154,11 @@ class RunSettingWindow(tk.Toplevel):
         def disk_run_start():
             d = tk.filedialog.askdirectory()
             if d:
-                lr_lib.core.etc.lbrb_from_disk.main(d)
+                (wr_n, lb_n) = lr_lib.core.etc.lbrb_from_disk.main(d)
+                t = self.disk_search_label['text'].rsplit(':', 1)[0]
+                t = '{0}: Найдено новых param={1}, LB={2}'.format(t, wr_n, lb_n)
+                self.disk_search_label['text'] = t
+                self.disk_search_label.update()
             return
         tt_tr = 'поиск новых правил lb/param из любых *.c скриптов выбранного каталога'
         self.disk_run = tk.Button(

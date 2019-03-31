@@ -58,7 +58,7 @@ def read_c_file(file: str, action=None, enc=lr_lib.core.var.etc.vars_other.VarEn
     return ''
 
 
-def _main(folder: str) -> Tuple:
+def _main3(folder: str) -> Tuple:
     """
     поиск новых LB и начал имен param, из уже готовых скриптов на диске
     :param folder: srt: 'C:\\SCR\\'
@@ -86,7 +86,23 @@ def main(folder: str) -> Tuple[int, int]:
     :param folder: srt: 'C:\\SCR\\'
     :return: None
     """
-    (wrsp_part_names, wrsp_lb) = _main(folder)
+    s = lr_vars.VarShowPopupWindow.get()
+    if s:  # не показывать всплывающие окна ошибок, если проверяемые файлы некорректны
+        lr_vars.VarShowPopupWindow.set(False)
+    try:
+        item = _main2(folder)
+    finally:
+        lr_vars.VarShowPopupWindow.set(s)
+    return item
+
+
+def _main2(folder: str) -> Tuple[int, int]:
+    """
+    поиск новых LB и начал имен param, из уже готовых скриптов на диске
+    :param folder: srt: 'C:\\SCR\\'
+    :return: None
+    """
+    (wrsp_part_names, wrsp_lb) = _main3(folder)
 
     fwr = os.path.join(lr_vars.lib_folder, WFILE)
     if os.path.exists(fwr):
@@ -96,7 +112,7 @@ def main(folder: str) -> Tuple[int, int]:
         lt1 = len(t)
         t.update(wrsp_part_names)
         lt2 = len(t)
-        lt3 = (lt2 - lt1)
+        wr_n = (lt2 - lt1)
         with open(fwr, 'w') as f:
             t = '\n'.join(t)
             f.write(t)
@@ -104,7 +120,7 @@ def main(folder: str) -> Tuple[int, int]:
         with open(fwr, 'w') as f:
             t = '\n'.join(wrsp_part_names)
             f.write(t)
-        lt3 = len(wrsp_part_names)
+        wr_n = len(wrsp_part_names)
 
     flb = os.path.join(lr_vars.lib_folder, LFILE)
     if os.path.exists(flb):
@@ -114,7 +130,7 @@ def main(folder: str) -> Tuple[int, int]:
         bt1 = len(t)
         t.update(wrsp_lb)
         bt2 = len(t)
-        bt3 = (bt2 - bt1)
+        lb_n = (bt2 - bt1)
         with open(flb, 'w') as f:
             t = '\n'.join(t)
             f.write(t)
@@ -122,9 +138,9 @@ def main(folder: str) -> Tuple[int, int]:
         with open(flb, 'w') as f:
             t = '\n'.join(wrsp_lb)
             f.write(t)
-        bt3 = len(wrsp_lb)
+        lb_n = len(wrsp_lb)
 
-    it = (lt3, bt3)
+    it = (wr_n, lb_n)
     return it
 
 
