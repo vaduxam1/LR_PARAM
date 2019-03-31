@@ -123,7 +123,7 @@ class RunSettingWindow(tk.Toplevel):
         )
 
         # LabelFrame
-        ttt = 'Допллнительные правила поиска {param} для методов 1), 5), 6)'
+        ttt = 'Дополнительные правила поиска {param} для методов 1), 5), 6)'
         self.disk_search_label = tk.LabelFrame(
             self.main_label, text=ttt, font='Arial 7 bold',
         )
