@@ -7,7 +7,6 @@
 
 from typing import Iterable, Tuple
 
-import contextlib
 import sys
 
 import lr_lib.core.main_core
@@ -36,7 +35,6 @@ def init(**kwargs) -> True:
     return exit_state
 
 
-@contextlib.contextmanager
 def start(excepthook=True, console_args=sys.argv) -> bool:
     """
     запуск core/gui в excepthook обработчике raise
