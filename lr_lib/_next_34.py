@@ -66,8 +66,8 @@ def _next_file() -> bool:
     следующей файл(3)
     """
     f = lr_vars.VarFile.get()  # текущий файл
+    index = lr_vars.FilesWithParam.index(f)  # индекс текушего файла(3) / ValueError
     try:
-        index = lr_vars.FilesWithParam.index(f)  # индекс текушего файла(3)
         file = lr_vars.FilesWithParam[index + 1]  # следующий файл
     except IndexError:
         return False  # все файлы перебраны
