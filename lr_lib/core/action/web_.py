@@ -480,7 +480,7 @@ class WebRegSaveParam(WebAny):
             line = line.strip()
             if line.startswith(wrsp_LB_start):
                 ln = line.split(wrsp_LB_start)[1]
-                ln = ln.split(wrsp_LB_end)[0]
+                ln = ln.rsplit('",', 1)[0]
                 break
             continue
         return ln

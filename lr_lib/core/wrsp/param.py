@@ -306,16 +306,31 @@ def wrsp_name_creator(param: str, Lb: str, Rb: str, snapshot: int) -> str:
     return wrsp_name
 
 
-# экранирование символов для WRSP
-ScrWrspSymbol = {ord(c): '\\{}'.format(c) for c in lr_lib.core.var.vars_param.Screening}
+# экранирование символов для WRSP LB/RB
+ScrWrspSymbol = {ord(s): '\\{0}'.format(s) for s in lr_lib.core.var.vars_param.Screening}
 
 
-def screening_wrsp(s: str) -> str:
+def screening_wrsp(lbrb: str) -> str:
     """
-    экранирование для web_reg_save_param
+    экранирование для web_reg_save_param LB/RB
+    :param lbrb: str: 'value=/'
+    :return: str: 'value=//'
     """
-    s = str.translate(s, ScrWrspSymbol)
-    return s
+    lbrb = str.translate(lbrb, ScrWrspSymbol)
+    return lbrb
+
+
+def un_screening_wrsp(lbrb: str) -> str:
+    """
+    раз-экранирование для web_reg_save_param LB/RB
+    :param lbrb: str: 'value=//'
+    :return: str: 'value=/'
+    """
+    for s in lr_lib.core.var.vars_param.Screening:
+        sc = '\\{}'.format(s)
+        lbrb = lbrb.replace(sc, s)
+        continue
+    return lbrb
 
 
 def _search_param_in_file(file: dict) -> dict:

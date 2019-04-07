@@ -5,6 +5,7 @@ import os
 from typing import Iterable, Tuple
 
 import lr_lib
+import lr_lib.core.wrsp.param
 import lr_lib.core.action.main_awal
 import lr_lib.core.var.vars as lr_vars
 from lr_lib.core.var.vars_param import WFILE, LFILE
@@ -48,6 +49,7 @@ def read_c_file(file: str, action=None, enc=lr_lib.core.var.etc.vars_other.VarEn
         if all(map(str.isnumeric, wn)):
             wn = ''
         lb = w.get_lb()
+        lb = lr_lib.core.wrsp.param.un_screening_wrsp(lb)
 
         it = (wn, lb)
         if any(it):
