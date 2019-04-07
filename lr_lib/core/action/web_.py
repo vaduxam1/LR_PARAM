@@ -432,10 +432,7 @@ class WebSnapshot(WebAny):
         wrsps = ''.join(map(WebRegSaveParam.to_str, self.web_reg_save_param_list))
         txt = '{wrsp}{stat_string}\n{text}'.format(stat_string=stat_string, text=text, wrsp=wrsps).strip('\n')
 
-        if WARN in txt:
-            self.warning = True
-        else:
-            self.warning = False
+        self.warning = (WARN in txt)
         return txt
 
     def get_body(self, a=1, b=-1) -> str:
@@ -559,11 +556,13 @@ class WebRegSaveParam(WebAny):
         t_snap = (wt['minmax_snapshots'] if self.transaction else '')
 
         if lr_vars.VarWRSPStatsTransacNames.get() or _all_stat:
-            tn = sorted(ps['transaction_names'], key=rep.web_transaction_sorted.index)
+            tn = ps['transaction_names']
+            tn = sorted(tn, key=rep.web_transaction_sorted.index)
         else:
             tn = ''
 
-        s = '{c} ({w_tr}: {t_snap}) -> Param:{p_all} | Snapshots:{snap} | Transactions={len_tr}:{tr_names}'.format(
+        s = '{c} ({w_tr}: {t_snap}) -> Param:{p_all} | Snapshots:{snap} | Transactions={len_tr}:{tr_names}'
+        s = s.format(
             wrsp_name=self.transaction,
             p_all=ps['param_count'],
             snap=ps['minmax_snapshots'],

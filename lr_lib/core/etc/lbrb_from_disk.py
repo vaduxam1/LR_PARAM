@@ -30,7 +30,7 @@ def find_c_files_from(folder=os.getcwd(), ext='.c') -> Iterable[str]:
 
 def read_c_file(file: str, action=None, enc=lr_lib.core.var.etc.vars_other.VarEncode.get()) -> Iterable:
     """
-    гайти LB и начала имен param, из файла
+    найти LB и начала имен param, из файла
     :param file: str: "C:\SCR\LR_11\action.c"
     :param action: 'lr_lib.gui.action.main_action.ActionWindow'
     :return: Iterable[(file, (name, lb))]
