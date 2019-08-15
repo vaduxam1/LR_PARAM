@@ -1,7 +1,7 @@
 ﻿# -*- coding: UTF-8 -*-
 # все варианты создания web_reg_save_param
 
-from typing import Iterable, Tuple
+from typing import Iterable, Tuple, List
 
 import lr_lib
 import lr_lib.core
@@ -14,52 +14,65 @@ from lr_lib.core.var import vars as lr_vars
 
 
 @lr_lib.core.var.etc.vars_other.T_POOL_decorator
-def all_wrsp_dict_web_reg_save_param(event, wrsp_web_=None) -> None:
+def all_wrsp_dict_web_reg_save_param(event, wrsp_web_=None, action=None, create=True) -> List:
     """
     все варианты создания web_reg_save_param, искать не ограничивая верхний номер Snapshot
     """
-    action = lr_lib.core_gui.action_lib.event_action_getter(event)
-    m = action.max_inf_cbx_var.get()
-    action.max_inf_cbx_var.set(0)
-    selection = event.widget.selection_get()
+    return all_wrsp_dict_web_reg_save_param_no_tr(event, wrsp_web_=wrsp_web_, action=action, create=create)
 
+
+def all_wrsp_dict_web_reg_save_param_no_tr(event, wrsp_web_=None, action=None, create=True) -> List:
+    """
+    все варианты создания web_reg_save_param, искать не ограничивая верхний номер Snapshot
+    """
+    if action is None:
+        action = lr_lib.core_gui.action_lib.event_action_getter(event)
+        selection = event.widget.selection_get()
+    else:
+        selection = event  # event - это str param
+
+    action.max_inf_cbx_var.set(0)
     with action.block():
         try:
-            _all_wrsp_dict_web_reg_save_param(action, selection)
+            wrsp_all = _all_wrsp_dict_web_reg_save_param(action, selection, create=create)
         except Exception as ex:
             lr_lib.etc.excepthook.excepthook(ex)
+            wrsp_all = []
         finally:
-            action.max_inf_cbx_var.set(m)
+            action.max_inf_cbx_var.set(action.max_inf_cbx_var.get())
 
         if wrsp_web_:
-            w = wrsp_web_.to_str()
-            action.search_in_action(word=w)
-    return
+            action.search_in_action(word=wrsp_web_.to_str())
+    return wrsp_all
 
 
-def _all_wrsp_dict_web_reg_save_param(action: 'lr_lib.gui.action.main_action.ActionWindow', selection: str) -> None:
+def _all_wrsp_dict_web_reg_save_param(
+        action: 'lr_lib.gui.action.main_action.ActionWindow',
+        selection: str,
+        create: bool,
+) -> List:
     """все варианты создания web_reg_save_param"""
     param = selection
     try:
         wrsp_and_param = action.web_action.websReport.wrsp_and_param_names
     except AttributeError as ex:
         pass
+    except Exception:
+        raise
     else:
         if selection in wrsp_and_param:  # сменить wrsp-имя в ориг. имя param
             param = wrsp_and_param[selection]
 
-    lr_vars.VarParam.set(param, action=action, set_file=True)
+    wrsp_all = list(filter(_check_wrsp_duplicate, _all_wrsp(param, action)))
 
-    lr_vars.VarWrspDictList.clear()
-    wrsp_all = _all_wrsp(action)
-    wrsp_all = filter(_check_wrsp_duplicate, wrsp_all)
-    lr_vars.VarWrspDictList.extend(wrsp_all)
-    assert lr_vars.VarWrspDictList, 'Ничего не найдено'
+    if create:
+        lr_vars.VarWrspDictList[:] =  wrsp_all
+        assert lr_vars.VarWrspDictList, 'Ничего не найдено'
 
-    answ_text = _ask_wrsp_create(param, action)
-    if isinstance(answ_text, str):
-        _create_wrsp_web_(answ_text, param, action)
-    return
+        answ_text = _ask_wrsp_create(param, action)
+        if isinstance(answ_text, str):
+            _create_wrsp_web_(answ_text, param, action)
+    return wrsp_all
 
 
 def _check_wrsp_duplicate(wr: Tuple[dict, str], dups=None) -> bool:
@@ -80,14 +93,14 @@ def _wrsp_text_delta_remove(wr: Tuple[dict, str]) -> str:
     return without_delta
 
 
-def _all_wrsp(action: 'lr_lib.gui.action.main_action.ActionWindow') -> Iterable[Tuple[dict, str]]:
+def _all_wrsp(param, action) -> Iterable[Tuple[dict, str]]:
     """поиск всех возможных wrsp"""
-    with lr_lib.gui.etc.color_progress.ColorProgress(action):
-        wr = _wr_create()  # первый/текущий wrsp
-        while wr:
-            yield wr
-            wr = _next_wrsp()  # остальные wrsp
-            continue
+    lr_vars.VarParam.set(param, action=action, set_file=True)
+    wr = _wr_create()  # первый/текущий wrsp
+    while wr:
+        yield wr
+        wr = _next_wrsp()  # остальные wrsp
+        continue
     return
 
 
@@ -97,6 +110,8 @@ def _next_wrsp() -> 'Iterable[(dict, str)] or None':
         lr_lib.core.var.var_callback.part_num.next_3_or_4_if_bad_or_enmpy_lb_rb('поиск всех корректных wrsp_dict')
     except UserWarning as ex:
         return  # конец поиска
+    except Exception:
+        raise
     else:
         wr = _wr_create()
     return wr
@@ -106,8 +121,7 @@ def _wr_create() -> Tuple[dict, str]:
     """создание wrsp"""
     wrsp_dict = lr_lib.core.wrsp.param.wrsp_dict_creator()
     wrsp_text = lr_lib.core.wrsp.param.create_web_reg_save_param(wrsp_dict)
-    wr = (wrsp_dict, wrsp_text)
-    return wr
+    return wrsp_dict, wrsp_text
 
 
 text_after = '''Либо оставить только один web_reg_save_param, удалив остальные.
@@ -153,7 +167,7 @@ def _ask_wrsp_create(param: str, action: 'lr_lib.gui.action.main_action.ActionWi
     return None
 
 
-Word = 'LAST);'
+Word = 'LAST);'  # посл. строка wrsp
 
 
 def _create_wrsp_web_(text: str, param: str, action: 'lr_lib.gui.action.main_action.ActionWindow') -> None:

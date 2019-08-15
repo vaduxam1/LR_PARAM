@@ -13,7 +13,7 @@ import lr_lib.core.main_core
 import lr_lib.core.var.etc.vars_other
 import lr_lib.core.var.vars as lr_vars
 import lr_lib.etc.excepthook
-import lr_lib.etc.keyb
+# import lr_lib.etc.keyb
 import lr_lib.etc.logger
 import lr_lib.etc.pool.main_pool
 import lr_lib.etc.pool.other
@@ -69,11 +69,20 @@ def main(console_args: Tuple[str]) -> Tuple[bool, dict]:
     if as_console:  # консольное использование
         lr_lib.core.main_core.start(c_args, echo=True)
     else:  # обычное использование
-        with lr_lib.etc.keyb.keyboard_listener():  # hotkey(param from clipboard)
-            # gui
-            lr_lib.gui.main_gui.init(c_args)
-            # блокировать главный поток
-            lr_lib.gui.main_gui.start()
+        # with lr_lib.etc.keyb.keyboard_listener():  # hotkey(param from clipboard)
+        # gui
+        lr_lib.gui.main_gui.init(c_args)
+        # блокировать главный поток
+        lr_lib.gui.main_gui.start()
 
     item = (as_console, c_args)
     return item
+
+
+def _test():
+    import lr_lib._next_34
+    lr_vars.VarParam.set('lYKQ1b0')
+    alv = list(lr_lib._next_34.all_wrsp_variant())
+    import json
+    print(json.dumps(alv, ensure_ascii=False, indent=2))
+    return

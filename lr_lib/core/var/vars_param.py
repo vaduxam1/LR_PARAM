@@ -174,7 +174,7 @@ param_splitters = set(param_splitters)  # символы обрезки авто
 
 DENY_WEB_ = {
     'google.com', 'yandex.ru', 'mail.ru',
-}  # web_ запросы, содержащие эти слова, помечять WARNING
+}  # web_ запросы, содержащие эти слова, помечать WARNING
 
 ########
 # файлы

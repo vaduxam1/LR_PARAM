@@ -130,7 +130,7 @@ class ActionWebsAndLines:
             continue
         return
 
-    def replace_bodys(self, replace_list: List[Tuple[str, str]], is_wrsp=True) -> None:
+    def replace_bodys(self, replace_list: List[Tuple[str, str]], is_wrsp=True, min_inf=0, max_inf=0) -> None:
         """
         заменить группу param, во всех web_ body
         """
@@ -140,6 +140,11 @@ class ActionWebsAndLines:
         lr_vars.Logger.trace(i)
 
         for web_ in web_actions:
+            if max_inf and (web_.snapshot.inf > max_inf):
+                break
+            elif min_inf and (web_.snapshot.inf < min_inf):
+                continue
+
             body = web_.get_body()
 
             for (search, replace) in replace_list:
@@ -150,16 +155,25 @@ class ActionWebsAndLines:
             continue
         return
 
-    def replace_bodys_iter(self, web_actions: Iterable[lr_web.WebAny], is_wrsp=True) -> None:
+    def replace_bodys_iter(self, web_actions: Iterable[lr_web.WebAny], is_wrsp=True, min_inf=0, max_inf=0) -> None:
         """
         заменить группу param, во всех web_ body - сопрограмма
         """
         search_replace = yield
         while search_replace is not None:
-            (search, replace) = search_replace
+            if len(search_replace) == 4:
+                ((search, replace), (min_inf, max_inf)) = search_replace
+            else:
+                (search, replace) = search_replace
 
             for web_ in web_actions:
+                if max_inf and (web_.snapshot.inf > max_inf):
+                    break
+                elif min_inf and (web_.snapshot.inf < min_inf):
+                    continue
+
                 body = web_.get_body()
+
                 new_body = lr_web.body_replace(body, search, replace, is_wrsp=is_wrsp)
                 if body != new_body:
                     web_.set_body(new_body)

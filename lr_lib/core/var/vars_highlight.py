@@ -16,7 +16,7 @@ HighlightAfter0 = 1500  # задержка(мс), перед перезапус�
 HighlightAfter1 = 250  # задержка(мс), перед стартом подсветки всех линий, отображенных на экране
 HighlightAfter2 = 250  # задержка(мс), перед подсветкой одной линии
 Background = 'khaki'
-ColorProgressDelay = 0.75  # мс - чем меньше тем быстрее смена цветов "гирлянды"
+ColorProgressDelay = 1.2  # мс - чем меньше тем быстрее смена цветов "гирлянды"
 
 highlight_words_folder = os.path.join(lr_lib.core.var.vars.lib_folder, 'etc')
 highlight_words_main_file = os.path.join(highlight_words_folder, 'highlight_words.txt')

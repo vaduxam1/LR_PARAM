@@ -12,7 +12,7 @@ import lr_lib.core.var.etc.var_ob as lr_var
 #####################################
 # главные переменные
 
-VERSION = 'v11.6.6'  # версия утилиты
+VERSION = 'v11.6.7'  # версия утилиты
 lib_folder = 'lr_lib'  # каталог py-файлов утилиты
 Tk = tk.Tk()
 original_callback_exception = Tk.report_callback_exception  # переопределение обработчика raise
@@ -59,6 +59,8 @@ VarStrongSearchInFile = tk.IntVar(value=True)  # принудительно ис
 ReplaceParamDialogWindow = True  # вкл диалог окна(автозамены), для одиночной замены param в action.c
 
 AllowOnlyNumericParam = tk.BooleanVar(value=False)  # разрешить имена {param}, состоящие только из цифр
+
+WRSPCreateMultyParamMode = tk.BooleanVar(value=True)  # True - поиск inf-номера web_reg_save_param, в аспекте того, что он может обновиться/переопределиться по мере выполнения теста
 
 VarFileSortKey1 = lr_var.Var(value='Snapshot')  # сортировка файлов
 VarFileSortKey2 = lr_var.Var(value='Nums')  # сортировка файлов
@@ -256,5 +258,5 @@ GitHub = (github + github_vars)  # полный путь к файлу на ги
 # полный путь к файлу на гитхабе, с описанием версии утилиты
 GitHub2 = 'https://raw.githubusercontent.com/vaduxam1/LR_PARAM/master/lr_lib/etc/git_upd.py'  # //raw. - без html тэгов
 githubDownloadUrl = '{}/archive/master.zip'.format(github)  # url для скачивания утилиты
-GitUpdPeriod = (1000* 60 * 60 * 4)  # мсек, период проверки наличия обновления утилиты
+GitUpdPeriod = (1000 * 60 * 60 * 4)  # мсек, период проверки наличия обновления утилиты
 githubCheckUpdateEnable = True  # вкл/выкл проверку обновления утилиты

@@ -1,7 +1,7 @@
 # -*- coding: UTF-8 -*-
 # классы lr web_ запросов
 
-from typing import Iterable, Tuple, List, Dict
+from typing import Iterable, Tuple, List, Dict, Union
 
 import lr_lib
 import lr_lib.core.etc.lbrb_checker
@@ -124,6 +124,25 @@ class WebAny:
 
         # print('\n{w}({n}):\n\tSnap={sn}, lines={l}, symb={s}, {t}'.format(w=self.type, n=self.name, l=len(self.lines_list), s=len(tuple(itertools.chain(*self.lines_list))), sn=self.snapshot, t=self.transaction))
         self.param_in = set()  # имена wrsp использующихся в теле, задается в WebReport
+        return
+
+    def is_param_in_body(self, param: str) -> Union[int, None]:
+        """
+        Вернуть номер inf, если param используется в теле
+        :param param: str: параметр для поиска в теле
+        :return: int|None: int - найден, None - ненайден
+        """
+        body_split = self.get_body().split(param)
+        len_body_split = len(body_split)
+        if len_body_split < 2:
+            return
+
+        for indx in range(1, len_body_split):
+            left = body_split[indx - 1]
+            right = body_split[indx]
+            if lr_lib.core.etc.lbrb_checker.check_bound_lb_rb(left, right):
+                return self.snapshot.inf
+            continue
         return
 
     def _read_snapshot(self) -> int:

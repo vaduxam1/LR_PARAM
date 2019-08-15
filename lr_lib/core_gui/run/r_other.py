@@ -18,6 +18,8 @@ def block(self) -> Iterable:
         state = (not self.parent._is_block_)
     except AttributeError:
         state = (not self._is_block_)
+    except Exception:
+        raise
 
     if not state:
         yield
@@ -28,6 +30,8 @@ def block(self) -> Iterable:
         lr_vars.MainThreadUpdater.submit(lambda: _block(self, True))
         try:
             yield
+        except Exception:
+            raise
         finally:
             self._is_block_ = False
             lr_vars.MainThreadUpdater.submit(lambda: _block(self, False))
@@ -48,6 +52,8 @@ def _block(self, bl: bool) -> None:
         self.update()
     except AttributeError:
         self.main_label.update()
+    except Exception:
+        raise
     return
 
 
@@ -61,8 +67,10 @@ def item_getattr(item, state: str) -> None:
         try:
             ga = getattr(item, attr)
             ga.configure(state=state)
-        except (AttributeError, tk.TclError) as ex:
+        except (AttributeError, tk.TclError):
             pass
+        except Exception:
+            raise
         continue
     return
 

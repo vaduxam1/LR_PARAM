@@ -242,6 +242,19 @@ class RunSettingWindow(tk.Toplevel):
         tt21 = 'Отфильтровывать имена {param} из списка запрешенных имен.\nТеоритически может отфильтровать нужное.'
         lr_lib.gui.widj.tooltip.createToolTip(self.deny_enable, tt21)
 
+        # Checkbutton
+        self.multiWRSP = tk.Checkbutton(
+            self.tool_label, anchor=tk.E, text='multiWRSP', font=lr_vars.DefaultFont,
+            variable=lr_lib.core.var.vars.WRSPCreateMultyParamMode,
+        )
+        tt21 = 'ON - Найти и создать web_reg_save_param, в аспекте того, что он может обновиться/переопределиться ' \
+               'по мере выполнения теста.\n' \
+               'Если {param}, используется в нескольких web, ' \
+               'и его можно создать используя несколько разных web, \nто попытатся создать отдельный wrsp, ' \
+               'для неодинаковых wrsp, для param из разных web.\n' \
+               'OFF - по старому, один web_reg_save_param на каждый param.'
+        lr_lib.gui.widj.tooltip.createToolTip(self.multiWRSP, tt21)
+
         # grid
         self.main_label.grid(row=0, column=0)
 
@@ -266,6 +279,8 @@ class RunSettingWindow(tk.Toplevel):
         self.min_num_param_spin.grid(row=5, column=6, sticky=tk.NSEW, rowspan=10, columnspan=1)
         self.only_numeric.grid(row=5, column=5, sticky=tk.NSEW, rowspan=10, columnspan=1)
         self.deny_enable.grid(row=5, column=8, sticky=tk.NSEW, rowspan=10, columnspan=1)
+
+        self.multiWRSP.grid(row=30, column=0, sticky=tk.NSEW, columnspan=10)
 
         self.cbxFirstLastFile.grid(row=5, column=3, sticky=tk.NSEW, rowspan=10, columnspan=1)
         self.add_inf_cbx.grid(row=5, column=4, sticky=tk.NSEW, rowspan=10, columnspan=1)
