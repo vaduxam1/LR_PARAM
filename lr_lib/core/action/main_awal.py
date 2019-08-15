@@ -162,7 +162,7 @@ class ActionWebsAndLines:
         search_replace = yield
         while search_replace is not None:
             if len(search_replace) == 4:
-                ((search, replace), (min_inf, max_inf)) = search_replace
+                (search, replace, min_inf, max_inf) = search_replace
             else:
                 (search, replace) = search_replace
 

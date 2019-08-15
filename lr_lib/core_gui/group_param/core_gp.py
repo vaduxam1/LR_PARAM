@@ -170,20 +170,20 @@ def _group_param_iter2(
                         if last_wr:
                             (lb1, rb1) = (last_wr['lb'], last_wr['rb'])
                             (lb2, rb2) = (curr_wr['lb'], curr_wr['rb'])
-                            if (lb1 == lb2) or (rb1 == rb2):
+                            if (lb1 == lb2) and (rb1 == rb2):
                                 continue
                         _i.append(i)
                         last_wr = i_wrsp_infs[i][0]
                     continue
 
-                if not _i:
+                if not _i:  # param используется в том же inf что и определяется
                     for i in wrsp_i:
                         curr_wr = i_wrsp_infs[i][0]
-                        if i <= i_param:
+                        if i == i_param:
                             if last_wr:
                                 (lb1, rb1) = (last_wr['lb'], last_wr['rb'])
                                 (lb2, rb2) = (curr_wr['lb'], curr_wr['rb'])
-                                if (lb1 == lb2) or (rb1 == rb2):
+                                if (lb1 == lb2) and (rb1 == rb2):
                                     continue
                             _i.append(i)
                             last_wr = i_wrsp_infs[i][0]
