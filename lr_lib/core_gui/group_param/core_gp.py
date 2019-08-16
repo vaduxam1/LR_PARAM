@@ -115,118 +115,26 @@ def _group_param_iter2(
     """
     ядро - найти и заменить группу web_reg_save_param
     """
-    unsuccess = []  # params, обработанные с ошибкой
-
-    all_wrsp = {}  # все варианты wrsp
-    for param in params:
-        try:
-            wds = lr_lib.core_gui.all_wrsp.all_wrsp_dict_web_reg_save_param_no_tr(param, action=action, create=False)
-            all_wrsp[param] = ap = {}
-            for wd in wds:
-                i_wrsp = wd[0]['inf_nums'][0]
-                if i_wrsp in all_wrsp:  # wrsp из одного inf
-                    (lb1, rb1) = (wd[0]['lb'], wd[0]['rb'])
-                    (lb2, rb2) = (ap[i_wrsp][0]['lb'], ap[i_wrsp][0]['rb'])
-                    rl1 = len(rb1)
-                    rl2 = len(rb2)
-                    if (rl2 > rl1) or ((rl2 == rl1) and (len(lb2) > len(lb1))):
-                        continue  # оставить более длинные
-                else:
-                    ap[i_wrsp] = wd
-                continue
-        except Exception as ex:
-            unsuccess.append(param)
-            lr_lib.etc.excepthook.excepthook(ex)
-        continue
-
     web_actions = tuple(action.web_action.get_web_snapshot_all())
-    wrsp_p_inf = {}
-    for w in web_actions:
-        for param in params:
-            i_wrsp = w.is_param_in_body(param)
-            if i_wrsp:
-                try:
-                    wrsp_p_inf[param].append(i_wrsp)
-                except:
-                    wrsp_p_inf[param] = [i_wrsp]
-            continue
-        continue
+    wrsp_p_inf = all_param_inf(params, web_actions)
     if not wrsp_p_inf:
         return
-
+    unsuccess = []  # params, обработанные с ошибкой
+    all_wrsp = all_wrsp_variant(params, unsuccess, action)  # все варианты wrsp
     flf = lr_vars.VarFirstLastFile.get()
 
     for (counter, param) in enumerate(wrsp_p_inf, start=1):
         try:
             i_wrsp_infs = all_wrsp[param]  # все inf/wrsp для param
-        except:
-            unsuccess.append(param)
-            continue
-        try:
             param_usage_infs = wrsp_p_inf[param]  # все inf использования данного param
+            assert i_wrsp_infs and param_usage_infs
         except:
             unsuccess.append(param)
-            continue
-        if (not i_wrsp_infs) or (not param_usage_infs):
             continue
 
         if len(i_wrsp_infs) > 1:
-            last_i_wrsp = 0
-            wr_pm = {}
-            last_wr = {}
-            wrsp_create_infs = sorted(i_wrsp_infs)
-
-            for i_param in param_usage_infs:
-                _i = []
-
-                for i_wrsp in wrsp_create_infs:
-                    if i_wrsp < i_param:
-                        if last_wr:
-                            curr_wr = i_wrsp_infs[i_wrsp][0]
-                            (lb1, rb1) = (last_wr['lb'], last_wr['rb'])
-                            (lb2, rb2) = (curr_wr['lb'], curr_wr['rb'])
-                            if (lb1 == lb2) and (rb1 == rb2):
-                                continue
-                        _i.append(i_wrsp)
-                        last_wr = i_wrsp_infs[i_wrsp][0]
-                    else:
-                        break
-                    continue
-
-                if _i:  # создать новый wrsp
-                    last_i_wrsp = _i[-1 if flf else 0]
-                    try:
-                        wr_pm[last_i_wrsp].append(i_param)
-                    except:
-                        wr_pm[last_i_wrsp] = [i_param]
-                elif last_i_wrsp:  # использовате предыдущий wrsp
-                    wr_pm[last_i_wrsp].append(i_param)
-
-                else:  # param используется в том же inf что и определяется
-                    for i_wrsp in wrsp_create_infs:
-                        if i_wrsp == i_param:
-                            if last_wr:
-                                curr_wr = i_wrsp_infs[i_wrsp][0]
-                                (lb1, rb1) = (last_wr['lb'], last_wr['rb'])
-                                (lb2, rb2) = (curr_wr['lb'], curr_wr['rb'])
-                                if (lb1 == lb2) and (rb1 == rb2):
-                                    continue
-                            _i.append(i_wrsp)
-                            last_wr = i_wrsp_infs[i_wrsp][0]
-                            break
-                        continue
-                    if _i:
-                        last_i_wrsp = _i[0]
-                        try:
-                            wr_pm[last_i_wrsp].append(i_param)
-                        except:
-                            wr_pm[last_i_wrsp] = [i_param]
-                    else:
-                        unsuccess.append(param)
-                continue
-
-            other_same_param = [(*i_wrsp_infs[i_wrsp], min(v), max(v)) for (i_wrsp, v) in wr_pm.items()]
-
+            wrsp_and_param_infs = many_param_from_one(i_wrsp_infs, param_usage_infs, unsuccess, param, flf)
+            other_same_param = [(*i_wrsp_infs[i_wrsp], min(v), max(v)) for (i_wrsp, v) in wrsp_and_param_infs.items()]
         else:
             last = sorted(i_wrsp_infs)[-1]
             (wrsp_dict, wrsp_text) = i_wrsp_infs[last]
@@ -247,6 +155,106 @@ def _group_param_iter2(
     # показать новый action.c
     action.web_action_to_tk_text(websReport=True)
     return
+
+
+def many_param_from_one(i_wrsp_infs, param_usage_infs, unsuccess, param, flf) -> Dict:
+    """несколько wrsp из одного param"""
+    wrsp_and_param_infs = {}
+    last_i_wrsp = 0
+    last_wr = {}
+    wrsp_create_infs = sorted(i_wrsp_infs)
+
+    for i_param in param_usage_infs:
+        _i = []
+
+        for i_wrsp in wrsp_create_infs:
+            if i_wrsp < i_param:
+                if last_wr:
+                    curr_wr = i_wrsp_infs[i_wrsp][0]
+                    (lb1, rb1) = (last_wr['lb'], last_wr['rb'])
+                    (lb2, rb2) = (curr_wr['lb'], curr_wr['rb'])
+                    if (lb1 == lb2) and (rb1 == rb2):
+                        continue
+                _i.append(i_wrsp)
+                last_wr = i_wrsp_infs[i_wrsp][0]
+            else:
+                break
+            continue
+
+        if _i:  # создать новый wrsp
+            last_i_wrsp = _i[-1 if flf else 0]
+            try:
+                wrsp_and_param_infs[last_i_wrsp].append(i_param)
+            except:
+                wrsp_and_param_infs[last_i_wrsp] = [i_param]
+        elif last_i_wrsp:  # использовате предыдущий wrsp
+            wrsp_and_param_infs[last_i_wrsp].append(i_param)
+
+        else:  # param используется в том же inf что и определяется
+            for i_wrsp in wrsp_create_infs:
+                if i_wrsp == i_param:
+                    if last_wr:
+                        curr_wr = i_wrsp_infs[i_wrsp][0]
+                        (lb1, rb1) = (last_wr['lb'], last_wr['rb'])
+                        (lb2, rb2) = (curr_wr['lb'], curr_wr['rb'])
+                        if (lb1 == lb2) and (rb1 == rb2):
+                            continue
+                    _i.append(i_wrsp)
+                    last_wr = i_wrsp_infs[i_wrsp][0]
+                    break
+                continue
+            if _i:
+                last_i_wrsp = _i[0]
+                try:
+                    wrsp_and_param_infs[last_i_wrsp].append(i_param)
+                except:
+                    wrsp_and_param_infs[last_i_wrsp] = [i_param]
+            else:
+                unsuccess.append(param)
+        continue
+    return wrsp_and_param_infs
+
+
+def all_param_inf(params: List[str], web_actions) -> Dict:
+    """все inf где есть param"""
+    wrsp_p_inf = {}
+    for w in web_actions:
+        for param in params:
+            i_wrsp = w.is_param_in_body(param)
+            if i_wrsp:
+                try:
+                    wrsp_p_inf[param].append(i_wrsp)
+                except:
+                    wrsp_p_inf[param] = [i_wrsp]
+            continue
+        continue
+    return wrsp_p_inf
+
+
+def all_wrsp_variant(params: List[str], unsuccess: List, action) -> Dict:
+    """все варианты wrsp"""
+    all_wrsp = {}
+    for param in params:
+        try:
+            wds = lr_lib.core_gui.all_wrsp.all_wrsp_dict_web_reg_save_param_no_tr(param, action=action, create=False)
+            all_wrsp[param] = ap = {}
+            for wd in wds:
+                i_wrsp = wd[0]['inf_nums'][0]
+                if i_wrsp in all_wrsp:  # wrsp из одного inf
+                    (lb1, rb1) = (wd[0]['lb'], wd[0]['rb'])
+                    (lb2, rb2) = (ap[i_wrsp][0]['lb'], ap[i_wrsp][0]['rb'])
+                    rl1 = len(rb1)
+                    rl2 = len(rb2)
+                    if (rl2 > rl1) or ((rl2 == rl1) and (len(lb2) > len(lb1))):
+                        continue  # оставить более длинные
+                else:
+                    ap[i_wrsp] = wd
+                continue
+        except Exception as ex:
+            unsuccess.append(param)
+            lr_lib.etc.excepthook.excepthook(ex)
+        continue
+    return all_wrsp
 
 
 def replace_body(action, web_actions, wrsp_dict, wrsp_text, i_min, i_max) -> None:
