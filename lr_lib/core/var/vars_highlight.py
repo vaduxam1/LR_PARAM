@@ -55,17 +55,23 @@ def init_highlight_words() -> None:
     """
     заполнить highlight_words
     """
-    for file in next(os.walk(highlight_words_folder))[2]:
-        if file.startswith(highlight_words_files_startswith):
-            f = os.path.join(highlight_words_folder, file)
-            with open(f) as hws:
-                for line in hws:
-                    lr = line.rstrip('\n')
-                    ls = lr.strip()
-                    if ls and (not ls.startswith('#')):
-                        highlight_words.add(lr)
-                    continue
-        continue
+    try:
+        fls = next(os.walk(highlight_words_folder))
+        fls = fls[2]
+    except:
+        pass
+    else:
+        for file in fls:
+            if file.startswith(highlight_words_files_startswith):
+                f = os.path.join(highlight_words_folder, file)
+                with open(f) as hws:
+                    for line in hws:
+                        lr = line.rstrip('\n')
+                        ls = lr.strip()
+                        if ls and (not ls.startswith('#')):
+                            highlight_words.add(lr)
+                        continue
+            continue
 
     highlight_words.update(lr_lib.etc.help.COLORS.keys())
     highlight_words.update(lr_lib.etc.help.HEX)
