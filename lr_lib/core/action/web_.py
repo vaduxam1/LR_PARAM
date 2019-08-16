@@ -130,7 +130,7 @@ class WebAny:
         """
         Вернуть номер inf, если param используется в теле
         :param param: str: параметр для поиска в теле
-        :return: int|None: int - найден, None - ненайден
+        :return: int - найден, None - ненайден
         """
         body_split = self.get_body().split(param)
         len_body_split = len(body_split)

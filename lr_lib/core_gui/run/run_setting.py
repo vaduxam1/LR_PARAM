@@ -245,7 +245,7 @@ class RunSettingWindow(tk.Toplevel):
         # Checkbutton
         self.multiWRSP = tk.Checkbutton(
             self.tool_label, anchor=tk.E, text='multiWRSP', font=lr_vars.DefaultFont,
-            variable=lr_lib.core.var.vars.WRSPCreateMultyParamMode,
+            variable=lr_lib.core.var.vars.WRSPCreateMultiParamMode,
         )
         tt21 = 'ON - Найти и создать web_reg_save_param, в аспекте того, что он может обновиться/переопределиться ' \
                'по мере выполнения теста.\n' \

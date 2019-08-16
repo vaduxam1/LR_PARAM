@@ -60,7 +60,7 @@ ReplaceParamDialogWindow = True  # вкл диалог окна(автозаме
 
 AllowOnlyNumericParam = tk.BooleanVar(value=False)  # разрешить имена {param}, состоящие только из цифр
 
-WRSPCreateMultyParamMode = tk.BooleanVar(value=True)  # True - поиск inf-номера web_reg_save_param, в аспекте того, что он может обновиться/переопределиться по мере выполнения теста
+WRSPCreateMultiParamMode = tk.BooleanVar(value=True)  # True - поиск inf-номера web_reg_save_param, в аспекте того, что он может обновиться/переопределиться по мере выполнения теста
 
 VarFileSortKey1 = lr_var.Var(value='Snapshot')  # сортировка файлов
 VarFileSortKey2 = lr_var.Var(value='Nums')  # сортировка файлов
