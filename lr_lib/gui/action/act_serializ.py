@@ -116,7 +116,7 @@ class TkTextWebSerialization(lr_lib.gui.action.act_backup.ActBackup):
                 for line in map(str.strip, f):
                     if need_lines:
                         if line.startswith('['):  # [Recorded Actions] - далее ненужно
-                            need_lines = False
+                            break
                     else:
                         need_lines = (line == '[Actions]')  # нужно, с этого момента
 
