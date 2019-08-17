@@ -2,11 +2,13 @@
 # action.с окно - преобразование action-текста(tk_text) во внутреннее представление(web_action), и обратно"
 
 import os
+import glob
 import tkinter as tk
 
 import lr_lib
 import lr_lib.core.var.vars as lr_vars
 import lr_lib.core.var.etc.vars_other
+import lr_lib.core.wrsp.param
 import lr_lib.gui.action._other
 import lr_lib.gui.action.act_backup
 import lr_lib.gui.etc.gui_other
@@ -95,12 +97,56 @@ class TkTextWebSerialization(lr_lib.gui.action.act_backup.ActBackup):
     @progress_decor
     def open_action(self, file=None, errors='replace', callback=None) -> None:
         """
-        сформировать action.c
+        сформировать vuser_init.c/action.c/.../vuser_end.c
         """
-        self.action_file = file or lr_lib.gui.action._other.get_action_file(lr_vars.VarFilesFolder.get())
+        try:
+            usr_files = glob.glob('*.usr')
+            if len(usr_files) > 1:
+                name = os.path.split(os.getcwd())[1]  # имя текущего каталога
+                usr = [n for n in usr_files if n.startswith(name)][0]
+            elif len(usr_files) == 1:
+                usr = usr_files[0]
+            else:
+                raise UserWarning
+
+            c_files = {}
+            need_lines = False
+            enc = lr_lib.core.var.etc.vars_other.VarEncode.get()
+            with open(usr) as f:  # не использовать configparser, т.к. вроде он падает, на каких-то .usr файлах (может там не соблюдается ini формат?)
+                for line in map(str.strip, f):
+                    if need_lines:
+                        if line.startswith('['):  # [Recorded Actions] - далее ненужно
+                            need_lines = False
+                    else:
+                        need_lines = (line == '[Actions]')  # нужно, с этого момента
+
+                    if need_lines:
+                        if line.endswith('.c'):
+                            (category, file) = line.split('=', 1)
+                            c_files[category] = file
+                    continue
+
+            s = '\n{c} ->\n{c} %s\n{c} <-\n'.format(c='// {}'.format('~'*15))  # lr_lib.core.wrsp.param.LR_COMENT
+            text = ''.join('{cm}\n{f}'.format(f=open(f, errors=errors, encoding=enc).read(), cm=(s % c))
+                           for (c, f) in c_files.items())
+            self.tk_text_to_web_action(text=text, websReport=True)
+            if callback:
+                callback()
+
+        except Exception as ex:
+            self.open_action_old(file=file, callback=callback)
+        return
+
+    @progress_decor
+    def open_action_old(self, file=None, callback=None) -> None:
+        """
+        сформировать только action.c
+        """
+        self.action_file = (file or lr_lib.gui.action._other.get_action_file(lr_vars.VarFilesFolder.get()))
 
         if os.path.isfile(self.action_file):
-            with open(self.action_file, errors=errors, encoding=lr_lib.core.var.etc.vars_other.VarEncode.get()) as text:
+            enc = lr_lib.core.var.etc.vars_other.VarEncode.get()
+            with open(self.action_file, errors='replace', encoding=enc) as text:
                 self.tk_text_to_web_action(text=text, websReport=True)
             if callback:
                 callback()
