@@ -34,18 +34,9 @@ def group_param(event, params: List[str], widget=None, ask=True) -> None:
     with lr_vars.Window.block(force=True):
         with action.block():
             action.backup()
-            progress_bar = lr_lib.core_gui.group_param.gp_progress.ProgressBar(len_params, widget)
-            progress_bar.__enter__()
-            try:  # создание
-                create_iterator = _group_param_iter(params, action)
-                # прогресс
-                for item in create_iterator:
-                    progress_bar.update(item)
-                    continue
-            except:
-                lr_lib.etc.excepthook.excepthook()
-            finally:
-                progress_bar.__exit__(None, None, None)
+            with lr_lib.core_gui.group_param.gp_progress.ProgressBar(len_params, widget).run() as progress_bar:
+                for _ in map(progress_bar.update, _group_param_iter(params, action)):  # создание
+                    continue  # прогрессбар
     return
 
 
@@ -84,13 +75,10 @@ def _group_param_iter1(
 
         for (counter, wrsp_dict) in enumerate(wrsp_get, start=1):
             wrsp = lr_lib.core.wrsp.param.create_web_reg_save_param(wrsp_dict)  # WRSP
-
             # вставить web_reg_save_param перед web
             action.web_action.web_reg_save_param_insert(wrsp_dict, wrsp)
-            it = (wrsp_dict['param'], wrsp_dict['web_reg_name'])
-
             # заменить param на web_reg_save_param
-            replace.send(it)
+            replace.send((wrsp_dict['param'], wrsp_dict['web_reg_name']))
 
             try:  # проверка(popup окно) inf запроса <= inf web_reg_save_param
                 action.param_inf_checker(wrsp_dict, wrsp)
@@ -99,8 +87,7 @@ def _group_param_iter1(
             except Exception:
                 continue
 
-            item = (counter, wrsp_dict, wrsp, unsuccess)
-            yield item  # для progressbar
+            yield counter, wrsp_dict, wrsp, unsuccess  # для progressbar
             continue
 
     finally:  # показать новый action.c
@@ -135,10 +122,12 @@ def _group_param_iter2(
         if len(i_wrsp_infs) > 1:
             wrsp_and_param_infs = many_param_from_one(i_wrsp_infs, param_usage_infs, unsuccess, param, flf)
             other_same_param = [(*i_wrsp_infs[i_wrsp], min(v), max(v)) for (i_wrsp, v) in wrsp_and_param_infs.items()]
+            yield counter, other_same_param[0][0], other_same_param[0][1], unsuccess  # для progressbar
         else:
             last = sorted(i_wrsp_infs)[-1]
             (wrsp_dict, wrsp_text) = i_wrsp_infs[last]
             other_same_param = [(wrsp_dict, wrsp_text, min(param_usage_infs), max(param_usage_infs)), ]
+            yield counter, wrsp_dict, wrsp_text, unsuccess  # для progressbar
 
         # замена param
         for (wrsp_dict, wrsp_text, i_min, i_max) in other_same_param:
@@ -147,7 +136,6 @@ def _group_param_iter2(
             except:
                 unsuccess.append(param)
                 raise
-
             yield counter, wrsp_dict, wrsp_text, unsuccess  # для progressbar
             continue
         continue

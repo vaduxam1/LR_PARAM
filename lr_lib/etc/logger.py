@@ -82,8 +82,14 @@ def _LoggerLevelCreator(level_num: int, level: str) -> None:
 
             if notepad:
                 lr_lib.core.etc.other.openTextInEditor(message)
+
             # окно с ошибкой
-            if lr_vars.VarShowPopupWindow.get() and (level in ('critical', 'error', 'warning',)):
+            try:
+                ch = lr_vars.VarShowPopupWindow.get()
+            except:  # [RuntimeError('main thread is not in main loop'), ('main thread is not in main loop',)]
+                ch = True
+
+            if ch and (level in ('critical', 'error', 'warning',)):
                 if (parent is None) and lr_vars.Window:  # сделать action родителем
                     parent = lr_vars.Window.get_main_action()
 

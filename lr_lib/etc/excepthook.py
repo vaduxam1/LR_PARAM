@@ -56,11 +56,10 @@ def full_tb_write(*args) -> False:
         exc_ = args[0]
         (exc_type, exc_val, exc_tb) = (exc_.__class__, exc_, exc_.__traceback__)
     else:
-        a = list(zip(args, (map(type, args))))
-        e = '{e}\n{a}'.format(e=sys.exc_info(), a=a, )
-        raise UserWarning(e)
+        raise UserWarning('{e}\n{a}'.format(e=sys.exc_info(), a=list(zip(args, (map(type, args)))), ))
 
     # в консоль
+    print(args)
     traceback.print_tb(exc_tb)
     # в лог
     with open(lr_vars.logFullName, 'a') as log:

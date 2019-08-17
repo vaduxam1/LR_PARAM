@@ -1,7 +1,10 @@
 # -*- coding: UTF-8 -*-
 # progressbar нахождения и замены group_param
 
+import contextlib
+
 import lr_lib.gui.etc.color_change
+import lr_lib.etc.excepthook
 from lr_lib.core.var import vars as lr_vars
 from typing import Iterable, Tuple, List, Callable
 
@@ -24,22 +27,21 @@ class ProgressBar:
         self.item0 = [item, ]  # [(counter, wrsp_dict, wrsp, unsuccess)]
         return
 
-    def __enter__(self) -> 'ProgressBar':
+    @contextlib.contextmanager
+    def run(self) -> 'ProgressBar':
         """
-        старт
+        запуск работы
         """
         self.widget.action.show_hide_bar_1(force_show=True)
         self.start()
-        return self
-
-    def __exit__(self, exc_type, exc_val, exc_tb) -> Tuple:
-        """
-        стоп
-        """
-        self.stop()
-        self.widget.action.show_hide_bar_1()
-        item = (exc_type, exc_val, exc_tb)
-        return item
+        try:
+            yield self
+        except Exception as ex:
+            lr_lib.etc.excepthook.excepthook(ex)
+        finally:
+            self.stop()
+            self.widget.action.show_hide_bar_1()
+        return
 
     def update(self, item: Tuple[int, dict, str, list]) -> None:
         """

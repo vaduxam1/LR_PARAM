@@ -365,10 +365,7 @@ def thread_set_stat(files: List[dict]) -> None:
     """
     создавать статистику в фоне, для всех файлов
     """
-    for file in files:
-        set_file_statistic(file)
+    for _ in map(set_file_statistic, files):
         continue
-
-    i = lr_lib.core.etc.other.all_files_info()
-    lr_vars.Logger.info(i)
+    lr_vars.Logger.info(lr_lib.core.etc.other.all_files_info())
     return
