@@ -5,7 +5,7 @@ import os
 import glob
 import tkinter as tk
 import tkinter.messagebox
-from typing import Dict, List
+from typing import Dict, List, Tuple
 
 import lr_lib
 import lr_lib.core.var.vars as lr_vars
@@ -103,53 +103,22 @@ class TkTextWebSerialization(lr_lib.gui.action.act_backup.ActBackup):
         не использовать configparser, т.к. вроде он падает, на каких-то .usr файлах
             (может там не соблюдается ini формат?)
         """
-        if file:  # из action файла
-            enc = lr_lib.core.var.etc.vars_other.VarEncode.get()
-            with open(file, errors='replace', encoding=enc) as f:
-                text = f.read()
-        else:  # или из usr файла
-            try:
-                if not usr_file:
-                    usr_files = glob.glob('*.usr')
-                    # открыть все vuser_init.c/action.c/.../vuser_end.c
-                    if len(usr_files) > 1:  # по умолчению, должен быть только один
-                        name = '{}.usr'.format(os.path.split(os.getcwd())[1])  # {одноименно с каталогом}.usr
-                        usr_file = [n for n in usr_files if (n == name)][0]
-                    elif len(usr_files) == 1:
-                        usr_file = usr_files[0]
-                    else:
-                        raise UserWarning  # только только action.c
+        (err, c_files, text) = get_action_files_text(file=file, usr_file=usr_file)
 
-                c_files = {}
-                need_lines = False
-                with open(usr_file) as f:
-                    for line in map(str.strip, f):
-                        if need_lines:
-                            if line.startswith('['):  # [Recorded Actions] - далее ненужно
-                                break
-                        else:
-                            need_lines = (line == '[Actions]')  # нужно, с этого момента
-
-                        if need_lines and line.endswith('.c') and ('=' in line):
-                            (category, file) = line.split('=', 1)
-                            c_files[category] = file
-                        continue
-                text = lr_texts_join(c_files)
-
-            except Exception as ex:
-                c_files = {
-                    'vuser_init': 'vuser_init.c',
-                    'Action': 'Action.c',
-                    'vuser_end': 'vuser_end.c',
-                }
-                s = 'Будут открыты только {f} файла:\n{fs} .\nНеобходимо проверить, ' \
-                    'что не используются другие action файлы.' \
-                    '\nВ директории утилиты должен присутствовать файл: "<одноименно с каталогом>.usr"'
-                tkinter.messagebox.showwarning('Внимание', s.format(f=len(c_files), fs=str(list(c_files.values())), ),
-                                               parent=self)
-                text = lr_texts_join(c_files)
+        if err:
+            tkinter.messagebox.showwarning(
+                'Внимание', 'Ошибка при разборе usr файла!\n\nБудут открыты только {f} стандартных файла:\n{fs} .\n'
+                            'Необходимо проверить, что не используются другие action файлы.\n'
+                            'В директории утилиты должен находится корректный файл .usr: '
+                            'одноименный с каталогом скрипта'.format(
+                    f=len(c_files), fs=str(list(c_files.values())), ), parent=self)
+            text = default_actions_text()
 
         self.tk_text_to_web_action(text=text, websReport=True)  # отобразить
+        if c_files:
+            tkinter.messagebox.showinfo('Открыты файлы .c', '\n'.join(
+                '{}). {}'.format(e, v) for (e, v) in enumerate(c_files.values(), start=1)), parent=self)
+
         if callback:
             callback()
         return
@@ -248,8 +217,77 @@ SPL = '\n{c} ->\n{c} %s\n{c} <-\n'.format(c='// {}'.format('~' * 15))  # lr_lib.
 def lr_texts_join(c_files: Dict) -> str:
     """объединить текст нескольких .c файлов"""
     enc = lr_lib.core.var.etc.vars_other.VarEncode.get()
-    text = ''.join('{cm}\n{f}'.format(
-        f=open(c_files[cat], errors='replace', encoding=enc).read(),
-        cm=(SPL % cat),
-    ) for cat in c_files)
+    text = ''.join(
+        '{cm}\n{f}'.format(
+            f=open(c_files[cat], errors='replace', encoding=enc).read(),
+            cm=(SPL % cat),
+        ) for cat in c_files
+    )
     return text
+
+
+CFiles = {
+    'vuser_init': 'vuser_init.c',
+    'Action': 'Action.c',
+    'vuser_end': 'vuser_end.c',
+}
+
+
+def default_actions_text(c_files=None) -> str:
+    """текст из 3х файлов, vuser_init.c/action.c/vuser_end.c"""
+    if c_files is None:
+        c_files = CFiles
+    return lr_texts_join(c_files)
+
+
+def get_action_files_text(file='', usr_file='') -> Tuple[bool, Dict[str, str], str]:
+    """
+    сформировать текст vuser_init.c/action.c/.../vuser_end.c, из action файла, или из usr файла
+       не использовать configparser, т.к. вроде он падает, на каких-то .usr файлах
+           (может там не соблюдается ini формат?)
+    :param file: str: 'Action.c'
+    :param usr_file: str: 'sozdanie_zkr.usr'
+    :return: (err, c_files, text)
+    """
+    c_files = {}
+
+    if file:  # из action файла
+        try:
+            enc = lr_lib.core.var.etc.vars_other.VarEncode.get()
+            with open(file, errors='replace', encoding=enc) as f:
+                text = f.read()
+        except:
+            return True, c_files, ''
+
+    else:  # или из usr файла
+        try:
+            if not usr_file:
+                usr_files = glob.glob('*.usr')
+                # открыть все vuser_init.c/action.c/.../vuser_end.c
+                if len(usr_files) > 1:  # по умолчению, должен быть только один
+                    name = '{}.usr'.format(os.path.split(os.getcwd())[1])  # {одноименно с каталогом}.usr
+                    usr_file = [n for n in usr_files if (n == name)][0]
+                elif len(usr_files) == 1:
+                    usr_file = usr_files[0]
+                else:
+                    raise UserWarning  # только только action.c
+
+            need_lines = False
+            with open(usr_file) as f:
+                for line in map(str.strip, f):
+                    if need_lines:
+                        if line.startswith('['):  # [Recorded Actions] - далее ненужно
+                            break
+                    else:
+                        need_lines = (line == '[Actions]')  # нужно, с этого момента
+
+                    if need_lines and line.endswith('.c') and ('=' in line):
+                        (category, file) = line.split('=', 1)
+                        c_files[category] = file
+                    continue
+            text = lr_texts_join(c_files)
+
+        except Exception as ex:
+            return True, c_files, ''
+
+    return False, c_files, text
