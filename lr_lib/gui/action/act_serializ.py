@@ -3,7 +3,9 @@
 
 import os
 import glob
+import itertools
 import tkinter as tk
+import tkinter.filedialog
 import tkinter.messagebox
 from typing import Dict, List, Tuple
 
@@ -162,6 +164,75 @@ class TkTextWebSerialization(lr_lib.gui.action.act_backup.ActBackup):
                 act.write(self.tk_text.get(1.0, tk.END))
         return
 
+    @progress_decor
+    def save_action_file_many(self, file_name=None, errors='replace', websReport=True) -> None:
+        """
+        текст to WEB_ACTION - сохранить текст action.c окна в несколько файлов vuser_init.c/action.c/.../vuser_end.c
+        """
+        self.tk_text_to_web_action(websReport=websReport)
+
+        if file_name is None:
+            file_name = tk.filedialog.askdirectory(
+                initialdir=os.getcwd(),
+                title='сохранить текст action-окна в vuser_init.c/action.c/.../vuser_end.c',
+                parent=self,
+            )
+        if file_name:
+            txt = self.web_action.to_str(websReport=False).strip()
+
+            if txt.startswith(S1):
+                enc = lr_lib.core.var.etc.vars_other.VarEncode.get()
+                fdict = {}
+                its = iter(txt.split('\n'))
+
+                while True:
+                    try:
+                        _ = next(its)
+
+                        file = next(its).strip()
+                        while not file:
+                            file = next(its).strip()
+                            continue
+                        assert str.startswith(file, S2[:4])
+
+                        _ = next(its)
+                        while not _:
+                            _ = next(its)
+                            continue
+
+                    except StopIteration:
+                        break
+                    except Exception:
+                        raise
+
+                    else:
+                        _text = []
+                        for _line in its:
+                            if _line == S1:
+                                its = itertools.chain([_line], its)
+                                break
+                            else:
+                                _text.append(_line)
+                            continue
+
+                        file = file.rstrip().rsplit(' ', 1)[1]
+                        fdict[file] = '\n'.join(_text)
+
+                    continue
+
+                for file in fdict:
+                    with open(file, 'w', errors=errors, encoding=enc) as f:
+                        f.write(fdict[file])
+                    continue
+
+                tkinter.messagebox.showinfo('OK', '\n'.join('{}). {} : {} симв.'.format(e, f, len(fdict[f]))
+                                                            for (e, f) in enumerate(fdict, start=1)))
+            else:
+                tkinter.messagebox.showerror(
+                    'Ошибка сохранения', 'Первая строка (для каждого файла), должна начинатся на:'
+                                         '\n{0}\n\\\\ имя_файла.c\n{0}'.format(S1), parent=self)
+        return
+
     def open_action_dialog(self, *a, title=False, folder=os.getcwd(), usr_file=False) -> None:
         """
         открыть файл .c или .usr
@@ -231,7 +302,9 @@ class TkTextWebSerialization(lr_lib.gui.action.act_backup.ActBackup):
         return
 
 
-SPL = '\n{c} ->\n{c} %s\n{c} <-\n'.format(c='// {}'.format('~' * 15))  # lr_lib.core.wrsp.param.LR_COMENT
+S1 = '// {} //'.format('~' * 15)
+S2 = '{} %s'.format(S1[:4])
+SPL = '\n{0}\n{1}\n{0}\n'.format(S1, S2)  # lr_lib.core.wrsp.param.LR_COMENT
 
 
 def lr_texts_join(c_files: Dict) -> str:
@@ -239,9 +312,9 @@ def lr_texts_join(c_files: Dict) -> str:
     enc = lr_lib.core.var.etc.vars_other.VarEncode.get()
     text = ''.join(
         '{cm}\n{f}'.format(
-            f=open(c_files[cat], errors='replace', encoding=enc).read(),
-            cm=(SPL % cat),
-        ) for cat in c_files
+            f=open(f, errors='replace', encoding=enc).read(),
+            cm=(SPL % f),
+        ) for f in c_files.values()
     )
     return text
 

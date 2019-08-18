@@ -118,10 +118,14 @@ class ActionWindow(lr_lib.gui.action.act_win.ActWin):
 
         cmd14 = lambda: self.open_action_dialog(title=True, folder=lr_vars.BackupFolder)
         cmd141 = lambda: self.open_action_dialog(usr_file=True)
-        filemenu2.add_command(label="Open (один action-файл) - выбрать '*.c' файл", command=cmd14,)
-        filemenu2.add_command(label="Open (группу файлов vuser_init/action/.../vuser_end) - выбрать '*.usr' файл",
+        filemenu2.add_command(label="Open '*.c' файл", command=cmd14,)
+        filemenu2.add_command(label="Open '*.usr' файл (т.е. открыть все '*.c' файлы "
+                                    "vuser_init.c/action.c/.../vuser_end.c)",
                               command=cmd141,)
-        filemenu2.add_command(label="Save (в один action-файл)", command=self.save_action_file)
+        filemenu2.add_command(label="Save (в один файл)", command=self.save_action_file)
+        filemenu2.add_command(label="Save (в vuser_init.c/action.c/.../vuser_end.c файлы) - "
+                                    "выбрать директорию сохранения",
+                              command=self.save_action_file_many)
 
         cm1 = self.tk_text_to_web_action
         filemenu2.add_command(label="Перенести текст_на_экране, во внутр_предсталение", command=cm1,)

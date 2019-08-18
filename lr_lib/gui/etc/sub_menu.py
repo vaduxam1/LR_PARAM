@@ -129,7 +129,12 @@ def rClicker(event) -> str:
             submenu_param.add_cascade(label='* одиночный -> удалить по wrsp или param', underline=0, command=cmd17,)
 
         cmd_18 = lambda e=event: lr_lib.core_gui.action_lib.event_action_getter(e).save_action_file(file_name=False)
-        nclst = [('Сохр. пользоват. изменения в тексте', cmd_18), ]
+        # cmd_19 = lambda e=event: lr_lib.core_gui.action_lib.event_action_getter(e).save_action_file_many(file_name=False)
+
+        nclst = [
+            ('Сохр. пользоват. изменения в тексте, в один файл', cmd_18),
+            # ('Сохр. пользоват. изменения в тексте, в vuser_init.c/action.c/.../vuser_end.c файлы', cmd_19),
+        ]
         for (txt, cmd) in nclst:
             rmenu.add_command(label=txt, command=cmd)
             continue
