@@ -117,6 +117,16 @@ class TkTextWebSerialization(lr_lib.gui.action.act_backup.ActBackup):
             _file = usr_file
 
         (err, c_files, text) = get_action_files_text(file=file, usr_file=usr_file)
+
+        cfl = len(c_files)
+        if err and (cfl > 1):
+            text = default_actions_text()
+
+        if text:
+            self.tk_text_to_web_action(text=text, websReport=True)  # отобразить
+            if callback:
+                callback()
+
         if err:
             tkinter.messagebox.showwarning(
                 'Внимание', 'Ошибка при разборе файла "{fls}" !\n\nБудут открыты только {f} стандартных файла:\n{fs}.\n'
@@ -124,19 +134,13 @@ class TkTextWebSerialization(lr_lib.gui.action.act_backup.ActBackup):
                             'В директории утилиты должен находится корректный файл .usr: '
                             'одноименный с каталогом скрипта'.format(
                     f=len(c_files), fs=str(list(c_files.values())), fls=_file), parent=self)
-            text = default_actions_text()
 
-        cfl = len(c_files)
         if cfl > 1:
             tkinter.messagebox.showinfo(os.path.split(_file)[1], '{}:\n{}'.format(_file, '\n'.join(
                 '{}). {}'.format(e, v) for (e, v) in enumerate(c_files.values(), start=1)), parent=self))
         elif cfl:
             tkinter.messagebox.showinfo(os.path.split(_file)[1], _file, parent=self)
 
-        self.tk_text_to_web_action(text=text, websReport=True)  # отобразить
-
-        if callback:
-            callback()
         return
 
     @progress_decor
