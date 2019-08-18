@@ -146,11 +146,11 @@ class ActWin(lr_lib.gui.action.act_any.ActAny):
         self.widj_reset()
         return
 
-    def open_action(self, file=None) -> None:
+    def open_action(self, **kwargs) -> None:
         """
         сформировать action.c
         """
-        super().open_action(file=file, callback=self._open_action_final)
+        super().open_action(callback=self._open_action_final, **kwargs)
         return
 
     def param_inf_checker(self, wrsp_dict: dict, wrsp: str) -> None:

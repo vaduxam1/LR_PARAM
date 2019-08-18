@@ -97,71 +97,59 @@ class TkTextWebSerialization(lr_lib.gui.action.act_backup.ActBackup):
         return
 
     @progress_decor
-    def open_action(self, file=None, callback=None) -> None:
+    def open_action(self, file=None, callback=None, usr_file=None) -> None:
         """
-        сформировать vuser_init.c/action.c/.../vuser_end.c
+        сформировать vuser_init.c/action.c/.../vuser_end.c, из action файла, или из usr файла
+        не использовать configparser, т.к. вроде он падает, на каких-то .usr файлах
+            (может там не соблюдается ini формат?)
         """
-        if file:
+        if file:  # из action файла
             enc = lr_lib.core.var.etc.vars_other.VarEncode.get()
             with open(file, errors='replace', encoding=enc) as f:
                 text = f.read()
-            self.tk_text_to_web_action(text=text, websReport=True)
-            if callback:
-                callback()
-            return
-
-        # из usr файла
-        try:
-            usr_files = glob.glob('*.usr')
-            # открыть все vuser_init.c/action.c/.../vuser_end.c
-            if len(usr_files) > 1:  # по умолчению, должен быть только один
-                name = os.path.split(os.getcwd())[1]  # имя текущего каталога
-                usr_ = '{}.usr'.format(name)  # {одноименно с каталогом}.usr
-                usr = [n for n in usr_files if (n == usr_)][0]
-            elif len(usr_files) == 1:
-                usr = usr_files[0]
-            else:
-                raise UserWarning  # только только action.c
-
-            c_files = {}
-            need_lines = False
-
-            with open(usr) as f:  # не использовать configparser, т.к. вроде он падает, на каких-то .usr файлах (может там не соблюдается ini формат?)
-                for line in map(str.strip, f):
-                    if need_lines:
-                        if line.startswith('['):  # [Recorded Actions] - далее ненужно
-                            break
+        else:  # или из usr файла
+            try:
+                if not usr_file:
+                    usr_files = glob.glob('*.usr')
+                    # открыть все vuser_init.c/action.c/.../vuser_end.c
+                    if len(usr_files) > 1:  # по умолчению, должен быть только один
+                        name = '{}.usr'.format(os.path.split(os.getcwd())[1])  # {одноименно с каталогом}.usr
+                        usr_file = [n for n in usr_files if (n == name)][0]
+                    elif len(usr_files) == 1:
+                        usr_file = usr_files[0]
                     else:
-                        need_lines = (line == '[Actions]')  # нужно, с этого момента
+                        raise UserWarning  # только только action.c
 
-                    if need_lines and line.endswith('.c') and ('=' in line):
-                        (category, file) = line.split('=', 1)
-                        c_files[category] = file
-                    continue
+                c_files = {}
+                need_lines = False
+                with open(usr_file) as f:
+                    for line in map(str.strip, f):
+                        if need_lines:
+                            if line.startswith('['):  # [Recorded Actions] - далее ненужно
+                                break
+                        else:
+                            need_lines = (line == '[Actions]')  # нужно, с этого момента
 
-            self.tk_text_to_web_action(text=lr_texts_join(c_files), websReport=True)
-            if callback:
-                callback()
+                        if need_lines and line.endswith('.c') and ('=' in line):
+                            (category, file) = line.split('=', 1)
+                            c_files[category] = file
+                        continue
+                text = lr_texts_join(c_files)
 
-        except Exception as ex:
-            self.open_action_force(callback=callback)  # открыть только action.c
-        return
+            except Exception as ex:
+                c_files = {
+                    'vuser_init': 'vuser_init.c',
+                    'Action': 'Action.c',
+                    'vuser_end': 'vuser_end.c',
+                }
+                s = 'Будут открыты только {f} файла:\n{fs} .\nНеобходимо проверить, ' \
+                    'что не используются другие action файлы.' \
+                    '\nВ директории утилиты должен присутствовать файл: "<одноименно с каталогом>.usr"'
+                tkinter.messagebox.showwarning('Внимание', s.format(f=len(c_files), fs=str(list(c_files.values())), ),
+                                               parent=self)
+                text = lr_texts_join(c_files)
 
-    @progress_decor
-    def open_action_force(self, callback=None) -> None:
-        """
-        сформировать только action.c
-        """
-        c_files = {
-            'vuser_init': 'vuser_init.c',
-            'Action': 'Action.c',
-            'vuser_end': 'vuser_end.c',
-        }
-        s = 'Будут открыты только {f} файла:\n{fs} .\nНеобходимо проверить, что не используются другие action файлы.' \
-            '\nВ директории утилиты должен присутствовать файл: "<одноименно с каталогом>.usr"'
-        tkinter.messagebox.showwarning('Внимание', s.format(f=len(c_files), fs=str(list(c_files.values())),),
-                                       parent=self)
-        self.tk_text_to_web_action(text=lr_texts_join(c_files), websReport=True)
+        self.tk_text_to_web_action(text=text, websReport=True)  # отобразить
         if callback:
             callback()
         return
@@ -185,21 +173,37 @@ class TkTextWebSerialization(lr_lib.gui.action.act_backup.ActBackup):
                 act.write(self.tk_text.get(1.0, tk.END))
         return
 
-    def open_action_dialog(self, *a, title=False, folder=os.getcwd()) -> None:
+    def open_action_dialog(self, *a, title=False, folder=os.getcwd(), usr_file=False) -> None:
         """
-        открыть файл
+        открыть файл .c или .usr
         """
-        if title:
-            ft = (("%s_backup_*.c" % self.id_, "%s_backup_*.c" % self.id_), ("all", "*.*"))
-            af = tk.filedialog.askopenfilename(
-                initialdir=folder, parent=self, filetypes=ft, title='backup({})'.format(self.id_)
-            )
+        if usr_file:
+            try:
+                fld = os.path.split(folder)[1]
+            except:
+                fld = '*'
+            u = "{}.usr".format(fld)
+
+            file = tk.filedialog.askopenfilename(
+                initialdir=folder, parent=self, filetypes=((u, u), ("*.usr", "*.usr"), ("all", "*.*")))
+
+            if file:
+                self.open_action(usr_file=file)
+
         else:
-            af = tk.filedialog.askopenfilename(
-                initialdir=folder, parent=self, filetypes=(("action.c", "*.c"), ("all", "*.*"))
-            )
-        if af:
-            self.open_action(file=af)
+            if title:
+                s = ("%s_backup_*.c" % self.id_)
+                ft = ((s, s), ("*.c", "*.c"), ("all", "*.*"), )
+                file = tk.filedialog.askopenfilename(
+                    initialdir=folder, parent=self, filetypes=ft, title='backup({})'.format(self.id_)
+                )
+            else:
+                file = tk.filedialog.askopenfilename(
+                    initialdir=folder, parent=self, filetypes=(("action.c", "*.c"), ("all", "*.*"))
+                )
+
+            if file:
+                self.open_action(file=file)
         return
 
     def show_info(self) -> None:

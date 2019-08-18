@@ -117,8 +117,11 @@ class ActionWindow(lr_lib.gui.action.act_win.ActWin):
         filemenu2 = tk.Menu(self.menubar, tearoff=0)
 
         cmd14 = lambda: self.open_action_dialog(title=True, folder=lr_vars.BackupFolder)
-        filemenu2.add_command(label="Open", command=cmd14,)
-        filemenu2.add_command(label="Save", command=self.save_action_file)
+        cmd141 = lambda: self.open_action_dialog(usr_file=True)
+        filemenu2.add_command(label="Open (один action-файл) - выбрать '*.c' файл", command=cmd14,)
+        filemenu2.add_command(label="Open (группу файлов vuser_init/action/.../vuser_end) - выбрать '*.usr' файл",
+                              command=cmd141,)
+        filemenu2.add_command(label="Save (в один action-файл)", command=self.save_action_file)
 
         cm1 = self.tk_text_to_web_action
         filemenu2.add_command(label="Перенести текст_на_экране, во внутр_предсталение", command=cm1,)
