@@ -8,6 +8,7 @@ import tkinter.messagebox
 from typing import Dict, List, Tuple
 
 import lr_lib
+import lr_lib.etc.excepthook
 import lr_lib.core.var.vars as lr_vars
 import lr_lib.core.var.etc.vars_other
 import lr_lib.core.wrsp.param
@@ -103,21 +104,36 @@ class TkTextWebSerialization(lr_lib.gui.action.act_backup.ActBackup):
         не использовать configparser, т.к. вроде он падает, на каких-то .usr файлах
             (может там не соблюдается ini формат?)
         """
-        (err, c_files, text) = get_action_files_text(file=file, usr_file=usr_file)
+        _file = (file or usr_file)
+        if not _file:
+            usr_files = glob.glob('*.usr')
+            if len(usr_files) > 1:  # по умолчению, должен быть только один
+                name = '{}.usr'.format(os.path.split(os.getcwd())[1])  # {одноименно с каталогом}.usr
+                usr_file = [n for n in usr_files if (n == name)][0]
+            elif len(usr_files) == 1:
+                usr_file = usr_files[0]
+            else:
+                return
+            _file = usr_file
 
+        (err, c_files, text) = get_action_files_text(file=file, usr_file=usr_file)
         if err:
             tkinter.messagebox.showwarning(
-                'Внимание', 'Ошибка при разборе usr файла!\n\nБудут открыты только {f} стандартных файла:\n{fs} .\n'
+                'Внимание', 'Ошибка при разборе файла "{fls}" !\n\nБудут открыты только {f} стандартных файла:\n{fs}.\n'
                             'Необходимо проверить, что не используются другие action файлы.\n'
                             'В директории утилиты должен находится корректный файл .usr: '
                             'одноименный с каталогом скрипта'.format(
-                    f=len(c_files), fs=str(list(c_files.values())), ), parent=self)
+                    f=len(c_files), fs=str(list(c_files.values())), fls=_file), parent=self)
             text = default_actions_text()
 
+        cfl = len(c_files)
+        if cfl > 1:
+            tkinter.messagebox.showinfo(os.path.split(_file)[1], '{}:\n{}'.format(_file, '\n'.join(
+                '{}). {}'.format(e, v) for (e, v) in enumerate(c_files.values(), start=1)), parent=self))
+        elif cfl:
+            tkinter.messagebox.showinfo(os.path.split(_file)[1], _file, parent=self)
+
         self.tk_text_to_web_action(text=text, websReport=True)  # отобразить
-        if c_files:
-            tkinter.messagebox.showinfo('Открыты файлы .c', '\n'.join(
-                '{}). {}'.format(e, v) for (e, v) in enumerate(c_files.values(), start=1)), parent=self)
 
         if callback:
             callback()
@@ -258,20 +274,11 @@ def get_action_files_text(file='', usr_file='') -> Tuple[bool, Dict[str, str], s
                 text = f.read()
         except:
             return True, c_files, ''
+        else:
+            c_files['file'] = file
 
     else:  # или из usr файла
         try:
-            if not usr_file:
-                usr_files = glob.glob('*.usr')
-                # открыть все vuser_init.c/action.c/.../vuser_end.c
-                if len(usr_files) > 1:  # по умолчению, должен быть только один
-                    name = '{}.usr'.format(os.path.split(os.getcwd())[1])  # {одноименно с каталогом}.usr
-                    usr_file = [n for n in usr_files if (n == name)][0]
-                elif len(usr_files) == 1:
-                    usr_file = usr_files[0]
-                else:
-                    raise UserWarning  # только только action.c
-
             need_lines = False
             with open(usr_file) as f:
                 for line in map(str.strip, f):
@@ -288,6 +295,7 @@ def get_action_files_text(file='', usr_file='') -> Tuple[bool, Dict[str, str], s
             text = lr_texts_join(c_files)
 
         except Exception as ex:
+            lr_lib.etc.excepthook.excepthook(ex)
             return True, c_files, ''
 
     return False, c_files, text
