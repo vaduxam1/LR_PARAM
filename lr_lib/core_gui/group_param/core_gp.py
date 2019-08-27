@@ -121,7 +121,16 @@ def _group_param_iter2(
 
         if len(i_wrsp_infs) > 1:
             wrsp_and_param_infs = many_param_from_one(i_wrsp_infs, param_usage_infs, unsuccess, param, flf)
-            other_same_param = [(*i_wrsp_infs[i_wrsp], min(v), max(v)) for (i_wrsp, v) in wrsp_and_param_infs.items()]
+            # other_same_param = [(*i_wrsp_infs[i_wrsp], min(v), max(v)) for (i_wrsp, v) in wrsp_and_param_infs.items()]
+            other_same_param = []
+            for (i_wrsp, v) in wrsp_and_param_infs.items():
+                (wrsp_dict, wrsp_text) = i_wrsp_infs[i_wrsp]
+                wrsp_dict = wrsp_dict.copy()
+                mav = max(v)
+                wrsp_dict['max_action_inf'] = wrsp_dict['param_max_action_inf'] = miv = min(v)
+                s = (wrsp_dict, wrsp_text, miv, mav)
+                other_same_param.append(s)
+                continue
             yield counter, other_same_param[0][0], other_same_param[0][1], unsuccess  # для progressbar
         else:
             last = sorted(i_wrsp_infs)[-1]
@@ -135,8 +144,8 @@ def _group_param_iter2(
                 replace_body(action, web_actions, wrsp_dict, wrsp_text, i_min, i_max)
             except:
                 unsuccess.append(param)
-                raise
-            yield counter, wrsp_dict, wrsp_text, unsuccess  # для progressbar
+                lr_lib.etc.excepthook.excepthook()
+            # yield counter, wrsp_dict, wrsp_text, unsuccess  # для progressbar
             continue
         continue
 
@@ -261,7 +270,7 @@ def replace_body(action, web_actions, wrsp_dict, wrsp_text, i_min, i_max) -> Non
     except (UserWarning, AssertionError) as ex:
         pass  # продолжать при raise
     except Exception:
-        raise
+        lr_lib.etc.excepthook.excepthook()
 
     return
 
