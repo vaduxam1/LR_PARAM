@@ -596,9 +596,9 @@ def find_param_ord() -> Tuple[int, int]:
     получить Ord
     """
     if lr_vars.VarOrdVersion.get():
-        ord_index = new_find_param_ord()
+        ord_index = find_param_ord_new()
     else:  # можно сравнить результат, при изменении алгоритма
-        ord_index = old_find_param_ord()
+        ord_index = find_param_ord_old()
 
     if ord_index:
         return ord_index
@@ -622,7 +622,7 @@ AIE2 = '''
 '''.strip()
 
 
-def new_find_param_ord() -> Tuple[int, int]:
+def find_param_ord_old() -> Tuple[int, int]:
     """
     получить Ord, версия после 7.2.0
     """
@@ -668,29 +668,61 @@ def new_find_param_ord() -> Tuple[int, int]:
     return
 
 
-def old_find_param_ord() -> Tuple[int, int]:
+def find_param_ord_new() -> Tuple[int, int]:
     """
-    получить Ord, версия до 7.2.0 - не ищет ord если символы LB(начало) и RB(конец) пересекаются
+    получить Ord, НОВАЯ!!! test - исправлена ошибка при проске ord
     """
-    lb = lr_vars.VarLB.get()
-    assert lb, 'Формирование web_reg_save_param невозможно, тк поле LB(5) пусто'
-    rb = lr_vars.VarRB.get()
-    assert rb, 'Формирование web_reg_save_param невозможно, тк поле RB(5) пусто'
-    text = lr_vars.VarFileText.get()
-    assert text, 'Формирование web_reg_save_param невозможно, тк файл пустой {}'.format(lr_vars.VarFile.get())
     param = lr_vars.VarParam.get()
-    assert param, 'Формирование web_reg_save_param невозможно, тк param пустой'
-    split_lb_text = text.split(lb)  # разбить по левой(LB) части
-    split_len = len(split_lb_text)
-    assert (split_len > 1), 'Формирование web_reg_save_param невозможно, тк файл не содержит LB( {lb} )'.format(lb=lb)
-    param_rb = (param + rb)
+    lb = lr_vars.VarLB.get()
+    rb = lr_vars.VarRB.get()
+    text = lr_vars.VarFileText.get()
+    items = (param, lb, rb, text,)
+
+    len_lbti = len(text.split(lb))
+    assert all(items), AIE1.format(
+        wrsp=lr_vars.VarWrspDict.get(),
+        empty=list(map(bool, items)),
+        pn=lr_vars.VarPartNum.get(),
+        len_lbti=len_lbti,
+        fl=lr_vars.VarFile.get(),
+    )
+    assert (len_lbti > 1), AIE2.format(wrsp=lr_vars.VarWrspDict.get(), )
+
     Ord = 0
-    for part in split_lb_text[1:]:  # слева, от первой LB части, не может быть RB
-        if rb in part:
-            Ord += 1
-            if part.startswith(param_rb):
-                _param_text_index = (text.index(lb + param_rb) + len(lb))
-                item = (Ord, _param_text_index)
-                return item
+    for line in text.split('\n'):
+        if (lb in line) and (rb in line):
+            try:
+                (other, data_) = line.split(lb, 1)
+            except:
+                continue
+            if rb in data_:
+                try:
+                    (_data, other) = data_.split(rb, 1)
+                except:
+                    continue
+
+                Ord += 1
+                if _data == param:
+                    return Ord, 0
+
+                while data_:
+                    try:
+                        (other, data_) = data_.split(lb, 1)
+                    except:
+                        break
+                    else:
+                        if rb in data_:
+                            try:
+                                (_data, other) = data_.split(rb, 1)
+                            except:
+                                break
+
+                            Ord += 1
+                            if _data == param:
+                                return Ord, 0
+                        else:
+                            break
+                    continue
+
         continue
     return
