@@ -690,6 +690,7 @@ def find_param_ord_new() -> Tuple[int, int]:
 
     Ord = 0
     for line in text.split('\n'):
+        line += '\n'
         if (lb in line) and (rb in line):
             try:
                 (other, data_) = line.split(lb, 1)
