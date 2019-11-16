@@ -691,39 +691,41 @@ def find_param_ord_new() -> Tuple[int, int]:
     Ord = 0
     for line in text.split('\n'):
         line += '\n'
+
         if (lb in line) and (rb in line):
             try:
                 (other, data_) = line.split(lb, 1)
             except:
                 continue
-            if rb in data_:
-                try:
-                    (_data, other) = data_.split(rb, 1)
-                except:
-                    continue
-
-                Ord += 1
-                if _data == param:
-                    return Ord, 0
-
-                while data_:
+            else:
+                if rb in data_:
                     try:
-                        (other, data_) = data_.split(lb, 1)
+                        (_data, other) = data_.split(rb, 1)
                     except:
-                        break
+                        continue
                     else:
-                        if rb in data_:
-                            try:
-                                (_data, other) = data_.split(rb, 1)
-                            except:
-                                break
-
-                            Ord += 1
-                            if _data == param:
-                                return Ord, 0
+                        Ord += 1
+                        if _data == param:
+                            return Ord, 0
                         else:
-                            break
-                    continue
-
+                            while data_:
+                                try:
+                                    (other, data_) = data_.split(lb, 1)
+                                except:
+                                    break
+                                else:
+                                    if rb in data_:
+                                        try:
+                                            (_data, other) = data_.split(rb, 1)
+                                        except:
+                                            break
+                                        else:
+                                            Ord += 1
+                                            if _data == param:
+                                                return Ord, 0
+                                    else:
+                                        break
+                                continue
         continue
-    return
+
+    return find_param_ord_old()  # иначе старый способ
